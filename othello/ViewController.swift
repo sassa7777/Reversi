@@ -14,25 +14,25 @@ let black = "black"
 
 //let y = 8
 //let x = 8
-
-@_cdecl("finish")
-func finish()
-{
-    countstone()
-    print("黒の数: \(blackc) 白の数: \(whitec)")
-    if(blackc > whitec)
-    {
-        print("黒の勝ち！")
-    }
-    else if(whitec > blackc)
-    {
-        print("白の勝ち！")
-    }
-    else
-    {
-        print("引き分け")
-    }
-}
+//
+//
+//func finish()
+//{
+//    countstone()
+//    print("黒の数: \(blackc) 白の数: \(whitec)")
+//    if(blackc > whitec)
+//    {
+//        print("黒の勝ち！")
+//    }
+//    else if(whitec > blackc)
+//    {
+//        print("白の勝ち！")
+//    }
+//    else
+//    {
+//        print("引き分け")
+//    }
+//}
 
 class ViewController: NSViewController
 {

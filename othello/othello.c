@@ -656,19 +656,49 @@ void check(void)
         canPut[i][0] = false;
         canPut[i][9] = false;
     }
+    skip = 0;
+    for(int i = 1; i < 9; i++)
+    {
+        for(int j = 1; j < 9; j++)
+        {
+            if (canPut[i][j] == true)
+            {
+                skip++;
+                break;
+            }
+        }
+        
+    }
     for(int i = 0; i < 10; i++)
     {
         for(int j = 0; j < 10; j++)
         {
-            if (canPut[i][j] != canPut[0][0])
+            if(isfree[i][j] == true)
             {
-                skip = 1;
-                break;
+                board[i][j] = 0;
             }
-        }
-        if(skip == 1)
-        {
-            break;
+            if(j == 9)
+            {
+                if(canPut[i][j] == true)
+                {
+                    printf("t\n");
+                }
+                else
+                {
+                    printf("f\n");
+                }
+            }
+            else
+            {
+                if(canPut[i][j] == true)
+                {
+                    printf("t ");
+                }
+                else
+                {
+                    printf("f ");
+                }
+            }
         }
     }
     if(skip == 0)
@@ -678,7 +708,6 @@ void check(void)
             if (skipped == true)
             {
                 //finished = true;
-                finish();
             }
             player = 2;
             skipped = true;
@@ -688,7 +717,6 @@ void check(void)
             if (skipped == true)
             {
                 //finished = true;
-                finish();
             }
             player = 1;
             skipped = true;
