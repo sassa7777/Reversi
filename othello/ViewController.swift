@@ -16,23 +16,6 @@ let black = "black"
 //let x = 8
 //
 //
-//func finish()
-//{
-//    countstone()
-//    print("黒の数: \(blackc) 白の数: \(whitec)")
-//    if(blackc > whitec)
-//    {
-//        print("黒の勝ち！")
-//    }
-//    else if(whitec > blackc)
-//    {
-//        print("白の勝ち！")
-//    }
-//    else
-//    {
-//        print("引き分け")
-//    }
-//}
 
 class ViewController: NSViewController
 {
@@ -493,6 +476,11 @@ class ViewController: NSViewController
         reset()
         reloadview()
         //print(board.3.3)
+    }
+    
+    func result()
+    {
+        print("gg")
     }
     
     func reloadview()
@@ -1389,7 +1377,7 @@ class ViewController: NSViewController
         }
         if(finishedsw() == 1)
         {
-            print("GG")
+            result()
         }
     }
 }

@@ -1599,14 +1599,14 @@ void rebuild(void)
             {
                 board[i][j] = 0;
             }
-            if(j == 9)
-            {
-                printf("%d\n", board[i][9]);
-            }
-            else
-            {
-                printf("%d ", board[i][j]);
-            }
+//            if(j == 9)
+//            {
+//                printf("%d\n", board[i][9]);
+//            }
+//            else
+//            {
+//                printf("%d ", board[i][j]);
+//            }
         }
     }
     for(int i = 0; i < 10; i++)
@@ -1616,6 +1616,7 @@ void rebuild(void)
             canPut[i][j] = false;
         }
     }
+    countstone();
     check();
 }
 
@@ -1674,6 +1675,8 @@ int putstone(int py, int px)
 
 void countstone(void)
 {
+    blackc = 0;
+    whitec = 0;
     for(int i = 0; i < 10; i++)
     {
         for(int j = 0; j < 10; j++)
