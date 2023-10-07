@@ -29,5 +29,6 @@ void reverse(int px, int py);
 void rebuild(void);
 void countstone(void);
 int finishedsw(void);
+int winner(void);
 
 #endif /* othello_h */

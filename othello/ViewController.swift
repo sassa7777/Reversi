@@ -8,9 +8,6 @@
 import Cocoa
 import Foundation
 
-let white = "white"
-let null = "null"
-let black = "black"
 
 //let y = 8
 //let x = 8
@@ -480,7 +477,18 @@ class ViewController: NSViewController
     
     func result()
     {
-        print("gg")
+        if winner() == 1
+        {
+            print("黒の勝ち！")
+        }
+        else if winner() == 2
+        {
+            print("白の勝ち！")
+        }
+        else
+        {
+            print("引き分け")
+        }
     }
     
     func reloadview()

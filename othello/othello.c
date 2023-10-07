@@ -665,28 +665,28 @@ void check(void)
             {
                 board[i][j] = 0;
             }
-            if(j == 9)
-            {
-                if(canPut[i][j] == true)
-                {
-                    printf("t\n");
-                }
-                else
-                {
-                    printf("f\n");
-                }
-            }
-            else
-            {
-                if(canPut[i][j] == true)
-                {
-                    printf("t ");
-                }
-                else
-                {
-                    printf("f ");
-                }
-            }
+//            if(j == 9)
+//            {
+//                if(canPut[i][j] == true)
+//                {
+//                    printf("t\n");
+//                }
+//                else
+//                {
+//                    printf("f\n");
+//                }
+//            }
+//            else
+//            {
+//                if(canPut[i][j] == true)
+//                {
+//                    printf("t ");
+//                }
+//                else
+//                {
+//                    printf("f ");
+//                }
+//            }
         }
     }
     
@@ -1693,9 +1693,30 @@ void countstone(void)
     }
 }
 
+int winner(void)
+{
+    if(blackc > whitec)
+    {
+        return 1;
+    }
+    else if(blackc < whitec)
+    {
+        return 2;
+    }
+    else if(blackc == whitec)
+    {
+        return 0;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 int finishedsw(void)
 {
-    if (finished == 1) 
+    printf("黒: %d 白: %d\n", blackc, whitec);
+    if (finished == 1)
     {
         return 1;
     }
