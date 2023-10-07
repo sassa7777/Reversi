@@ -713,6 +713,7 @@ void check(void)
             if(skipped > 60)
             {
                 printf("終了\n");
+                finished = true;
                 return;
             }
             check();
@@ -725,6 +726,7 @@ void check(void)
             if(skipped > 60)
             {
                 printf("終了\n");
+                finished = true;
                 return;
             }
             check();

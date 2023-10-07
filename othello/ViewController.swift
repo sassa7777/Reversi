@@ -2276,6 +2276,10 @@ class ViewController: NSViewController
 //                }
 //           }
 //        }
+        if finished == true
+        {
+            
+        }
     }
     
     
