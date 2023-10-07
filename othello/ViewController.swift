@@ -15,6 +15,12 @@ let black = "black"
 //let y = 8
 //let x = 8
 
+@_cdecl("finish")
+func finish()
+{
+    countstone()
+    //print("黒の数")
+}
 
 class ViewController: NSViewController
 {
@@ -2259,5 +2265,7 @@ class ViewController: NSViewController
 //           }
 //        }
     }
+    
+    
 }
 

@@ -675,11 +675,23 @@ void check(void)
     {
         if(player == 1)
         {
+            if (skipped == true)
+            {
+                //finished = true;
+                finish();
+            }
             player = 2;
+            skipped = true;
         }
         else if(player == 2)
         {
+            if (skipped == true)
+            {
+                //finished = true;
+                finish();
+            }
             player = 1;
+            skipped = true;
         }
     }
 }
@@ -1618,5 +1630,24 @@ int putstone(int py, int px)
     {
         printf("[*]そこには置けません\n");
         return 0;
+    }
+    
+}
+
+void countstone(void)
+{
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < 10; j++)
+        {
+            if(board[i][j] == 1)
+            {
+                blackc++;
+            }
+            else if(board[i][j] == 2)
+            {
+                whitec++;
+            }
+        }
     }
 }
