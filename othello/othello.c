@@ -713,7 +713,7 @@ void check(void)
             if(skipped > 60)
             {
                 printf("終了\n");
-                finished = true;
+                finished = 1;
                 return;
             }
             check();
@@ -726,7 +726,7 @@ void check(void)
             if(skipped > 60)
             {
                 printf("終了\n");
-                finished = true;
+                finished = 1;
                 return;
             }
             check();
@@ -1687,5 +1687,17 @@ void countstone(void)
                 whitec++;
             }
         }
+    }
+}
+
+int finishedsw(void)
+{
+    if (finished == 1) 
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }

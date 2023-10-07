@@ -14,7 +14,7 @@
 int board[10][10];
 bool canPut[10][10];
 bool isfree[10][10];
-bool finished = false;
+int finished = 0;
 int skipped = 0;
 int skip = 0;
 int px, py;
@@ -28,5 +28,6 @@ int putstone(int px, int py);
 void reverse(int px, int py);
 void rebuild(void);
 void countstone(void);
+int finishedsw(void);
 
 #endif /* othello_h */
