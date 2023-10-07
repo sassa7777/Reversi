@@ -15,7 +15,7 @@ int board[10][10];
 bool canPut[10][10];
 bool isfree[10][10];
 bool finished = false;
-bool skipped = false;
+int skipped = 0;
 int skip = 0;
 int px, py;
 int player;
