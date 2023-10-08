@@ -12,6 +12,7 @@
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
 		1BA79BF12AC835D000E864A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BEF2AC835D000E864A1 /* Main.storyboard */; };
 		1BA79BFE2AC848F600E864A1 /* othello.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* othello.c */; };
+		5A46A7122AD2DE70008876DE /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46A7112AD2DE70008876DE /* ResultViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1BA79BFC2AC848F600E864A1 /* othello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = othello.h; path = othello/othello.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; };
+		5A46A7112AD2DE70008876DE /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 			children = (
 				1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */,
 				1BA79BEB2AC835CF00E864A1 /* ViewController.swift */,
+				5A46A7112AD2DE70008876DE /* ResultViewController.swift */,
 				1BA79BEF2AC835D000E864A1 /* Main.storyboard */,
 				1BA79BED2AC835D000E864A1 /* Assets.xcassets */,
 				1BA79BF22AC835D000E864A1 /* othello.entitlements */,
@@ -142,6 +145,7 @@
 				1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */,
 				1BA79BFE2AC848F600E864A1 /* othello.c in Sources */,
 				1BA79BEA2AC835CF00E864A1 /* AppDelegate.swift in Sources */,
+				5A46A7122AD2DE70008876DE /* ResultViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

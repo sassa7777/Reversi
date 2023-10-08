@@ -468,6 +468,7 @@ class ViewController: NSViewController
     }
     
     
+    
     override func viewDidLoad() 
     {
         reset()
@@ -1386,6 +1387,7 @@ class ViewController: NSViewController
         if(finishedsw() == 1)
         {
             result()
+            performSegue(withIdentifier: "popup", sender: self)
         }
     }
 }

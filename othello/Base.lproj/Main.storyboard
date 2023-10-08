@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -700,6 +701,32 @@
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-293" y="129"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="a74-Za-9Xz">
+            <objects>
+                <viewController id="2tx-jJ-5NR" sceneMemberID="viewController">
+                    <view key="view" id="uP4-jY-upB">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="6po-ix-Mh9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-727" y="111"/>
+        </scene>
+        <!--ResultViewController-->
+        <scene sceneID="4Np-vB-ebT">
+            <objects>
+                <viewController id="AIO-dW-Itm" userLabel="ResultViewController" sceneMemberID="viewController">
+                    <view key="view" id="awY-XK-Ued">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                </viewController>
+                <customObject id="iTW-H4-4qe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-822" y="668"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
@@ -1480,11 +1507,12 @@
                         <outlet property="hf" destination="ZIE-x3-5gW" id="ZDz-4a-YUV"/>
                         <outlet property="hg" destination="nYk-2f-yrf" id="bLc-ew-rhB"/>
                         <outlet property="hh" destination="Ffc-32-V9f" id="Rkp-te-oEs"/>
+                        <segue destination="AIO-dW-Itm" kind="popover" identifier="popup" popoverBehavior="t" preferredEdge="maxY" id="A4o-T5-CjX"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="49" y="704"/>
+            <point key="canvasLocation" x="-72" y="727"/>
         </scene>
     </scenes>
     <resources>
