@@ -31,240 +31,240 @@ void check(void)
     {
         for(int x = 1; x < 9; x++)
         {
-                if(player == 1)
+            if(player == 1)
+            {
+                int xx, yy;
+                if(board[y][x] == 1)
                 {
-                    int xx, yy;
-                    if(board[y][x] == 1)
+                    if(board[y - 1][x - 1] == 2)
                     {
-                            if(board[y - 1][x - 1] == 2)
-                            {
-                                xx = x - 1;
-                                yy = y - 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx -= 1;
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y - 1][x] == 2)
-                            {
-                                xx = x;
-                                yy = y - 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y][x - 1] == 2)
-                            {
-                                xx = x - 1;
-                                yy = y;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y - 1][x + 1] == 2)
-                            {
-                                xx = x + 1;
-                                yy = y - 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx += 1;
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y][x + 1] == 2)
-                            {
-                                xx = x + 1;
-                                yy = y;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x + 1] == 2)
-                            {
-                                xx = x + 1;
-                                yy = y + 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx += 1;
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x] == 2)
-                            {
-                                xx = x;
-                                yy = y + 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x - 1] == 2)
-                            {
-                                xx = x - 1;
-                                yy = y + 1;
-                                while(board[yy][xx] == 2)
-                                {
-                                    xx -= 1;
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
+                        xx = x - 1;
+                        yy = y - 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx -= 1;
+                            yy -= 1;
                         }
-                }
-                else if(player == 2)
-                {
-                    int xx, yy;
-                    if(board[y][x] == 2)
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y - 1][x] == 2)
                     {
-                        
-                            if(board[y - 1][x - 1] == 1)
-                            {
-                                xx = x - 1;
-                                yy = y - 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx -= 1;
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y - 1][x] == 1)
-                            {
-                                xx = x;
-                                yy = y - 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y][x - 1] == 1)
-                            {
-                                xx = x - 1;
-                                yy = y;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y - 1][x + 1] == 1)
-                            {
-                                xx = x + 1;
-                                yy = y - 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx += 1;
-                                    yy -= 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y][x + 1] == 1)
-                            {
-                                xx = x + 1;
-                                yy = y;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x + 1] == 1)
-                            {
-                                xx = x + 1;
-                                yy = y + 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx += 1;
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x] == 1)
-                            {
-                                xx = x;
-                                yy = y + 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                            if(board[y + 1][x - 1] == 1)
-                            {
-                                xx = x - 1;
-                                yy = y + 1;
-                                while(board[yy][xx] == 1)
-                                {
-                                    xx -= 1;
-                                    yy += 1;
-                                }
-                                if(board[yy][xx] == 0)
-                                {
-                                    canPut[yy][xx] = true;
-                                }
-                            }
-                        
+                        xx = x;
+                        yy = y - 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            yy -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y][x - 1] == 2)
+                    {
+                        xx = x - 1;
+                        yy = y;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y - 1][x + 1] == 2)
+                    {
+                        xx = x + 1;
+                        yy = y - 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx += 1;
+                            yy -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y][x + 1] == 2)
+                    {
+                        xx = x + 1;
+                        yy = y;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x + 1] == 2)
+                    {
+                        xx = x + 1;
+                        yy = y + 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx += 1;
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x] == 2)
+                    {
+                        xx = x;
+                        yy = y + 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x - 1] == 2)
+                    {
+                        xx = x - 1;
+                        yy = y + 1;
+                        while(board[yy][xx] == 2)
+                        {
+                            xx -= 1;
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
                     }
                 }
             }
+            else if(player == 2)
+            {
+                int xx, yy;
+                if(board[y][x] == 2)
+                {
+                    
+                    if(board[y - 1][x - 1] == 1)
+                    {
+                        xx = x - 1;
+                        yy = y - 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx -= 1;
+                            yy -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y - 1][x] == 1)
+                    {
+                        xx = x;
+                        yy = y - 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            yy -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y][x - 1] == 1)
+                    {
+                        xx = x - 1;
+                        yy = y;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y - 1][x + 1] == 1)
+                    {
+                        xx = x + 1;
+                        yy = y - 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx += 1;
+                            yy -= 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y][x + 1] == 1)
+                    {
+                        xx = x + 1;
+                        yy = y;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x + 1] == 1)
+                    {
+                        xx = x + 1;
+                        yy = y + 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx += 1;
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x] == 1)
+                    {
+                        xx = x;
+                        yy = y + 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    if(board[y + 1][x - 1] == 1)
+                    {
+                        xx = x - 1;
+                        yy = y + 1;
+                        while(board[yy][xx] == 1)
+                        {
+                            xx -= 1;
+                            yy += 1;
+                        }
+                        if(board[yy][xx] == 0)
+                        {
+                            canPut[yy][xx] = true;
+                        }
+                    }
+                    
+                }
+            }
         }
+    }
     for(int i = 0; i < 10; i++)
     {
         canPut[0][i] = false;
@@ -284,28 +284,28 @@ void check(void)
             {
                 board[i][j] = 0;
             }
-//            if(j == 9)
-//            {
-//                if(canPut[i][j] == true)
-//                {
-//                    printf("t\n");
-//                }
-//                else
-//                {
-//                    printf("f\n");
-//                }
-//            }
-//            else
-//            {
-//                if(canPut[i][j] == true)
-//                {
-//                    printf("t ");
-//                }
-//                else
-//                {
-//                    printf("f ");
-//                }
-//            }
+            //            if(j == 9)
+            //            {
+            //                if(canPut[i][j] == true)
+            //                {
+            //                    printf("t\n");
+            //                }
+            //                else
+            //                {
+            //                    printf("f\n");
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if(canPut[i][j] == true)
+            //                {
+            //                    printf("t ");
+            //                }
+            //                else
+            //                {
+            //                    printf("f ");
+            //                }
+            //            }
         }
     }
     
@@ -355,9 +355,9 @@ void check(void)
 
 void reverse(int x, int y)
 {
-//    int x, y;
-//    x = px;
-//    y = py;
+    //    int x, y;
+    //    x = px;
+    //    y = py;
     if(player == 1)
     {
         int xx, yy;
@@ -528,165 +528,164 @@ void reverse(int x, int y)
         int xx, yy;
         if(board[y][x] == 2)
         {
+            
+            if(board[y - 1][x - 1] == 1)
             {
-                if(board[y - 1][x - 1] == 1)
+                xx = x - 1;
+                yy = y - 1;
+                while(board[yy][xx] == 1)
                 {
-                    xx = x - 1;
-                    yy = y - 1;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx -= 1;
-                        yy -= 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx += 1;
-                        yy += 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx++;
-                            yy++;
-                        }
-                    }
+                    xx -= 1;
+                    yy -= 1;
                 }
-                if(board[y - 1][x] == 1)
+                if(board[yy][xx] == 2)
                 {
-                    xx = x;
-                    yy = y - 1;
+                    xx += 1;
+                    yy += 1;
                     while(board[yy][xx] == 1)
                     {
-                        yy -= 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        yy += 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            yy++;
-                        }
-                    }
-                }
-                if(board[y][x - 1] == 1)
-                {
-                    xx = x - 1;
-                    yy = y;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx -= 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx += 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx++;
-                        }
-                    }
-                }
-                if(board[y - 1][x + 1] == 1)
-                {
-                    xx = x + 1;
-                    yy = y - 1;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx += 1;
-                        yy -= 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx -= 1;
-                        yy += 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx--;
-                            yy++;
-                        }
-                    }
-                }
-                if(board[y][x + 1] == 1)
-                {
-                    xx = x + 1;
-                    yy = y;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx += 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx -= 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx--;
-                        }
-                    }
-                }
-                if(board[y + 1][x + 1] == 1)
-                {
-                    xx = x + 1;
-                    yy = y + 1;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx += 1;
-                        yy += 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx -= 1;
-                        yy -= 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx--;
-                            yy--;
-                        }
-                    }
-                }
-                if(board[y + 1][x] == 1)
-                {
-                    xx = x;
-                    yy = y + 1;
-                    while(board[yy][xx] == 1)
-                    {
-                        yy += 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        yy -= 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            yy--;
-                        }
-                    }
-                }
-                if(board[y + 1][x - 1] == 1)
-                {
-                    xx = x - 1;
-                    yy = y + 1;
-                    while(board[yy][xx] == 1)
-                    {
-                        xx -= 1;
-                        yy += 1;
-                    }
-                    if(board[yy][xx] == 2)
-                    {
-                        xx += 1;
-                        yy -= 1;
-                        while(board[yy][xx] == 1)
-                        {
-                            board[yy][xx] = 2;
-                            xx++;
-                            yy--;
-                        }
+                        board[yy][xx] = 2;
+                        xx++;
+                        yy++;
                     }
                 }
             }
-
+            if(board[y - 1][x] == 1)
+            {
+                xx = x;
+                yy = y - 1;
+                while(board[yy][xx] == 1)
+                {
+                    yy -= 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    yy += 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        yy++;
+                    }
+                }
+            }
+            if(board[y][x - 1] == 1)
+            {
+                xx = x - 1;
+                yy = y;
+                while(board[yy][xx] == 1)
+                {
+                    xx -= 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    xx += 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        xx++;
+                    }
+                }
+            }
+            if(board[y - 1][x + 1] == 1)
+            {
+                xx = x + 1;
+                yy = y - 1;
+                while(board[yy][xx] == 1)
+                {
+                    xx += 1;
+                    yy -= 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    xx -= 1;
+                    yy += 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        xx--;
+                        yy++;
+                    }
+                }
+            }
+            if(board[y][x + 1] == 1)
+            {
+                xx = x + 1;
+                yy = y;
+                while(board[yy][xx] == 1)
+                {
+                    xx += 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    xx -= 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        xx--;
+                    }
+                }
+            }
+            if(board[y + 1][x + 1] == 1)
+            {
+                xx = x + 1;
+                yy = y + 1;
+                while(board[yy][xx] == 1)
+                {
+                    xx += 1;
+                    yy += 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    xx -= 1;
+                    yy -= 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        xx--;
+                        yy--;
+                    }
+                }
+            }
+            if(board[y + 1][x] == 1)
+            {
+                xx = x;
+                yy = y + 1;
+                while(board[yy][xx] == 1)
+                {
+                    yy += 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    yy -= 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        yy--;
+                    }
+                }
+            }
+            if(board[y + 1][x - 1] == 1)
+            {
+                xx = x - 1;
+                yy = y + 1;
+                while(board[yy][xx] == 1)
+                {
+                    xx -= 1;
+                    yy += 1;
+                }
+                if(board[yy][xx] == 2)
+                {
+                    xx += 1;
+                    yy -= 1;
+                    while(board[yy][xx] == 1)
+                    {
+                        board[yy][xx] = 2;
+                        xx++;
+                        yy--;
+                    }
+                }
+            }
+            
         }
     }
 }
@@ -701,14 +700,14 @@ void rebuild(void)
             {
                 board[i][j] = 0;
             }
-//            if(j == 9)
-//            {
-//                printf("%d\n", board[i][9]);
-//            }
-//            else
-//            {
-//                printf("%d ", board[i][j]);
-//            }
+            //            if(j == 9)
+            //            {
+            //                printf("%d\n", board[i][9]);
+            //            }
+            //            else
+            //            {
+            //                printf("%d ", board[i][j]);
+            //            }
         }
     }
     for(int i = 0; i < 10; i++)
@@ -724,19 +723,19 @@ void rebuild(void)
 
 int putstone(int py, int px)
 {
-//    if(player == 2)
-//    {
-//        player = 1;
-//    }
-//    else
-//    {
-//        player = 2;
-//    }
-//    check();
+    //    if(player == 2)
+    //    {
+    //        player = 1;
+    //    }
+    //    else
+    //    {
+    //        player = 2;
+    //    }
+    //    check();
     printf("Player: %d\n", player);
     //scanf("%d, %d", &px, &py);
-//    px -= 1;
-//    py -= 1;
+    //    px -= 1;
+    //    py -= 1;
     printf("(%d, %d)\n", px, py);
     if(px > 8 || py > 8)
     {
