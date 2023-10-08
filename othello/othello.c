@@ -153,9 +153,6 @@ void check(void)
 
 void reverse(int x, int y)
 {
-    //    int x, y;
-    //    x = px;
-    //    y = py;
     if(player == 1)
     {
         if(board[y][x] == 1)
@@ -240,14 +237,6 @@ void rebuild(void)
             {
                 board[i][j] = 0;
             }
-            //            if(j == 9)
-            //            {
-            //                printf("%d\n", board[i][9]);
-            //            }
-            //            else
-            //            {
-            //                printf("%d ", board[i][j]);
-            //            }
         }
     }
     for(int i = 0; i < 10; i++)
@@ -263,26 +252,13 @@ void rebuild(void)
 
 int putstone(int py, int px)
 {
-    //    if(player == 2)
-    //    {
-    //        player = 1;
-    //    }
-    //    else
-    //    {
-    //        player = 2;
-    //    }
-    //    check();
     printf("Player: %d\n", player);
-    //scanf("%d, %d", &px, &py);
-    //    px -= 1;
-    //    py -= 1;
     printf("(%d, %d)\n", px, py);
     if(px > 8 || py > 8)
     {
         printf("[*]そこには置けません\n");
         return 0;
     }
-    //canPut[py][px] = true;
     if(canPut[py][px] == true)
     {
         if(player == 1)
