@@ -6,12 +6,12 @@
 //
 
 import Cocoa
+import Foundation
 
-class ResultViewController: NSViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do view setup here.
+class ResultViewController: NSViewController
+{
+    @IBAction func tapclose(_ sender: Any)
+    {
+        self.dismiss(self)
     }
-    
 }

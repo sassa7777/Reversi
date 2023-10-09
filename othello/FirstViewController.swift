@@ -6,12 +6,19 @@
 //
 
 import Cocoa
+import Foundation
 
-class FirstViewController: NSViewController {
+class FirstViewController: NSViewController 
+{
 
-    override func viewDidLoad() {
+    override func viewDidLoad() 
+    {
         super.viewDidLoad()
         // Do view setup here.
     }
     
+    @IBAction func tapstart(_ sender: Any)
+    {
+        performSegue(withIdentifier: "start", sender: self)
+    }
 }

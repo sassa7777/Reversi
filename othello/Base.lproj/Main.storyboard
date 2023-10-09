@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="22154" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="gOt-pg-uBu">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="22154"/>
@@ -685,7 +685,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" identifier="popup" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="750" height="600"/>
@@ -700,28 +700,88 @@
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-293" y="129"/>
+            <point key="canvasLocation" x="-367" y="-284"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="a74-Za-9Xz">
+        <!--Window Controller-->
+        <scene sceneID="7uo-6f-lRT">
             <objects>
-                <viewController id="2tx-jJ-5NR" sceneMemberID="viewController">
-                    <view key="view" id="uP4-jY-upB">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="6po-ix-Mh9" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <windowController id="TuH-e1-nC3" sceneMemberID="viewController">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="dxQ-wd-GDb">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="211" y="270" width="750" height="600"/>
+                        <rect key="screenRect" x="0.0" y="0.0" width="1512" height="950"/>
+                        <view key="contentView" id="9L7-n1-cqG">
+                            <rect key="frame" x="0.0" y="0.0" width="750" height="600"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </view>
+                        <connections>
+                            <outlet property="delegate" destination="TuH-e1-nC3" id="fVn-AS-Fca"/>
+                        </connections>
+                    </window>
+                </windowController>
+                <customObject id="ZuS-yw-jFs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-727" y="111"/>
+            <point key="canvasLocation" x="-1067" y="258"/>
+        </scene>
+        <!--First View Controller-->
+        <scene sceneID="VH7-Na-mJo">
+            <objects>
+                <viewController id="gOt-pg-uBu" customClass="FirstViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="iNX-Uh-vd0">
+                        <rect key="frame" x="0.0" y="0.0" width="750" height="600"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cC2-Wk-MlV">
+                                <rect key="frame" x="334" y="182" width="83" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="スタート" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="JdQ-4T-C1a">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="tapstart:" target="gOt-pg-uBu" id="A3G-Sg-BTa"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <segue destination="B8D-0N-5wS" kind="modal" identifier="start" id="NCx-Fr-qvN"/>
+                    </connections>
+                </viewController>
+                <customObject id="LXl-Ft-zqh" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-265" y="227"/>
         </scene>
         <!--ResultViewController-->
         <scene sceneID="4Np-vB-ebT">
             <objects>
-                <viewController id="AIO-dW-Itm" userLabel="ResultViewController" sceneMemberID="viewController">
-                    <view key="view" id="awY-XK-Ued">
+                <viewController id="AIO-dW-Itm" userLabel="ResultViewController" customClass="ResultViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" identifier="popup" id="awY-XK-Ued">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MPx-DE-YD2">
+                                <rect key="frame" x="117" y="209" width="216" height="52"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="a50-gj-vqa">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="04o-rU-cqn">
+                                <rect key="frame" x="196" y="75" width="59" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="戻る" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Ng-0S-Pah">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="tapclose:" target="AIO-dW-Itm" id="yE3-zG-LeJ"/>
+                                </connections>
+                            </button>
+                        </subviews>
                     </view>
                 </viewController>
                 <customObject id="iTW-H4-4qe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -1440,6 +1500,17 @@
                                     <action selector="hh:" target="XfG-lQ-9wD" id="GbQ-Qh-Pj0"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NBt-XF-21B">
+                                <rect key="frame" x="315" y="74" width="71" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7TP-HQ-gNp">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="XfG-lQ-9wD" id="dIw-cr-thi"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
@@ -1467,6 +1538,7 @@
                         <outlet property="cf" destination="fnP-pE-Mb9" id="UeT-tH-wQX"/>
                         <outlet property="cg" destination="YBo-xL-Gh7" id="SxU-Ze-fW3"/>
                         <outlet property="ch" destination="Q7p-gF-JRk" id="15t-dI-vCM"/>
+                        <outlet property="close" destination="NBt-XF-21B" id="dVA-3b-Tdr"/>
                         <outlet property="da" destination="BM4-Qd-zVD" id="yXO-va-evw"/>
                         <outlet property="db" destination="YyK-bd-2g7" id="ruG-hb-E85"/>
                         <outlet property="dc" destination="upw-YP-KDM" id="CPz-j4-pIe"/>
@@ -1507,7 +1579,7 @@
                         <outlet property="hf" destination="ZIE-x3-5gW" id="ZDz-4a-YUV"/>
                         <outlet property="hg" destination="nYk-2f-yrf" id="bLc-ew-rhB"/>
                         <outlet property="hh" destination="Ffc-32-V9f" id="Rkp-te-oEs"/>
-                        <segue destination="AIO-dW-Itm" kind="popover" identifier="popup" popoverBehavior="t" preferredEdge="maxY" id="A4o-T5-CjX"/>
+                        <segue destination="AIO-dW-Itm" kind="popover" identifier="popup" popoverBehavior="t" preferredEdge="maxY" id="Zel-KA-FWB"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -80,10 +80,7 @@ class ViewController: NSViewController
     @IBOutlet var hf: NSButton!
     @IBOutlet var hg: NSButton!
     @IBOutlet var hh: NSButton!
-    
-
-
-    
+    @IBOutlet var close: NSButton!
 
     @IBAction func aa(_ sender: Any)
     {
@@ -101,181 +98,151 @@ class ViewController: NSViewController
         putstone(1,3)
         reloadview()
     }
-    
     @IBAction func ad(_ sender: Any)
     {
         putstone(1,4)
         reloadview()
     }
-    
     @IBAction func ae(_ sender: Any)
     {
         putstone(1,5)
         reloadview()
     }
-    
     @IBAction func af(_ sender: Any)
     {
         putstone(1,6)
         reloadview()
     }
-    
     @IBAction func ag(_ sender: Any)
     {
         putstone(1,7)
         reloadview()
     }
-    
     @IBAction func ah(_ sender: Any)
     {
         putstone(1,8)
         reloadview()
     }
-    
     @IBAction func ba(_ sender: Any)
     {
         putstone(2,1)
         reloadview()
     }
-    
     @IBAction func bb(_ sender: Any)
     {
         putstone(2,2)
         reloadview()
     }
-    
     @IBAction func bc(_ sender: Any)
     {
         putstone(2,3)
         reloadview()
     }
-    
     @IBAction func bd(_ sender: Any)
     {
         putstone(2,4)
         reloadview()
     }
-    
     @IBAction func be(_ sender: Any)
     {
         putstone(2,5)
         reloadview()
     }
-    
     @IBAction func bf(_ sender: Any)
     {
         putstone(2,6)
         reloadview()
     }
-    
     @IBAction func bg(_ sender: Any)
     {
         putstone(2,7)
         reloadview()
     }
-    
     @IBAction func bh(_ sender: Any)
     {
         putstone(2,8)
         reloadview()
     }
-    
     @IBAction func ca(_ sender: Any)
     {
         putstone(3,1)
         reloadview()
     }
-    
     @IBAction func cb(_ sender: Any)
     {
         putstone(3,2)
         reloadview()
     }
-    
     @IBAction func cc(_ sender: Any)
     {
         putstone(3,3)
         reloadview()
     }
-    
     @IBAction func cd(_ sender: Any)
     {
         putstone(3,4)
         reloadview()
     }
-    
     @IBAction func ce(_ sender: Any)
     {
         putstone(3,5)
         reloadview()
     }
-    
     @IBAction func cf(_ sender: Any)
     {
         putstone(3,6)
         reloadview()
     }
-    
     @IBAction func cg(_ sender: Any)
     {
         putstone(3,7)
         reloadview()
     }
-    
     @IBAction func ch(_ sender: Any)
     {
         putstone(3,8)
         reloadview()
     }
-    
     @IBAction func da(_ sender: Any)
     {
         putstone(4,1)
         reloadview()
     }
-    
     @IBAction func db(_ sender: Any)
     {
         putstone(4,2)
         reloadview()
     }
-    
     @IBAction func dc(_ sender: Any)
     {
         putstone(4,3)
         reloadview()
     }
-    
     @IBAction func dd(_ sender: Any)
     {
         putstone(4,4)
         reloadview()
     }
-    
     @IBAction func de(_ sender: Any)
     {
         putstone(4,5)
         reloadview()
     }
-    
     @IBAction func df(_ sender: Any)
     {
         putstone(4,6)
         reloadview()
     }
-    
     @IBAction func dg(_ sender: Any)
     {
         putstone(4,7)
         reloadview()
     }
-    
     @IBAction func dh(_ sender: Any)
     {
         putstone(4,8)
         reloadview()
     }
-    
     @IBAction func ea(_ sender: Any)
     {
         putstone(5,1)
@@ -292,185 +259,160 @@ class ViewController: NSViewController
         putstone(5,3)
         reloadview()
     }
-    
     @IBAction func ed(_ sender: Any)
     {
         putstone(5,4)
         reloadview()
     }
-    
     @IBAction func ee(_ sender: Any)
     {
         putstone(5,5)
         reloadview()
     }
-    
     @IBAction func ef(_ sender: Any)
     {
         putstone(5,6)
         reloadview()
     }
-    
     @IBAction func eg(_ sender: Any)
     {
         putstone(5,7)
         reloadview()
     }
-    
     @IBAction func eh(_ sender: Any)
     {
         putstone(5,8)
         reloadview()
     }
-    
     @IBAction func fa(_ sender: Any)
     {
         putstone(6,1)
         reloadview()
     }
-    
     @IBAction func fb(_ sender: Any)
     {
         putstone(6,2)
         reloadview()
     }
-    
     @IBAction func fc(_ sender: Any)
     {
         putstone(6,3)
         reloadview()
     }
-    
     @IBAction func fd(_ sender: Any)
     {
         putstone(6,4)
         reloadview()
     }
-    
     @IBAction func fe(_ sender: Any)
     {
         putstone(6,5)
         reloadview()
     }
-    
     @IBAction func ff(_ sender: Any)
     {
         putstone(6,6)
         reloadview()
     }
-    
     @IBAction func fg(_ sender: Any)
     {
         putstone(6,7)
         reloadview()
     }
-    
     @IBAction func fh(_ sender: Any)
     {
         putstone(6,8)
         reloadview()
     }
-    
     @IBAction func ga(_ sender: Any)
     {
         putstone(7,1)
         reloadview()
     }
-    
     @IBAction func gb(_ sender: Any)
     {
         putstone(7,2)
         reloadview()
     }
-    
     @IBAction func gc(_ sender: Any)
     {
         putstone(7,3)
         reloadview()
     }
-    
     @IBAction func gd(_ sender: Any)
     {
         putstone(7,4)
         reloadview()
     }
-    
     @IBAction func ge(_ sender: Any)
     {
         putstone(7,5)
         reloadview()
     }
-    
     @IBAction func gf(_ sender: Any)
     {
         putstone(7,6)
         reloadview()
     }
-    
     @IBAction func gg(_ sender: Any)
     {
         putstone(7,7)
         reloadview()
     }
-    
     @IBAction func gh(_ sender: Any)
     {
         putstone(7,8)
         reloadview()
     }
-    
     @IBAction func ha(_ sender: Any)
     {
         putstone(8,1)
         reloadview()
     }
-    
     @IBAction func hb(_ sender: Any)
     {
         putstone(8,2)
         reloadview()
     }
-    
     @IBAction func hc(_ sender: Any)
     {
         putstone(8,3)
         reloadview()
     }
-    
     @IBAction func hd(_ sender: Any)
     {
         putstone(8,4)
         reloadview()
     }
-    
     @IBAction func he(_ sender: Any)
     {
         putstone(8,5)
         reloadview()
     }
-    
     @IBAction func hf(_ sender: Any)
     {
         putstone(8,6)
         reloadview()
     }
-    
     @IBAction func hg(_ sender: Any)
     {
         putstone(8,7)
         reloadview()
     }
-    
     @IBAction func hh(_ sender: Any)
     {
         putstone(8,8)
         reloadview()
     }
-    
+    @IBAction func close(_ sender: Any)
+    {
+        self.dismiss(self)
+    }
     
     
     override func viewDidLoad() 
     {
+        close.isHidden = true
         reset()
         reloadview()
         //print(board.3.3)
@@ -526,7 +468,6 @@ class ViewController: NSViewController
                             ab.image = NSImage(named: "white")
                         default:
                             ab.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.1.3
@@ -539,7 +480,6 @@ class ViewController: NSViewController
                             ac.image = NSImage(named: "white")
                         default:
                             ac.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.1.4
@@ -552,7 +492,6 @@ class ViewController: NSViewController
                             ad.image = NSImage(named: "white")
                         default:
                             ad.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.1.5
@@ -565,7 +504,6 @@ class ViewController: NSViewController
                             ae.image = NSImage(named: "white")
                         default:
                             ae.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.1.6
@@ -578,7 +516,6 @@ class ViewController: NSViewController
                             af.image = NSImage(named: "white")
                         default:
                             af.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.1.7
@@ -591,7 +528,6 @@ class ViewController: NSViewController
                             ag.image = NSImage(named: "white")
                         default:
                             ag.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.1.8
@@ -604,7 +540,6 @@ class ViewController: NSViewController
                             ah.image = NSImage(named: "white")
                         default:
                             ah.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -623,7 +558,6 @@ class ViewController: NSViewController
                             ba.image = NSImage(named: "white")
                         default:
                             ba.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.2.2
@@ -636,7 +570,6 @@ class ViewController: NSViewController
                             bb.image = NSImage(named: "white")
                         default:
                             bb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.2.3
@@ -649,7 +582,6 @@ class ViewController: NSViewController
                             bc.image = NSImage(named: "white")
                         default:
                             bc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.2.4
@@ -662,7 +594,6 @@ class ViewController: NSViewController
                             bd.image = NSImage(named: "white")
                         default:
                             bd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.2.5
@@ -675,7 +606,6 @@ class ViewController: NSViewController
                             be.image = NSImage(named: "white")
                         default:
                             be.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.2.6
@@ -688,7 +618,6 @@ class ViewController: NSViewController
                             bf.image = NSImage(named: "white")
                         default:
                             bf.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.2.7
@@ -701,7 +630,6 @@ class ViewController: NSViewController
                             bg.image = NSImage(named: "white")
                         default:
                             bg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.2.8
@@ -714,7 +642,6 @@ class ViewController: NSViewController
                             bh.image = NSImage(named: "white")
                         default:
                             bh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -733,7 +660,6 @@ class ViewController: NSViewController
                             ca.image = NSImage(named: "white")
                         default:
                             ca.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.3.2
@@ -746,7 +672,6 @@ class ViewController: NSViewController
                             cb.image = NSImage(named: "white")
                         default:
                             cb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.3.3
@@ -759,7 +684,6 @@ class ViewController: NSViewController
                             cc.image = NSImage(named: "white")
                         default:
                             cc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.3.4
@@ -772,7 +696,6 @@ class ViewController: NSViewController
                             cd.image = NSImage(named: "white")
                         default:
                             cd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.3.5
@@ -785,7 +708,6 @@ class ViewController: NSViewController
                             ce.image = NSImage(named: "white")
                         default:
                             ce.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.3.6
@@ -798,7 +720,6 @@ class ViewController: NSViewController
                             cf.image = NSImage(named: "white")
                         default:
                             cf.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.3.7
@@ -811,7 +732,6 @@ class ViewController: NSViewController
                             cg.image = NSImage(named: "white")
                         default:
                             cg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.3.8
@@ -824,7 +744,6 @@ class ViewController: NSViewController
                             ch.image = NSImage(named: "white")
                         default:
                             ch.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -843,7 +762,6 @@ class ViewController: NSViewController
                             da.image = NSImage(named: "white")
                         default:
                             da.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.4.2
@@ -856,7 +774,6 @@ class ViewController: NSViewController
                             db.image = NSImage(named: "white")
                         default:
                             db.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.4.3
@@ -869,7 +786,6 @@ class ViewController: NSViewController
                             dc.image = NSImage(named: "white")
                         default:
                             dc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.4.4
@@ -882,7 +798,6 @@ class ViewController: NSViewController
                             dd.image = NSImage(named: "white")
                         default:
                             dd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.4.5
@@ -895,7 +810,6 @@ class ViewController: NSViewController
                             de.image = NSImage(named: "white")
                         default:
                             de.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.4.6
@@ -908,7 +822,6 @@ class ViewController: NSViewController
                             df.image = NSImage(named: "white")
                         default:
                             df.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.4.7
@@ -921,7 +834,6 @@ class ViewController: NSViewController
                             dg.image = NSImage(named: "white")
                         default:
                             dg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.4.8
@@ -934,7 +846,6 @@ class ViewController: NSViewController
                             dh.image = NSImage(named: "white")
                         default:
                             dh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -953,7 +864,6 @@ class ViewController: NSViewController
                             ea.image = NSImage(named: "white")
                         default:
                             ea.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.5.2
@@ -966,7 +876,6 @@ class ViewController: NSViewController
                             eb.image = NSImage(named: "white")
                         default:
                             eb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.5.3
@@ -979,7 +888,6 @@ class ViewController: NSViewController
                             ec.image = NSImage(named: "white")
                         default:
                             ec.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.5.4
@@ -992,7 +900,6 @@ class ViewController: NSViewController
                             ed.image = NSImage(named: "white")
                         default:
                             ed.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.5.5
@@ -1005,7 +912,6 @@ class ViewController: NSViewController
                             ee.image = NSImage(named: "white")
                         default:
                             ee.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.5.6
@@ -1018,7 +924,6 @@ class ViewController: NSViewController
                             ef.image = NSImage(named: "white")
                         default:
                             ef.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.5.7
@@ -1031,7 +936,6 @@ class ViewController: NSViewController
                             eg.image = NSImage(named: "white")
                         default:
                             eg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.5.8
@@ -1044,7 +948,6 @@ class ViewController: NSViewController
                             eh.image = NSImage(named: "white")
                         default:
                             eh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -1063,7 +966,6 @@ class ViewController: NSViewController
                             fa.image = NSImage(named: "white")
                         default:
                             fa.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.6.2
@@ -1076,7 +978,6 @@ class ViewController: NSViewController
                             fb.image = NSImage(named: "white")
                         default:
                             fb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.6.3
@@ -1089,7 +990,6 @@ class ViewController: NSViewController
                             fc.image = NSImage(named: "white")
                         default:
                             fc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.6.4
@@ -1102,7 +1002,6 @@ class ViewController: NSViewController
                             fd.image = NSImage(named: "white")
                         default:
                             fd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.6.5
@@ -1115,7 +1014,6 @@ class ViewController: NSViewController
                             fe.image = NSImage(named: "white")
                         default:
                             fe.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.6.6
@@ -1128,7 +1026,6 @@ class ViewController: NSViewController
                             ff.image = NSImage(named: "white")
                         default:
                             ff.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.6.7
@@ -1141,7 +1038,6 @@ class ViewController: NSViewController
                             fg.image = NSImage(named: "white")
                         default:
                             fg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.6.8
@@ -1154,7 +1050,6 @@ class ViewController: NSViewController
                             fh.image = NSImage(named: "white")
                         default:
                             fh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -1173,7 +1068,6 @@ class ViewController: NSViewController
                             ga.image = NSImage(named: "white")
                         default:
                             ga.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.7.2
@@ -1186,7 +1080,6 @@ class ViewController: NSViewController
                             gb.image = NSImage(named: "white")
                         default:
                             gb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.7.3
@@ -1199,7 +1092,6 @@ class ViewController: NSViewController
                             gc.image = NSImage(named: "white")
                         default:
                             gc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.7.4
@@ -1212,7 +1104,6 @@ class ViewController: NSViewController
                             gd.image = NSImage(named: "white")
                         default:
                             gd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.7.5
@@ -1225,7 +1116,6 @@ class ViewController: NSViewController
                             ge.image = NSImage(named: "white")
                         default:
                             ge.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.7.6
@@ -1238,7 +1128,6 @@ class ViewController: NSViewController
                             gf.image = NSImage(named: "white")
                         default:
                             gf.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.7.7
@@ -1251,7 +1140,6 @@ class ViewController: NSViewController
                             gg.image = NSImage(named: "white")
                         default:
                             gg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.7.8
@@ -1264,7 +1152,6 @@ class ViewController: NSViewController
                             gh.image = NSImage(named: "white")
                         default:
                             gh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -1283,7 +1170,6 @@ class ViewController: NSViewController
                             ha.image = NSImage(named: "white")
                         default:
                             ha.image = NSImage(named: "null")
-                            
                         }
                     case 2:
                         switch board.8.2
@@ -1296,7 +1182,6 @@ class ViewController: NSViewController
                             hb.image = NSImage(named: "white")
                         default:
                             hb.image = NSImage(named: "null")
-                            
                         }
                     case 3:
                         switch board.8.3
@@ -1309,7 +1194,6 @@ class ViewController: NSViewController
                             hc.image = NSImage(named: "white")
                         default:
                             hc.image = NSImage(named: "null")
-                            
                         }
                     case 4:
                         switch board.8.4
@@ -1322,7 +1206,6 @@ class ViewController: NSViewController
                             hd.image = NSImage(named: "white")
                         default:
                             hd.image = NSImage(named: "null")
-                            
                         }
                     case 5:
                         switch board.8.5
@@ -1335,7 +1218,6 @@ class ViewController: NSViewController
                             he.image = NSImage(named: "white")
                         default:
                             he.image = NSImage(named: "null")
-                            
                         }
                     case 6:
                         switch board.8.6
@@ -1348,7 +1230,6 @@ class ViewController: NSViewController
                             hf.image = NSImage(named: "white")
                         default:
                             hf.image = NSImage(named: "null")
-                            
                         }
                     case 7:
                         switch board.8.7
@@ -1361,7 +1242,6 @@ class ViewController: NSViewController
                             hg.image = NSImage(named: "white")
                         default:
                             hg.image = NSImage(named: "null")
-                            
                         }
                     case 8:
                         switch board.8.8
@@ -1374,7 +1254,6 @@ class ViewController: NSViewController
                             hh.image = NSImage(named: "white")
                         default:
                             hh.image = NSImage(named: "null")
-                            
                         }
                     default:
                         continue
@@ -1388,6 +1267,7 @@ class ViewController: NSViewController
         {
             result()
             performSegue(withIdentifier: "popup", sender: self)
+            close.isHidden = false
         }
     }
 }
