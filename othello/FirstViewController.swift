@@ -1,5 +1,5 @@
 //
-//  ResultViewController.swift
+//  FirstViewController.swift
 //  othello
 //
 //  Created by sasa on 2023/10/08.
@@ -7,7 +7,7 @@
 
 import Cocoa
 
-class ResultViewController: NSViewController {
+class FirstViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
