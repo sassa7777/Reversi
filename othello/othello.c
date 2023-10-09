@@ -342,3 +342,19 @@ int finishedsw(void)
         return 0;
     }
 }
+
+int countstoneswift(int c)
+{
+    if(c == 1)
+    {
+        return blackc;
+    }
+    else if(c == 2)
+    {
+        return whitec;
+    }
+    else
+    {
+        return 0;
+    }
+}

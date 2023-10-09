@@ -30,5 +30,6 @@ void rebuild(void);
 void countstone(void);
 int finishedsw(void);
 int winner(void);
+int countstoneswift(int c);
 
 #endif /* othello_h */
