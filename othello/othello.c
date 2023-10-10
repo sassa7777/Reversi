@@ -23,6 +23,13 @@ void reset(void)
     //白が2,黒が1
     player = 1;
     skip = 0;
+    for(int x = 0; x < 10; x++)
+    {
+        for(int y = 0; y < 10; y++)
+        {
+            virtualboard[y][x] = board[y][x];
+        }
+    }
     return;
 }
 void check(void)
@@ -287,7 +294,6 @@ int putstone(int py, int px)
         printf("[*]そこには置けません\n");
         return 0;
     }
-    
 }
 
 void countstone(void)
@@ -356,5 +362,157 @@ int countstoneswift(int c)
     else
     {
         return 0;
+    }
+}
+
+void ai(void)
+{
+    int tmpscore = countscore();
+    int tmpx = 0, tmpy = 0;
+    check();
+    for(int x = 1; x < 9; x++)
+    {
+        for(int y = 1; y < 9; y++)
+        {
+            if(canPut[y][x] == true)
+            {
+                virtualput(x, y);
+                if(countscore() > tmpscore)
+                {
+                    tmpx = x; tmpy = y;
+                    tmpscore = countscore();
+                }
+                rebuild_virtual();
+            }
+        }
+    }
+    putstone(tmpx, tmpy);
+}
+
+int virtualput(int px, int py)
+{
+    printf("Player: bot\n");
+    printf("(%d, %d)\n", px, py);
+    if(player == 1)
+    {
+        virtualboard[py][px] = 1;
+        virtualreverse(px, py);
+        player = 2;
+        return 1;
+    }
+    else if(player == 2)
+    {
+        virtualboard[py][px] = 2;
+        virtualreverse(px, py);
+        player = 1;
+        return 2;
+    }
+    else
+    {
+        printf("[*]そこには置けません\n");
+        return 0;
+    }
+}
+
+int countscore(void)
+{
+    score = 0;
+    for(int x = 1; x < 9; x++)
+    {
+        for(int y = 1; y < 9; y++)
+        {
+            if(board[y][x] == 2)
+            {
+                score += scoreboard[y][x];
+            }
+        }
+    }
+    return score;
+}
+
+void rebuild_virtual(void)
+{
+    for(int x = 0; x < 10; x++)
+    {
+        for(int y = 0; y < 10; y++)
+        {
+            virtualboard[y][x] = board[y][x];
+        }
+    }
+}
+
+void virtualreverse(int x, int y)
+{
+    if(player == 1)
+    {
+        if(virtualboard[y][x] == 1)
+        {
+            for(int xx = -1; xx < 2; xx++)
+            {
+                for(int yy = -1; yy < 2; yy++)
+                {
+                    if(xx != 0 || yy != 0)
+                    {
+                        if(virtualboard[y + yy][x + xx] == 2)
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(virtualboard[yyy][xxx] == 2)
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(virtualboard[yyy][xxx] == 1)
+                            {
+                                xxx -= xx;
+                                yyy -= yy;
+                                while(virtualboard[yyy][xxx] == 2)
+                                {
+                                    virtualboard[yyy][xxx] = 1;
+                                    yyy -= yy;
+                                    xxx -= xx;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    else if(player == 2)
+    {
+        if(virtualboard[y][x] == 2)
+        {
+            for(int xx = -1; xx < 2; xx++)
+            {
+                for(int yy = -1; yy < 2; yy++)
+                {
+                    if(xx != 0 || yy != 0)
+                    {
+                        if(virtualboard[y + yy][x + xx] == 1)
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(virtualboard[yyy][xxx] == 1)
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(virtualboard[yyy][xxx] == 2)
+                            {
+                                xxx -= xx;
+                                yyy -= yy;
+                                while(virtualboard[yyy][xxx] == 1)
+                                {
+                                    virtualboard[yyy][xxx] = 2;
+                                    yyy -= yy;
+                                    xxx -= xx;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
