@@ -84,325 +84,516 @@ class ViewController: NSViewController
 
     @IBAction func aa(_ sender: Any)
     {
-        putstone(1,1)
-        reloadview()
+        if(putstone(1, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ab(_ sender: Any)
     {
-        putstone(1, 2)
-        reloadview()
-        
+        if(putstone(1, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ac(_ sender: Any)
     {
-        putstone(1,3)
-        reloadview()
+        if(putstone(1, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ad(_ sender: Any)
     {
-        putstone(1,4)
-        reloadview()
+        if(putstone(1, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ae(_ sender: Any)
     {
-        putstone(1,5)
-        reloadview()
+        if(putstone(1, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func af(_ sender: Any)
     {
-        putstone(1,6)
-        reloadview()
+        if(putstone(1, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ag(_ sender: Any)
     {
-        putstone(1,7)
-        reloadview()
+        if(putstone(1, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ah(_ sender: Any)
     {
-        putstone(1,8)
-        reloadview()
+        if(putstone(1, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ba(_ sender: Any)
     {
-        putstone(2,1)
-        reloadview()
+        if(putstone(2, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bb(_ sender: Any)
     {
-        putstone(2,2)
-        reloadview()
+        if(putstone(2, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bc(_ sender: Any)
     {
-        putstone(2,3)
-        reloadview()
+        if(putstone(2, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bd(_ sender: Any)
     {
-        putstone(2,4)
-        reloadview()
+        if(putstone(2, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func be(_ sender: Any)
     {
-        putstone(2,5)
-        reloadview()
+        if(putstone(2, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bf(_ sender: Any)
     {
-        putstone(2,6)
-        reloadview()
+        if(putstone(2, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bg(_ sender: Any)
     {
-        putstone(2,7)
-        reloadview()
+        if(putstone(2, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func bh(_ sender: Any)
     {
-        putstone(2,8)
-        reloadview()
+        if(putstone(2, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ca(_ sender: Any)
     {
-        putstone(3,1)
-        reloadview()
+        if(putstone(3, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func cb(_ sender: Any)
     {
-        putstone(3,2)
-        reloadview()
+        if(putstone(3, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func cc(_ sender: Any)
     {
-        putstone(3,3)
-        reloadview()
+        if(putstone(3, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func cd(_ sender: Any)
     {
-        putstone(3,4)
-        reloadview()
+        if(putstone(3, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ce(_ sender: Any)
     {
-        putstone(3,5)
-        reloadview()
+        if(putstone(3, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func cf(_ sender: Any)
     {
-        putstone(3,6)
-        reloadview()
+        if(putstone(3, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func cg(_ sender: Any)
     {
-        putstone(3,7)
-        reloadview()
+        if(putstone(3, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ch(_ sender: Any)
     {
-        putstone(3,8)
-        reloadview()
+        if(putstone(3, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func da(_ sender: Any)
     {
-        putstone(4,1)
-        reloadview()
+        if(putstone(4, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func db(_ sender: Any)
     {
-        putstone(4,2)
-        reloadview()
+        if(putstone(4, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func dc(_ sender: Any)
     {
-        putstone(4,3)
-        reloadview()
+        if(putstone(4, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func dd(_ sender: Any)
     {
-        putstone(4,4)
-        reloadview()
+        if(putstone(4, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func de(_ sender: Any)
     {
-        putstone(4,5)
-        reloadview()
+        if(putstone(4, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func df(_ sender: Any)
     {
-        putstone(4,6)
-        reloadview()
+        if(putstone(4, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func dg(_ sender: Any)
     {
-        putstone(4,7)
-        reloadview()
+        if(putstone(4, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func dh(_ sender: Any)
     {
-        putstone(4,8)
-        reloadview()
+        if(putstone(4, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ea(_ sender: Any)
     {
-        putstone(5,1)
-        reloadview()
+        if(putstone(5, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func eb(_ sender: Any)
     {
-        putstone(5,2)
-        reloadview()
+        if(putstone(5, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
         
     }
     @IBAction func ec(_ sender: Any)
     {
-        putstone(5,3)
-        reloadview()
+        if(putstone(5, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ed(_ sender: Any)
     {
-        putstone(5,4)
-        reloadview()
+        if(putstone(5, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ee(_ sender: Any)
     {
-        putstone(5,5)
-        reloadview()
+        if(putstone(5, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ef(_ sender: Any)
     {
-        putstone(5,6)
-        reloadview()
+        if(putstone(5, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func eg(_ sender: Any)
     {
-        putstone(5,7)
-        reloadview()
+        if(putstone(5, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func eh(_ sender: Any)
     {
-        putstone(5,8)
-        reloadview()
+        if(putstone(5, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fa(_ sender: Any)
     {
-        putstone(6,1)
-        reloadview()
+        if(putstone(6, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fb(_ sender: Any)
     {
-        putstone(6,2)
-        reloadview()
+        if(putstone(6, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fc(_ sender: Any)
     {
-        putstone(6,3)
-        reloadview()
+        if(putstone(6, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fd(_ sender: Any)
     {
-        putstone(6,4)
-        reloadview()
+        if(putstone(6, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fe(_ sender: Any)
     {
-        putstone(6,5)
-        reloadview()
+        if(putstone(6, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ff(_ sender: Any)
     {
-        putstone(6,6)
-        reloadview()
+        if(putstone(6, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fg(_ sender: Any)
     {
-        putstone(6,7)
-        reloadview()
+        if(putstone(6, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func fh(_ sender: Any)
     {
-        putstone(6,8)
-        reloadview()
+        if(putstone(6, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ga(_ sender: Any)
     {
-        putstone(7,1)
-        reloadview()
+        if(putstone(7, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gb(_ sender: Any)
     {
-        putstone(7,2)
-        reloadview()
+        if(putstone(7, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gc(_ sender: Any)
     {
-        putstone(7,3)
-        reloadview()
+        if(putstone(7, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gd(_ sender: Any)
     {
-        putstone(7,4)
-        reloadview()
+        if(putstone(7, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ge(_ sender: Any)
     {
-        putstone(7,5)
-        reloadview()
+        if(putstone(7, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gf(_ sender: Any)
     {
-        putstone(7,6)
-        reloadview()
+        if(putstone(7, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gg(_ sender: Any)
     {
-        putstone(7,7)
-        reloadview()
+        if(putstone(7, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func gh(_ sender: Any)
     {
-        putstone(7,8)
-        reloadview()
+        if(putstone(7, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func ha(_ sender: Any)
     {
-        putstone(8,1)
-        reloadview()
+        if(putstone(8, 1) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hb(_ sender: Any)
     {
-        putstone(8,2)
-        reloadview()
+        if(putstone(8, 2) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hc(_ sender: Any)
     {
-        putstone(8,3)
-        reloadview()
+        if(putstone(8, 3) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hd(_ sender: Any)
     {
-        putstone(8,4)
-        reloadview()
+        if(putstone(8, 4) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func he(_ sender: Any)
     {
-        putstone(8,5)
-        reloadview()
+        if(putstone(8, 5) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hf(_ sender: Any)
     {
-        putstone(8,6)
-        reloadview()
+        if(putstone(8, 6) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hg(_ sender: Any)
     {
-        putstone(8,7)
-        reloadview()
+        if(putstone(8, 7) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func hh(_ sender: Any)
     {
-        putstone(8,8)
-        reloadview()
+        if(putstone(8, 8) != 0)
+        {
+            reloadview()
+            putai()
+        }
     }
     @IBAction func close(_ sender: Any)
     {
@@ -416,6 +607,15 @@ class ViewController: NSViewController
         reset()
         reloadview()
         //print(board.3.3)
+    }
+    
+    func putai()
+    {
+        rebuild_virtual()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+            ai()
+            self.reloadview()
+        }
     }
     
     func result()

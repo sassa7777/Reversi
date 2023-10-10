@@ -367,7 +367,7 @@ int countstoneswift(int c)
 
 void ai(void)
 {
-    int tmpscore = countscore();
+    int tmpscore = -9999;
     int tmpx = 0, tmpy = 0;
     check();
     for(int x = 1; x < 9; x++)
@@ -377,41 +377,40 @@ void ai(void)
             if(canPut[y][x] == true)
             {
                 virtualput(x, y);
+                printf("%d\n", countscore());
                 if(countscore() > tmpscore)
                 {
                     tmpx = x; tmpy = y;
+                    printf("%d, %d ", tmpx, tmpy);
                     tmpscore = countscore();
+                    printf("%d\n", tmpscore);
                 }
                 rebuild_virtual();
             }
         }
     }
-    putstone(tmpx, tmpy);
+    putstone(tmpy, tmpx);
 }
 
-int virtualput(int px, int py)
+void virtualput(int px, int py)
 {
-    printf("Player: bot\n");
+    printf("Player: bot %d\n", player);
     printf("(%d, %d)\n", px, py);
     if(player == 1)
     {
         virtualboard[py][px] = 1;
         virtualreverse(px, py);
-        player = 2;
-        return 1;
     }
     else if(player == 2)
     {
         virtualboard[py][px] = 2;
         virtualreverse(px, py);
-        player = 1;
-        return 2;
     }
     else
     {
         printf("[*]そこには置けません\n");
-        return 0;
     }
+    return;
 }
 
 int countscore(void)
@@ -421,7 +420,7 @@ int countscore(void)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(board[y][x] == 2)
+            if(virtualboard[y][x] == 2)
             {
                 score += scoreboard[y][x];
             }

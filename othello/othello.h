@@ -46,7 +46,7 @@ int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
 void ai(void);
-int virtualput(int px, int py);
+void virtualput(int px, int py);
 void virtualreverse(int x, int y);
 int countscore(void);
 void rebuild_virtual(void);
