@@ -611,9 +611,13 @@ class ViewController: NSViewController
     
     func putai()
     {
+        if(skipsw() == 1)
+        {
+            return
+        }
         rebuild_virtual()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
-            ai()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+            ai2()
             self.reloadview()
         }
     }
