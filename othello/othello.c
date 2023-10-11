@@ -285,7 +285,7 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 2;
-            skip = false;
+            skipb = false;
             return 1;
         }
         else if(player == 2)
@@ -294,7 +294,7 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 1;
-            skip = false;
+            skipb = false;
             return 2;
         }
         else
@@ -418,8 +418,8 @@ void ai2(void)
             {
                 board[y][x] = player;
                 int movevalue = minimax(3, player, (player == 1 ? 2 : 1));
+                printf("%dL\n", movevalue);
                 board[y][x] = 0;
-                
                 if (movevalue > bestMoveValue)
                 {
                     bestMoveValue = movevalue;
@@ -429,7 +429,7 @@ void ai2(void)
             }
         }
     }
-    printf("(%d, %d)", bestMoveX, bestMoveY);
+    printf("(%d, %d)\n", bestMoveX, bestMoveY);
     putstone(bestMoveY, bestMoveX);
     bot = true;
 }
@@ -462,13 +462,19 @@ int countscore(void)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(board[y][x] == 1)
+            if(player == 1)
             {
-                score += scoreboard[y][x];
+                if(board[y][x] == 1)
+                {
+                    score += scoreboard[y][x];
+                }
             }
-            if(board[y][x] == 2)
+            else if(player == 2)
             {
-                score -= scoreboard[y][x];
+                if(board[y][x] == 2)
+                {
+                    score += scoreboard[y][x];
+                }
             }
         }
     }
@@ -490,7 +496,6 @@ int minimax(int depth, int playerrn, int playeraf)
 {
     if(depth == 0) return countscore();
     check();
-    reset_virtualboard();
     int best;
     if(playerrn == 1)
     {
@@ -498,7 +503,7 @@ int minimax(int depth, int playerrn, int playeraf)
     }
     else
     {
-        best = 9999;
+        best = -9999;
     }
     for(int x = 1; x < 9; x++)
     {
@@ -506,9 +511,10 @@ int minimax(int depth, int playerrn, int playeraf)
         {
             if(canPut[y][x] == true)
             {
+                //printf("%d, %d\n", x, y);
                 int player_back = player;
                 //putstone(y, x);
-                board[y][x] = player;
+                board[y][x] = playerrn;
                 int value = minimax(depth - 1, playeraf, playerrn);
                 board[y][x] = 0;
                 player = player_back;
@@ -519,14 +525,15 @@ int minimax(int depth, int playerrn, int playeraf)
                         board[y][x] = virtualboard[y][x];
                     }
                 }
-                if((playerrn == 1 && value > best) || (playerrn == 2 && value < best))
+                if((playerrn == 1 && value > best) || (playerrn == 2 && value > best))
                 {
                     best = value;
+                    printf("(%d, %d), %d score, %d\n", x, y, value, depth);
                 }
             }
+                            
         }
     }
-    
     return best;
 }
 
