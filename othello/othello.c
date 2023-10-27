@@ -122,7 +122,6 @@ void check(void)
             if (canPut[i][j] == true)
             {
                 skip++;
-                bot = false;
                 break;
             }
         }
@@ -134,17 +133,12 @@ void check(void)
         {
             player = 2;
             printf("スキップ\n");
-            skipb = true;
             skipped++;
             if(skipped > 60)
             {
                 printf("終了\n");
                 finished = 1;
                 return;
-            }
-            if(bot == true)
-            {
-                ai2();
             }
             check();
         }
@@ -152,17 +146,12 @@ void check(void)
         {
             player = 1;
             printf("スキップ\n");
-            skipb = true;
             skipped++;
             if(skipped > 60)
             {
                 printf("終了\n");
                 finished = 1;
                 return;
-            }
-            if(bot == true)
-            {
-                ai2();
             }
             check();
         }
@@ -270,8 +259,8 @@ void rebuild(void)
 
 int putstone(int py, int px)
 {
-    //printf("Player: %d\n", player);
-    //printf("(%d, %d)\n", px, py);
+    printf("Player: %d\n", player);
+    printf("(%d, %d)\n", px, py);
     if(px > 8 || py > 8)
     {
         printf("[*]そこには置けません\n");
@@ -285,7 +274,6 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 2;
-            skipb = false;
             return 1;
         }
         else if(player == 2)
@@ -294,7 +282,6 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 1;
-            skipb = false;
             return 2;
         }
         else
@@ -380,7 +367,6 @@ int countstoneswift(int c)
 
 void ai(void)
 {
-    player_bot = player;
     int tmpscore = -9999;
     int tmpx = 0, tmpy = 0;
     check();
@@ -391,6 +377,7 @@ void ai(void)
             if(canPut[y][x] == true)
             {
                 virtualput(x, y);
+                printf("%d\n", countscore());
                 if(countscore() > tmpscore)
                 {
                     tmpx = x; tmpy = y;
@@ -405,39 +392,10 @@ void ai(void)
     putstone(tmpy, tmpx);
 }
 
-void ai2(void)
-{
-    int bestMoveValue = -1000;
-    int bestMoveX = -1;
-    int bestMoveY = -1;
-    for(int x = 1; x < 9; x++)
-    {
-        for(int y = 1; y < 9; y++)
-        {
-            if(canPut[y][x] == true)
-            {
-                board[y][x] = player;
-                int movevalue = minimax(3, player, (player == 1 ? 2 : 1));
-                printf("%dL\n", movevalue);
-                board[y][x] = 0;
-                if (movevalue > bestMoveValue)
-                {
-                    bestMoveValue = movevalue;
-                    bestMoveY = y;
-                    bestMoveX = x;
-                }
-            }
-        }
-    }
-    printf("(%d, %d)\n", bestMoveX, bestMoveY);
-    putstone(bestMoveY, bestMoveX);
-    bot = true;
-}
-
 void virtualput(int px, int py)
 {
-    //printf("Player: bot %d\n", player);
-    //printf("(%d, %d)\n", px, py);
+    printf("Player: bot %d\n", player);
+    printf("(%d, %d)\n", px, py);
     if(player == 1)
     {
         virtualboard[py][px] = 1;
@@ -462,19 +420,9 @@ int countscore(void)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(player == 1)
+            if(virtualboard[y][x] == 2)
             {
-                if(board[y][x] == 1)
-                {
-                    score += scoreboard[y][x];
-                }
-            }
-            else if(player == 2)
-            {
-                if(board[y][x] == 2)
-                {
-                    score += scoreboard[y][x];
-                }
+                score += scoreboard[y][x];
             }
         }
     }
@@ -490,51 +438,6 @@ void rebuild_virtual(void)
             virtualboard[y][x] = board[y][x];
         }
     }
-}
-
-int minimax(int depth, int playerrn, int playeraf)
-{
-    if(depth == 0) return countscore();
-    check();
-    int best;
-    if(playerrn == 1)
-    {
-        best = -9999;
-    }
-    else
-    {
-        best = -9999;
-    }
-    for(int x = 1; x < 9; x++)
-    {
-        for(int y = 1; y < 9; y++)
-        {
-            if(canPut[y][x] == true)
-            {
-                //printf("%d, %d\n", x, y);
-                int player_back = player;
-                //putstone(y, x);
-                board[y][x] = playerrn;
-                int value = minimax(depth - 1, playeraf, playerrn);
-                board[y][x] = 0;
-                player = player_back;
-                for(int x = 0; x < 10; x++)
-                {
-                    for(int y = 0; y < 10; y++)
-                    {
-                        board[y][x] = virtualboard[y][x];
-                    }
-                }
-                if((playerrn == 1 && value > best) || (playerrn == 2 && value > best))
-                {
-                    best = value;
-                    printf("(%d, %d), %d score, %d\n", x, y, value, depth);
-                }
-            }
-                            
-        }
-    }
-    return best;
 }
 
 void virtualreverse(int x, int y)
@@ -610,17 +513,5 @@ void virtualreverse(int x, int y)
                 }
             }
         }
-    }
-}
-
-int skipsw(void)
-{
-    if(skipb == true)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
     }
 }
