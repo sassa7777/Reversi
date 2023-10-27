@@ -612,9 +612,16 @@ class ViewController: NSViewController
     func putai()
     {
         rebuild_virtual()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
             ai()
             self.reloadview()
+            if returnplayer() == 2
+            {
+                if finishedsw() != 1
+                {
+                    self.putai()
+                }
+            }
         }
     }
     
@@ -638,7 +645,7 @@ class ViewController: NSViewController
     {
         rebuild()
         print("[*]場面を再構築中...")
-        for i in 1..<19 {
+        for i in 1..<9 {
             for j in 1..<9 {
                 switch i
                 {

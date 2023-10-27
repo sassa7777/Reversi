@@ -22,7 +22,7 @@ void reset(void)
     isfree[5][5] = false;
     //白が2,黒が1
     player = 1;
-    skip = 0;
+    skip = false;
     for(int x = 0; x < 10; x++)
     {
         for(int y = 0; y < 10; y++)
@@ -114,20 +114,20 @@ void check(void)
         }
     }
     
-    skip = 0;
+    skip = false;
     for(int i = 1; i < 9; i++)
     {
         for(int j = 1; j < 9; j++)
         {
             if (canPut[i][j] == true)
             {
-                skip++;
+                skip = true;
                 break;
             }
         }
     }
     
-    if(skip == 0)
+    if(skip == false)
     {
         if(player == 1)
         {
@@ -274,6 +274,7 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 2;
+            skip = false;
             return 1;
         }
         else if(player == 2)
@@ -282,6 +283,7 @@ int putstone(int py, int px)
             isfree[py][px] = false;
             reverse(px, py);
             player = 1;
+            skip = false;
             return 2;
         }
         else
@@ -514,4 +516,9 @@ void virtualreverse(int x, int y)
             }
         }
     }
+}
+
+int returnplayer(void)
+{
+    return player;
 }

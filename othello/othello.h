@@ -17,7 +17,7 @@ bool canPut[10][10];
 bool isfree[10][10];
 int finished = 0;
 int skipped = 0;
-int skip = 0;
+bool skip = false;
 int px, py;
 int player;
 int turn = 0;
@@ -50,5 +50,6 @@ void virtualput(int px, int py);
 void virtualreverse(int x, int y);
 int countscore(void);
 void rebuild_virtual(void);
+int returnplayer(void);
 
 #endif /* othello_h */
