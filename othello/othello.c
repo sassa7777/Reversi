@@ -372,26 +372,94 @@ void ai(void)
     int tmpscore = -9999;
     int tmpx = 0, tmpy = 0;
     check();
-    for(int x = 1; x < 9; x++)
+    turn++;
+    for(int y = 1; y < 9; y++)
     {
-        for(int y = 1; y < 9; y++)
+        for(int x = 1; x < 9; x++)
         {
             if(canPut[y][x] == true)
             {
                 virtualput(x, y);
                 printf("%d\n", countscore());
-                if(countscore() > tmpscore)
+                if(turn <= 5)
                 {
-                    tmpx = x; tmpy = y;
-                    printf("%d, %d ", tmpx, tmpy);
-                    tmpscore = countscore();
-                    printf("%d\n", tmpscore);
+                    if((countscore() - (whitec)) > tmpscore)
+                    {
+                        tmpx = x; tmpy = y;
+                        tmpscore = countscore();
+                    }
+                }
+                else
+                {
+                    if(countscore() > tmpscore)
+                    {
+                        tmpx = x; tmpy = y;
+                        tmpscore = countscore();
+                    }
                 }
                 rebuild_virtual();
             }
         }
     }
     putstone(tmpy, tmpx);
+    printf("sroreL: %d\n", scoreboard[2][2]);
+}
+
+void ai2(void)
+{
+    check();
+    int bestMoveValue = -1000;
+    int bestMoveX = -1;
+    int bestMoveY = -1;
+    int bestmove = -9999;
+    for(int x = 1; x < 9; x++)
+    {
+        for(int y = 1; y < 9; y++)
+        {
+            if(canPut[y][x] == true)
+            {
+                bestmove = negamax(2, 2, 1);
+                if(bestmove >= bestMoveValue)
+                {
+                    //if(bestmove > 999) return;
+                    bestMoveY = y;
+                    bestMoveX = x;
+                    bestMoveValue = bestmove;
+                }
+            }
+        }
+    }
+    //int bestmove = negaalpha(3, alpha, beta);
+    printf("%d\n", bestmove);
+    printf("(%d, %d) score: %d", bestMoveX, bestMoveY, bestMoveValue);
+    putstone(bestMoveY, bestMoveX);
+}
+
+int negamax(int depth, int playerrn, int playeraf)
+{
+    if(depth == 0) return countscore();
+    
+    int bestValue = -999999;
+    
+    check();
+    for(int y = 1; y < 9; y++)
+    {
+        for(int x = 1; x < 9; x++)
+        {
+            if(canPut[y][x] == true)
+            {
+                virtualput(x, y);
+                int value = -negamax(depth - 1, playeraf, playerrn);
+                rebuild_virtual();
+                
+                if (value > bestValue) 
+                {
+                    bestValue = value;
+                }
+            }
+        }
+    }
+    return bestValue;
 }
 
 void virtualput(int px, int py)
@@ -401,12 +469,12 @@ void virtualput(int px, int py)
     if(player == 1)
     {
         virtualboard[py][px] = 1;
-        virtualreverse(px, py);
+        virtualreverse(py, px);
     }
     else if(player == 2)
     {
         virtualboard[py][px] = 2;
-        virtualreverse(px, py);
+        virtualreverse(py, px);
     }
     else
     {
@@ -422,9 +490,9 @@ int countscore(void)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(virtualboard[y][x] == 2)
+            if(virtualboard[x][y] == 2)
             {
-                score += scoreboard[y][x];
+                score += scoreboard[x-1][y-1];
             }
         }
     }
@@ -442,7 +510,7 @@ void rebuild_virtual(void)
     }
 }
 
-void virtualreverse(int x, int y)
+void virtualreverse(int y, int x)
 {
     if(player == 1)
     {

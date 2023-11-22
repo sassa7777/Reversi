@@ -46,8 +46,8 @@
 			children = (
 				1BA79BE82AC835CF00E864A1 /* othello */,
 				1BA79BE72AC835CF00E864A1 /* Products */,
-				1BA79BFC2AC848F600E864A1 /* othello.h */,
 				1BA79BFD2AC848F600E864A1 /* othello.c */,
+				1BA79BFC2AC848F600E864A1 /* othello.h */,
 				1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
