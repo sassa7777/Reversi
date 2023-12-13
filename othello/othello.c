@@ -380,21 +380,21 @@ void ai(void)
             if(canPut[y][x] == true)
             {
                 virtualput(x, y);
-                printf("%d\n", countscore());
+                printf("%d\n", countscore(virtualboard));
                 if(turn <= 5)
                 {
-                    if((countscore() - (whitec)) > tmpscore)
+                    if((countscore(virtualboard) - (whitec)) > tmpscore)
                     {
                         tmpx = x; tmpy = y;
-                        tmpscore = countscore();
+                        tmpscore = countscore(virtualboard);
                     }
                 }
                 else
                 {
-                    if(countscore() > tmpscore)
+                    if(countscore(virtualboard) > tmpscore)
                     {
                         tmpx = x; tmpy = y;
-                        tmpscore = countscore();
+                        tmpscore = countscore(virtualboard);
                     }
                 }
                 rebuild_virtual();
@@ -407,59 +407,63 @@ void ai(void)
 
 void ai2(void)
 {
-    check();
-    int bestMoveValue = -1000;
-    int bestMoveX = -1;
-    int bestMoveY = -1;
-    int bestmove = -9999;
-    for(int x = 1; x < 9; x++)
-    {
-        for(int y = 1; y < 9; y++)
-        {
-            if(canPut[y][x] == true)
-            {
-                bestmove = negamax(2, 2, 1);
-                if(bestmove >= bestMoveValue)
-                {
-                    //if(bestmove > 999) return;
-                    bestMoveY = y;
-                    bestMoveX = x;
-                    bestMoveValue = bestmove;
-                }
-            }
-        }
-    }
-    //int bestmove = negaalpha(3, alpha, beta);
-    printf("%d\n", bestmove);
-    printf("(%d, %d) score: %d", bestMoveX, bestMoveY, bestMoveValue);
-    putstone(bestMoveY, bestMoveX);
+    minimax(DEPTH);
+    putstone(tmpy, tmpx);
 }
 
-int negamax(int depth, int playerrn, int playeraf)
+int minimax(int depth)
 {
-    if(depth == 0) return countscore();
+    if(depth == 0) return countscore(board);
     
-    int bestValue = -999999;
+    int score = -99999;
+    int var;
     
-    check();
-    for(int y = 1; y < 9; y++)
+    for (int i = 0; i < 8; i++)
     {
-        for(int x = 1; x < 9; x++)
+        for (int j=0; j < 8; j++)
         {
-            if(canPut[y][x] == true)
+            tmpboard[depth][i][j] = board[i+1][j+1];
+        }
+    }
+    check();
+    for (int i=1; i<9; i++)
+    {
+        for (int j=1; j<9; j++)
+        {
+            if(canPut[i][j] == true)
             {
-                virtualput(x, y);
-                int value = -negamax(depth - 1, playeraf, playerrn);
-                rebuild_virtual();
+                putstone(i,j);
                 
-                if (value > bestValue) 
+                if(player == 2)
                 {
-                    bestValue = value;
+                    var = minimax(depth-1);
+                }
+                else
+                {
+                    var = -minimax(depth-1);
+                }
+                
+                if(score <= var)
+                {
+                    score = var;
+                    if(depth == DEPTH)
+                    {
+                        tmpx = j;
+                        tmpy = i;
+                    }
+                }
+                
+                for (int y = 0; y < 8; y++)
+                {
+                    for (int x=0; x < 8; x++)
+                    {
+                        board[y+1][x+1] = tmpboard[depth][y][x];
+                    }
                 }
             }
         }
     }
-    return bestValue;
+    return 0;
 }
 
 void virtualput(int px, int py)
@@ -483,14 +487,14 @@ void virtualput(int px, int py)
     return;
 }
 
-int countscore(void)
+int countscore(int board[10][10])
 {
     score = 0;
     for(int x = 1; x < 9; x++)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(virtualboard[x][y] == 2)
+            if(board[x][y] == 2)
             {
                 score += scoreboard[x-1][y-1];
             }

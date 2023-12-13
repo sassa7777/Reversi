@@ -613,7 +613,7 @@ class ViewController: NSViewController
     {
         rebuild_virtual()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-            ai()
+            ai2()
             self.reloadview()
             if returnplayer() == 2
             {

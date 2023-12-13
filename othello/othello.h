@@ -7,6 +7,7 @@
 
 #ifndef othello_h
 #define othello_h
+#define DEPTH 2
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -24,6 +25,8 @@ int turn = 0;
 int whitec = 0;
 int blackc = 0;
 int score = 0;
+int tmpboard[6][8][8];
+int tmpx, tmpy;
 int scoreboard[8][8] = {
         45, 3, 15, 14, 14, 15, 3, 45,
         3, 0, 12, 12, 12, 12, 0, 3,
@@ -57,9 +60,9 @@ void ai(void);
 void ai2(void);
 void virtualput(int px, int py);
 void virtualreverse(int x, int y);
-int countscore(void);
+int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
-int negamax(int depth, int playerrn, int playeraf);
+int minimax(int depth);
 
 #endif /* othello_h */
