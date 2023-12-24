@@ -38,27 +38,24 @@ void check(void)
     {
         for(int x = 1; x < 9; x++)
         {
-            if(player == 1)
+            if(player == 1 && board[y][x] == 1)
             {
-                if(board[y][x] == 1)
+                for(int xx = -1; xx < 2; xx++)
                 {
-                    for(int xx = -1; xx < 2; xx++)
+                    for(int yy = -1; yy < 2; yy++)
                     {
-                        for(int yy = -1; yy < 2; yy++)
+                        if(board[y + yy][x + xx] == 2)
                         {
-                            if(board[y + yy][x + xx] == 2)
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == 2)
                             {
-                                int xxx = x + xx;
-                                int yyy = y + yy;
-                                while(board[yyy][xxx] == 2)
-                                {
-                                    xxx += xx;
-                                    yyy += yy;
-                                }
-                                if(board[yyy][xxx] == 0)
-                                {
-                                    canPut[yyy][xxx] = true;
-                                }
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canPut[yyy][xxx] = true;
                             }
                         }
                     }
@@ -122,7 +119,7 @@ void check(void)
             if (canPut[i][j] == true)
             {
                 skip = true;
-                break;
+                return;
             }
         }
     }
@@ -154,6 +151,129 @@ void check(void)
                 return;
             }
             check();
+        }
+    }
+}
+
+void check2(int player)
+{
+    for(int y = 1; y < 9; y++)
+    {
+        for(int x = 1; x < 9; x++)
+        {
+            if(player == 1 && board[y][x] == 1)
+            {
+                for(int xx = -1; xx < 2; xx++)
+                {
+                    for(int yy = -1; yy < 2; yy++)
+                    {
+                        if(board[y + yy][x + xx] == 2)
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == 2)
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canPut[yyy][xxx] = true;
+                            }
+                        }
+                    }
+                }
+            }
+            else if(player == 2)
+            {
+                if(board[y][x] == 2)
+                {
+                    for(int xx = -1; xx < 2; xx++)
+                    {
+                        for(int yy = -1; yy < 2; yy++)
+                        {
+                            if(board[y + yy][x + xx] == 1)
+                            {
+                                int xxx = x + xx;
+                                int yyy = y + yy;
+                                while(board[yyy][xxx] == 1)
+                                {
+                                    xxx += xx;
+                                    yyy += yy;
+                                }
+                                if(board[yyy][xxx] == 0)
+                                {
+                                    canPut[yyy][xxx] = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for(int i = 0; i < 10; i++)
+    {
+        canPut[0][i] = false;
+        canPut[9][i] = false;
+    }
+    for(int i = 1; i < 9; i++)
+    {
+        canPut[i][0] = false;
+        canPut[i][9] = false;
+    }
+    
+    for(int i = 0; i < 10; i++)
+    {
+        for(int j = 0; j < 10; j++)
+        {
+            if(isfree[i][j] == true)
+            {
+                board[i][j] = 0;
+            }
+        }
+    }
+    
+    skip = false;
+    for(int i = 1; i < 9; i++)
+    {
+        for(int j = 1; j < 9; j++)
+        {
+            if (canPut[i][j] == true)
+            {
+                skip = true;
+                return;
+            }
+        }
+    }
+    
+    if(skip == false)
+    {
+        if(player == 1)
+        {
+            player = 2;
+            printf("スキップ\n");
+            skipped++;
+            if(skipped > 60)
+            {
+                printf("終了\n");
+                finished = 1;
+                return;
+            }
+            check2(player);
+        }
+        else if(player == 2)
+        {
+            player = 1;
+            printf("スキップ\n");
+            skipped++;
+            if(skipped > 60)
+            {
+                printf("終了\n");
+                finished = 1;
+                return;
+            }
+            check2(player);
         }
     }
 }
@@ -298,6 +418,45 @@ int putstone(int py, int px)
     }
 }
 
+int putstone2(int py, int px, int player)
+{
+    printf("Player: %d\n", player);
+    printf("(%d, %d)\n", px, py);
+    if(px > 8 || py > 8)
+    {
+        printf("[*]そこには置けません\n");
+        return 0;
+    }
+    if(canPut[py][px] == true)
+    {
+        if(player == 1)
+        {
+            board[py][px] = 1;
+            isfree[py][px] = false;
+            reverse(px, py);
+            skip = false;
+            return 1;
+        }
+        else if(player == 2)
+        {
+            board[py][px] = 2;
+            isfree[py][px] = false;
+            reverse(px, py);
+            skip = false;
+            return 2;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        printf("[*]そこには置けません\n");
+        return 0;
+    }
+}
+
 void countstone(void)
 {
     blackc = 0;
@@ -407,11 +566,14 @@ void ai(void)
 
 void ai2(void)
 {
-    minimax(DEPTH);
+    isbot = true;
+    minimax(DEPTH, player);
+    player = 2;
     putstone(tmpy, tmpx);
+    isbot = false;
 }
 
-int minimax(int depth)
+int minimax(int depth, int playerrn)
 {
     if(depth == 0) return countscore(board);
     
@@ -425,22 +587,24 @@ int minimax(int depth)
             tmpboard[depth][i][j] = board[i+1][j+1];
         }
     }
-    check();
+    check2(playerrn);
+    //printf("checked %d\n", playerrn);
     for (int i=1; i<9; i++)
     {
         for (int j=1; j<9; j++)
         {
             if(canPut[i][j] == true)
             {
-                putstone(i,j);
+                printf("putable: (%d, %d)\n", j, i);
+                putstone2(i,j, playerrn);
                 
-                if(player == 2)
+                if(playerrn == 2)
                 {
-                    var = minimax(depth-1);
+                    var = -minimax(depth-1, 1);
                 }
                 else
                 {
-                    var = -minimax(depth-1);
+                    var = minimax(depth-1, 2);
                 }
                 
                 if(score <= var)

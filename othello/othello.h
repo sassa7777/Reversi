@@ -27,6 +27,7 @@ int blackc = 0;
 int score = 0;
 int tmpboard[6][8][8];
 int tmpx, tmpy;
+bool isbot = false;
 int scoreboard[8][8] = {
         45, 3, 15, 14, 14, 15, 3, 45,
         3, 0, 12, 12, 12, 12, 0, 3,
@@ -49,6 +50,7 @@ int scoreboard2[8][8] = {
 };
 void reset(void);
 void check(void);
+void check2(int player);
 int putstone(int px, int py);
 void reverse(int px, int py);
 void rebuild(void);
@@ -63,6 +65,6 @@ void virtualreverse(int x, int y);
 int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
-int minimax(int depth);
+int minimax(int depth, int playerrn);
 
 #endif /* othello_h */
