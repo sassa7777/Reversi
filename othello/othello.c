@@ -61,27 +61,24 @@ void check(void)
                     }
                 }
             }
-            else if(player == 2)
+            else if(player == 2 && board[y][x] == 2)
             {
-                if(board[y][x] == 2)
+                for(int xx = -1; xx < 2; xx++)
                 {
-                    for(int xx = -1; xx < 2; xx++)
+                    for(int yy = -1; yy < 2; yy++)
                     {
-                        for(int yy = -1; yy < 2; yy++)
+                        if(board[y + yy][x + xx] == 1)
                         {
-                            if(board[y + yy][x + xx] == 1)
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == 1)
                             {
-                                int xxx = x + xx;
-                                int yyy = y + yy;
-                                while(board[yyy][xxx] == 1)
-                                {
-                                    xxx += xx;
-                                    yyy += yy;
-                                }
-                                if(board[yyy][xxx] == 0)
-                                {
-                                    canPut[yyy][xxx] = true;
-                                }
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canPut[yyy][xxx] = true;
                             }
                         }
                     }
@@ -184,27 +181,24 @@ void check2(int player)
                     }
                 }
             }
-            else if(player == 2)
+            else if(player == 2 && board[y][x] == 2)
             {
-                if(board[y][x] == 2)
+                for(int xx = -1; xx < 2; xx++)
                 {
-                    for(int xx = -1; xx < 2; xx++)
+                    for(int yy = -1; yy < 2; yy++)
                     {
-                        for(int yy = -1; yy < 2; yy++)
+                        if(board[y + yy][x + xx] == 1)
                         {
-                            if(board[y + yy][x + xx] == 1)
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == 1)
                             {
-                                int xxx = x + xx;
-                                int yyy = y + yy;
-                                while(board[yyy][xxx] == 1)
-                                {
-                                    xxx += xx;
-                                    yyy += yy;
-                                }
-                                if(board[yyy][xxx] == 0)
-                                {
-                                    canPut[yyy][xxx] = true;
-                                }
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canPut[yyy][xxx] = true;
                             }
                         }
                     }
