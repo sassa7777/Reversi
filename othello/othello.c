@@ -39,40 +39,17 @@ void check2(int player)
     {
         for(int x = 1; x < 9; x++)
         {
-            if(player == 1 && board[y][x] == 1)
+            if(board[y][x] == player)
             {
                 for(int xx = -1; xx < 2; xx++)
                 {
                     for(int yy = -1; yy < 2; yy++)
                     {
-                        if(board[y + yy][x + xx] == 2)
+                        if(board[y + yy][x + xx] == (3-player))
                         {
                             int xxx = x + xx;
                             int yyy = y + yy;
-                            while(board[yyy][xxx] == 2)
-                            {
-                                xxx += xx;
-                                yyy += yy;
-                            }
-                            if(board[yyy][xxx] == 0)
-                            {
-                                canPut[yyy][xxx] = true;
-                            }
-                        }
-                    }
-                }
-            }
-            else if(player == 2 && board[y][x] == 2)
-            {
-                for(int xx = -1; xx < 2; xx++)
-                {
-                    for(int yy = -1; yy < 2; yy++)
-                    {
-                        if(board[y + yy][x + xx] == 1)
-                        {
-                            int xxx = x + xx;
-                            int yyy = y + yy;
-                            while(board[yyy][xxx] == 1)
+                            while(board[yyy][xxx] == (3-player))
                             {
                                 xxx += xx;
                                 yyy += yy;
@@ -155,7 +132,7 @@ void check2(int player)
 
 void reverse(int x, int y)
 {
-    if(player == 1 && board[y][x] == 1)
+    if(board[y][x] == player)
     {
         for(int xx = -1; xx < 2; xx++)
         {
@@ -163,55 +140,22 @@ void reverse(int x, int y)
             {
                 if(xx != 0 || yy != 0)
                 {
-                    if(board[y + yy][x + xx] == 2)
+                    if(board[y + yy][x + xx] == (3-player))
                     {
                         int xxx = x + xx;
                         int yyy = y + yy;
-                        while(board[yyy][xxx] == 2)
+                        while(board[yyy][xxx] == (3-player))
                         {
                             xxx += xx;
                             yyy += yy;
                         }
-                        if(board[yyy][xxx] == 1)
+                        if(board[yyy][xxx] == player)
                         {
                             xxx -= xx;
                             yyy -= yy;
-                            while(board[yyy][xxx] == 2)
+                            while(board[yyy][xxx] == (3-player))
                             {
-                                board[yyy][xxx] = 1;
-                                yyy -= yy;
-                                xxx -= xx;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else if(player == 2 && board[y][x] == 2)
-    {
-        for(int xx = -1; xx < 2; xx++)
-        {
-            for(int yy = -1; yy < 2; yy++)
-            {
-                if(xx != 0 || yy != 0)
-                {
-                    if(board[y + yy][x + xx] == 1)
-                    {
-                        int xxx = x + xx;
-                        int yyy = y + yy;
-                        while(board[yyy][xxx] == 1)
-                        {
-                            xxx += xx;
-                            yyy += yy;
-                        }
-                        if(board[yyy][xxx] == 2)
-                        {
-                            xxx -= xx;
-                            yyy -= yy;
-                            while(board[yyy][xxx] == 1)
-                            {
-                                board[yyy][xxx] = 2;
+                                board[yyy][xxx] = player;
                                 yyy -= yy;
                                 xxx -= xx;
                             }
@@ -496,7 +440,7 @@ int minimax(int depth, int playerrn)
             }
         }
     }
-    return 0;
+    return score;
 }
 
 void virtualput(int px, int py)
