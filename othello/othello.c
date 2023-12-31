@@ -493,71 +493,32 @@ void rebuild_virtual(void)
 
 void virtualreverse(int y, int x)
 {
-    if(player == 1)
+    if(virtualboard[y][x] == player)
     {
-        if(virtualboard[y][x] == 1)
+        for(int xx = -1; xx < 2; xx++)
         {
-            for(int xx = -1; xx < 2; xx++)
+            for(int yy = -1; yy < 2; yy++)
             {
-                for(int yy = -1; yy < 2; yy++)
+                if(xx != 0 || yy != 0)
                 {
-                    if(xx != 0 || yy != 0)
+                    if(virtualboard[y + yy][x + xx] == (3-player))
                     {
-                        if(virtualboard[y + yy][x + xx] == 2)
+                        int xxx = x + xx;
+                        int yyy = y + yy;
+                        while(virtualboard[yyy][xxx] == (3-player))
                         {
-                            int xxx = x + xx;
-                            int yyy = y + yy;
-                            while(virtualboard[yyy][xxx] == 2)
-                            {
-                                xxx += xx;
-                                yyy += yy;
-                            }
-                            if(virtualboard[yyy][xxx] == 1)
-                            {
-                                xxx -= xx;
-                                yyy -= yy;
-                                while(virtualboard[yyy][xxx] == 2)
-                                {
-                                    virtualboard[yyy][xxx] = 1;
-                                    yyy -= yy;
-                                    xxx -= xx;
-                                }
-                            }
+                            xxx += xx;
+                            yyy += yy;
                         }
-                    }
-                }
-            }
-        }
-    }
-    else if(player == 2)
-    {
-        if(virtualboard[y][x] == 2)
-        {
-            for(int xx = -1; xx < 2; xx++)
-            {
-                for(int yy = -1; yy < 2; yy++)
-                {
-                    if(xx != 0 || yy != 0)
-                    {
-                        if(virtualboard[y + yy][x + xx] == 1)
+                        if(virtualboard[yyy][xxx] == player)
                         {
-                            int xxx = x + xx;
-                            int yyy = y + yy;
-                            while(virtualboard[yyy][xxx] == 1)
+                            xxx -= xx;
+                            yyy -= yy;
+                            while(virtualboard[yyy][xxx] == (3-player))
                             {
-                                xxx += xx;
-                                yyy += yy;
-                            }
-                            if(virtualboard[yyy][xxx] == 2)
-                            {
-                                xxx -= xx;
+                                virtualboard[yyy][xxx] = player;
                                 yyy -= yy;
-                                while(virtualboard[yyy][xxx] == 1)
-                                {
-                                    virtualboard[yyy][xxx] = 2;
-                                    yyy -= yy;
-                                    xxx -= xx;
-                                }
+                                xxx -= xx;
                             }
                         }
                     }
