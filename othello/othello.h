@@ -7,7 +7,7 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 2
+#define DEPTH 4
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -17,40 +17,43 @@ int virtualboard[10][10];
 bool canPut[10][10];
 bool isfree[10][10];
 int finished = 0;
-int skipped = 0;
+bool skipped = false;
 bool skip = false;
 int px, py;
 int player;
 int turn = 0;
 int whitec = 0;
 int blackc = 0;
-int score = 0;
-int tmpboard[6][8][8];
 int tmpx, tmpy;
 bool isbot = false;
-int scoreboard[8][8] = {
-        45, 3, 15, 14, 14, 15, 3, 45,
-        3, 0, 12, 12, 12, 12, 0, 3,
-        15,12, 15, 14, 14, 15, 12, 15,
-        14, 12, 14, 14, 14, 14, 12, 14,
-        14, 12, 14, 14, 14, 14, 12, 14,
-        15, 12, 15, 14, 14, 15, 12, 15,
-        3, 0, 12, 12, 12, 12, 0, 3,
-        45, 3, 15, 14, 14, 15, 3, 45
+int scoreboard[10][10] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
+        0, -3, -5, -3, -3, -3, -3, -5, -3, 0,
+        0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
+        0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
+        0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
+        0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
+        0, -3, -5, -3, -3, -3, -3, -5, -3, 0,
+        0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-int scoreboard2[8][8] = {
-    30, -12, 0, -1, -1, 0, -12, 30,
-    -12, -15, -3, -3, -3, -3, -15, -12,
-    0, -3, 0, -1, -1, 0, -3, 0,
-    -1, -3, -1, 3, 3, -1, -3, -1,
-    -1, -3, -1, 3, 3, -1, -3, -1,
-    0, -3, 0, -1, -1, 0, -3, 0,
-    -12, -15, -3, -3, -3, -3, -15, -12,
-    30, -12, 0, -1, -1, 0, -12, 30
+int scoreboard2[10][10] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 35, -15, 0, -1, -1, 0, -15, 35, 0,
+    0, -15, -18, -3, -3, -3, -3, -18, -15, 0,
+    0, 0, -3, 0, -1, -1, 0, -3, 0, 0,
+    0, -1, -3, -1, 3, 3, -1, -3, -1, 0,
+    0, -1, -3, -1, 3, 3, -1, -3, -1, 0,
+    0, 0, -3, 0, -1, -1, 0, -3, 0, 0,
+    0, -15, -18, -3, -3, -3, -3, -18, -15, 0,
+    0, 35, -15, 0, -1, -1, 0, -15, 35, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 void reset(void);
-void check(void);
+void check3(int player, bool canput[10][10]);
 void check2(int player);
+bool putableto(int player);
 int putstone(int px, int py);
 void reverse(int px, int py);
 void rebuild(void);
@@ -66,5 +69,6 @@ int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
+int alpha_beta(int depth, int playerrn, int α, int β);
 
 #endif /* othello_h */

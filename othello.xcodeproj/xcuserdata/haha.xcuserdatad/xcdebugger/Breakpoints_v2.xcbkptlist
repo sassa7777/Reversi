@@ -3,4 +3,162 @@
    uuid = "C5089725-A641-490C-A7F3-20D373BF1994"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B8055C6D-E95D-4E68-B6E7-7183FC136D68"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "othello/othello.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
+            landmarkName = "minimax(depth, playerrn)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "B8055C6D-E95D-4E68-B6E7-7183FC136D68 - 840e980636e937fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "543"
+                  endingLineNumber = "543"
+                  offsetFromSymbolStart = "1016">
+               </Location>
+               <Location
+                  uuid = "B8055C6D-E95D-4E68-B6E7-7183FC136D68 - 840e980636e937fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "543"
+                  endingLineNumber = "543"
+                  offsetFromSymbolStart = "1056">
+               </Location>
+               <Location
+                  uuid = "B8055C6D-E95D-4E68-B6E7-7183FC136D68 - 840e980636e937fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "543"
+                  endingLineNumber = "543"
+                  offsetFromSymbolStart = "1064">
+               </Location>
+               <Location
+                  uuid = "B8055C6D-E95D-4E68-B6E7-7183FC136D68 - 840e980636e9341e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "544"
+                  endingLineNumber = "544"
+                  offsetFromSymbolStart = "1064">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "45DBC9F8-73B3-46F5-9DF5-385EF958F2AC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "othello/othello.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "549"
+            endingLineNumber = "549"
+            landmarkName = "minimax(depth, playerrn)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "45DBC9F8-73B3-46F5-9DF5-385EF958F2AC - 840e980636e93479"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "1060">
+               </Location>
+               <Location
+                  uuid = "45DBC9F8-73B3-46F5-9DF5-385EF958F2AC - 840e980636e93479"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "1100">
+               </Location>
+               <Location
+                  uuid = "45DBC9F8-73B3-46F5-9DF5-385EF958F2AC - 840e980636e93479"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "547"
+                  endingLineNumber = "547"
+                  offsetFromSymbolStart = "1108">
+               </Location>
+               <Location
+                  uuid = "45DBC9F8-73B3-46F5-9DF5-385EF958F2AC - 840e980636e9349a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "minimax"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "548"
+                  endingLineNumber = "548"
+                  offsetFromSymbolStart = "1108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

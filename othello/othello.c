@@ -23,6 +23,8 @@ void reset(void)
     //白が2,黒が1
     player = 1;
     skip = false;
+    finished = 0;
+    skipped = false;
     for(int x = 0; x < 10; x++)
     {
         for(int y = 0; y < 10; y++)
@@ -68,23 +70,20 @@ void check2(int player)
     {
         canPut[0][i] = false;
         canPut[9][i] = false;
-    }
-    for(int i = 1; i < 9; i++)
-    {
         canPut[i][0] = false;
         canPut[i][9] = false;
     }
     
-    for(int i = 0; i < 10; i++)
-    {
-        for(int j = 0; j < 10; j++)
-        {
-            if(isfree[i][j] == true)
-            {
-                board[i][j] = 0;
-            }
-        }
-    }
+//    for(int i = 0; i < 10; i++)
+//    {
+//        for(int j = 0; j < 10; j++)
+//        {
+//            if(isfree[i][j] == true)
+//            {
+//                board[i][j] = 0;
+//            }
+//        }
+//    }
     
     skip = false;
     for(int i = 1; i < 9; i++)
@@ -93,41 +92,129 @@ void check2(int player)
         {
             if (canPut[i][j] == true)
             {
+                if(skipped == true && player == 2) ai2();
+                skipped = false;
                 skip = true;
                 return;
             }
         }
     }
     
-    if(skip == false)
+    if(skipped == true)
     {
-        if(player == 1)
+        printf("終了\n");
+        finished = 1;
+        return;
+    }
+    
+    if(player == 1)
+    {
+        player = 2;
+        printf("スキップ\n");
+        skipped = true;
+        check2(player);
+    }
+    else if(player == 2)
+    {
+        player = 1;
+        printf("スキップ\n");
+        skipped = true;
+        check2(player);
+    }
+}
+
+void check3(int player, bool canput[10][10])
+{
+    for(int y = 1; y < 9; y++)
+    {
+        for(int x = 1; x < 9; x++)
         {
-            player = 2;
-            printf("スキップ\n");
-            skipped++;
-            if(skipped > 60)
+            if(board[y][x] == player)
             {
-                printf("終了\n");
-                finished = 1;
-                return;
+                for(int xx = -1; xx < 2; xx++)
+                {
+                    for(int yy = -1; yy < 2; yy++)
+                    {
+                        if(board[y + yy][x + xx] == (3-player))
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == (3-player))
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canput[yyy][xxx] = true;
+                            }
+                        }
+                    }
+                }
             }
-            check2(player);
-        }
-        else if(player == 2)
-        {
-            player = 1;
-            printf("スキップ\n");
-            skipped++;
-            if(skipped > 60)
-            {
-                printf("終了\n");
-                finished = 1;
-                return;
-            }
-            check2(player);
         }
     }
+    for(int i = 0; i < 10; i++)
+    {
+        canput[0][i] = false;
+        canput[9][i] = false;
+        canput[i][0] = false;
+        canput[i][9] = false;
+    }
+    
+//    for(int i = 0; i < 10; i++)
+//    {
+//        for(int j = 0; j < 10; j++)
+//        {
+//            if(isfree[i][j] == true)
+//            {
+//                board[i][j] = 0;
+//            }
+//        }
+//    }
+    
+    skip = false;
+    for(int i = 1; i < 9; i++)
+    {
+        for(int j = 1; j < 9; j++)
+        {
+            if (canput[i][j] == true)
+            {
+                skip = true;
+                return;
+            }
+        }
+    }
+//    
+//    if(skip == false)
+//    {
+//        if(player == 1)
+//        {
+//            player = 2;
+//            printf("スキップ\n");
+//            skipped++;
+//            if(skipped > 60)
+//            {
+//                printf("終了\n");
+//                finished = 1;
+//                return;
+//            }
+//            check3(player, canput);
+//        }
+//        else if(player == 2)
+//        {
+//            player = 1;
+//            printf("スキップ\n");
+//            skipped++;
+//            if(skipped > 60)
+//            {
+//                printf("終了\n");
+//                finished = 1;
+//                return;
+//            }
+//            check3(player, canput);
+//        }
+//    }
 }
 
 void reverse(int x, int y)
@@ -192,8 +279,8 @@ void rebuild(void)
 
 int putstone(int py, int px)
 {
-    printf("Player: %d\n", player);
-    printf("(%d, %d)\n", px, py);
+    //printf("Player: %d\n", player);
+    //printf("(%d, %d)\n", px, py);
     if(px > 8 || py > 8)
     {
         printf("[*]そこには置けません\n");
@@ -231,21 +318,21 @@ int putstone(int py, int px)
     }
 }
 
-int putstone2(int py, int px, int player)
+int putstone2(int py, int px, int player, bool canput[10][10])
 {
-    printf("Player: %d\n", player);
-    printf("(%d, %d)\n", px, py);
-    if(px > 8 || py > 8)
+    //printf("Player: %d\n", player);
+    //printf("(%d, %d)\n", px, py);
+    if(px > 9 || py > 9)
     {
         printf("[*]そこには置けません\n");
         return 0;
     }
-    if(canPut[py][px] == true)
+    if(canput[py][px] == true)
     {
         if(player == 1)
         {
             board[py][px] = 1;
-            isfree[py][px] = false;
+            //isfree[py][px] = false;
             reverse(px, py);
             skip = false;
             return 1;
@@ -253,7 +340,7 @@ int putstone2(int py, int px, int player)
         else if(player == 2)
         {
             board[py][px] = 2;
-            isfree[py][px] = false;
+            //isfree[py][px] = false;
             reverse(px, py);
             skip = false;
             return 2;
@@ -379,68 +466,174 @@ void ai(void)
 
 void ai2(void)
 {
+    if(player == 1) return;
     isbot = true;
     minimax(DEPTH, player);
-    player = 2;
     putstone(tmpy, tmpx);
     isbot = false;
 }
 
 int minimax(int depth, int playerrn)
 {
-    if(depth == 0) return countscore(board);
+    if(depth == 0)
+    {
+        printf("score is %d\n", countscore(board));
+        return countscore(board);
+    }
     
     int score = -99999;
     int var;
-    
-    for (int i = 0; i < 8; i++)
+    int tmpboard[10][10];
+    bool canput[10][10];
+    for (int i = 0; i < 10; i++)
     {
-        for (int j=0; j < 8; j++)
+        for (int j=0; j < 10; j++)
         {
-            tmpboard[depth][i][j] = board[i+1][j+1];
+            tmpboard[i][j] = board[i][j];
+            canput[i][j] = false;
         }
     }
-    check2(playerrn);
-    //printf("checked %d\n", playerrn);
+    
+    check3(playerrn, canput);
     for (int i=1; i<9; i++)
     {
         for (int j=1; j<9; j++)
         {
-            if(canPut[i][j] == true)
+            if(canput[i][j] == true)
             {
-                printf("putable: (%d, %d)\n", j, i);
-                putstone2(i,j, playerrn);
+                //printf("putable: (%d, %d), DEPTH is %d\n", j, i, depth);
+                putstone2(i,j, playerrn, canput);
                 
-                if(playerrn == 2)
+                if(putableto(3-playerrn) == true)
                 {
-                    var = -minimax(depth-1, 1);
+                    //printf("ok\n");
+                    var = minimax(depth-1, 3-playerrn);
                 }
                 else
                 {
-                    var = minimax(depth-1, 2);
+                    printf("cant put\n");
+                    var = minimax(depth-1, playerrn);
                 }
+                printf("score is %d, depth:%d, player:%d\n", var, depth, playerrn);
                 
-                if(score <= var)
+                if(playerrn == 2 && score <= var)
                 {
                     score = var;
                     if(depth == DEPTH)
                     {
                         tmpx = j;
                         tmpy = i;
+                        //printf("best place is (%d, %d), score %d\n", j, i, var);
                     }
                 }
                 
-                for (int y = 0; y < 8; y++)
+                if(playerrn == 1 && score <= -var) score = -var;
+                
+                for (int y = 0; y < 10; y++)
                 {
-                    for (int x=0; x < 8; x++)
+                    for (int x=0; x < 10; x++)
                     {
-                        board[y+1][x+1] = tmpboard[depth][y][x];
+                        board[y][x] = tmpboard[y][x];
                     }
                 }
             }
         }
     }
-    return score;
+    printf("Score before re:%d, depth: %d\n", score, depth);
+    if(score == 99999)
+    {
+        printf("");
+    }
+    if(score == -99999)
+    {
+        printf("");
+    }
+    if(playerrn == 2) return score;
+    if(playerrn == 1) return -score;
+    printf("ERROR_1\n");
+    return 99999;
+}
+
+int alpha_beta(int depth, int playerrn, int alpha, int beta)
+{
+    if(depth == 0)
+    {
+        printf("score is %d\n", countscore(board));
+        return countscore(board);
+    }
+    
+    int score;
+    int var;
+    int tmpboard[10][10];
+    bool canput[10][10];
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j=0; j < 10; j++)
+        {
+            tmpboard[i][j] = board[i][j];
+            canput[i][j] = false;
+        }
+    }
+    
+    check3(playerrn, canput);
+    for (int i=1; i<9; i++)
+    {
+        for (int j=1; j<9; j++)
+        {
+            if(canput[i][j] == true)
+            {
+                //printf("putable: (%d, %d), DEPTH is %d\n", j, i, depth);
+                putstone2(i,j, playerrn, canput);
+                
+                if(putableto(3-playerrn) == true)
+                {
+                    //printf("ok\n");
+                    var = alpha_beta(depth-1, 3-playerrn, alpha, beta);
+                }
+                else
+                {
+                    printf("cant put\n");
+                    var = alpha_beta(depth-1, playerrn, alpha, beta);
+                }
+                printf("score is %d, depth:%d, player:%d\n", var, depth, playerrn);
+                
+                if(playerrn == 2 && score <= var)
+                {
+                    score = var;
+                    if(depth == DEPTH)
+                    {
+                        tmpx = j;
+                        tmpy = i;
+                        //printf("best place is (%d, %d), score %d\n", j, i, var);
+                    }
+                }
+                
+                if(playerrn == 1 && score <= -var) score = -var;
+                
+                for (int y = 0; y < 10; y++)
+                {
+                    for (int x=0; x < 10; x++)
+                    {
+                        board[y][x] = tmpboard[y][x];
+                    }
+                }
+            }
+        }
+    }
+    printf("Score before re:%d, depth: %d\n", score, depth);
+    if(score == 99999)
+    {
+        printf("");
+    }
+    if(score == -99999)
+    {
+        printf("");
+    }
+    if(playerrn == 2) return score;
+    if(playerrn == 1) return -score;
+    printf("ERROR_1\n");
+    return 99999;
+
 }
 
 void virtualput(int px, int py)
@@ -466,15 +659,13 @@ void virtualput(int px, int py)
 
 int countscore(int board[10][10])
 {
-    score = 0;
+    int score = 0;
     for(int x = 1; x < 9; x++)
     {
         for(int y = 1; y < 9; y++)
         {
-            if(board[x][y] == 2)
-            {
-                score += scoreboard[x-1][y-1];
-            }
+            if(board[x][y] == 2) score += scoreboard[x][y];
+            if(board[x][y] == 1) score -= scoreboard[x][y];
         }
     }
     return score;
@@ -531,4 +722,38 @@ void virtualreverse(int y, int x)
 int returnplayer(void)
 {
     return player;
+}
+
+bool putableto(int player)
+{
+    for(int y = 1; y < 9; y++)
+    {
+        for(int x = 1; x < 9; x++)
+        {
+            if(board[y][x] == player)
+            {
+                for(int xx = -1; xx < 2; xx++)
+                {
+                    for(int yy = -1; yy < 2; yy++)
+                    {
+                        if(board[y + yy][x + xx] == (3-player))
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == (3-player))
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }

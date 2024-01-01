@@ -611,7 +611,7 @@ class ViewController: NSViewController
     
     func putai()
     {
-        rebuild_virtual()
+        //rebuild_virtual()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
             ai2()
             self.reloadview()
