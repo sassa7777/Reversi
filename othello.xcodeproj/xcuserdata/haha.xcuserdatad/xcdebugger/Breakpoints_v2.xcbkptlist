@@ -14,8 +14,8 @@
             filePath = "othello/othello.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "546"
-            endingLineNumber = "546"
+            startingLineNumber = "494"
+            endingLineNumber = "494"
             landmarkName = "minimax(depth, playerrn)"
             landmarkType = "9">
             <Locations>
@@ -92,8 +92,8 @@
             filePath = "othello/othello.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "550"
-            endingLineNumber = "550"
+            startingLineNumber = "498"
+            endingLineNumber = "498"
             landmarkName = "minimax(depth, playerrn)"
             landmarkType = "9">
             <Locations>
@@ -156,6 +156,54 @@
                   startingLineNumber = "548"
                   endingLineNumber = "548"
                   offsetFromSymbolStart = "1108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DCB179EE-2A73-4B8E-A1C6-B3FD8B06B33D"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "othello/othello.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
+            landmarkName = "check2(player)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "DCB179EE-2A73-4B8E-A1C6-B3FD8B06B33D - c2da9eb1687f74cb"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "check2"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "952">
+               </Location>
+               <Location
+                  uuid = "DCB179EE-2A73-4B8E-A1C6-B3FD8B06B33D - c2da9eb1687f742a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "check2"
+                  moduleName = "othello"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/haha/Desktop/othello/othello/othello.c"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "104"
+                  endingLineNumber = "104"
+                  offsetFromSymbolStart = "1040">
                </Location>
             </Locations>
          </BreakpointContent>

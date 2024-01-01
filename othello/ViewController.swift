@@ -615,13 +615,6 @@ class ViewController: NSViewController
         {
             ai2()
             self.reloadview()
-            if returnplayer() == 2
-            {
-                if finishedsw() != 1
-                {
-                    self.putai()
-                }
-            }
         }
     }
     
@@ -1347,6 +1340,11 @@ class ViewController: NSViewController
             result()
             performSegue(withIdentifier: "popup", sender: self)
             close.isHidden = false
+            return
+        }
+        if player == 2
+        {
+            self.putai()
         }
     }
 }

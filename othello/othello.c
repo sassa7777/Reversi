@@ -74,17 +74,6 @@ void check2(int player)
         canPut[i][9] = false;
     }
     
-//    for(int i = 0; i < 10; i++)
-//    {
-//        for(int j = 0; j < 10; j++)
-//        {
-//            if(isfree[i][j] == true)
-//            {
-//                board[i][j] = 0;
-//            }
-//        }
-//    }
-    
     skip = false;
     for(int i = 1; i < 9; i++)
     {
@@ -109,16 +98,16 @@ void check2(int player)
     
     if(player == 1)
     {
-        player = 2;
-        printf("スキップ\n");
+        printf("Player:%dをスキップ\n", player);
         skipped = true;
+        player = 2;
         check2(player);
     }
     else if(player == 2)
     {
-        player = 1;
-        printf("スキップ\n");
+        printf("Player:%dをスキップ\n", player);
         skipped = true;
+        player = 1;
         check2(player);
     }
 }
@@ -162,17 +151,6 @@ void check3(int player, bool canput[10][10])
         canput[i][9] = false;
     }
     
-//    for(int i = 0; i < 10; i++)
-//    {
-//        for(int j = 0; j < 10; j++)
-//        {
-//            if(isfree[i][j] == true)
-//            {
-//                board[i][j] = 0;
-//            }
-//        }
-//    }
-    
     skip = false;
     for(int i = 1; i < 9; i++)
     {
@@ -185,36 +163,6 @@ void check3(int player, bool canput[10][10])
             }
         }
     }
-//    
-//    if(skip == false)
-//    {
-//        if(player == 1)
-//        {
-//            player = 2;
-//            printf("スキップ\n");
-//            skipped++;
-//            if(skipped > 60)
-//            {
-//                printf("終了\n");
-//                finished = 1;
-//                return;
-//            }
-//            check3(player, canput);
-//        }
-//        else if(player == 2)
-//        {
-//            player = 1;
-//            printf("スキップ\n");
-//            skipped++;
-//            if(skipped > 60)
-//            {
-//                printf("終了\n");
-//                finished = 1;
-//                return;
-//            }
-//            check3(player, canput);
-//        }
-//    }
 }
 
 void reverse(int x, int y)
