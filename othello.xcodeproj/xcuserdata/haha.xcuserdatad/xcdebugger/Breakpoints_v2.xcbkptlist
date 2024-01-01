@@ -14,8 +14,8 @@
             filePath = "othello/othello.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "545"
-            endingLineNumber = "545"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
             landmarkName = "minimax(depth, playerrn)"
             landmarkType = "9">
             <Locations>
@@ -92,8 +92,8 @@
             filePath = "othello/othello.c"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "549"
-            endingLineNumber = "549"
+            startingLineNumber = "550"
+            endingLineNumber = "550"
             landmarkName = "minimax(depth, playerrn)"
             landmarkType = "9">
             <Locations>

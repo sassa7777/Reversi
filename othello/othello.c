@@ -92,7 +92,7 @@ void check2(int player)
         {
             if (canPut[i][j] == true)
             {
-                if(skipped == true && player == 2) ai2();
+                //if(skipped == true && player == 2) ai2();
                 skipped = false;
                 skip = true;
                 return;
@@ -468,6 +468,7 @@ void ai2(void)
 {
     if(player == 1) return;
     isbot = true;
+    printf("[*]Botが考え中..\n");
     minimax(DEPTH, player);
     putstone(tmpy, tmpx);
     isbot = false;
@@ -477,7 +478,7 @@ int minimax(int depth, int playerrn)
 {
     if(depth == 0)
     {
-        printf("score is %d\n", countscore(board));
+        //printf("score is %d\n", countscore(board));
         return countscore(board);
     }
     
@@ -514,7 +515,7 @@ int minimax(int depth, int playerrn)
                     printf("cant put\n");
                     var = minimax(depth-1, playerrn);
                 }
-                printf("score is %d, depth:%d, player:%d\n", var, depth, playerrn);
+                //printf("score is %d, depth:%d, player:%d\n", var, depth, playerrn);
                 
                 if(playerrn == 2 && score <= var)
                 {
@@ -539,7 +540,7 @@ int minimax(int depth, int playerrn)
             }
         }
     }
-    printf("Score before re:%d, depth: %d\n", score, depth);
+    //printf("Score before re:%d, depth: %d\n", score, depth);
     if(score == 99999)
     {
         printf("");

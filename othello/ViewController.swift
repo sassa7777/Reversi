@@ -611,8 +611,8 @@ class ViewController: NSViewController
     
     func putai()
     {
-        //rebuild_virtual()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+        {
             ai2()
             self.reloadview()
             if returnplayer() == 2
