@@ -655,8 +655,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.1.1
                         {
-                        case 0:
-                            aa.image = NSImage(named: "null")
                         case 1:
                             aa.image = NSImage(named: "black")
                         case 2:
@@ -667,8 +665,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.1.2
                         {
-                        case 0:
-                            ab.image = NSImage(named: "null")
                         case 1:
                             ab.image = NSImage(named: "black")
                         case 2:
@@ -679,8 +675,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.1.3
                         {
-                        case 0:
-                            ac.image = NSImage(named: "null")
                         case 1:
                             ac.image = NSImage(named: "black")
                         case 2:
@@ -691,8 +685,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.1.4
                         {
-                        case 0:
-                            ad.image = NSImage(named: "null")
                         case 1:
                             ad.image = NSImage(named: "black")
                         case 2:
@@ -703,8 +695,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.1.5
                         {
-                        case 0:
-                            ae.image = NSImage(named: "null")
                         case 1:
                             ae.image = NSImage(named: "black")
                         case 2:
@@ -715,8 +705,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.1.6
                         {
-                        case 0:
-                            af.image = NSImage(named: "null")
                         case 1:
                             af.image = NSImage(named: "black")
                         case 2:
@@ -727,8 +715,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.1.7
                         {
-                        case 0:
-                            ag.image = NSImage(named: "null")
                         case 1:
                             ag.image = NSImage(named: "black")
                         case 2:
@@ -739,8 +725,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.1.8
                         {
-                        case 0:
-                            ah.image = NSImage(named: "null")
                         case 1:
                             ah.image = NSImage(named: "black")
                         case 2:
@@ -757,8 +741,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.2.1
                         {
-                        case 0:
-                            ba.image = NSImage(named: "null")
                         case 1:
                             ba.image = NSImage(named: "black")
                         case 2:
@@ -769,8 +751,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.2.2
                         {
-                        case 0:
-                            bb.image = NSImage(named: "null")
                         case 1:
                             bb.image = NSImage(named: "black")
                         case 2:
@@ -781,8 +761,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.2.3
                         {
-                        case 0:
-                            bc.image = NSImage(named: "null")
                         case 1:
                             bc.image = NSImage(named: "black")
                         case 2:
@@ -793,8 +771,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.2.4
                         {
-                        case 0:
-                            bd.image = NSImage(named: "null")
                         case 1:
                             bd.image = NSImage(named: "black")
                         case 2:
@@ -805,8 +781,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.2.5
                         {
-                        case 0:
-                            be.image = NSImage(named: "null")
                         case 1:
                             be.image = NSImage(named: "black")
                         case 2:
@@ -817,8 +791,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.2.6
                         {
-                        case 0:
-                            bf.image = NSImage(named: "null")
                         case 1:
                             bf.image = NSImage(named: "black")
                         case 2:
@@ -829,8 +801,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.2.7
                         {
-                        case 0:
-                            bg.image = NSImage(named: "null")
                         case 1:
                             bg.image = NSImage(named: "black")
                         case 2:
@@ -841,8 +811,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.2.8
                         {
-                        case 0:
-                            bh.image = NSImage(named: "null")
                         case 1:
                             bh.image = NSImage(named: "black")
                         case 2:
@@ -859,8 +827,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.3.1
                         {
-                        case 0:
-                            ca.image = NSImage(named: "null")
                         case 1:
                             ca.image = NSImage(named: "black")
                         case 2:
@@ -871,8 +837,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.3.2
                         {
-                        case 0:
-                            cb.image = NSImage(named: "null")
                         case 1:
                             cb.image = NSImage(named: "black")
                         case 2:
@@ -883,8 +847,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.3.3
                         {
-                        case 0:
-                            cc.image = NSImage(named: "null")
                         case 1:
                             cc.image = NSImage(named: "black")
                         case 2:
@@ -895,8 +857,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.3.4
                         {
-                        case 0:
-                            cd.image = NSImage(named: "null")
                         case 1:
                             cd.image = NSImage(named: "black")
                         case 2:
@@ -907,8 +867,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.3.5
                         {
-                        case 0:
-                            ce.image = NSImage(named: "null")
                         case 1:
                             ce.image = NSImage(named: "black")
                         case 2:
@@ -919,8 +877,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.3.6
                         {
-                        case 0:
-                            cf.image = NSImage(named: "null")
                         case 1:
                             cf.image = NSImage(named: "black")
                         case 2:
@@ -931,8 +887,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.3.7
                         {
-                        case 0:
-                            cg.image = NSImage(named: "null")
                         case 1:
                             cg.image = NSImage(named: "black")
                         case 2:
@@ -943,8 +897,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.3.8
                         {
-                        case 0:
-                            ch.image = NSImage(named: "null")
                         case 1:
                             ch.image = NSImage(named: "black")
                         case 2:
@@ -961,8 +913,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.4.1
                         {
-                        case 0:
-                            da.image = NSImage(named: "null")
                         case 1:
                             da.image = NSImage(named: "black")
                         case 2:
@@ -973,8 +923,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.4.2
                         {
-                        case 0:
-                            db.image = NSImage(named: "null")
                         case 1:
                             db.image = NSImage(named: "black")
                         case 2:
@@ -985,8 +933,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.4.3
                         {
-                        case 0:
-                            dc.image = NSImage(named: "null")
                         case 1:
                             dc.image = NSImage(named: "black")
                         case 2:
@@ -997,8 +943,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.4.4
                         {
-                        case 0:
-                            dd.image = NSImage(named: "null")
                         case 1:
                             dd.image = NSImage(named: "black")
                         case 2:
@@ -1009,8 +953,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.4.5
                         {
-                        case 0:
-                            de.image = NSImage(named: "null")
                         case 1:
                             de.image = NSImage(named: "black")
                         case 2:
@@ -1021,8 +963,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.4.6
                         {
-                        case 0:
-                            df.image = NSImage(named: "null")
                         case 1:
                             df.image = NSImage(named: "black")
                         case 2:
@@ -1033,8 +973,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.4.7
                         {
-                        case 0:
-                            dg.image = NSImage(named: "null")
                         case 1:
                             dg.image = NSImage(named: "black")
                         case 2:
@@ -1045,8 +983,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.4.8
                         {
-                        case 0:
-                            dh.image = NSImage(named: "null")
                         case 1:
                             dh.image = NSImage(named: "black")
                         case 2:
@@ -1063,8 +999,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.5.1
                         {
-                        case 0:
-                            ea.image = NSImage(named: "null")
                         case 1:
                             ea.image = NSImage(named: "black")
                         case 2:
@@ -1075,8 +1009,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.5.2
                         {
-                        case 0:
-                            eb.image = NSImage(named: "null")
                         case 1:
                             eb.image = NSImage(named: "black")
                         case 2:
@@ -1087,8 +1019,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.5.3
                         {
-                        case 0:
-                            ec.image = NSImage(named: "null")
                         case 1:
                             ec.image = NSImage(named: "black")
                         case 2:
@@ -1099,8 +1029,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.5.4
                         {
-                        case 0:
-                            ed.image = NSImage(named: "null")
                         case 1:
                             ed.image = NSImage(named: "black")
                         case 2:
@@ -1111,8 +1039,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.5.5
                         {
-                        case 0:
-                            ee.image = NSImage(named: "null")
                         case 1:
                             ee.image = NSImage(named: "black")
                         case 2:
@@ -1123,8 +1049,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.5.6
                         {
-                        case 0:
-                            ef.image = NSImage(named: "null")
                         case 1:
                             ef.image = NSImage(named: "black")
                         case 2:
@@ -1135,8 +1059,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.5.7
                         {
-                        case 0:
-                            eg.image = NSImage(named: "null")
                         case 1:
                             eg.image = NSImage(named: "black")
                         case 2:
@@ -1147,8 +1069,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.5.8
                         {
-                        case 0:
-                            eh.image = NSImage(named: "null")
                         case 1:
                             eh.image = NSImage(named: "black")
                         case 2:
@@ -1165,8 +1085,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.6.1
                         {
-                        case 0:
-                            fa.image = NSImage(named: "null")
                         case 1:
                             fa.image = NSImage(named: "black")
                         case 2:
@@ -1177,8 +1095,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.6.2
                         {
-                        case 0:
-                            fb.image = NSImage(named: "null")
                         case 1:
                             fb.image = NSImage(named: "black")
                         case 2:
@@ -1189,8 +1105,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.6.3
                         {
-                        case 0:
-                            fc.image = NSImage(named: "null")
                         case 1:
                             fc.image = NSImage(named: "black")
                         case 2:
@@ -1201,8 +1115,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.6.4
                         {
-                        case 0:
-                            fd.image = NSImage(named: "null")
                         case 1:
                             fd.image = NSImage(named: "black")
                         case 2:
@@ -1213,8 +1125,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.6.5
                         {
-                        case 0:
-                            fe.image = NSImage(named: "null")
                         case 1:
                             fe.image = NSImage(named: "black")
                         case 2:
@@ -1225,8 +1135,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.6.6
                         {
-                        case 0:
-                            ff.image = NSImage(named: "null")
                         case 1:
                             ff.image = NSImage(named: "black")
                         case 2:
@@ -1237,8 +1145,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.6.7
                         {
-                        case 0:
-                            fg.image = NSImage(named: "null")
                         case 1:
                             fg.image = NSImage(named: "black")
                         case 2:
@@ -1249,8 +1155,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.6.8
                         {
-                        case 0:
-                            fh.image = NSImage(named: "null")
                         case 1:
                             fh.image = NSImage(named: "black")
                         case 2:
@@ -1267,8 +1171,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.7.1
                         {
-                        case 0:
-                            ga.image = NSImage(named: "null")
                         case 1:
                             ga.image = NSImage(named: "black")
                         case 2:
@@ -1279,8 +1181,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.7.2
                         {
-                        case 0:
-                            gb.image = NSImage(named: "null")
                         case 1:
                             gb.image = NSImage(named: "black")
                         case 2:
@@ -1291,8 +1191,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.7.3
                         {
-                        case 0:
-                            gc.image = NSImage(named: "null")
                         case 1:
                             gc.image = NSImage(named: "black")
                         case 2:
@@ -1303,8 +1201,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.7.4
                         {
-                        case 0:
-                            gd.image = NSImage(named: "null")
                         case 1:
                             gd.image = NSImage(named: "black")
                         case 2:
@@ -1315,8 +1211,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.7.5
                         {
-                        case 0:
-                            ge.image = NSImage(named: "null")
                         case 1:
                             ge.image = NSImage(named: "black")
                         case 2:
@@ -1327,8 +1221,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.7.6
                         {
-                        case 0:
-                            gf.image = NSImage(named: "null")
                         case 1:
                             gf.image = NSImage(named: "black")
                         case 2:
@@ -1339,8 +1231,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.7.7
                         {
-                        case 0:
-                            gg.image = NSImage(named: "null")
                         case 1:
                             gg.image = NSImage(named: "black")
                         case 2:
@@ -1351,8 +1241,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.7.8
                         {
-                        case 0:
-                            gh.image = NSImage(named: "null")
                         case 1:
                             gh.image = NSImage(named: "black")
                         case 2:
@@ -1369,8 +1257,6 @@ class ViewController: NSViewController
                     case 1:
                         switch board.8.1
                         {
-                        case 0:
-                            ha.image = NSImage(named: "null")
                         case 1:
                             ha.image = NSImage(named: "black")
                         case 2:
@@ -1381,8 +1267,6 @@ class ViewController: NSViewController
                     case 2:
                         switch board.8.2
                         {
-                        case 0:
-                            hb.image = NSImage(named: "null")
                         case 1:
                             hb.image = NSImage(named: "black")
                         case 2:
@@ -1393,8 +1277,6 @@ class ViewController: NSViewController
                     case 3:
                         switch board.8.3
                         {
-                        case 0:
-                            hc.image = NSImage(named: "null")
                         case 1:
                             hc.image = NSImage(named: "black")
                         case 2:
@@ -1405,8 +1287,6 @@ class ViewController: NSViewController
                     case 4:
                         switch board.8.4
                         {
-                        case 0:
-                            hd.image = NSImage(named: "null")
                         case 1:
                             hd.image = NSImage(named: "black")
                         case 2:
@@ -1417,8 +1297,6 @@ class ViewController: NSViewController
                     case 5:
                         switch board.8.5
                         {
-                        case 0:
-                            he.image = NSImage(named: "null")
                         case 1:
                             he.image = NSImage(named: "black")
                         case 2:
@@ -1429,8 +1307,6 @@ class ViewController: NSViewController
                     case 6:
                         switch board.8.6
                         {
-                        case 0:
-                            hf.image = NSImage(named: "null")
                         case 1:
                             hf.image = NSImage(named: "black")
                         case 2:
@@ -1441,8 +1317,6 @@ class ViewController: NSViewController
                     case 7:
                         switch board.8.7
                         {
-                        case 0:
-                            hg.image = NSImage(named: "null")
                         case 1:
                             hg.image = NSImage(named: "black")
                         case 2:
@@ -1453,8 +1327,6 @@ class ViewController: NSViewController
                     case 8:
                         switch board.8.8
                         {
-                        case 0:
-                            hh.image = NSImage(named: "null")
                         case 1:
                             hh.image = NSImage(named: "black")
                         case 2:
