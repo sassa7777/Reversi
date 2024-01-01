@@ -69,6 +69,5 @@ int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
-int alpha_beta(int depth, int playerrn, int α, int β);
 
 #endif /* othello_h */
