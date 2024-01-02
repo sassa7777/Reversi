@@ -462,7 +462,6 @@ int minimax(int depth, int playerrn)
                 
                 if(putableto(3-playerrn) == true)
                 {
-                    //printf("ok\n");
                     var = minimax(depth-1, 3-playerrn);
                 }
                 else

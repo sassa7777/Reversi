@@ -7,10 +7,11 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 7
+#define DEPTH 6
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 int board[10][10];
 int virtualboard[10][10];
@@ -69,5 +70,6 @@ int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
+int minimax_multi(int depth, int playerrn);
 
 #endif /* othello_h */
