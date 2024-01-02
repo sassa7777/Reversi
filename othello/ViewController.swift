@@ -86,7 +86,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -94,7 +94,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -102,7 +102,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -110,7 +110,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -118,7 +118,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -126,7 +126,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -134,7 +134,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -142,7 +142,7 @@ class ViewController: NSViewController
     {
         if(putstone(1, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -150,7 +150,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -158,7 +158,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -166,7 +166,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -174,7 +174,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -182,7 +182,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -190,7 +190,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -198,7 +198,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -206,7 +206,7 @@ class ViewController: NSViewController
     {
         if(putstone(2, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -214,7 +214,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -222,7 +222,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -230,7 +230,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -238,7 +238,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -246,7 +246,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -254,7 +254,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -262,7 +262,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -270,7 +270,7 @@ class ViewController: NSViewController
     {
         if(putstone(3, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -278,7 +278,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -286,7 +286,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -294,7 +294,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -302,7 +302,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -310,7 +310,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -318,7 +318,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -326,7 +326,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -334,7 +334,7 @@ class ViewController: NSViewController
     {
         if(putstone(4, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -342,7 +342,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -350,7 +350,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
         
@@ -359,7 +359,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -367,7 +367,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -375,7 +375,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -383,7 +383,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -391,7 +391,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -399,7 +399,7 @@ class ViewController: NSViewController
     {
         if(putstone(5, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -407,7 +407,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -415,7 +415,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -423,7 +423,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -431,7 +431,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -439,7 +439,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -447,7 +447,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -455,7 +455,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -463,7 +463,7 @@ class ViewController: NSViewController
     {
         if(putstone(6, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -471,7 +471,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -479,7 +479,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -487,7 +487,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -495,7 +495,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -503,7 +503,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -511,7 +511,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -519,7 +519,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -527,7 +527,7 @@ class ViewController: NSViewController
     {
         if(putstone(7, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -535,7 +535,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 1) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -543,7 +543,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 2) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -551,7 +551,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 3) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -559,7 +559,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 4) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -567,7 +567,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 5) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -575,7 +575,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 6) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -583,7 +583,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 7) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -591,7 +591,7 @@ class ViewController: NSViewController
     {
         if(putstone(8, 8) != 0)
         {
-            reloadview()
+            reloadview(bot: false)
             putai()
         }
     }
@@ -605,7 +605,7 @@ class ViewController: NSViewController
     {
         close.isHidden = true
         reset()
-        reloadview()
+        reloadview(bot: false)
         //print(board.3.3)
     }
     
@@ -613,8 +613,15 @@ class ViewController: NSViewController
     {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
-            ai2()
-            self.reloadview()
+            if(ai2() == 1)
+            {
+                self.reloadview(bot: false)
+                self.putai()
+            }
+            else
+            {
+                return
+            }
         }
     }
     
@@ -634,9 +641,9 @@ class ViewController: NSViewController
         }
     }
     
-    func reloadview()
+    func reloadview(bot: Bool)
     {
-        rebuild()
+        rebuild(bot)
         print("[*]場面を再構築中...")
         for i in 1..<9 {
             for j in 1..<9 {
@@ -1341,10 +1348,6 @@ class ViewController: NSViewController
             performSegue(withIdentifier: "popup", sender: self)
             close.isHidden = false
             return
-        }
-        if player == 2
-        {
-            self.putai()
         }
     }
 }

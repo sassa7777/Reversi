@@ -7,7 +7,7 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 5
+#define DEPTH 7
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -29,12 +29,12 @@ bool isbot = false;
 int scoreboard[10][10] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
-        0, -3, -5, -3, -3, -3, -3, -5, -3, 0,
+        0, -3, -8, -3, -3, -3, -3, -8, -3, 0,
         0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
         0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
         0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
         0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
-        0, -3, -5, -3, -3, -3, -3, -5, -3, 0,
+        0, -3, -8, -3, -3, -3, -3, -8, -3, 0,
         0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
@@ -56,13 +56,13 @@ void check2(int player);
 bool putableto(int player);
 int putstone(int px, int py);
 void reverse(int px, int py);
-void rebuild(void);
+void rebuild(bool bot);
 void countstone(void);
 int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
 void ai(void);
-void ai2(void);
+int ai2(void);
 void virtualput(int px, int py);
 void virtualreverse(int x, int y);
 int countscore(int board[10][10]);
