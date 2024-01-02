@@ -16,6 +16,19 @@
 		1BA79BFE2AC848F600E864A1 /* othello.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* othello.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		1B51CB022B4449D900307437 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		1B84B9A92AD2F01200E10BFB /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
@@ -84,6 +97,7 @@
 				1BA79BE22AC835CF00E864A1 /* Sources */,
 				1BA79BE32AC835CF00E864A1 /* Frameworks */,
 				1BA79BE42AC835CF00E864A1 /* Resources */,
+				1B51CB022B4449D900307437 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -145,10 +159,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BA79BFE2AC848F600E864A1 /* othello.c in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
 				1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */,
 				1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */,
-				1BA79BFE2AC848F600E864A1 /* othello.c in Sources */,
 				1BA79BEA2AC835CF00E864A1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,7 +323,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -344,6 +359,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

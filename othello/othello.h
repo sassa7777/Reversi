@@ -16,7 +16,6 @@
 int board[10][10];
 int virtualboard[10][10];
 bool canPut[10][10];
-bool isfree[10][10];
 int finished = 0;
 bool skipped = false;
 bool skip = false;
@@ -29,14 +28,14 @@ int tmpx, tmpy;
 bool isbot = false;
 int scoreboard[10][10] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
+        0, 8, -3, 0, -1, -1, 0, -3, 8, 0,
         0, -3, -8, -3, -3, -3, -3, -8, -3, 0,
         0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
         0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
         0, -1, -3, 0, -1, -1, 0, -3, -1, 0,
         0, 0, -3, 0, 0, 0, 0, -3, 0, 0,
         0, -3, -8, -3, -3, -3, -3, -8, -3, 0,
-        0, 5, -3, 0, -1, -1, 0, -3, 5, 0,
+        0, 8, -3, 0, -1, -1, 0, -3, 8, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 int scoreboard2[10][10] = {
@@ -51,6 +50,7 @@ int scoreboard2[10][10] = {
     0, 35, -15, 0, -1, -1, 0, -15, 35, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
+
 void reset(void);
 void check3(int player, bool canput[10][10]);
 void check2(int player);
@@ -70,6 +70,5 @@ int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
-int minimax_multi(int depth, int playerrn);
 
 #endif /* othello_h */

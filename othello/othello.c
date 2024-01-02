@@ -9,17 +9,12 @@ void reset(void)
         {
             board[i][j] = 0;
             canPut[i][j] = false;
-            isfree[i][j] = true;
         }
     }
     board[4][4] = 2;
     board[4][5] = 1;
     board[5][4] = 1;
     board[5][5] = 2;
-    isfree[4][4] = false;
-    isfree[4][5] = false;
-    isfree[5][4] = false;
-    isfree[5][5] = false;
     //白が2,黒が1
     player = 1;
     skip = false;
@@ -81,7 +76,6 @@ void check2(int Player)
         {
             if (canPut[i][j] == true)
             {
-                //if(skipped == true && player == 2) ai2();
                 skipped = false;
                 skip = true;
                 return;
@@ -208,16 +202,6 @@ void rebuild(bool bot)
     {
         for(int j = 0; j < 10; j++)
         {
-            if(isfree[i][j] == true)
-            {
-                board[i][j] = 0;
-            }
-        }
-    }
-    for(int i = 0; i < 10; i++)
-    {
-        for(int j = 0; j < 10; j++)
-        {
             canPut[i][j] = false;
         }
     }
@@ -227,8 +211,6 @@ void rebuild(bool bot)
 
 int putstone(int py, int px)
 {
-    //printf("Player: %d\n", player);
-    //printf("(%d, %d)\n", px, py);
     if(px > 8 || py > 8)
     {
         printf("[*]そこには置けません\n");
@@ -239,7 +221,6 @@ int putstone(int py, int px)
         if(player == 1)
         {
             board[py][px] = 1;
-            isfree[py][px] = false;
             reverse(px, py);
             player = 2;
             skip = false;
@@ -248,7 +229,6 @@ int putstone(int py, int px)
         else if(player == 2)
         {
             board[py][px] = 2;
-            isfree[py][px] = false;
             reverse(px, py);
             player = 1;
             skip = false;
@@ -268,8 +248,6 @@ int putstone(int py, int px)
 
 int putstone2(int py, int px, int player, bool canput[10][10])
 {
-    //printf("Player: %d\n", player);
-    //printf("(%d, %d)\n", px, py);
     if(px > 9 || py > 9)
     {
         printf("[*]そこには置けません\n");
@@ -280,7 +258,6 @@ int putstone2(int py, int px, int player, bool canput[10][10])
         if(player == 1)
         {
             board[py][px] = 1;
-            //isfree[py][px] = false;
             reverse(px, py);
             skip = false;
             return 1;
@@ -288,7 +265,6 @@ int putstone2(int py, int px, int player, bool canput[10][10])
         else if(player == 2)
         {
             board[py][px] = 2;
-            //isfree[py][px] = false;
             reverse(px, py);
             skip = false;
             return 2;
@@ -427,7 +403,6 @@ int minimax(int depth, int playerrn)
 {
     if(depth == 0)
     {
-        //printf("score is %d\n", countscore(board));
         return countscore(board);
     }
     
@@ -457,7 +432,6 @@ int minimax(int depth, int playerrn)
         {
             if(canput[i][j] == true)
             {
-                //printf("putable: (%d, %d), DEPTH is %d\n", j, i, depth);
                 putstone2(i,j, playerrn, canput);
                 
                 if(putableto(3-playerrn) == true)
@@ -469,7 +443,6 @@ int minimax(int depth, int playerrn)
                     printf("cant put\n");
                     var = minimax(depth-1, playerrn);
                 }
-                //printf("score is %d, depth:%d, player:%d\n", var, depth, playerrn);
                 
                 if(playerrn == 2 && score <= var)
                 {
@@ -494,7 +467,6 @@ int minimax(int depth, int playerrn)
             }
         }
     }
-    //printf("Score before re:%d, depth: %d\n", score, depth);
     if(playerrn == 2) return score;
     if(playerrn == 1) return -score;
     printf("ERROR_1\n");
