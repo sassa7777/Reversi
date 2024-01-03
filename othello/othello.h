@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <time.h>
 
 char board[10][10];
 //int virtualboard[10][10];
@@ -69,5 +70,6 @@ int returnplayer(void);
 int minimax(int depth, int playerrn);
 void* minimax_thread(void* minimaxargs);
 int minimax_multi(int depth, int playerrn);
+int returnrundom(void);
 
 #endif /* othello_h */

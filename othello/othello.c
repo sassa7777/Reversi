@@ -400,6 +400,19 @@ int minimax(int depth, int playerrn)
                 
                 if(playerrn == 2 && score <= var)
                 {
+                    if(score == var)
+                    {
+                        if(returnrundom() == 1)
+                        {
+                            score = var;
+                            if(depth == DEPTH)
+                            {
+                                tmpx = j;
+                                tmpy = i;
+                                printf("best place is (%d, %d), score %d\n", j, i, var);
+                            }
+                        }
+                    }
                     score = var;
                     if(depth == DEPTH)
                     {
@@ -586,4 +599,11 @@ bool putableto(int player)
         }
     }
     return false;
+}
+
+int returnrundom(void)
+{
+    unsigned int seed = (unsigned int)time(NULL);
+    srand(seed);
+    return rand() % 2 + 1;
 }
