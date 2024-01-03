@@ -366,13 +366,6 @@ int minimax(int depth, int playerrn)
     {
         return countscore(board);
     }
-    
-//    if(putableto(playerrn) == false)
-//    {
-//        if(playerrn == 1) return countscore(board)+8;
-//        if(playerrn == 2) return countscore(board)-8;
-//    }
-    
     int score = -99999;
     int var;
     char tmpboard[10][10];
