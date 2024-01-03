@@ -669,6 +669,11 @@ class ViewController: NSViewController
                             aa.image = NSImage(named: "white")
                         default:
                             aa.image = NSImage(named: "null")
+                            if canPut.1.1 == true && returnplayer() == 1
+                            {
+                                aa.image = NSImage(named: "null2")
+                            }
+                            
                         }
                     case 2:
                         switch board.1.2
@@ -679,6 +684,10 @@ class ViewController: NSViewController
                             ab.image = NSImage(named: "white")
                         default:
                             ab.image = NSImage(named: "null")
+                            if canPut.1.2 == true && returnplayer() == 1
+                            {
+                                ab.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.1.3
@@ -689,6 +698,10 @@ class ViewController: NSViewController
                             ac.image = NSImage(named: "white")
                         default:
                             ac.image = NSImage(named: "null")
+                            if canPut.1.3 == true && returnplayer() == 1
+                            {
+                                ac.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.1.4
@@ -699,6 +712,10 @@ class ViewController: NSViewController
                             ad.image = NSImage(named: "white")
                         default:
                             ad.image = NSImage(named: "null")
+                            if canPut.1.4 == true && returnplayer() == 1
+                            {
+                                ad.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.1.5
@@ -709,6 +726,10 @@ class ViewController: NSViewController
                             ae.image = NSImage(named: "white")
                         default:
                             ae.image = NSImage(named: "null")
+                            if canPut.1.5 == true && returnplayer() == 1
+                            {
+                                ae.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.1.6
@@ -719,6 +740,10 @@ class ViewController: NSViewController
                             af.image = NSImage(named: "white")
                         default:
                             af.image = NSImage(named: "null")
+                            if canPut.1.6 == true && returnplayer() == 1
+                            {
+                                af.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.1.7
@@ -729,6 +754,10 @@ class ViewController: NSViewController
                             ag.image = NSImage(named: "white")
                         default:
                             ag.image = NSImage(named: "null")
+                            if canPut.1.7 == true && returnplayer() == 1
+                            {
+                                ag.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.1.8
@@ -739,6 +768,10 @@ class ViewController: NSViewController
                             ah.image = NSImage(named: "white")
                         default:
                             ah.image = NSImage(named: "null")
+                            if canPut.1.8 == true && returnplayer() == 1
+                            {
+                                ah.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -755,6 +788,10 @@ class ViewController: NSViewController
                             ba.image = NSImage(named: "white")
                         default:
                             ba.image = NSImage(named: "null")
+                            if canPut.2.1 == true && returnplayer() == 1
+                            {
+                                ba.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.2.2
@@ -765,6 +802,10 @@ class ViewController: NSViewController
                             bb.image = NSImage(named: "white")
                         default:
                             bb.image = NSImage(named: "null")
+                            if canPut.2.2 == true && returnplayer() == 1
+                            {
+                                bb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.2.3
@@ -775,6 +816,10 @@ class ViewController: NSViewController
                             bc.image = NSImage(named: "white")
                         default:
                             bc.image = NSImage(named: "null")
+                            if canPut.2.3 == true && returnplayer() == 1
+                            {
+                                bc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.2.4
@@ -785,6 +830,10 @@ class ViewController: NSViewController
                             bd.image = NSImage(named: "white")
                         default:
                             bd.image = NSImage(named: "null")
+                            if canPut.2.4 == true && returnplayer() == 1
+                            {
+                                bd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.2.5
@@ -795,6 +844,10 @@ class ViewController: NSViewController
                             be.image = NSImage(named: "white")
                         default:
                             be.image = NSImage(named: "null")
+                            if canPut.2.5 == true && returnplayer() == 1
+                            {
+                                be.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.2.6
@@ -805,6 +858,10 @@ class ViewController: NSViewController
                             bf.image = NSImage(named: "white")
                         default:
                             bf.image = NSImage(named: "null")
+                            if canPut.2.6 == true && returnplayer() == 1
+                            {
+                                bf.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.2.7
@@ -815,6 +872,10 @@ class ViewController: NSViewController
                             bg.image = NSImage(named: "white")
                         default:
                             bg.image = NSImage(named: "null")
+                            if canPut.2.7 == true && returnplayer() == 1
+                            {
+                                bg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.2.8
@@ -825,6 +886,10 @@ class ViewController: NSViewController
                             bh.image = NSImage(named: "white")
                         default:
                             bh.image = NSImage(named: "null")
+                            if canPut.2.8 == true && returnplayer() == 1
+                            {
+                                bh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -841,6 +906,10 @@ class ViewController: NSViewController
                             ca.image = NSImage(named: "white")
                         default:
                             ca.image = NSImage(named: "null")
+                            if canPut.3.1 == true && returnplayer() == 1
+                            {
+                                ca.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.3.2
@@ -851,6 +920,10 @@ class ViewController: NSViewController
                             cb.image = NSImage(named: "white")
                         default:
                             cb.image = NSImage(named: "null")
+                            if canPut.3.2 == true && returnplayer() == 1
+                            {
+                                cb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.3.3
@@ -861,6 +934,10 @@ class ViewController: NSViewController
                             cc.image = NSImage(named: "white")
                         default:
                             cc.image = NSImage(named: "null")
+                            if canPut.3.3 == true && returnplayer() == 1
+                            {
+                                cc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.3.4
@@ -871,6 +948,10 @@ class ViewController: NSViewController
                             cd.image = NSImage(named: "white")
                         default:
                             cd.image = NSImage(named: "null")
+                            if canPut.3.4 == true && returnplayer() == 1
+                            {
+                                cd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.3.5
@@ -881,6 +962,10 @@ class ViewController: NSViewController
                             ce.image = NSImage(named: "white")
                         default:
                             ce.image = NSImage(named: "null")
+                            if canPut.3.5 == true && returnplayer() == 1
+                            {
+                                ce.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.3.6
@@ -891,6 +976,10 @@ class ViewController: NSViewController
                             cf.image = NSImage(named: "white")
                         default:
                             cf.image = NSImage(named: "null")
+                            if canPut.3.6 == true && returnplayer() == 1
+                            {
+                                cf.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.3.7
@@ -901,6 +990,10 @@ class ViewController: NSViewController
                             cg.image = NSImage(named: "white")
                         default:
                             cg.image = NSImage(named: "null")
+                            if canPut.3.7 == true && returnplayer() == 1
+                            {
+                                cg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.3.8
@@ -911,6 +1004,10 @@ class ViewController: NSViewController
                             ch.image = NSImage(named: "white")
                         default:
                             ch.image = NSImage(named: "null")
+                            if canPut.3.8 == true && returnplayer() == 1
+                            {
+                                ch.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -927,6 +1024,10 @@ class ViewController: NSViewController
                             da.image = NSImage(named: "white")
                         default:
                             da.image = NSImage(named: "null")
+                            if canPut.4.1 == true && returnplayer() == 1
+                            {
+                                da.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.4.2
@@ -937,6 +1038,10 @@ class ViewController: NSViewController
                             db.image = NSImage(named: "white")
                         default:
                             db.image = NSImage(named: "null")
+                            if canPut.4.2 == true && returnplayer() == 1
+                            {
+                                db.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.4.3
@@ -947,6 +1052,10 @@ class ViewController: NSViewController
                             dc.image = NSImage(named: "white")
                         default:
                             dc.image = NSImage(named: "null")
+                            if canPut.4.3 == true && returnplayer() == 1
+                            {
+                                dc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.4.4
@@ -957,6 +1066,10 @@ class ViewController: NSViewController
                             dd.image = NSImage(named: "white")
                         default:
                             dd.image = NSImage(named: "null")
+                            if canPut.4.4 == true && returnplayer() == 1
+                            {
+                                dd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.4.5
@@ -967,6 +1080,10 @@ class ViewController: NSViewController
                             de.image = NSImage(named: "white")
                         default:
                             de.image = NSImage(named: "null")
+                            if canPut.4.5 == true && returnplayer() == 1
+                            {
+                                de.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.4.6
@@ -977,6 +1094,10 @@ class ViewController: NSViewController
                             df.image = NSImage(named: "white")
                         default:
                             df.image = NSImage(named: "null")
+                            if canPut.4.6 == true && returnplayer() == 1
+                            {
+                                df.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.4.7
@@ -987,6 +1108,10 @@ class ViewController: NSViewController
                             dg.image = NSImage(named: "white")
                         default:
                             dg.image = NSImage(named: "null")
+                            if canPut.4.7 == true && returnplayer() == 1
+                            {
+                                dg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.4.8
@@ -997,6 +1122,10 @@ class ViewController: NSViewController
                             dh.image = NSImage(named: "white")
                         default:
                             dh.image = NSImage(named: "null")
+                            if canPut.4.8 == true && returnplayer() == 1
+                            {
+                                dh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -1013,6 +1142,10 @@ class ViewController: NSViewController
                             ea.image = NSImage(named: "white")
                         default:
                             ea.image = NSImage(named: "null")
+                            if canPut.5.1 == true && returnplayer() == 1
+                            {
+                                ea.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.5.2
@@ -1023,6 +1156,10 @@ class ViewController: NSViewController
                             eb.image = NSImage(named: "white")
                         default:
                             eb.image = NSImage(named: "null")
+                            if canPut.5.2 == true && returnplayer() == 1
+                            {
+                                eb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.5.3
@@ -1033,6 +1170,10 @@ class ViewController: NSViewController
                             ec.image = NSImage(named: "white")
                         default:
                             ec.image = NSImage(named: "null")
+                            if canPut.5.3 == true && returnplayer() == 1
+                            {
+                                ec.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.5.4
@@ -1043,6 +1184,10 @@ class ViewController: NSViewController
                             ed.image = NSImage(named: "white")
                         default:
                             ed.image = NSImage(named: "null")
+                            if canPut.5.4 == true && returnplayer() == 1
+                            {
+                                ed.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.5.5
@@ -1053,6 +1198,10 @@ class ViewController: NSViewController
                             ee.image = NSImage(named: "white")
                         default:
                             ee.image = NSImage(named: "null")
+                            if canPut.5.5 == true && returnplayer() == 1
+                            {
+                                ee.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.5.6
@@ -1063,6 +1212,10 @@ class ViewController: NSViewController
                             ef.image = NSImage(named: "white")
                         default:
                             ef.image = NSImage(named: "null")
+                            if canPut.5.6 == true && returnplayer() == 1
+                            {
+                                ef.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.5.7
@@ -1073,6 +1226,10 @@ class ViewController: NSViewController
                             eg.image = NSImage(named: "white")
                         default:
                             eg.image = NSImage(named: "null")
+                            if canPut.5.7 == true && returnplayer() == 1
+                            {
+                                eg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.5.8
@@ -1083,6 +1240,10 @@ class ViewController: NSViewController
                             eh.image = NSImage(named: "white")
                         default:
                             eh.image = NSImage(named: "null")
+                            if canPut.5.8 == true && returnplayer() == 1
+                            {
+                                eh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -1099,6 +1260,10 @@ class ViewController: NSViewController
                             fa.image = NSImage(named: "white")
                         default:
                             fa.image = NSImage(named: "null")
+                            if canPut.6.1 == true && returnplayer() == 1
+                            {
+                                fa.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.6.2
@@ -1109,6 +1274,10 @@ class ViewController: NSViewController
                             fb.image = NSImage(named: "white")
                         default:
                             fb.image = NSImage(named: "null")
+                            if canPut.6.2 == true && returnplayer() == 1
+                            {
+                                fb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.6.3
@@ -1119,6 +1288,10 @@ class ViewController: NSViewController
                             fc.image = NSImage(named: "white")
                         default:
                             fc.image = NSImage(named: "null")
+                            if canPut.6.3 == true && returnplayer() == 1
+                            {
+                                fc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.6.4
@@ -1129,6 +1302,10 @@ class ViewController: NSViewController
                             fd.image = NSImage(named: "white")
                         default:
                             fd.image = NSImage(named: "null")
+                            if canPut.6.4 == true && returnplayer() == 1
+                            {
+                                fd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.6.5
@@ -1139,6 +1316,10 @@ class ViewController: NSViewController
                             fe.image = NSImage(named: "white")
                         default:
                             fe.image = NSImage(named: "null")
+                            if canPut.6.5 == true && returnplayer() == 1
+                            {
+                                fe.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.6.6
@@ -1149,6 +1330,10 @@ class ViewController: NSViewController
                             ff.image = NSImage(named: "white")
                         default:
                             ff.image = NSImage(named: "null")
+                            if canPut.6.6 == true && returnplayer() == 1
+                            {
+                                ff.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.6.7
@@ -1159,6 +1344,10 @@ class ViewController: NSViewController
                             fg.image = NSImage(named: "white")
                         default:
                             fg.image = NSImage(named: "null")
+                            if canPut.6.7 == true && returnplayer() == 1
+                            {
+                                fg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.6.8
@@ -1169,6 +1358,10 @@ class ViewController: NSViewController
                             fh.image = NSImage(named: "white")
                         default:
                             fh.image = NSImage(named: "null")
+                            if canPut.6.8 == true && returnplayer() == 1
+                            {
+                                fh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -1185,6 +1378,10 @@ class ViewController: NSViewController
                             ga.image = NSImage(named: "white")
                         default:
                             ga.image = NSImage(named: "null")
+                            if canPut.7.1 == true && returnplayer() == 1
+                            {
+                                ga.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.7.2
@@ -1195,6 +1392,10 @@ class ViewController: NSViewController
                             gb.image = NSImage(named: "white")
                         default:
                             gb.image = NSImage(named: "null")
+                            if canPut.7.2 == true && returnplayer() == 1
+                            {
+                                gb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.7.3
@@ -1205,6 +1406,10 @@ class ViewController: NSViewController
                             gc.image = NSImage(named: "white")
                         default:
                             gc.image = NSImage(named: "null")
+                            if canPut.7.3 == true && returnplayer() == 1
+                            {
+                                gc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.7.4
@@ -1215,6 +1420,10 @@ class ViewController: NSViewController
                             gd.image = NSImage(named: "white")
                         default:
                             gd.image = NSImage(named: "null")
+                            if canPut.7.4 == true && returnplayer() == 1
+                            {
+                                gd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.7.5
@@ -1225,6 +1434,10 @@ class ViewController: NSViewController
                             ge.image = NSImage(named: "white")
                         default:
                             ge.image = NSImage(named: "null")
+                            if canPut.7.5 == true && returnplayer() == 1
+                            {
+                                ge.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.7.6
@@ -1235,6 +1448,10 @@ class ViewController: NSViewController
                             gf.image = NSImage(named: "white")
                         default:
                             gf.image = NSImage(named: "null")
+                            if canPut.7.6 == true && returnplayer() == 1
+                            {
+                                gf.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.7.7
@@ -1245,6 +1462,10 @@ class ViewController: NSViewController
                             gg.image = NSImage(named: "white")
                         default:
                             gg.image = NSImage(named: "null")
+                            if canPut.7.7 == true && returnplayer() == 1
+                            {
+                                gg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.7.8
@@ -1255,6 +1476,10 @@ class ViewController: NSViewController
                             gh.image = NSImage(named: "white")
                         default:
                             gh.image = NSImage(named: "null")
+                            if canPut.7.8 == true && returnplayer() == 1
+                            {
+                                gh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
@@ -1271,6 +1496,10 @@ class ViewController: NSViewController
                             ha.image = NSImage(named: "white")
                         default:
                             ha.image = NSImage(named: "null")
+                            if canPut.8.1 == true && returnplayer() == 1
+                            {
+                                ha.image = NSImage(named: "null2")
+                            }
                         }
                     case 2:
                         switch board.8.2
@@ -1281,6 +1510,10 @@ class ViewController: NSViewController
                             hb.image = NSImage(named: "white")
                         default:
                             hb.image = NSImage(named: "null")
+                            if canPut.8.2 == true && returnplayer() == 1
+                            {
+                                hb.image = NSImage(named: "null2")
+                            }
                         }
                     case 3:
                         switch board.8.3
@@ -1291,6 +1524,10 @@ class ViewController: NSViewController
                             hc.image = NSImage(named: "white")
                         default:
                             hc.image = NSImage(named: "null")
+                            if canPut.8.3 == true && returnplayer() == 1
+                            {
+                                hc.image = NSImage(named: "null2")
+                            }
                         }
                     case 4:
                         switch board.8.4
@@ -1301,6 +1538,10 @@ class ViewController: NSViewController
                             hd.image = NSImage(named: "white")
                         default:
                             hd.image = NSImage(named: "null")
+                            if canPut.8.4 == true && returnplayer() == 1
+                            {
+                                hd.image = NSImage(named: "null2")
+                            }
                         }
                     case 5:
                         switch board.8.5
@@ -1311,6 +1552,10 @@ class ViewController: NSViewController
                             he.image = NSImage(named: "white")
                         default:
                             he.image = NSImage(named: "null")
+                            if canPut.8.5 == true && returnplayer() == 1
+                            {
+                                he.image = NSImage(named: "null2")
+                            }
                         }
                     case 6:
                         switch board.8.6
@@ -1321,6 +1566,10 @@ class ViewController: NSViewController
                             hf.image = NSImage(named: "white")
                         default:
                             hf.image = NSImage(named: "null")
+                            if canPut.8.6 == true && returnplayer() == 1
+                            {
+                                hf.image = NSImage(named: "null2")
+                            }
                         }
                     case 7:
                         switch board.8.7
@@ -1331,6 +1580,10 @@ class ViewController: NSViewController
                             hg.image = NSImage(named: "white")
                         default:
                             hg.image = NSImage(named: "null")
+                            if canPut.8.7 == true && returnplayer() == 1
+                            {
+                                hg.image = NSImage(named: "null2")
+                            }
                         }
                     case 8:
                         switch board.8.8
@@ -1341,6 +1594,10 @@ class ViewController: NSViewController
                             hh.image = NSImage(named: "white")
                         default:
                             hh.image = NSImage(named: "null")
+                            if canPut.8.8 == true && returnplayer() == 1
+                            {
+                                hh.image = NSImage(named: "null2")
+                            }
                         }
                     default:
                         continue
