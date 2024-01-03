@@ -523,8 +523,8 @@ int countscore(char board[10][10])
     {
         for(int y = 1; y < 9; y++)
         {
-            if(board[x][y] == 2) score += scoreboard[x][y];
-            if(board[x][y] == 1) score -= scoreboard[x][y];
+            if(board[x][y] == 2) score += scoreboard2[x][y];
+            if(board[x][y] == 1) score -= scoreboard2[x][y];
         }
     }
     return score;
