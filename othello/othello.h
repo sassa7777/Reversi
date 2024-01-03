@@ -14,8 +14,8 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-int board[10][10];
-int virtualboard[10][10];
+char board[10][10];
+//int virtualboard[10][10];
 bool canPut[10][10];
 int finished = 0;
 bool skipped = false;
@@ -63,12 +63,8 @@ void countstone(void);
 int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
-void ai(void);
 int ai2(bool multi);
-void virtualput(int px, int py);
-void virtualreverse(int x, int y);
-int countscore(int board[10][10]);
-void rebuild_virtual(void);
+int countscore(char board[10][10]);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
 void* minimax_thread(void* minimaxargs);

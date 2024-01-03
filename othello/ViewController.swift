@@ -622,7 +622,6 @@ class ViewController: NSViewController
         {
             if(ai2(multicore) == 1)
             {
-                print("multicore is \(multicore)")
                 self.reloadview(bot: false)
                 self.putai()
             }

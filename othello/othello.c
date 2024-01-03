@@ -20,13 +20,6 @@ void reset(void)
     skip = false;
     finished = 0;
     skipped = false;
-    for(int x = 0; x < 10; x++)
-    {
-        for(int y = 0; y < 10; y++)
-        {
-            virtualboard[y][x] = board[y][x];
-        }
-    }
     return;
 }
 
@@ -350,49 +343,16 @@ int countstoneswift(int c)
     }
 }
 
-void ai(void)
-{
-    int tmpscore = -9999;
-    int tmpx = 0, tmpy = 0;
-    check2(player);
-    turn++;
-    for(int y = 1; y < 9; y++)
-    {
-        for(int x = 1; x < 9; x++)
-        {
-            if(canPut[y][x] == true)
-            {
-                virtualput(x, y);
-                printf("%d\n", countscore(virtualboard));
-                if(turn <= 5)
-                {
-                    if((countscore(virtualboard) - (whitec)) > tmpscore)
-                    {
-                        tmpx = x; tmpy = y;
-                        tmpscore = countscore(virtualboard);
-                    }
-                }
-                else
-                {
-                    if(countscore(virtualboard) > tmpscore)
-                    {
-                        tmpx = x; tmpy = y;
-                        tmpscore = countscore(virtualboard);
-                    }
-                }
-                rebuild_virtual();
-            }
-        }
-    }
-    putstone(tmpy, tmpx);
-}
-
 int ai2(bool multi)
 {
     if(player == 1 || finished == 1) return 0;
     isbot = true;
     printf("[*]Botが考え中..\n");
-    if(multi == true) minimax_multi(DEPTH, player);
+    if(multi == true)
+    {
+        printf("Warning: using pthread\n");
+        minimax_multi(DEPTH, player);
+    }
     else minimax(DEPTH, player);
     putstone(tmpy, tmpx);
     check2(1);
@@ -407,15 +367,15 @@ int minimax(int depth, int playerrn)
         return countscore(board);
     }
     
-    if(putableto(playerrn) == false)
-    {
-        if(playerrn == 1) return 99999;
-        if(playerrn == 2) return -99999;
-    }
+//    if(putableto(playerrn) == false)
+//    {
+//        if(playerrn == 1) return countscore(board)+8;
+//        if(playerrn == 2) return countscore(board)-8;
+//    }
     
     int score = -99999;
     int var;
-    int tmpboard[10][10];
+    char tmpboard[10][10];
     bool canput[10][10];
     for (int i = 0; i < 10; i++)
     {
@@ -483,12 +443,12 @@ int minimax_multi(int depth, int playerrn)
     
     if(putableto(playerrn) == false)
     {
-        if(playerrn == 1) return 99999;
-        if(playerrn == 2) return -99999;
+        if(playerrn == 1) return countscore(board)+8;
+        if(playerrn == 2) return countscore(board)-8;
     }
     
     int score = -99999;
-    int tmpboard[10][10];
+    char tmpboard[10][10];
     int* var;
     bool canput[10][10];
     for (int i = 0; i < 10; i++)
@@ -563,28 +523,7 @@ void* minimax_thread(void* args)
     pthread_exit(result);
 }
 
-void virtualput(int px, int py)
-{
-    printf("Player: bot %d\n", player);
-    printf("(%d, %d)\n", px, py);
-    if(player == 1)
-    {
-        virtualboard[py][px] = 1;
-        virtualreverse(py, px);
-    }
-    else if(player == 2)
-    {
-        virtualboard[py][px] = 2;
-        virtualreverse(py, px);
-    }
-    else
-    {
-        printf("[*]そこには置けません\n");
-    }
-    return;
-}
-
-int countscore(int board[10][10])
+int countscore(char board[10][10])
 {
     int score = 0;
     for(int x = 1; x < 9; x++)
@@ -596,54 +535,6 @@ int countscore(int board[10][10])
         }
     }
     return score;
-}
-
-void rebuild_virtual(void)
-{
-    for(int x = 0; x < 10; x++)
-    {
-        for(int y = 0; y < 10; y++)
-        {
-            virtualboard[y][x] = board[y][x];
-        }
-    }
-}
-
-void virtualreverse(int y, int x)
-{
-    if(virtualboard[y][x] == player)
-    {
-        for(int xx = -1; xx < 2; xx++)
-        {
-            for(int yy = -1; yy < 2; yy++)
-            {
-                if(xx != 0 || yy != 0)
-                {
-                    if(virtualboard[y + yy][x + xx] == (3-player))
-                    {
-                        int xxx = x + xx;
-                        int yyy = y + yy;
-                        while(virtualboard[yyy][xxx] == (3-player))
-                        {
-                            xxx += xx;
-                            yyy += yy;
-                        }
-                        if(virtualboard[yyy][xxx] == player)
-                        {
-                            xxx -= xx;
-                            yyy -= yy;
-                            while(virtualboard[yyy][xxx] == (3-player))
-                            {
-                                virtualboard[yyy][xxx] = player;
-                                yyy -= yy;
-                                xxx -= xx;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 int returnplayer(void)
