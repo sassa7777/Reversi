@@ -10,7 +10,6 @@ import Foundation
 
 class FirstViewController: NSViewController 
 {
-
     override func viewDidLoad() 
     {
         super.viewDidLoad()

@@ -8,11 +8,7 @@
 import Cocoa
 import Foundation
 
-
-//let y = 8
-//let x = 8
-//
-//
+var multicore: Bool = false
 
 class ViewController: NSViewController
 {
@@ -81,6 +77,7 @@ class ViewController: NSViewController
     @IBOutlet var hg: NSButton!
     @IBOutlet var hh: NSButton!
     @IBOutlet var close: NSButton!
+    @IBOutlet var multi: NSButton!
 
     @IBAction func aa(_ sender: Any)
     {
@@ -595,6 +592,17 @@ class ViewController: NSViewController
             putai()
         }
     }
+    @IBAction func switchmulti(_ multiswitch: NSButton)
+    {
+        if multiswitch.state == .on
+        {
+            multicore = true;
+        }
+        else
+        {
+            multicore = false;
+        }
+    }
     @IBAction func close(_ sender: Any)
     {
         self.dismiss(self)
@@ -606,15 +614,15 @@ class ViewController: NSViewController
         close.isHidden = true
         reset()
         reloadview(bot: false)
-        //print(board.3.3)
     }
     
     func putai()
     {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
-            if(ai2() == 1)
+            if(ai2(multicore) == 1)
             {
+                print("multicore is \(multicore)")
                 self.reloadview(bot: false)
                 self.putai()
             }

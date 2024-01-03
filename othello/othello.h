@@ -64,7 +64,7 @@ int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
 void ai(void);
-int ai2(void);
+int ai2(bool multi);
 void virtualput(int px, int py);
 void virtualreverse(int x, int y);
 int countscore(int board[10][10]);
@@ -72,5 +72,6 @@ void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
 void* minimax_thread(void* minimaxargs);
+int minimax_multi(int depth, int playerrn);
 
 #endif /* othello_h */
