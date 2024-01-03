@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 int board[10][10];
 int virtualboard[10][10];
@@ -70,5 +71,6 @@ int countscore(int board[10][10]);
 void rebuild_virtual(void);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
+void* minimax_thread(void* minimaxargs);
 
 #endif /* othello_h */

@@ -424,7 +424,6 @@ int minimax(int depth, int playerrn)
             canput[i][j] = false;
         }
     }
-    
     check3(playerrn, canput);
     for (int i=1; i<9; i++)
     {
@@ -433,17 +432,25 @@ int minimax(int depth, int playerrn)
             if(canput[i][j] == true)
             {
                 putstone2(i,j, playerrn, canput);
-                
+                pthread_t thread;
                 if(putableto(3-playerrn) == true)
                 {
-                    var = minimax(depth-1, 3-playerrn);
+                    //var = minimax(depth-1, 3-playerrn);
+                    int values[2] = {depth-1, 3-playerrn};
+                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
                 }
                 else
                 {
                     printf("cant put\n");
-                    var = minimax(depth-1, playerrn);
+                    //var = minimax(depth-1, playerrn);
+                    int values[2] = {depth-1, playerrn};
+                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
                 }
-                
+                int* threadResult;
+                pthread_join(thread, (void**)&threadResult);
+                var = *threadResult;
+                free(threadResult);
+                //printf("returned score is %d\n", var);
                 if(playerrn == 2 && score <= var)
                 {
                     score = var;
@@ -471,6 +478,17 @@ int minimax(int depth, int playerrn)
     if(playerrn == 1) return -score;
     printf("ERROR_1\n");
     return 99999;
+}
+
+void* minimax_thread(void* args)
+{
+    int* result = (int*)malloc(sizeof(int));
+    int* arg = (int*)args;
+    int depth = arg[0];
+    int playerrn = arg[1];
+    *result = minimax(depth, playerrn);
+    //printf("score is %d\n", *result);
+    pthread_exit(result);
 }
 
 void virtualput(int px, int py)
