@@ -366,6 +366,7 @@ int minimax(int depth, int playerrn)
     {
         return countscore(board);
     }
+    
     int score = -99999;
     int var;
     char tmpboard[10][10];
@@ -434,6 +435,7 @@ int minimax(int depth, int playerrn)
             }
         }
     }
+    if(score == -99999) score = countscore(board);
     if(playerrn == 2) return score;
     if(playerrn == 1) return -score;
     printf("ERROR_1\n");
@@ -550,7 +552,7 @@ int returnplayer(void)
 
 bool putableto(int player)
 {
-    int canput[10][10];
+    bool canput[10][10];
     for(int y = 1; y < 9; y++)
     {
         for(int x = 1; x < 9; x++)
