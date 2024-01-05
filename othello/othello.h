@@ -7,7 +7,7 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 9
+#define DEPTH 10
 
 #include <stdio.h>
 #include <stdbool.h>
