@@ -7,7 +7,7 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 7
+#define DEPTH 10
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -67,6 +67,7 @@ int ai2(bool multi);
 int countscore(char board[10][10]);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
+int alphabeta(int depth, int playerrn, int alpha, int beta);
 void* minimax_thread(void* minimaxargs);
 int minimax_multi(int depth, int playerrn);
 int returnrundom(void);

@@ -353,7 +353,8 @@ int ai2(bool multi)
         printf("Warning: using pthread\n");
         minimax_multi(DEPTH, player);
     }
-    else minimax(DEPTH, player);
+    //else minimax(DEPTH, player);
+    else alphabeta(DEPTH, player, -9999, 9999);
     putstone(tmpy, tmpx);
     check2(1);
     isbot = false;
@@ -438,6 +439,80 @@ int minimax(int depth, int playerrn)
     if(score == -99999) score = countscore(board);
     if(playerrn == 2) return score;
     if(playerrn == 1) return -score;
+    printf("ERROR_1\n");
+    return 99999;
+}
+
+int alphabeta(int depth, int playerrn, int alpha, int beta)
+{
+    if(depth == 0)
+    {
+        return countscore(board);
+    }
+    
+    int var;
+    char tmpboard[10][10];
+    bool canput[10][10];
+    for (int i = 0; i < 10; i++)
+    {
+        for (int j=0; j < 10; j++)
+        {
+            tmpboard[i][j] = board[i][j];
+            canput[i][j] = false;
+        }
+    }
+    
+    check3(playerrn, canput);
+    for (int i=1; i<9; i++)
+    {
+        for (int j=1; j<9; j++)
+        {
+            if(canput[i][j] == true)
+            {
+                putstone2(i,j, playerrn, canput);
+                
+                if(putableto(3-playerrn) == true)
+                {
+                    var = alphabeta(depth-1, 3-playerrn, alpha, beta);
+                }
+                else
+                {
+                    printf("cant put\n");
+                    var = alphabeta(depth-1, playerrn, alpha, beta);
+                }
+                
+                if(playerrn == 2 && alpha < var)
+                {
+                    alpha = var;
+                    if(depth == DEPTH)
+                    {
+                        tmpx = j;
+                        tmpy = i;
+                        printf("best place is (%d, %d), score %d\n", j, i, var);
+                    }
+                }
+                
+                if(playerrn == 1 && beta > var) beta = var;
+                
+                for (int y = 0; y < 10; y++)
+                {
+                    for (int x=0; x < 10; x++)
+                    {
+                        board[y][x] = tmpboard[y][x];
+                    }
+                }
+                if(alpha >= beta)
+                {
+                    if(playerrn == 2) return alpha;
+                    if(playerrn == 1) return beta;
+                }
+            }
+        }
+    }
+    if(alpha == -9999) alpha = countscore(board);
+    if(beta == 9999) beta = countscore(board);
+    if(playerrn == 2) return alpha;
+    if(playerrn == 1) return beta;
     printf("ERROR_1\n");
     return 99999;
 }
