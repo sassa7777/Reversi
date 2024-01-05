@@ -496,7 +496,7 @@ int alphabeta(int depth, int playerrn, int alpha, int beta)
                 
                 for (int y = 0; y < 10; y++)
                 {
-                    for (int x=0; x < 10; x++)
+                    for (int x = 0; x < 10; x++)
                     {
                         board[y][x] = tmpboard[y][x];
                     }
@@ -515,6 +515,85 @@ int alphabeta(int depth, int playerrn, int alpha, int beta)
     if(playerrn == 1) return beta;
     printf("ERROR_1\n");
     return 99999;
+}
+
+int countscore(char board[10][10])
+{
+    int score = 0;
+    for(int x = 1; x < 9; x++)
+    {
+        for(int y = 1; y < 9; y++)
+        {
+            if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
+            if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
+        }
+    }
+    return score;
+}
+
+int returnplayer(void)
+{
+    return player;
+}
+
+bool putableto(int player)
+{
+    bool canput[10][10];
+    for(int y = 1; y < 9; y++)
+    {
+        for(int x = 1; x < 9; x++)
+        {
+            if(board[y][x] == player)
+            {
+                for(int xx = -1; xx < 2; xx++)
+                {
+                    for(int yy = -1; yy < 2; yy++)
+                    {
+                        if(board[y + yy][x + xx] == (3-player))
+                        {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while(board[yyy][xxx] == (3-player))
+                            {
+                                xxx += xx;
+                                yyy += yy;
+                            }
+                            if(board[yyy][xxx] == 0)
+                            {
+                                canput[yyy][xxx] = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    for(int i = 0; i < 10; i++)
+    {
+        canput[0][i] = false;
+        canput[9][i] = false;
+        canput[i][0] = false;
+        canput[i][9] = false;
+    }
+    
+    for(int i = 1; i < 9; i++)
+    {
+        for(int j = 1; j < 9; j++)
+        {
+            if (canput[i][j] == true)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int returnrundom(void)
+{
+    unsigned int seed = (unsigned int)time(NULL);
+    srand(seed);
+    return rand() % 2 + 1;
 }
 
 int minimax_multi(int depth, int playerrn)
@@ -604,83 +683,4 @@ void* minimax_thread(void* args)
     *result = minimax_multi(depth, playerrn);
     //printf("score is %d\n", *result);
     pthread_exit(result);
-}
-
-int countscore(char board[10][10])
-{
-    int score = 0;
-    for(int x = 1; x < 9; x++)
-    {
-        for(int y = 1; y < 9; y++)
-        {
-            if(board[x][y] == 2) score += scoreboard2[x][y];
-            if(board[x][y] == 1) score -= scoreboard2[x][y];
-        }
-    }
-    return score;
-}
-
-int returnplayer(void)
-{
-    return player;
-}
-
-bool putableto(int player)
-{
-    bool canput[10][10];
-    for(int y = 1; y < 9; y++)
-    {
-        for(int x = 1; x < 9; x++)
-        {
-            if(board[y][x] == player)
-            {
-                for(int xx = -1; xx < 2; xx++)
-                {
-                    for(int yy = -1; yy < 2; yy++)
-                    {
-                        if(board[y + yy][x + xx] == (3-player))
-                        {
-                            int xxx = x + xx;
-                            int yyy = y + yy;
-                            while(board[yyy][xxx] == (3-player))
-                            {
-                                xxx += xx;
-                                yyy += yy;
-                            }
-                            if(board[yyy][xxx] == 0)
-                            {
-                                canput[yyy][xxx] = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    for(int i = 0; i < 10; i++)
-    {
-        canput[0][i] = false;
-        canput[9][i] = false;
-        canput[i][0] = false;
-        canput[i][9] = false;
-    }
-    
-    for(int i = 1; i < 9; i++)
-    {
-        for(int j = 1; j < 9; j++)
-        {
-            if (canput[i][j] == true)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-int returnrundom(void)
-{
-    unsigned int seed = (unsigned int)time(NULL);
-    srand(seed);
-    return rand() % 2 + 1;
 }
