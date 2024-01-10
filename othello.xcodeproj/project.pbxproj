@@ -13,7 +13,8 @@
 		1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BEB2AC835CF00E864A1 /* ViewController.swift */; };
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
 		1BA79BF12AC835D000E864A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BEF2AC835D000E864A1 /* Main.storyboard */; };
-		1BA79BFE2AC848F600E864A1 /* othello.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* othello.c */; };
+		1BC0B1672B4AC229004B9DBF /* evaluation.h in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0B1622B4A8B57004B9DBF /* evaluation.h */; };
+		1BC0B1682B4AC22E004B9DBF /* othello.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* othello.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,6 +42,8 @@
 		1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1BA79BFC2AC848F600E864A1 /* othello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = othello.h; path = othello/othello.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; };
+		1BC0B1622B4A8B57004B9DBF /* evaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = evaluation.h; path = othello/evaluation.h; sourceTree = "<group>"; };
+		1BC0B1652B4ABD7F004B9DBF /* libomp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libomp.dylib; path = usr/lib/libomp.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,7 +64,9 @@
 				1BA79BE72AC835CF00E864A1 /* Products */,
 				1BA79BFD2AC848F600E864A1 /* othello.c */,
 				1BA79BFC2AC848F600E864A1 /* othello.h */,
+				1BC0B1622B4A8B57004B9DBF /* evaluation.h */,
 				1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */,
+				1BC0B1642B4ABD7F004B9DBF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -85,6 +90,14 @@
 				1BA79BF22AC835D000E864A1 /* othello.entitlements */,
 			);
 			path = othello;
+			sourceTree = "<group>";
+		};
+		1BC0B1642B4ABD7F004B9DBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1BC0B1652B4ABD7F004B9DBF /* libomp.dylib */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,7 +172,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1BA79BFE2AC848F600E864A1 /* othello.c in Sources */,
+				1BC0B1682B4AC22E004B9DBF /* othello.c in Sources */,
+				1BC0B1672B4AC229004B9DBF /* evaluation.h in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
 				1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */,
 				1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */,

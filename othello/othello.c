@@ -1,4 +1,5 @@
 #include "othello.h"
+#include "evaluation.h"
 
 void reset(void)
 {
@@ -20,6 +21,7 @@ void reset(void)
     skip = false;
     finished = 0;
     skipped = false;
+    turn = 1;
     return;
 }
 
@@ -216,6 +218,7 @@ int putstone(int py, int px)
             board[py][px] = 1;
             reverse(px, py);
             player = 2;
+            turn++;
             skip = false;
             return 1;
         }
@@ -224,6 +227,7 @@ int putstone(int py, int px)
             board[py][px] = 2;
             reverse(px, py);
             player = 1;
+            turn++;
             skip = false;
             return 2;
         }
@@ -351,103 +355,112 @@ int ai2(bool multi)
     if(multi == true)
     {
         printf("Warning: using pthread\n");
-        minimax_multi(DEPTH, player);
+        //minimax_multi(DEPTH, player);
     }
     //else minimax(DEPTH, player);
-    else alphabeta(DEPTH, player, -9999, 9999);
+    else alphabeta(DEPTH, player, -9999, 9999, turn);
     putstone(tmpy, tmpx);
     check2(1);
     isbot = false;
     return 1;
 }
 
-int minimax(int depth, int playerrn)
+//int minimax(int depth, int playerrn)
+//{
+//    if(depth == 0)
+//    {
+//        return countscore(board, turn);
+//    }
+//    
+//    int score = -99999;
+//    int var;
+//    char tmpboard[10][10];
+//    bool canput[10][10];
+//    for (int i = 0; i < 10; i++)
+//    {
+//        for (int j=0; j < 10; j++)
+//        {
+//            tmpboard[i][j] = board[i][j];
+//            canput[i][j] = false;
+//        }
+//    }
+//    
+//    check3(playerrn, canput);
+//    for (int i=1; i<9; i++)
+//    {
+//        for (int j=1; j<9; j++)
+//        {
+//            if(canput[i][j] == true)
+//            {
+//                putstone2(i,j, playerrn, canput);
+//                
+//                if(putableto(3-playerrn) == true)
+//                {
+//                    var = minimax(depth-1, 3-playerrn);
+//                }
+//                else
+//                {
+//                    printf("cant put\n");
+//                    var = minimax(depth-1, playerrn);
+//                }
+//                
+//                if(playerrn == 2 && score <= var)
+//                {
+//                    if(score == var)
+//                    {
+//                        if(returnrundom() == 1)
+//                        {
+//                            score = var;
+//                            if(depth == DEPTH)
+//                            {
+//                                tmpx = j;
+//                                tmpy = i;
+//                                printf("best place is (%d, %d), score %d\n", j, i, var);
+//                            }
+//                        }
+//                    }
+//                    score = var;
+//                    if(depth == DEPTH)
+//                    {
+//                        tmpx = j;
+//                        tmpy = i;
+//                        printf("best place is (%d, %d), score %d\n", j, i, var);
+//                    }
+//                }
+//                
+//                if(playerrn == 1 && score <= -var) score = -var;
+//                
+//                for (int y = 0; y < 10; y++)
+//                {
+//                    for (int x=0; x < 10; x++)
+//                    {
+//                        board[y][x] = tmpboard[y][x];
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    if(score == -99999) score = countscore(board, turn);
+//    if(playerrn == 2) return score;
+//    if(playerrn == 1) return -score;
+//    printf("ERROR_1\n");
+//    return 99999;
+//}
+
+int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
 {
     if(depth == 0)
     {
-        return countscore(board);
-    }
-    
-    int score = -99999;
-    int var;
-    char tmpboard[10][10];
-    bool canput[10][10];
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j=0; j < 10; j++)
+        bool canput[10][10];
+        for (int i = 0; i < 10; i++)
         {
-            tmpboard[i][j] = board[i][j];
-            canput[i][j] = false;
-        }
-    }
-    
-    check3(playerrn, canput);
-    for (int i=1; i<9; i++)
-    {
-        for (int j=1; j<9; j++)
-        {
-            if(canput[i][j] == true)
+            for (int j=0; j < 10; j++)
             {
-                putstone2(i,j, playerrn, canput);
-                
-                if(putableto(3-playerrn) == true)
-                {
-                    var = minimax(depth-1, 3-playerrn);
-                }
-                else
-                {
-                    printf("cant put\n");
-                    var = minimax(depth-1, playerrn);
-                }
-                
-                if(playerrn == 2 && score <= var)
-                {
-                    if(score == var)
-                    {
-                        if(returnrundom() == 1)
-                        {
-                            score = var;
-                            if(depth == DEPTH)
-                            {
-                                tmpx = j;
-                                tmpy = i;
-                                printf("best place is (%d, %d), score %d\n", j, i, var);
-                            }
-                        }
-                    }
-                    score = var;
-                    if(depth == DEPTH)
-                    {
-                        tmpx = j;
-                        tmpy = i;
-                        printf("best place is (%d, %d), score %d\n", j, i, var);
-                    }
-                }
-                
-                if(playerrn == 1 && score <= -var) score = -var;
-                
-                for (int y = 0; y < 10; y++)
-                {
-                    for (int x=0; x < 10; x++)
-                    {
-                        board[y][x] = tmpboard[y][x];
-                    }
-                }
+                canput[i][j] = false;
             }
         }
-    }
-    if(score == -99999) score = countscore(board);
-    if(playerrn == 2) return score;
-    if(playerrn == 1) return -score;
-    printf("ERROR_1\n");
-    return 99999;
-}
-
-int alphabeta(int depth, int playerrn, int alpha, int beta)
-{
-    if(depth == 0)
-    {
-        return countscore(board);
+        check3(3-playerrn, canput);
+        return countscore(board, turn, canput);
     }
     
     int var;
@@ -473,12 +486,12 @@ int alphabeta(int depth, int playerrn, int alpha, int beta)
                 
                 if(putableto(3-playerrn) == true)
                 {
-                    var = alphabeta(depth-1, 3-playerrn, alpha, beta);
+                    var = alphabeta(depth-1, 3-playerrn, alpha, beta, turn+1);
                 }
                 else
                 {
                     printf("cant put\n");
-                    var = alphabeta(depth-1, playerrn, alpha, beta);
+                    var = alphabeta(depth-1, playerrn, alpha, beta, turn+1);
                 }
                 
                 if(playerrn == 2 && alpha < var)
@@ -493,7 +506,6 @@ int alphabeta(int depth, int playerrn, int alpha, int beta)
                 }
                 
                 if(playerrn == 1 && beta > var) beta = var;
-                
                 for (int y = 0; y < 10; y++)
                 {
                     for (int x = 0; x < 10; x++)
@@ -509,26 +521,20 @@ int alphabeta(int depth, int playerrn, int alpha, int beta)
             }
         }
     }
-    if(alpha == -9999) alpha = countscore(board);
-    if(beta == 9999) beta = countscore(board);
+    if(alpha == -9999)
+    {
+        check3(3-playerrn, canput);
+        alpha = countscore(board, turn, canput);
+    }
+    if(beta == 9999)
+    {
+        check3(3-playerrn, canput);
+        beta = countscore(board, turn, canput);
+    }
     if(playerrn == 2) return alpha;
     if(playerrn == 1) return beta;
     printf("ERROR_1\n");
     return 99999;
-}
-
-int countscore(char board[10][10])
-{
-    int score = 0;
-    for(int x = 1; x < 9; x++)
-    {
-        for(int y = 1; y < 9; y++)
-        {
-            if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
-            if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
-        }
-    }
-    return score;
 }
 
 int returnplayer(void)
@@ -596,91 +602,91 @@ int returnrundom(void)
     return rand() % 2 + 1;
 }
 
-int minimax_multi(int depth, int playerrn)
-{
-    if(depth == 0)
-    {
-        return countscore(board);
-    }
-    
-    if(putableto(playerrn) == false)
-    {
-        if(playerrn == 1) return countscore(board)+8;
-        if(playerrn == 2) return countscore(board)-8;
-    }
-    
-    int score = -99999;
-    char tmpboard[10][10];
-    int* var;
-    bool canput[10][10];
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j=0; j < 10; j++)
-        {
-            tmpboard[i][j] = board[i][j];
-            canput[i][j] = false;
-        }
-    }
-    check3(playerrn, canput);
-    for (int i=1; i<9; i++)
-    {
-        for (int j=1; j<9; j++)
-        {
-            if(canput[i][j] == true)
-            {
-                putstone2(i,j, playerrn, canput);
-                pthread_t thread;
-                if(putableto(3-playerrn) == true)
-                {
-                    //var = minimax(depth-1, 3-playerrn);
-                    int values[2] = {depth-1, 3-playerrn};
-                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
-                }
-                else
-                {
-                    printf("cant put\n");
-                    //var = minimax(depth-1, playerrn);
-                    int values[2] = {depth-1, playerrn};
-                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
-                }
-                pthread_join(thread, (void**)&var);
-                //printf("returned score is %d\n", var);
-                if(playerrn == 2 && score <= *var)
-                {
-                    score = *var;
-                    if(depth == DEPTH)
-                    {
-                        tmpx = j;
-                        tmpy = i;
-                        printf("best place is (%d, %d), score %d\n", j, i, *var);
-                    }
-                }
-                
-                if(playerrn == 1 && score <= -*var) score = -*var;
-                
-                for (int y = 0; y < 10; y++)
-                {
-                    for (int x=0; x < 10; x++)
-                    {
-                        board[y][x] = tmpboard[y][x];
-                    }
-                }
-            }
-        }
-    }
-    if(playerrn == 2) return score;
-    if(playerrn == 1) return -score;
-    printf("ERROR\n");
-    return 99999;
-}
+//int minimax_multi(int depth, int playerrn)
+//{
+//    if(depth == 0)
+//    {
+//        return countscore(board, turn);
+//    }
+//    
+//    if(putableto(playerrn) == false)
+//    {
+//        if(playerrn == 1) return countscore(board, turn)+8;
+//        if(playerrn == 2) return countscore(board, turn)-8;
+//    }
+//    
+//    int score = -99999;
+//    char tmpboard[10][10];
+//    int* var;
+//    bool canput[10][10];
+//    for (int i = 0; i < 10; i++)
+//    {
+//        for (int j=0; j < 10; j++)
+//        {
+//            tmpboard[i][j] = board[i][j];
+//            canput[i][j] = false;
+//        }
+//    }
+//    check3(playerrn, canput);
+//    for (int i=1; i<9; i++)
+//    {
+//        for (int j=1; j<9; j++)
+//        {
+//            if(canput[i][j] == true)
+//            {
+//                putstone2(i,j, playerrn, canput);
+//                pthread_t thread;
+//                if(putableto(3-playerrn) == true)
+//                {
+//                    //var = minimax(depth-1, 3-playerrn);
+//                    int values[2] = {depth-1, 3-playerrn};
+//                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
+//                }
+//                else
+//                {
+//                    printf("cant put\n");
+//                    //var = minimax(depth-1, playerrn);
+//                    int values[2] = {depth-1, playerrn};
+//                    pthread_create(&thread, NULL, minimax_thread, (void*)&values);
+//                }
+//                pthread_join(thread, (void**)&var);
+//                //printf("returned score is %d\n", var);
+//                if(playerrn == 2 && score <= *var)
+//                {
+//                    score = *var;
+//                    if(depth == DEPTH)
+//                    {
+//                        tmpx = j;
+//                        tmpy = i;
+//                        printf("best place is (%d, %d), score %d\n", j, i, *var);
+//                    }
+//                }
+//                
+//                if(playerrn == 1 && score <= -*var) score = -*var;
+//                
+//                for (int y = 0; y < 10; y++)
+//                {
+//                    for (int x=0; x < 10; x++)
+//                    {
+//                        board[y][x] = tmpboard[y][x];
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    if(playerrn == 2) return score;
+//    if(playerrn == 1) return -score;
+//    printf("ERROR\n");
+//    return 99999;
+//}
 
-void* minimax_thread(void* args)
-{
-    int* result = (int*)malloc(sizeof(int));
-    int* arg = (int*)args;
-    int depth = arg[0];
-    int playerrn = arg[1];
-    *result = minimax_multi(depth, playerrn);
-    //printf("score is %d\n", *result);
-    pthread_exit(result);
-}
+//void* minimax_thread(void* args)
+//{
+//    int* result = (int*)malloc(sizeof(int));
+//    int* arg = (int*)args;
+//    int depth = arg[0];
+//    int playerrn = arg[1];
+//    *result = minimax_multi(depth, playerrn);
+//    //printf("score is %d\n", *result);
+//    pthread_exit(result);
+//}
