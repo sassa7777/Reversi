@@ -339,6 +339,10 @@
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
+				"OTHER_CFLAGS[arch=*]" = (
+					"-O3",
+					"-march=native",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -373,7 +377,10 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = (
+					"-O3",
+					"-march=native",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -23,34 +23,56 @@ int scoreboard2[8][8] = {
 int countscore(char board[10][10], int turncount, bool canput[10][10])
 {
     int score = 0;
-    for(int x = 1; x < 9; x++)
+    if(turn < 35)
     {
-        for(int y = 1; y < 9; y++)
+    #pragma clang loop vectorize(enable)
+        for(int i = 1; i < 9; ++i)
         {
-            if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
-            if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
+            for(int j = 1; j < 9; ++j)
+            {
+                if(canput[i][j] == true)
+                {
+                    score+=1;
+                }
+            }
+        }
+        score/=2;
+        for (int i = 1; i <= 8; i+=7)
+        {
+            if (board[i][3] == 1 && board[i][4] == 1 && board[i][5] == 1 && board[i][6] == 1) score -= 6;
+            if (board[i][3] == 2 && board[i][4] == 2 && board[i][5] == 2 && board[i][6] == 2) score += 6;
+            if (board[3][i] == 1 && board[4][i] == 1 && board[5][i] == 1 && board[6][i] == 1) score -= 6;
+            if (board[3][i] == 2 && board[4][i] == 2 && board[5][i] == 2 && board[6][i] == 2) score += 6;
         }
     }
-//    for (int i = 1; i <= 8; i+=7)
-//    {
-//        if (board[i][3] == 1 && board[i][4] == 1 && board[i][5] == 1 && board[i][6] == 1) score -= 10;
-//        if (board[i][3] == 2 && board[i][4] == 2 && board[i][5] == 2 && board[i][6] == 2) score += 10;
-//        if (board[3][i] == 1 && board[4][i] == 1 && board[5][i] == 1 && board[6][i] == 1) score -= 10;
-//        if (board[3][i] == 2 && board[4][i] == 2 && board[5][i] == 2 && board[6][i] == 2) score += 10;
-//    }
-    if(turn > 45)
+    if(turn < 50)
     {
-        for(int i = 1; i < 9; i++)
+        #pragma clang loop vectorize(enable)
+        for(int x = 1; x < 9; ++x)
         {
-            for(int j = 1; j < 9; j++)
+            for(int y = 1; y < 9; y++)
+            {
+                if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
+                if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
+            }
+        }
+        
+    }
+    
+    if(turn > 43)
+    {
+        #pragma clang loop vectorize(enable)
+        for(int i = 1; i < 9; ++i)
+        {
+            for(int j = 1; j < 9; ++j)
             {
                 if(board[i][j] == 1)
                 {
-                    score--;
+                    score-=2;
                 }
                 else if(board[i][j] == 2)
                 {
-                    score++;
+                    score+=2;
                 }
             }
         }
