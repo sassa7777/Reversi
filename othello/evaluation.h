@@ -25,9 +25,9 @@ int countscore(char board[10][10], int turncount, bool canput[10][10])
     int score = 0;
     if(turn < 35)
     {
-    #pragma clang loop vectorize(enable)
         for(int i = 1; i < 9; ++i)
         {
+            #pragma clang loop vectorize(enable)
             for(int j = 1; j < 9; ++j)
             {
                 if(canput[i][j] == true)
@@ -47,9 +47,9 @@ int countscore(char board[10][10], int turncount, bool canput[10][10])
     }
     if(turn < 50)
     {
-        #pragma clang loop vectorize(enable)
         for(int x = 1; x < 9; ++x)
         {
+            #pragma clang loop vectorize(enable)
             for(int y = 1; y < 9; y++)
             {
                 if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
@@ -61,9 +61,9 @@ int countscore(char board[10][10], int turncount, bool canput[10][10])
     
     if(turn > 43)
     {
-        #pragma clang loop vectorize(enable)
         for(int i = 1; i < 9; ++i)
         {
+            #pragma clang loop vectorize(enable)
             for(int j = 1; j < 9; ++j)
             {
                 if(board[i][j] == 1)
