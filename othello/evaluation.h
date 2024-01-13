@@ -1,3 +1,7 @@
+#include <stdbool.h>
+#include <stdio.h>
+#include "othello.h"
+
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
        -12, -15, -3, -3, -3, -3, -15, -12,
@@ -19,63 +23,81 @@ int scoreboard2[8][8] = {
     35, -8, 2, 0, 0, 2, -8, 35
 };
 
+int score_wing(char board[10][10])
+{
+    return 0;
+}
 
-int countscore(char board[10][10], int turncount, bool canput[10][10])
+int score_putable(char board[10][10], bool canput[10][10])
+{
+    int score = 0;
+    for(int i = 1; i < 9; ++i)
+    {
+        #pragma clang loop vectorize(enable)
+        for(int j = 1; j < 9; ++j)
+        {
+            if(canput[i][j] == true)
+            {
+                score+=1;
+            }
+        }
+    }
+    score/=2;
+    return score;
+}
+
+int score_stone(char board[10][10])
+{
+    int score = 0;
+    for(int x = 1; x < 9; ++x)
+    {
+        #pragma clang loop vectorize(enable)
+        for(int y = 1; y < 9; y++)
+        {
+            if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
+            if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
+        }
+    }
+    return score;
+}
+
+int score_countstone(char board[10][10])
+{
+    int score = 0;
+    for(int i = 1; i < 9; ++i)
+    {
+        #pragma clang loop vectorize(enable)
+        for(int j = 1; j < 9; ++j)
+        {
+            if(board[i][j] == 1)
+            {
+                score-=2;
+            }
+            else if(board[i][j] == 2)
+            {
+                score+=2;
+            }
+        }
+    }
+    return score;
+}
+
+int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
     if(turn < 35)
     {
-        for(int i = 1; i < 9; ++i)
-        {
-            #pragma clang loop vectorize(enable)
-            for(int j = 1; j < 9; ++j)
-            {
-                if(canput[i][j] == true)
-                {
-                    score+=1;
-                }
-            }
-        }
-        score/=2;
-        for (int i = 1; i <= 8; i+=7)
-        {
-            if (board[i][3] == 1 && board[i][4] == 1 && board[i][5] == 1 && board[i][6] == 1) score -= 6;
-            if (board[i][3] == 2 && board[i][4] == 2 && board[i][5] == 2 && board[i][6] == 2) score += 6;
-            if (board[3][i] == 1 && board[4][i] == 1 && board[5][i] == 1 && board[6][i] == 1) score -= 6;
-            if (board[3][i] == 2 && board[4][i] == 2 && board[5][i] == 2 && board[6][i] == 2) score += 6;
-        }
+        score += score_putable(board, canput);
+        
     }
     if(turn < 50)
     {
-        for(int x = 1; x < 9; ++x)
-        {
-            #pragma clang loop vectorize(enable)
-            for(int y = 1; y < 9; y++)
-            {
-                if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
-                if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
-            }
-        }
-        
+        score += score_stone(board);
     }
     
     if(turn > 43)
     {
-        for(int i = 1; i < 9; ++i)
-        {
-            #pragma clang loop vectorize(enable)
-            for(int j = 1; j < 9; ++j)
-            {
-                if(board[i][j] == 1)
-                {
-                    score-=2;
-                }
-                else if(board[i][j] == 2)
-                {
-                    score+=2;
-                }
-            }
-        }
+        score += score_countstone(board);
     }
     return score;
 }
