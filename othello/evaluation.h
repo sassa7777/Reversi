@@ -1,7 +1,3 @@
-#include <stdbool.h>
-#include <stdio.h>
-#include "othello.h"
-
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
        -12, -15, -3, -3, -3, -3, -15, -12,
@@ -25,7 +21,76 @@ int scoreboard2[8][8] = {
 
 int score_wing(char board[10][10])
 {
-    return 0;
+    int wing = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && board[1][2] == 1 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 0 && board[1][8] == 0) wing++;
+    else if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 0) wing++;
+    //白
+    if(board[1][1] == 0 && board[1][2] == 2 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0) wing--;
+    else if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 2 && board[1][8] == 0) wing--;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && board[8][2] == 1 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0) wing++;
+    else if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][8] == 0) wing++;
+    //白
+    if(board[8][1] == 0 && board[8][2] == 2 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0) wing--;
+    else if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 2 && board[8][8] == 0) wing--;
+    
+    //右
+    //黒
+    if(board[1][1] == 0 && board[2][2] == 1 && board[3][4] == 1 && board[4][4] == 1 && board[5][5] == 1 && board[6][6] == 1 && board[7][7] == 0 && board[8][8] == 0) wing++;
+    else if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][8] == 0) wing++;
+    //白
+    if(board[1][8] == 0 && board[2][8] == 2 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 0 && board[8][8] == 0) wing--;
+    else if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 2 && board[8][8] == 0) wing--;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && board[2][1] == 1 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 0 && board[8][1] == 0) wing++;
+    else if(board[8][1] == 0 && board[8][1] == 0 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 0) wing++;
+    //白
+    if(board[1][1] == 0 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0) wing--;
+    else if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 0) wing--;
+    return -2*wing;
+}
+
+int score_mountain(char board[10][10])
+{
+    int mountain = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && board[1][2] == 1 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 0 && board[2][3] != 0 && board[2][4] != 0 && board[2][5] != 0 && board[2][6] != 0) mountain--;
+    else if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 0 && board[2][3] != 0 && board[2][4] != 0 && board[2][5] != 0 && board[2][6] != 0) mountain--;
+    //白
+    if(board[1][1] == 0 && board[1][2] == 2 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0 && board[2][3] != 0 && board[2][4] != 0 && board[2][5] != 0 && board[2][6] != 0) mountain++;
+    else if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 2 && board[1][8] == 0 && board[2][3] != 0 && board[2][4] != 0 && board[2][5] != 0 && board[2][6] != 0) mountain++;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && board[8][2] == 1 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0 && board[7][3] != 0 && board[7][4] != 0 && board[7][5] != 0 && board[7][6] != 0) mountain--;
+    else if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][8] == 0 && board[7][3] != 0 && board[7][4] != 0 && board[7][5] != 0 && board[7][6] != 0) mountain--;
+    //白
+    if(board[8][1] == 0 && board[8][2] == 2 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0 && board[7][3] != 0 && board[7][4] != 0 && board[7][5] != 0 && board[7][6] != 0) mountain++;
+    else if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 2 && board[8][8] == 0 && board[7][3] != 0 && board[7][4] != 0 && board[7][5] != 0 && board[7][6] != 0) mountain++;
+    
+    //右
+    //黒
+    if(board[1][8] == 0 && board[2][8] == 1 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[8][8] == 0 && board[3][7] != 0 && board[4][7] != 0 && board[5][7] != 0 && board[6][7] != 0) mountain--;
+    else if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 1 && board[8][8] == 0 && board[3][7] != 0 && board[4][7] != 0 && board[5][7] != 0 && board[6][7] != 0) mountain--;
+    //白
+    if(board[1][8] == 0 && board[2][8] == 2 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 0 && board[8][8] == 0 && board[3][7] != 0 && board[4][7] != 0 && board[5][7] != 0 && board[6][7] != 0) mountain++;
+    else if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 2 && board[8][8] == 0 && board[3][7] != 0 && board[4][7] != 0 && board[5][7] != 0 && board[6][7] != 0) mountain++;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && board[2][1] == 1 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 0 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain--;
+    else if(board[8][1] == 0 && board[8][1] == 0 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 1 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain--;
+    //白
+    if(board[1][1] == 0 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain++;
+    else if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain++;
+    return 3*mountain;
 }
 
 int score_putable(char board[10][10], bool canput[10][10])
@@ -88,13 +153,13 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
     if(turn < 35)
     {
         score += score_putable(board, canput);
-        
+        score += score_wing(board);
     }
     if(turn < 50)
     {
         score += score_stone(board);
+        score += score_mountain(board);
     }
-    
     if(turn > 43)
     {
         score += score_countstone(board);
