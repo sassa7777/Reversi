@@ -4,14 +4,8 @@
 void reset(void)
 {
     printf("[*]初期化中...\n");
-    for(int i = 0; i < 10; i++)
-    {
-        for(int j = 0; j < 10; j++)
-        {
-            board[i][j] = 0;
-            canPut[i][j] = false;
-        }
-    }
+    memset(board, 0, sizeof(board));
+    memset(canPut, 0, sizeof(canPut));
     board[4][4] = 2;
     board[4][5] = 1;
     board[5][4] = 1;
@@ -29,6 +23,7 @@ void check2(int Player)
 {
     for(int y = 1; y < 9; y++)
     {
+        #pragma clang loop vectorize(enable)
         for(int x = 1; x < 9; x++)
         {
             if(board[y][x] == Player)
@@ -56,6 +51,7 @@ void check2(int Player)
             }
         }
     }
+    #pragma clang loop vectorize(enable)
     for(int i = 0; i < 10; i++)
     {
         canPut[0][i] = false;
@@ -67,6 +63,7 @@ void check2(int Player)
     skip = false;
     for(int i = 1; i < 9; i++)
     {
+        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; j++)
         {
             if (canPut[i][j] == true)
@@ -105,6 +102,7 @@ void check3(int player, bool canput[10][10])
 {
     for(int y = 1; y < 9; y++)
     {
+        #pragma clang loop vectorize(enable)
         for(int x = 1; x < 9; x++)
         {
             if(board[y][x] == player)
@@ -132,6 +130,7 @@ void check3(int player, bool canput[10][10])
             }
         }
     }
+    #pragma clang loop vectorize(enable)
     for(int i = 0; i < 10; i++)
     {
         canput[0][i] = false;
@@ -143,6 +142,7 @@ void check3(int player, bool canput[10][10])
     skip = false;
     for(int i = 1; i < 9; i++)
     {
+        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; j++)
         {
             if (canput[i][j] == true)
@@ -160,6 +160,7 @@ void reverse(int x, int y)
     {
         for(int xx = -1; xx < 2; xx++)
         {
+            #pragma clang loop vectorize(enable)
             for(int yy = -1; yy < 2; yy++)
             {
                 if(xx != 0 || yy != 0)
@@ -370,13 +371,8 @@ int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
     if(depth == 0)
     {
         bool canput[10][10];
-        for (int i = 0; i < 10; i++)
-        {
-            for (int j=0; j < 10; j++)
-            {
-                canput[i][j] = false;
-            }
-        }
+        memset(canput, 0, sizeof(canput));
+
         check3(3-playerrn, canput);
         return countscore(board, turn, canput);
     }
@@ -384,18 +380,14 @@ int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
     int var;
     char tmpboard[10][10];
     bool canput[10][10];
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j=0; j < 10; j++)
-        {
-            tmpboard[i][j] = board[i][j];
-            canput[i][j] = false;
-        }
-    }
+    
+    memcpy(tmpboard, board, sizeof(board));
+    memset(canput, 0, sizeof(canput));
     
     check3(playerrn, canput);
     for (int i=1; i<9; i++)
     {
+        #pragma clang loop vectorize(enable)
         for (int j=1; j<9; j++)
         {
             if(canput[i][j] == true)
@@ -424,13 +416,7 @@ int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
                 }
                 
                 if(playerrn == 1 && beta > var) beta = var;
-                for (int y = 0; y < 10; y++)
-                {
-                    for (int x = 0; x < 10; x++)
-                    {
-                        board[y][x] = tmpboard[y][x];
-                    }
-                }
+                memcpy(board, tmpboard, sizeof(board));
                 if(alpha >= beta)
                 {
                     if(playerrn == 2) return alpha;

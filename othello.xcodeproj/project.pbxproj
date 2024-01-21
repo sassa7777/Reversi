@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B84B9A92AD2F01200E10BFB /* ResultViewController.swift */; };
 		1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */; };
+		1B8654E62B5CF121007402B0 /* othello.h in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFC2AC848F600E864A1 /* othello.h */; };
 		1BA79BEA2AC835CF00E864A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */; };
 		1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BEB2AC835CF00E864A1 /* ViewController.swift */; };
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
@@ -162,6 +163,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1B8654E62B5CF121007402B0 /* othello.h in Sources */,
 				1BC0B1682B4AC22E004B9DBF /* othello.c in Sources */,
 				1BC0B1672B4AC229004B9DBF /* evaluation.h in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
