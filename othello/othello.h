@@ -11,9 +11,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include <pthread.h>
 #include <stdlib.h>
-#include <omp.h>
 
 char board[10][10];
 bool canPut[10][10];
@@ -41,12 +39,8 @@ int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
 int ai2(bool multi);
-//int countscore(char board[10][10], int turncount, bool canput[10][10]);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
 int alphabeta(int depth, int playerrn, int alpha, int beta, int turn);
-void* minimax_thread(void* minimaxargs);
-int minimax_multi(int depth, int playerrn);
-int returnrundom(void);
 
 #endif /* othello_h */

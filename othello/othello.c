@@ -513,9 +513,4 @@ bool putableto(int player)
     return false;
 }
 
-int returnrundom(void)
-{
-    unsigned int seed = (unsigned int)time(NULL);
-    srand(seed);
-    return rand() % 2 + 1;
-}
+

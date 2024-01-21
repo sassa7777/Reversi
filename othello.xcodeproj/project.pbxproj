@@ -43,7 +43,6 @@
 		1BA79BFC2AC848F600E864A1 /* othello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = othello.h; path = othello/othello.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; };
 		1BC0B1622B4A8B57004B9DBF /* evaluation.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = evaluation.h; path = othello/evaluation.h; sourceTree = "<group>"; };
-		1BC0B1652B4ABD7F004B9DBF /* libomp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libomp.dylib; path = usr/lib/libomp.dylib; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +65,6 @@
 				1BC0B1622B4A8B57004B9DBF /* evaluation.h */,
 				1BA79BFC2AC848F600E864A1 /* othello.h */,
 				1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */,
-				1BC0B1642B4ABD7F004B9DBF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,14 +88,6 @@
 				1BA79BF22AC835D000E864A1 /* othello.entitlements */,
 			);
 			path = othello;
-			sourceTree = "<group>";
-		};
-		1BC0B1642B4ABD7F004B9DBF /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				1BC0B1652B4ABD7F004B9DBF /* libomp.dylib */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

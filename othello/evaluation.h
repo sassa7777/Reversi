@@ -9,14 +9,14 @@ int scoreboard[8][8] = {
        30, -12, 0, -1, -1, 0, -12, 30
 };
 int scoreboard2[8][8] = {
-    35, -8, 2, 0, 0, 2, -8, 35,
-    -8, -15, -3, -3, -3, -3, -15, -8,
+    40, -8, 2, 0, 0, 2, -8, 40,
+    -7, -12, -3, -3, -3, -3, -12, -7,
     2, -3, 1, -1, -1, 1, -3, 2,
     0, -3, -1, 2, 2, -1, -3, 0,
     0, -3, -1, 2, 2, -1, -3, 0,
     2, -3, 1, -1, -1, 1, -3, 2,
-    -8, -15, -3, -3, -3, -3, -15, -8,
-    35, -8, 2, 0, 0, 2, -8, 35
+    -7, -12, -3, -3, -3, -3, -12, -7,
+    40, -8, 2, 0, 0, 2, -8, 40
 };
 
 int score_wing(char board[10][10])
@@ -147,6 +147,62 @@ int score_countstone(char board[10][10])
     return score;
 }
 
+int score_fixedstone(char board[10][10])
+{
+    int score = 0;
+    //角
+    //白
+    if(board[0][0] == 1) score-=1;
+    if(board[0][8] == 1) score-=1;
+    if(board[8][0] == 1) score-=1;
+    if(board[8][8] == 1) score-=1;
+    //黒
+    if(board[0][0] == 2) score+=1;
+    if(board[0][8] == 2) score+=1;
+    if(board[8][0] == 2) score+=1;
+    if(board[8][8] == 2) score+=1;
+    
+    //辺
+    int i = 0;
+    //上
+    if(board[1][1] != 0 && board[1][2] != 0 && board[1][3] != 0 && board[1][4] != 0 && board[1][5] != 0 && board[1][6] != 0 && board[1][7] != 0 && board[1][8] != 0)
+    {
+        for (i = 1; i <= 8; ++i)
+        {
+            if(board[1][i] == 2) score += 2;
+            else if(board[1][i] == 1) score -= 2;
+        }
+    }
+    //下
+    if(board[8][1] != 0 && board[8][2] != 0 && board[8][3] != 0 && board[8][4] != 0 && board[8][5] != 0 && board[8][6] != 0 && board[8][7] != 0 && board[8][8] != 0)
+    {
+        for (i = 1; i <= 8; ++i)
+        {
+            if(board[8][i] == 2) score += 2;
+            else if(board[8][i] == 1) score -= 2;
+        }
+    }
+    //右
+    if(board[1][8] != 0 && board[2][8] != 0 && board[3][8] != 0 && board[4][8] != 0 && board[5][8] != 0 && board[6][8] != 0 && board[7][8] != 0 && board[8][8] != 0)
+    {
+        for (i = 1; i <= 8; ++i)
+        {
+            if(board[i][8] == 2) score += 2;
+            else if(board[i][8] == 1) score -= 2;
+        }
+    }
+    //左
+    if(board[1][1] != 0 && board[2][1] != 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0 && board[7][1] != 0 && board[8][1] != 0)
+    {
+        for (i = 1; i <= 8; ++i)
+        {
+            if(board[i][1] == 2) score += 2;
+            else if(board[i][1] == 1) score -= 2;
+        }
+    }
+    return score;
+}
+
 int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
@@ -159,10 +215,12 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
     {
         score += score_stone(board);
         score += score_mountain(board);
+        score_fixedstone(board);
     }
     if(turn > 43)
     {
         score += score_countstone(board);
+        score_fixedstone(board);
     }
     return score;
 }
