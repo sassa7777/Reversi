@@ -1,3 +1,10 @@
+//
+//  othello.c
+//  othello
+//
+//  Created by sasa on 2023/09/30.
+//
+
 #include "othello.h"
 #include "evaluation.h"
 
