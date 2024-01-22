@@ -264,13 +264,14 @@ int score_fixedstone(char board[10][10])
 int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
-//    if(turn < 35)
+    //printf("turn is %d\n", turn);
+//    if(turn < 40)
 //    {
 //        score += score_putable(board, canput);
 //    }
 //    if(turn < 60)
 //    {
-//        score += score_fixedstone(board);
+//        //score += score_fixedstone(board);
 //        score += score_stone(board);
 //        score += 7*score_mountain(board);
 //        score += score_fixedstone(board);
@@ -278,12 +279,20 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
 //        score += 7*score_wing(board);
 //        score += 7*score_halfblock(board);
 //    }
-//    if(turn > 43)
-//    {
-//        score += 3*score_countstone(board);
-//        score += score_fixedstone(board);
-//    }
-    score += 10*score_halfblock(board);
+    if(turn > 55)
+    {
+        score += 50*score_countstone(board);
+        score += score_fixedstone(board);
+
+    }
+
+    score += score_putable(board, canput);
     score += score_stone(board);
+    score += 7*score_mountain(board);
+    score += score_fixedstone(board);
+    score += 7*score_pureblock(board);
+    score += 7*score_wing(board);
+    score += 7*score_halfblock(board);
+    
     return score;
 }
