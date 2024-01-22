@@ -53,7 +53,7 @@ int score_wing(char board[10][10])
     //白
     if(board[1][1] == 0 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0) wing--;
     else if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 0) wing--;
-    return -2*wing;
+    return wing;
 }
 
 int score_mountain(char board[10][10])
@@ -90,7 +90,65 @@ int score_mountain(char board[10][10])
     //白
     if(board[1][1] == 0 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain++;
     else if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0) mountain++;
-    return 3*mountain;
+    return mountain;
+}
+
+int score_pureblock(char board[10][10])
+{
+    int block = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 0 && board[1][8] == 0 && board[2][3] == 1 && board[2][4] == 1 && board[2][5] == 1 && board[2][6] == 1) block--;
+    //白
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0 && board[2][3] == 2 && board[2][4] == 2 && board[2][5] == 2 && board[2][6] == 2) block++;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0 && board[7][3] == 1 && board[7][4] == 1 && board[7][5] == 1 && board[7][6] == 1) block--;
+    //白
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0 && board[7][3] == 2 && board[7][4] == 2 && board[7][5] == 2 && board[7][6] == 2) block++;
+    
+    //右
+    //黒
+    if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[8][8] == 0 && board[3][7] == 1 && board[4][7] == 1 && board[5][7] == 1 && board[6][7] == 1) block--;
+    //白
+    if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 0 && board[8][8] == 0 && board[3][7] == 2 && board[4][7] == 2 && board[5][7] == 2 && board[6][7] == 2) block++;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 0 && board[8][1] == 0 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1) block--;
+    //白
+    if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2) block++;
+    return -block;
+}
+
+int score_halfblock(char board[10][10])
+{
+    int block = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 0 && board[1][8] == 0) block--;
+    //白
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0) block++;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0) block--;
+    //白
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0) block++;
+    
+    //右
+    //黒
+    if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[8][8] == 0) block--;
+    //白
+    if(board[1][8] == 0 && board[2][8] == 0 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 0 && board[8][8] == 0) block++;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 0 && board[8][1] == 0) block--;
+    //白
+    if(board[1][1] == 0 && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 0 && board[8][1] == 0) block++;
+    return block;
 }
 
 int score_putable(char board[10][10], bool canput[10][10])
@@ -119,8 +177,8 @@ int score_stone(char board[10][10])
         #pragma clang loop vectorize(enable)
         for(int y = 1; y < 9; y++)
         {
-            if(board[x][y] == 2) score += scoreboard2[x-1][y-1];
-            if(board[x][y] == 1) score -= scoreboard2[x-1][y-1];
+            if(board[x][y] == 2) score += scoreboard[x-1][y-1];
+            if(board[x][y] == 1) score -= scoreboard[x-1][y-1];
         }
     }
     return score;
@@ -206,21 +264,26 @@ int score_fixedstone(char board[10][10])
 int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
-    if(turn < 35)
-    {
-        score += score_putable(board, canput);
-        score += score_wing(board);
-    }
-    if(turn < 50)
-    {
-        score += score_stone(board);
-        score += score_mountain(board);
-        score_fixedstone(board);
-    }
-    if(turn > 43)
-    {
-        score += score_countstone(board);
-        score_fixedstone(board);
-    }
+//    if(turn < 35)
+//    {
+//        score += score_putable(board, canput);
+//    }
+//    if(turn < 60)
+//    {
+//        score += score_fixedstone(board);
+//        score += score_stone(board);
+//        score += 7*score_mountain(board);
+//        score += score_fixedstone(board);
+//        score += 7*score_pureblock(board);
+//        score += 7*score_wing(board);
+//        score += 7*score_halfblock(board);
+//    }
+//    if(turn > 43)
+//    {
+//        score += 3*score_countstone(board);
+//        score += score_fixedstone(board);
+//    }
+    score += 10*score_halfblock(board);
+    score += score_stone(board);
     return score;
 }

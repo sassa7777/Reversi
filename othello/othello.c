@@ -23,7 +23,6 @@ void check2(int Player)
 {
     for(int y = 1; y < 9; y++)
     {
-        #pragma clang loop vectorize(enable)
         for(int x = 1; x < 9; x++)
         {
             if(board[y][x] == Player)
@@ -102,7 +101,6 @@ void check3(int player, bool canput[10][10])
 {
     for(int y = 1; y < 9; y++)
     {
-        #pragma clang loop vectorize(enable)
         for(int x = 1; x < 9; x++)
         {
             if(board[y][x] == player)
@@ -387,7 +385,6 @@ int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
     check3(playerrn, canput);
     for (int i=1; i<9; i++)
     {
-        #pragma clang loop vectorize(enable)
         for (int j=1; j<9; j++)
         {
             if(canput[i][j] == true)
