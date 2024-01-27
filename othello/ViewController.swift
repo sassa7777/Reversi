@@ -624,7 +624,7 @@ class ViewController: NSViewController
         {
             DispatchQueue.main.async()
             {
-                self.hakotext.stringValue = "考え中..."
+                self.hakotext.stringValue = "考え中...(時間がかかることがあります)"
             }
         }
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.2)
