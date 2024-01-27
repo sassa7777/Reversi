@@ -620,22 +620,31 @@ class ViewController: NSViewController
     
     func putai()
     {
-        if finishedsw() != 1
+        if(finishedsw() != 1)
         {
-            hakotext.stringValue = "考え中..."
+            DispatchQueue.main.async()
+            {
+                self.hakotext.stringValue = "考え中..."
+            }
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2)
         {
             if(ai2(multicore) == 1)
             {
-                self.reloadview(bot: false)
-                self.putai()
+                DispatchQueue.main.async()
+                {
+                    self.reloadview(bot: false)
+                    self.putai()
+                }
             }
             else
             {
                 if finishedsw() != 1
                 {
-                    self.hakotext.stringValue = "君(プレイヤー)の番だよ！"
+                    DispatchQueue.main.async()
+                    {
+                        self.hakotext.stringValue = "君(プレイヤー)の番だよ！"
+                    }
                 }
                 return
             }
@@ -647,15 +656,19 @@ class ViewController: NSViewController
         if winner() == 1
         {
             print("黒の勝ち！")
+            self.hakotext.stringValue = "君の勝ち！遊んでくれてありがとう！"
         }
         else if winner() == 2
         {
             print("白の勝ち！")
+            self.hakotext.stringValue = "僕の勝ち！遊んでくれてありがとう！"
         }
         else
         {
             print("引き分け")
+            self.hakotext.stringValue = "引き分け！遊んでくれてありがとう！"
         }
+        hakotext.isEditable = false
     }
     
     func reloadview(bot: Bool)
@@ -1618,18 +1631,6 @@ class ViewController: NSViewController
         }
         if(finishedsw() == 1)
         {
-            if winner() == 1
-            {
-                hakotext.stringValue = "君の勝ち！遊んでくれてありがとう！"
-            }
-            else if winner() == 2
-            {
-                hakotext.stringValue = "僕の勝ち！遊んでくれてありがとう！"
-            }
-            else
-            {
-                hakotext.stringValue = "引き分け！遊んでくれてありがとう！"
-            }
             result()
             performSegue(withIdentifier: "popup", sender: self)
             close.isHidden = false
