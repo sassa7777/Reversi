@@ -961,7 +961,7 @@ class ViewController: NSViewController
                             be.image = NSImage(named: "black")
                             if(tmpy == 2 && tmpx == 5)
                             {
-                                ea.image = NSImage(named: "blackb")
+                                be.image = NSImage(named: "blackb")
                             }
                         case 2:
                             be.image = NSImage(named: "white")
