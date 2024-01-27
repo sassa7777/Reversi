@@ -212,6 +212,7 @@ void rebuild(bool bot)
 
 int putstone(int py, int px)
 {
+    tmpx = px; tmpy = py;
     if(px > 8 || py > 8)
     {
         printf("[*]そこには置けません\n");
