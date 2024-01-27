@@ -1504,20 +1504,18 @@
                                     <action selector="close:" target="XfG-lQ-9wD" id="dIw-cr-thi"/>
                                 </connections>
                             </button>
-                            <switch horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" baseWritingDirection="leftToRight" alignment="left" translatesAutoresizingMaskIntoConstraints="NO" id="xbj-pn-6kJ">
-                                <rect key="frame" x="210" y="116" width="42" height="25"/>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eCE-Dh-RO6" userLabel="hako">
+                                <rect key="frame" x="93" y="114" width="48" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <connections>
-                                    <action selector="switchmulti:" target="XfG-lQ-9wD" id="q0e-Y5-jeN"/>
-                                </connections>
-                            </switch>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FCV-hS-zWx">
-                                <rect key="frame" x="159" y="148" width="144" height="16"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="c0Y-EB-lNb"/>
+                            </imageView>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-cl-HZJ" userLabel="hakotext">
+                                <rect key="frame" x="158" y="109" width="239" height="65"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="MultiCore (experiment)" id="Pcb-d0-IX8">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" alignment="left" drawsBackground="YES" id="NG6-NI-yb2">
+                                    <font key="font" metaFont="system" size="15"/>
+                                    <color key="textColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                         </subviews>
@@ -1581,6 +1579,7 @@
                         <outlet property="gg" destination="7UT-IQ-yvY" id="B4C-iA-8tF"/>
                         <outlet property="gh" destination="xtw-Wd-Rjz" id="mVY-NR-REo"/>
                         <outlet property="ha" destination="AhA-Ss-3r1" id="gtA-Sv-uPm"/>
+                        <outlet property="hakotext" destination="kdP-cl-HZJ" id="4Zc-4j-wp8"/>
                         <outlet property="hb" destination="wnl-UB-LHA" id="Uy0-G2-jkS"/>
                         <outlet property="hc" destination="PeK-Xg-kgJ" id="rMQ-v0-Jdm"/>
                         <outlet property="hd" destination="GlW-Tx-6lW" id="Zjw-r3-CVG"/>
@@ -1596,6 +1595,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="hako" width="128" height="128"/>
         <image name="null" width="110" height="110"/>
     </resources>
 </document>

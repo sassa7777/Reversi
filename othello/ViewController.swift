@@ -78,6 +78,7 @@ class ViewController: NSViewController
     @IBOutlet var hh: NSButton!
     @IBOutlet var close: NSButton!
     @IBOutlet var multi: NSButton!
+    @IBOutlet var hakotext: NSTextField!
 
     @IBAction func aa(_ sender: Any)
     {
@@ -614,10 +615,15 @@ class ViewController: NSViewController
         close.isHidden = true
         reset()
         reloadview(bot: false)
+        hakotext.stringValue = "君(プレイヤー)の番だよ！"
     }
     
     func putai()
     {
+        if finishedsw() != 1
+        {
+            hakotext.stringValue = "考え中..."
+        }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
         {
             if(ai2(multicore) == 1)
@@ -627,6 +633,10 @@ class ViewController: NSViewController
             }
             else
             {
+                if finishedsw() != 1
+                {
+                    self.hakotext.stringValue = "君(プレイヤー)の番だよ！"
+                }
                 return
             }
         }
@@ -1608,6 +1618,18 @@ class ViewController: NSViewController
         }
         if(finishedsw() == 1)
         {
+            if winner() == 1
+            {
+                hakotext.stringValue = "君の勝ち！遊んでくれてありがとう！"
+            }
+            else if winner() == 2
+            {
+                hakotext.stringValue = "僕の勝ち！遊んでくれてありがとう！"
+            }
+            else
+            {
+                hakotext.stringValue = "引き分け！遊んでくれてありがとう！"
+            }
             result()
             performSegue(withIdentifier: "popup", sender: self)
             close.isHidden = false
