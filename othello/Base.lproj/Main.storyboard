@@ -722,20 +722,20 @@
                                     <action selector="tapstart:" target="gOt-pg-uBu" id="A3G-Sg-BTa"/>
                                 </connections>
                             </button>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRi-yQ-D4l">
+                                <rect key="frame" x="227" y="430" width="48" height="48"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="KZh-AK-QLb"/>
+                            </imageView>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bLc-DZ-CAJ">
-                                <rect key="frame" x="224" y="439" width="277" height="29"/>
+                                <rect key="frame" x="259" y="439" width="277" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="ハコくんオセロ" id="FYm-bR-h7J">
-                                    <font key="font" size="20" name=".HiraKakuInterface-W3"/>
+                                    <font key="font" metaFont="system" size="20"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRi-yQ-D4l">
-                                <rect key="frame" x="187" y="430" width="48" height="48"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="KZh-AK-QLb"/>
-                            </imageView>
                         </subviews>
                     </view>
                     <connections>

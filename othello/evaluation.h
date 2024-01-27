@@ -207,16 +207,6 @@ int score_fixedstone(char board[10][10])
     int score = 0;
     //角
     //白
-    if(board[0][0] == 1) score-=1;
-    if(board[0][8] == 1) score-=1;
-    if(board[8][0] == 1) score-=1;
-    if(board[8][8] == 1) score-=1;
-    //黒
-    if(board[0][0] == 2) score+=1;
-    if(board[0][8] == 2) score+=1;
-    if(board[8][0] == 2) score+=1;
-    if(board[8][8] == 2) score+=1;
-    
     //辺
     int i = 0;
     //上
@@ -255,7 +245,7 @@ int score_fixedstone(char board[10][10])
             else if(board[i][1] == 1) score -= 2;
         }
     }
-    return score;
+    return 4*score;
 }
 
 int score_badcorner(char board[10][10])
@@ -299,16 +289,15 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
     //printf("turn is %d\n", turn);
-    if(turn > 55)
+    if(turn > 50)
     {
         score += 50*score_countstone(board);
-        score += score_fixedstone(board);
     }
-    score += score_stone(board);
-    score += 3*score_mountain(board);
     score += score_fixedstone(board);
-    score += 3*score_wing(board);
-    score += 3*score_halfblock(board);
-    //score += -10*score_badcorner(board);
+    score += score_stone(board);
+    score += 4*score_mountain(board);
+    score += score_fixedstone(board);
+    score += 4*score_wing(board);
+    score += 4*score_halfblock(board);
     return score;
 }
