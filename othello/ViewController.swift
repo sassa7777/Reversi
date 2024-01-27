@@ -613,6 +613,7 @@ class ViewController: NSViewController
     override func viewDidLoad() 
     {
         close.isHidden = true
+        view.window?.title = "対局"
         reset()
         reloadview(bot: false)
         hakotext.stringValue = "君(プレイヤー)の番だよ！"

@@ -703,10 +703,10 @@
             </objects>
             <point key="canvasLocation" x="-1067" y="258"/>
         </scene>
-        <!--First View Controller-->
+        <!--ハコくんオセロ-->
         <scene sceneID="VH7-Na-mJo">
             <objects>
-                <viewController id="gOt-pg-uBu" customClass="FirstViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="ハコくんオセロ" id="gOt-pg-uBu" customClass="FirstViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="iNX-Uh-vd0">
                         <rect key="frame" x="0.0" y="0.0" width="750" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -722,6 +722,20 @@
                                     <action selector="tapstart:" target="gOt-pg-uBu" id="A3G-Sg-BTa"/>
                                 </connections>
                             </button>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bLc-DZ-CAJ">
+                                <rect key="frame" x="224" y="439" width="277" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="ハコくんオセロ" id="FYm-bR-h7J">
+                                    <font key="font" size="20" name=".HiraKakuInterface-W3"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bRi-yQ-D4l">
+                                <rect key="frame" x="187" y="430" width="48" height="48"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="KZh-AK-QLb"/>
+                            </imageView>
                         </subviews>
                     </view>
                     <connections>
@@ -732,15 +746,16 @@
             </objects>
             <point key="canvasLocation" x="-238" y="475"/>
         </scene>
-        <!--ResultViewController-->
+        <!--結果-->
         <scene sceneID="4Np-vB-ebT">
             <objects>
-                <viewController id="AIO-dW-Itm" userLabel="ResultViewController" customClass="ResultViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <customObject id="iTW-H4-4qe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <viewController title="結果" id="AIO-dW-Itm" customClass="ResultViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="popup" id="awY-XK-Ued">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MPx-DE-YD2">
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MPx-DE-YD2">
                                 <rect key="frame" x="117" y="209" width="216" height="52"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="a50-gj-vqa">
@@ -760,7 +775,7 @@
                                     <action selector="tapclose:" target="AIO-dW-Itm" id="yE3-zG-LeJ"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="egp-Lz-xbN">
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="egp-Lz-xbN">
                                 <rect key="frame" x="191" y="159" width="68" height="42"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="SDM-Yg-DiY">
@@ -776,21 +791,20 @@
                         <outlet property="win_player" destination="egp-Lz-xbN" id="H8J-NF-YOX"/>
                     </connections>
                 </viewController>
-                <customObject id="iTW-H4-4qe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-833" y="877"/>
         </scene>
-        <!--View Controller-->
+        <!--対局-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="対局" id="XfG-lQ-9wD" customClass="ViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="700" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hb4-0U-MhY" userLabel="00">
-                                <rect key="frame" x="161" y="526" width="48" height="48"/>
+                                <rect key="frame" x="160" y="526" width="48" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="null" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="VRk-nb-2nA">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1509,7 +1523,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="c0Y-EB-lNb"/>
                             </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-cl-HZJ" userLabel="hakotext">
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-cl-HZJ" userLabel="hakotext">
                                 <rect key="frame" x="158" y="109" width="286" height="65"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="truncatingTail" alignment="left" drawsBackground="YES" id="NG6-NI-yb2">
