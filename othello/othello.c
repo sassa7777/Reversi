@@ -57,7 +57,6 @@ void check2(int Player)
             }
         }
     }
-    #pragma clang loop vectorize(enable)
     for(int i = 0; i < 10; i++)
     {
         canPut[0][i] = false;
@@ -69,7 +68,6 @@ void check2(int Player)
     skip = false;
     for(int i = 1; i < 9; i++)
     {
-        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; j++)
         {
             if (canPut[i][j] == true)
@@ -135,7 +133,6 @@ void check3(int player, bool canput[10][10])
             }
         }
     }
-    #pragma clang loop vectorize(enable)
     for(int i = 0; i < 10; i++)
     {
         canput[0][i] = false;
@@ -147,7 +144,6 @@ void check3(int player, bool canput[10][10])
     skip = false;
     for(int i = 1; i < 9; i++)
     {
-        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; j++)
         {
             if (canput[i][j] == true)
@@ -165,7 +161,6 @@ void reverse(int x, int y)
     {
         for(int xx = -1; xx < 2; xx++)
         {
-            #pragma clang loop vectorize(enable)
             for(int yy = -1; yy < 2; yy++)
             {
                 if(xx != 0 || yy != 0)

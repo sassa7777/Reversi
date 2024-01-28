@@ -153,7 +153,6 @@ int score_putable(char board[10][10], bool canput[10][10])
     int score = 0;
     for(int i = 1; i < 9; ++i)
     {
-        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; ++j)
         {
             if(canput[i][j] == true)
@@ -171,7 +170,6 @@ int score_stone(char board[10][10])
     int score = 0;
     for(int x = 1; x < 9; ++x)
     {
-        #pragma clang loop vectorize(enable)
         for(int y = 1; y < 9; y++)
         {
             if(board[x][y] == 2) score += scoreboard[x-1][y-1];
@@ -186,7 +184,6 @@ int score_countstone(char board[10][10])
     int score = 0;
     for(int i = 1; i < 9; ++i)
     {
-        #pragma clang loop vectorize(enable)
         for(int j = 1; j < 9; ++j)
         {
             if(board[i][j] == 1)
