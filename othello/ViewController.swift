@@ -79,7 +79,7 @@ class ViewController: NSViewController
     @IBOutlet var close: NSButton!
     @IBOutlet var multi: NSButton!
     @IBOutlet var hakotext: NSTextField!
-
+	
     @IBAction func aa(_ sender: Any)
     {
         if(putstone(1, 1) != 0)
@@ -615,8 +615,30 @@ class ViewController: NSViewController
         close.isHidden = true
         reset()
         reloadview(bot: false)
-        hakotext.stringValue = "君(プレイヤー)の番だよ！"
+		putai()
     }
+	
+	func switchbutton(switch: Bool)
+	{
+		let buttons: [[NSButton]] = [
+			[aa, ab, ac, ad, ae, af, ag, ah],
+			[ba, bb, bc, bd, be, bf, bg, bh],
+			[ca, cb, cc, cd, ce, cf, cg, ch],
+			[da, db, dc, dd, de, df, dg, dh],
+			[ea, eb, ec, ed, ee, ef, eg, eh],
+			[fa, fb, fc, fd, fe, ff, fg, fh],
+			[ga, gb, gc, gd, ge, gf, gg, gh],
+			[ha, hb, hc, hd, he, hf, hg, hh]
+		]
+
+		for i in buttons {
+			for button in i {
+				button.isEnabled = `switch`
+				(button.cell as? NSButtonCell)?.imageDimsWhenDisabled = false
+			}
+		}
+
+	}
     
     func putai()
     {
@@ -624,6 +646,7 @@ class ViewController: NSViewController
         {
             DispatchQueue.main.async()
             {
+				self.switchbutton(switch: false)
                 self.hakotext.stringValue = "考え中...(時間がかかることがあります)"
             }
         }
@@ -643,10 +666,10 @@ class ViewController: NSViewController
                 {
                     DispatchQueue.main.async()
                     {
+						self.switchbutton(switch: true)
                         self.hakotext.stringValue = "君(プレイヤー)の番だよ！"
-                    }
+					}
                 }
-                return
             }
         }
     }
@@ -668,6 +691,7 @@ class ViewController: NSViewController
             print("引き分け")
             self.hakotext.stringValue = "引き分け！遊んでくれてありがとう！"
         }
+		switchbutton(switch: false)
         hakotext.isEditable = false
     }
     
@@ -675,7 +699,6 @@ class ViewController: NSViewController
     {
         rebuild(bot)
         print("[*]場面を再構築中...")
-        print("tmpx \(tmpx) tmpy \(tmpy)")
         for i in 1..<9 {
             for j in 1..<9 {
                 switch i
