@@ -637,7 +637,6 @@ class ViewController: NSViewController
 				(button.cell as? NSButtonCell)?.imageDimsWhenDisabled = false
 			}
 		}
-
 	}
     
     func putai()
@@ -654,7 +653,7 @@ class ViewController: NSViewController
         {
             if(ai2(multicore) == 1)
             {
-                DispatchQueue.main.async()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
                 {
                     self.reloadview(bot: false)
                     self.putai()
@@ -1210,7 +1209,7 @@ class ViewController: NSViewController
                             cg.image = NSImage(named: "black")
                             if(tmpy == 3 && tmpx == 7)
                             {
-                                ga.image = NSImage(named: "blackb")
+                                cg.image = NSImage(named: "blackb")
                             }
                         case 2:
                             cg.image = NSImage(named: "white")

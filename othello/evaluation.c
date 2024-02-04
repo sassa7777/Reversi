@@ -5,16 +5,7 @@
 //  Created by sasa on 2024/01/15.
 //
 
-int scoreboard[8][8] = {
-    35, -12, 1, -1, -1, 1, -12, 35,
-       -12, -15, -3, -3, -3, -3, -15, -12,
-       1, -3, 0, -1, -1, 0, -3, 1,
-       -1, -3, -1, -1, -1, -1, -3, -1,
-       -1, -3, -1, -1, -1, -1, -3, -1,
-       1, -3, 0, -1, -1, 0, -3, 1,
-       -12, -15, -3, -3, -3, -3, -15, -12,
-       35, -12, 1, -1, -1, 1, -12, 35
-};
+#include "evaluation.h"
 
 int score_wing(char board[10][10])
 {
@@ -119,20 +110,50 @@ int score_pureblock(char board[10][10])
     return -block;
 }
 
+int score_purewing(char board[10][10])
+{
+    int block = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && ((board[1][2] == 1 && board[1][7] == 0) || (board[1][2] == 0 && board[1][7] == 1)) && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 &&  board[1][8] == 0 && board[2][3] == 1 && board[2][4] == 1 && board[2][5] == 1 && board[2][6] == 1) block--;
+    //白
+    if(board[1][1] == 0 && ((board[1][2] == 2 && board[1][7] == 0) || (board[1][2] == 0 && board[1][7] == 2)) && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][8] == 0 && board[2][3] == 2 && board[2][4] == 2 && board[2][5] == 2 && board[2][6] == 2) block++;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && ((board[8][2] == 1 && board[8][7] == 0) || (board[8][2] == 0 && board[8][7] == 1)) && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][8] == 0 && board[7][3] == 1 && board[7][4] == 1 && board[7][5] == 1 && board[7][6] == 1) block--;
+    //白
+    if(board[8][1] == 0 && ((board[2][8] == 2 && board[7][8] == 0) || (board[2][8] == 0 && board[7][8] == 2)) && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][8] == 0 && board[7][3] == 2 && board[7][4] == 2 && board[7][5] == 2 && board[7][6] == 2) block++;
+    
+    //右
+    //黒
+    if(board[1][8] == 0 && ((board[2][8] == 1 && board[7][8] == 0) || (board[2][8] == 0 && board[7][8] == 1)) && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[8][8] == 0 && board[3][7] == 1 && board[4][7] == 1 && board[5][7] == 1 && board[6][7] == 1) block--;
+    //白
+    if(board[1][8] == 0 && ((board[2][8] == 2 && board[7][8] == 0) || (board[2][8] == 0 && board[7][8] == 2)) && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[8][8] == 0 && board[3][7] == 2 && board[4][7] == 2 && board[5][7] == 2 && board[6][7] == 2) block++;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && ((board[2][1] == 1 && board[7][1] == 0) || (board[2][1] == 0 && board[7][1] == 1)) && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[8][1] == 0 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1) block--;
+    //白
+    if(board[1][1] == 0 && ((board[2][1] == 2 && board[7][1] == 0) || (board[2][1] == 0 && board[7][1] == 2)) && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[8][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2) block++;
+    return -block;
+
+}
+
 int score_halfblock(char board[10][10])
 {
     int block = 0;
     //上
     //黒
-    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 0 && board[1][8] == 0) block--;
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][3] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 0 && board[1][8] == 0) block--;
     //白
-    if(board[1][1] == 0 && board[1][2] == 0 && board[1][4] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0) block++;
+    if(board[1][1] == 0 && board[1][2] == 0 && board[1][3] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 0 && board[1][8] == 0) block++;
     
     //下
     //黒
-    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0) block--;
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][3] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 0 && board[8][8] == 0) block--;
     //白
-    if(board[8][1] == 0 && board[8][2] == 0 && board[8][4] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0) block++;
+    if(board[8][1] == 0 && board[8][2] == 0 && board[8][3] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 0 && board[8][8] == 0) block++;
     
     //右
     //黒
@@ -325,19 +346,51 @@ int score_goodcorner(char board[10][10])
     return score;
 }
 
+int score_badside(char board[10][10])
+{
+    int block = 0;
+    //上
+    //黒
+    if(board[1][1] == 0 && board[1][8] == 0 && ((board[1][2] == 1 && board[1][3] == 1 && board[1][6] == 0 && board[1][7] == 0) || (board[1][2] == 0 && board[1][3] == 0 && board[1][6] == 1 && board[1][7] == 1)) && board[1][2] == 0 && board[1][3] == 1 && board[1][4] == 1 && board[1][5] == 1) block--;
+    //白
+    if(board[1][1] == 0 && board[1][8] == 0 && ((board[1][2] == 2 && board[1][3] == 2 && board[1][6] == 0 && board[1][7] == 0) || (board[1][2] == 0 && board[1][3] == 0 && board[1][6] == 2 && board[1][7] == 2)) && board[1][2] == 0 && board[1][3] == 2 && board[1][4] == 2 && board[1][5] == 2) block++;
+    
+    //下
+    //黒
+    if(board[8][1] == 0 && board[8][8] == 0 && ((board[8][2] == 1 && board[8][3] == 1 && board[8][6] == 0 && board[8][7] == 0) || (board[8][2] == 0 && board[8][3] == 0 && board[8][6] == 1 && board[8][7] == 1)) && board[1][2] == 0 && board[8][3] == 1 && board[8][4] == 1 && board[8][5] == 1) block--;
+    //白
+    if(board[8][1] == 0 && board[8][8] == 0 && ((board[8][2] == 2 && board[8][3] == 2 && board[8][6] == 0 && board[8][7] == 0) || (board[8][2] == 0 && board[8][3] == 0 && board[8][6] == 2 && board[8][7] == 2)) && board[8][2] == 0 && board[8][3] == 2 && board[8][4] == 2 && board[8][5] == 2) block++;
+    
+    //右
+    //黒
+    if(board[1][8] == 0 && board[8][8] == 0 && ((board[2][8] == 1 && board[3][8] == 1 && board[6][8] == 0 && board[7][8] == 0) || (board[2][8] == 0 && board[3][8] == 0 && board[6][8] == 1 && board[7][8] == 1)) && board[2][8] == 0 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1) block--;
+    //白
+    if(board[1][8] == 0 && board[8][8] == 0 && ((board[2][8] == 2 && board[3][8] == 2 && board[6][8] == 0 && board[7][8] == 0) || (board[2][8] == 0 && board[3][8] == 0 && board[6][8] == 1 && board[7][8] == 2)) && board[2][8] == 0 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2) block++;
+    
+    //左
+    //黒
+    if(board[1][1] == 0 && board[8][1] == 0 && ((board[2][1] == 1 && board[3][1] == 1 && board[6][1] == 0 && board[7][1] == 0) || (board[2][1] == 0 && board[3][1] == 0 && board[6][1] == 1 && board[7][1] == 1)) && board[2][1] == 0 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1) block--;
+    //白
+    if(board[1][1] == 0 && board[8][1] == 0 && ((board[2][1] == 2 && board[3][1] == 2 && board[6][1] == 0 && board[7][1] == 0) || (board[2][1] == 0 && board[3][1] == 0 && board[6][1] == 1 && board[7][1] == 2)) && board[2][1] == 0 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2) block++;
+    
+    return -block;
+}
+
 int countscore(char board[10][10], int turn, bool canput[10][10])
 {
     int score = 0;
-    //printf("turn is %d\n", turn);
     if(turn > 50)
     {
         score += 50*score_countstone(board);
     }
     score += score_goodcorner(board);
+    score += 2*score_badside(board);
+    score += score_fixedstone(board);
     score += score_stone(board);
     score += 3*score_mountain(board);
     score += score_fixedstone(board);
     score += 3*score_wing(board);
+    score += 3*score_purewing(board);
     score += 3*score_halfblock(board);
     return score;
 }

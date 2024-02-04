@@ -6,7 +6,7 @@
 //
 
 #include "othello.h"
-#include "evaluation.h"
+#include "evaluation.c"
 
 void reset(void)
 {
@@ -23,6 +23,7 @@ void reset(void)
     finished = 0;
     skipped = false;
     turn = 1;
+	DEPTH = 10;
     return;
 }
 
@@ -354,91 +355,78 @@ int ai2(bool multi)
     if(player == 1 || finished == 1) return 0;
     isbot = true;
     printf("[*]Botが考え中..\n");
-    if(multi == true)
+    if(turn > 45)
     {
-        printf("Warning: using pthread\n");
-        //minimax_multi(DEPTH, player);
+		DEPTH = 15;
+		nega_alpha(DEPTH, player, -9999, 9999, turn);
     }
-    //else minimax(DEPTH, player);
-    else alphabeta(DEPTH, player, -9999, 9999, turn);
+    else nega_alpha(DEPTH, player, -9999, 9999, turn);
     putstone(tmpy, tmpx);
     check2(1);
     isbot = false;
     return 1;
 }
 
-int alphabeta(int depth, int playerrn, int alpha, int beta, int turn)
+int nega_alpha(int depth, int playerrn, int alpha, int beta, int turn)
 {
-    if(depth == 0)
-    {
-        bool canput[10][10];
-        memset(canput, 0, sizeof(canput));
-
-        check3(3-playerrn, canput);
-        return countscore(board, turn, canput);
-    }
-    
-    int var;
-    char tmpboard[10][10];
-    bool canput[10][10];
-    
-    memcpy(tmpboard, board, sizeof(board));
-    memset(canput, 0, sizeof(canput));
-    
-    check3(playerrn, canput);
-    for (int i=1; i<9; i++)
-    {
-        for (int j=1; j<9; j++)
-        {
-            if(canput[i][j] == true)
-            {
-                putstone2(i,j, playerrn, canput);
-                
-                if(putableto(3-playerrn) == true)
-                {
-                    var = alphabeta(depth-1, 3-playerrn, alpha, beta, turn+1);
-                }
-                else
-                {
-                    printf("cant put\n");
-                    var = alphabeta(depth-1, playerrn, alpha, beta, turn+1);
-                }
-                
-                if(playerrn == 2 && alpha < var)
-                {
-                    alpha = var;
-                    if(depth == DEPTH)
-                    {
-                        tmpx = j;
-                        tmpy = i;
-                        printf("best place is (%d, %d), score %d\n", j, i, var);
-                    }
-                }
-                
-                if(playerrn == 1 && beta > var) beta = var;
-                memcpy(board, tmpboard, sizeof(board));
-                if(alpha >= beta)
-                {
-                    if(playerrn == 2) return alpha;
-                    if(playerrn == 1) return beta;
-                }
-            }
-        }
-    }
-    if(alpha == -9999)
-    {
-        check3(3-playerrn, canput);
-        alpha = countscore(board, turn, canput);
-    }
-    if(beta == 9999)
-    {
-        check3(3-playerrn, canput);
-        beta = countscore(board, turn, canput);
-    }
-    if(playerrn == 2) return alpha;
-    if(playerrn == 1) return beta;
-    printf("ERROR_1\n");
-    return 99999;
+	if(depth == 0)
+	{
+		bool canput[10][10];
+		memset(canput, 0, sizeof(canput));
+		check3(3-playerrn, canput);
+		return countscore(board, turn, canput);
+	}
+	
+	int var;
+	char tmpboard[10][10];
+	bool canput[10][10] = {{false}};
+	
+	memcpy(tmpboard, board, sizeof(board));
+	
+	check3(playerrn, canput);
+	for (int i=1; i<9; i++)
+	{
+		for (int j=1; j<9; j++)
+		{
+			if(canput[i][j] == true)
+			{
+				putstone2(i, j, playerrn, canput);
+					
+				if(putableto(3-playerrn) == true)
+				{
+					var = -nega_alpha(depth-1, 3-playerrn, -beta, -alpha, turn+1);
+				}
+				else
+				{
+					printf("cant put\n");
+					var = -nega_alpha(depth-1, playerrn, -beta, -alpha, turn+1);
+				}
+					
+				if(var > alpha)
+				{
+					alpha = var;
+					if(depth == DEPTH)
+					{
+						tmpx = j;
+						tmpy = i;
+						printf("best place is (%d, %d), score %d\n", j, i, var);
+					}
+				}
+				memcpy(board, tmpboard, sizeof(board));
+				
+				if(alpha >= beta)
+				{
+					return alpha;
+				}
+			}
+		}
+	}
+	if(alpha == -9999)
+	{
+		check3(3-playerrn, canput);
+		alpha = countscore(board, turn, canput);
+	}
+	return alpha;
 }
 
 int returnplayer(void)

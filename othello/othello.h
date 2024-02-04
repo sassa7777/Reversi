@@ -7,9 +7,9 @@
 
 #ifndef othello_h
 #define othello_h
-#define DEPTH 10
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -25,6 +25,7 @@ int whitec = 0;
 int blackc = 0;
 int tmpx, tmpy;
 bool isbot = false;
+int DEPTH;
 
 
 void reset(void);
@@ -41,6 +42,6 @@ int countstoneswift(int c);
 int ai2(bool multi);
 int returnplayer(void);
 int minimax(int depth, int playerrn);
-int alphabeta(int depth, int playerrn, int alpha, int beta, int turn);
+int nega_alpha(int depth, int playerrn, int alpha, int beta, int turn);
 
 #endif /* othello_h */
