@@ -1,11 +1,22 @@
 //
-//  evaluation.h
+//  evaluation.c
 //  othello
 //
 //  Created by sasa on 2024/01/15.
 //
 
-#include "evaluation.h"
+#include <stdbool.h>
+
+int scoreboard[8][8] = {
+    35, -12, 1, -1, -1, 1, -12, 35,
+       -12, -18, -3, -3, -3, -3, -18, -12,
+       1, -3, 0, -1, -1, 0, -3, 1,
+       -1, -3, -1, -1, -1, -1, -3, -1,
+       -1, -3, -1, -1, -1, -1, -3, -1,
+       1, -3, 0, -1, -1, 0, -3, 1,
+       -12, -18, -3, -3, -3, -3, -18, -12,
+       35, -12, 1, -1, -1, 1, -12, 35
+};
 
 int score_wing(char board[10][10])
 {
@@ -189,9 +200,9 @@ int score_putable(char board[10][10], bool canput[10][10])
 int score_stone(char board[10][10])
 {
     int score = 0;
-    for(int x = 1; x < 9; ++x)
+    for(char x = 1; x < 9; ++x)
     {
-        for(int y = 1; y < 9; y++)
+        for(char y = 1; y < 9; y++)
         {
             if(board[x][y] == 2) score += scoreboard[x-1][y-1];
             if(board[x][y] == 1) score -= scoreboard[x-1][y-1];
@@ -203,9 +214,9 @@ int score_stone(char board[10][10])
 int score_countstone(char board[10][10])
 {
     int score = 0;
-    for(int i = 1; i < 9; ++i)
+    for(char i = 1; i < 9; ++i)
     {
-        for(int j = 1; j < 9; ++j)
+        for(char j = 1; j < 9; ++j)
         {
             if(board[i][j] == 1)
             {
@@ -308,40 +319,76 @@ int score_goodcorner(char board[10][10])
     int score = 0;
     //左上
     //白
-    if(board[1][1] == 2 && board[2][1] == 2 && board[3][1] == 2) score += 12;
-    if(board[1][1] == 2 && board[1][2] == 2 && board[1][3] == 2) score += 12;
-    if(board[1][1] == 2 && board[2][2] == 2 && board[3][3] == 2) score += 15;
+    if(board[1][1] == 2 && board[2][1] == 2 && board[3][1] == 2) score += 6;
+    if(board[1][1] == 2 && board[1][2] == 2 && board[1][3] == 2) score += 6;
+    if(board[1][1] == 2 && board[2][2] == 2 && board[3][3] == 2) score += 7;
     //黒
-    if(board[1][1] == 1 && board[2][1] == 1 && board[3][1] == 1) score -= 12;
-    if(board[1][1] == 1 && board[1][2] == 1 && board[1][3] == 1) score -= 12;
-    if(board[1][1] == 1 && board[2][2] == 1 && board[3][3] == 1) score -= 15;
+    if(board[1][1] == 1 && board[2][1] == 1 && board[3][1] == 1) score -= 6;
+    if(board[1][1] == 1 && board[1][2] == 1 && board[1][3] == 1) score -= 6;
+    if(board[1][1] == 1 && board[2][2] == 1 && board[3][3] == 1) score -= 7;
     //右上
     //白
-    if(board[1][8] == 2 && board[2][8] == 2 && board[3][8] == 2) score += 12;
-    if(board[1][8] == 2 && board[1][7] == 2 && board[1][6] == 2) score += 12;
-    if(board[1][8] == 2 && board[2][7] == 2 && board[3][6] == 2) score += 15;
+    if(board[1][8] == 2 && board[2][8] == 2 && board[3][8] == 2) score += 6;
+    if(board[1][8] == 2 && board[1][7] == 2 && board[1][6] == 2) score += 6;
+    if(board[1][8] == 2 && board[2][7] == 2 && board[3][6] == 2) score += 7;
     //黒
-    if(board[1][8] == 1 && board[2][8] == 1 && board[3][8] == 1) score -= 12;
-    if(board[1][8] == 1 && board[1][7] == 1 && board[1][6] == 1) score -= 12;
-    if(board[1][8] == 1 && board[2][7] == 1 && board[3][6] == 1) score -= 15;
+    if(board[1][8] == 1 && board[2][8] == 1 && board[3][8] == 1) score -= 6;
+    if(board[1][8] == 1 && board[1][7] == 1 && board[1][6] == 1) score -= 6;
+    if(board[1][8] == 1 && board[2][7] == 1 && board[3][6] == 1) score -= 7;
     //左下
     //白
-    if(board[8][1] == 2 && board[7][1] == 2 && board[6][1] == 2) score += 12;
-    if(board[8][1] == 2 && board[8][2] == 2 && board[8][3] == 2) score += 12;
-    if(board[8][1] == 2 && board[7][2] == 2 && board[6][3] == 2) score += 15;
+    if(board[8][1] == 2 && board[7][1] == 2 && board[6][1] == 2) score += 6;
+    if(board[8][1] == 2 && board[8][2] == 2 && board[8][3] == 2) score += 6;
+    if(board[8][1] == 2 && board[7][2] == 2 && board[6][3] == 2) score += 7;
     //黒
-    if(board[8][1] == 1 && board[7][1] == 1 && board[6][1] == 1) score -= 12;
-    if(board[8][1] == 1 && board[8][2] == 1 && board[8][3] == 1) score -= 12;
-    if(board[8][1] == 1 && board[7][2] == 1 && board[6][3] == 1) score -= 15;
+    if(board[8][1] == 1 && board[7][1] == 1 && board[6][1] == 1) score -= 6;
+    if(board[8][1] == 1 && board[8][2] == 1 && board[8][3] == 1) score -= 6;
+    if(board[8][1] == 1 && board[7][2] == 1 && board[6][3] == 1) score -= 7;
     //右下
     //白
-    if(board[8][8] == 2 && board[8][7] == 2 && board[8][6] == 2) score += 12;
-    if(board[8][8] == 2 && board[7][8] == 2 && board[6][8] == 2) score += 12;
-    if(board[8][8] == 2 && board[7][7] == 2 && board[6][6] == 2) score += 15;
+    if(board[8][8] == 2 && board[8][7] == 2 && board[8][6] == 2) score += 6;
+    if(board[8][8] == 2 && board[7][8] == 2 && board[6][8] == 2) score += 6;
+    if(board[8][8] == 2 && board[7][7] == 2 && board[6][6] == 2) score += 7;
     //黒
-    if(board[8][8] == 1 && board[8][7] == 1 && board[8][6] == 1) score -= 12;
-    if(board[8][8] == 1 && board[7][8] == 1 && board[6][8] == 1) score -= 12;
-    if(board[8][8] == 1 && board[7][7] == 1 && board[6][6] == 1) score -= 15;
+    if(board[8][8] == 1 && board[8][7] == 1 && board[8][6] == 1) score -= 6;
+    if(board[8][8] == 1 && board[7][8] == 1 && board[6][8] == 1) score -= 6;
+    if(board[8][8] == 1 && board[7][7] == 1 && board[6][6] == 1) score -= 7;
+    //左上
+    //白
+    if(board[1][1] != 0 && board[2][1] == 2 && board[3][1] == 2) score += 6;
+    if(board[1][1] != 0 && board[1][2] == 2 && board[1][3] == 2) score += 6;
+    if(board[1][1] != 0 && board[2][2] == 2 && board[3][3] == 2) score += 7;
+    //黒
+    if(board[1][1] != 0 && board[2][1] == 1 && board[3][1] == 1) score -= 6;
+    if(board[1][1] != 0 && board[1][2] == 1 && board[1][3] == 1) score -= 6;
+    if(board[1][1] != 0 && board[2][2] == 1 && board[3][3] == 1) score -= 7;
+    //右上
+    //白
+    if(board[1][8] != 0 && board[2][8] == 2 && board[3][8] == 2) score += 6;
+    if(board[1][8] != 0 && board[1][7] == 2 && board[1][6] == 2) score += 6;
+    if(board[1][8] != 0 && board[2][7] == 2 && board[3][6] == 2) score += 7;
+    //黒
+    if(board[1][8] != 0 && board[2][8] == 1 && board[3][8] == 1) score -= 6;
+    if(board[1][8] != 0 && board[1][7] == 1 && board[1][6] == 1) score -= 6;
+    if(board[1][8] != 0 && board[2][7] == 1 && board[3][6] == 1) score -= 7;
+    //左下
+    //白
+    if(board[8][1] != 0 && board[7][1] == 2 && board[6][1] == 2) score += 6;
+    if(board[8][1] != 0 && board[8][2] == 2 && board[8][3] == 2) score += 6;
+    if(board[8][1] != 0 && board[7][2] == 2 && board[6][3] == 2) score += 7;
+    //黒
+    if(board[8][1] != 0 && board[7][1] == 1 && board[6][1] == 1) score -= 6;
+    if(board[8][1] != 1 && board[8][2] == 1 && board[8][3] == 1) score -= 6;
+    if(board[8][1] != 0 && board[7][2] == 1 && board[6][3] == 1) score -= 7;
+    //右下
+    //白
+    if(board[8][8] != 0 && board[8][7] == 2 && board[8][6] == 2) score += 6;
+    if(board[8][8] != 0 && board[7][8] == 2 && board[6][8] == 2) score += 6;
+    if(board[8][8] != 0 && board[7][7] == 2 && board[6][6] == 2) score += 7;
+    //黒
+    if(board[8][8] != 0 && board[8][7] == 1 && board[8][6] == 1) score -= 6;
+    if(board[8][8] != 0 && board[7][8] == 1 && board[6][8] == 1) score -= 6;
+    if(board[8][8] != 0 && board[7][7] == 1 && board[6][6] == 1) score -= 7;
     
     return score;
 }
@@ -381,16 +428,17 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
     int score = 0;
     if(turn > 50)
     {
-        score += 50*score_countstone(board);
+        score += 20*score_countstone(board);
     }
     score += score_goodcorner(board);
-    score += 2*score_badside(board);
+    score += 1*score_badside(board);
     score += score_fixedstone(board);
     score += score_stone(board);
-    score += 3*score_mountain(board);
+    score += 1*score_mountain(board);
     score += score_fixedstone(board);
-    score += 3*score_wing(board);
-    score += 3*score_purewing(board);
-    score += 3*score_halfblock(board);
+    score += 1*score_wing(board);
+    score += 1*score_purewing(board);
+    score += 1*score_halfblock(board);
     return score;
 }
+

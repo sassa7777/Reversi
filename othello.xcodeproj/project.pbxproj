@@ -16,7 +16,6 @@
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
 		1BA79BF12AC835D000E864A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BEF2AC835D000E864A1 /* Main.storyboard */; };
 		1BC0B1672B4AC229004B9DBF /* evaluation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0B1622B4A8B57004B9DBF /* evaluation.c */; };
-		1BE95E032B6CA51700B95784 /* evaluation.h in Sources */ = {isa = PBXBuildFile; fileRef = 1BE95E022B6CA51700B95784 /* evaluation.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,8 +43,7 @@
 		1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1BA79BFC2AC848F600E864A1 /* othello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = othello.h; path = othello/othello.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; usesTabs = 1; };
-		1BC0B1622B4A8B57004B9DBF /* evaluation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = evaluation.c; path = othello/evaluation.c; sourceTree = "<group>"; };
-		1BE95E022B6CA51700B95784 /* evaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = evaluation.h; path = othello/evaluation.h; sourceTree = "<group>"; };
+		1BC0B1622B4A8B57004B9DBF /* evaluation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = evaluation.c; path = othello/evaluation.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +64,6 @@
 				1BA79BE72AC835CF00E864A1 /* Products */,
 				1BA79BFD2AC848F600E864A1 /* othello.c */,
 				1BC0B1622B4A8B57004B9DBF /* evaluation.c */,
-				1BE95E022B6CA51700B95784 /* evaluation.h */,
 				1BA79BFC2AC848F600E864A1 /* othello.h */,
 				1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */,
 			);
@@ -169,7 +166,6 @@
 				1B8654E72B5CFD99007402B0 /* othello.c in Sources */,
 				1B8654E62B5CF121007402B0 /* othello.h in Sources */,
 				1BC0B1672B4AC229004B9DBF /* evaluation.c in Sources */,
-				1BE95E032B6CA51700B95784 /* evaluation.h in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
 				1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */,
 				1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */,
@@ -328,7 +324,8 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Othello;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -338,14 +335,17 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
-				"OTHER_CFLAGS[arch=*]" = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "othello-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -366,7 +366,8 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Othello;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -376,14 +377,19 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "othello-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
