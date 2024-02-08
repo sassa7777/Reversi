@@ -42,7 +42,7 @@
 		1BA79BF22AC835D000E864A1 /* othello.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = othello.entitlements; sourceTree = "<group>"; };
 		1BA79BFB2AC848F600E864A1 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1BA79BFC2AC848F600E864A1 /* othello.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = othello.h; path = othello/othello.h; sourceTree = "<group>"; };
-		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; usesTabs = 1; };
+		1BA79BFD2AC848F600E864A1 /* othello.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = othello.c; path = othello/othello.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		1BC0B1622B4A8B57004B9DBF /* evaluation.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; name = evaluation.c; path = othello/evaluation.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 

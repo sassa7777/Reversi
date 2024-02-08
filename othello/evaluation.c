@@ -434,11 +434,11 @@ int countscore(char board[10][10], int turn, bool canput[10][10])
     score += 1*score_badside(board);
     score += score_fixedstone(board);
     score += score_stone(board);
-    score += 1*score_mountain(board);
+    score += 2*score_mountain(board);
     score += score_fixedstone(board);
-    score += 1*score_wing(board);
-    score += 1*score_purewing(board);
-    score += 1*score_halfblock(board);
+    score += 2*score_wing(board);
+    score += 2*score_purewing(board);
+    score += 2*score_halfblock(board);
     return score;
 }
 
