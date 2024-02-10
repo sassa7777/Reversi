@@ -5,7 +5,7 @@
 //  Created by sasa on 2023/09/30.
 //
 
-#include "othello.h"
+#include "reversi.h"
 #include "evaluation.c"
 
 void reset(void) {
@@ -26,7 +26,7 @@ void reset(void) {
 	finished = 0;
 	skipped = false;
 	turn = 1;
-	DEPTH = 10;
+	DEPTH = 11;
 	return;
 }
 
@@ -425,7 +425,6 @@ void *nega_alpha_thread1(void *args) {
 				if (putableto2(3 - playerrn, threadboard[0]) == true) {
 					var = nega_alpha_deepthread(depth - 1, 3 - playerrn, alpha, beta, turn + 1, threadboard[0]);
 				} else {
-					printf("cant put\n");
 					var = nega_alpha_deepthread(depth - 1, playerrn, alpha, beta, turn + 1, threadboard[0]);
 				}
 				
@@ -465,7 +464,6 @@ void *nega_alpha_thread2(void *args) {
 					var = nega_alpha_deepthread(depth - 1, 3 - playerrn, alpha, beta,
 												turn + 1, threadboard[1]);
 				} else {
-					printf("cant put\n");
 					var = nega_alpha_deepthread(depth - 1, playerrn, alpha, beta,
 												turn + 1, threadboard[1]);
 				}
@@ -504,7 +502,6 @@ void *nega_alpha_thread3(void *args) {
 					var = nega_alpha_deepthread(depth - 1, 3 - playerrn, alpha, beta,
 												turn + 1, threadboard[2]);
 				} else {
-					printf("cant put\n");
 					var = nega_alpha_deepthread(depth - 1, playerrn, alpha, beta,
 												turn + 1, threadboard[2]);
 				}
@@ -544,7 +541,6 @@ void *nega_alpha_thread4(void *args) {
 					var = nega_alpha_deepthread(depth - 1, 3 - playerrn, alpha, beta,
 												turn + 1, threadboard[3]);
 				} else {
-					printf("cant put\n");
 					var = nega_alpha_deepthread(depth - 1, playerrn, alpha, beta,
 												turn + 1, threadboard[3]);
 				}
@@ -618,12 +614,10 @@ int nega_alpha_deepthread(int depth, int playerrn, int alpha, int beta,
 			}
 		}
 	}
-	if (alpha == -9999) {
+	if (alpha == -9999 && playerrn == 2) {
 		check4(3 - playerrn, canput, board);
-		alpha = countscore(board, turn, canput);
+		return countscore(board, turn, canput);
 	}
-	if (playerrn == 2)
-		return alpha;
 	if (beta == 9999) {
 		check4(3 - playerrn, canput, board);
 		beta = countscore(board, turn, canput);
