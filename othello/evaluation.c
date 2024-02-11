@@ -6,17 +6,172 @@
 //
 
 #include <stdbool.h>
+#include <stdlib.h>
+//
+//int scoreboard[8][8] = {
+//    50, -15, 2, -1, -1, 2, -15, 50,
+//    -15, -18, -3, -2, -2, -3, -18, -15,
+//    2, -3, 1, -1, -1, 1, -3, 2,
+//    -1, -2, -1, 0, 0, -1, -2, -1,
+//    -1, -2, -1, 0, 0, -1, -2, -1,
+//    2, -3, 1, -1, -1, 1, -3, 2,
+//    -15, -18, -3, -2, -2, -3, -18, -15,
+//    50, -15, 2, -1, -1, 2, -15, 50
+//};
 
 int scoreboard[8][8] = {
-    50, -15, 2, -1, -1, 2, -15, 50,
-    -15, -18, -3, -2, -2, -3, -18, -15,
-    2, -3, 1, -1, -1, 1, -3, 2,
-    -1, -2, -1, 0, 0, -1, -2, -1,
-    -1, -2, -1, 0, 0, -1, -2, -1,
-    2, -3, 1, -1, -1, 1, -3, 2,
-    -15, -18, -3, -2, -2, -3, -18, -15,
-    50, -15, 2, -1, -1, 2, -15, 50
+     45, -11, 4, 0, 0, 4, -11, 45,
+     -11, -16, -1, -3, -3, -1, -16, -11,
+     4, -1, 2, -1, -1, 2, -1, 4,
+     0, -3, -1, 0, 0, -1, -3, 0,
+     0, -3, -1, 0, 0, -1, -3, 0,
+     4, -1, 2, -1, -1, 2, -1, 4,
+     -11, -16, -1, -3, -3, -1, -16, -11,
+     45, -11, 4, 0, 0, 4, -11, 45
 };
+
+int score_stone(char board[10][10])
+{
+    int score = 0;
+    for(char x = 1; x < 9; ++x)
+    {
+        for(char y = 1; y < 9; ++y)
+        {
+            if(board[x][y] == 2) score += (scoreboard[x-1][y-1] * 3);
+            if(board[x][y] == 1) score -= (scoreboard[x-1][y-1] * 3);
+        }
+    }
+    return score;
+}
+
+int score_putable(char board[10][10], bool canput[10][10])
+{
+    int score = 0;
+    for(int i = 1; i < 9; ++i)
+    {
+        for(int j = 1; j < 9; ++j)
+        {
+            if(canput[i][j] == true)
+            {
+                score+=1;
+            }
+        }
+    }
+    score *= 10;
+    return score;
+}
+
+int score_fixedstone(char board[10][10])
+{
+    int fixedstone = 0;
+    //ひとつでも埋まっているかどうか
+    if(board[1][1] != 0 || board[1][8] != 0 || board[8][1] != 0 || board[8][8] != 0)
+    {
+        //全て埋まっている
+        if(board[1][1] != 0 && board[1][8] != 0 && board[8][1] != 0 && board[8][8] != 0)
+        {
+            for(char i = 1; i <= 8; ++i)
+            {
+                if(board[1][i] == 2) fixedstone++;
+                else if(board[1][i] == 1) fixedstone--;
+                if(board[8][i] == 2) fixedstone++;
+                else if(board[8][i] == 1) fixedstone--;
+                if(board[i][1] == 2) fixedstone++;
+                else if(board[i][1] == 1) fixedstone--;
+                if(board[i][8] == 2) fixedstone++;
+                else if(board[i][8] == 1) fixedstone--;
+            }
+        }
+        else //全ては埋まっていない
+        {
+            //左上
+            if(board[1][1] != 0)
+            {
+                char i = 1;
+                if(board[1][1] == 2)
+                {
+                    while(board[1][i] == board[1][1])
+                    {
+                        fixedstone++;
+                        i++;
+                    }
+                }
+                else
+                {
+                    while(board[1][i] == board[1][1])
+                    {
+                        fixedstone--;
+                        i++;
+                    }
+                }
+            }
+            //右上
+            if(board[1][8] != 0)
+            {
+                char i = 2;
+                if(board[1][8] == 2)
+                {
+                    while(board[1][i] == board[1][8])
+                    {
+                        fixedstone++;
+                        i--;
+                    }
+                }
+                else
+                {
+                    while(board[1][i] == board[1][8])
+                    {
+                        fixedstone--;
+                        i--;
+                    }
+                }
+            }
+            //左下
+            if(board[8][1] != 0)
+            {
+                char i = 2;
+                if(board[8][1] == 2)
+                {
+                    while(board[8][i] == board[8][1])
+                    {
+                        fixedstone++;
+                        i++;
+                    }
+                }
+                else
+                {
+                    while(board[8][i] == board[8][1])
+                    {
+                        fixedstone--;
+                        i++;
+                    }
+                }
+            }
+            //右下
+            if(board[8][8] != 0)
+            {
+                char i = 2;
+                if(board[8][8] == 2)
+                {
+                    while(board[8][i] == board[8][8])
+                    {
+                        fixedstone++;
+                        i--;
+                    }
+                }
+                else
+                {
+                    while(board[8][i] == board[8][8])
+                    {
+                        fixedstone--;
+                        i--;
+                    }
+                }
+            }
+        }
+    }
+    return 11*fixedstone;
+}
 
 int score_wing(char board[10][10])
 {
@@ -180,37 +335,6 @@ int score_halfblock(char board[10][10])
     return block;
 }
 
-int score_putable(char board[10][10], bool canput[10][10])
-{
-    int score = 0;
-    for(int i = 1; i < 9; ++i)
-    {
-        for(int j = 1; j < 9; ++j)
-        {
-            if(canput[i][j] == true)
-            {
-                score+=1;
-            }
-        }
-    }
-    score/=2;
-    return -score;
-}
-
-int score_stone(char board[10][10])
-{
-    int score = 0;
-    for(char x = 1; x < 9; ++x)
-    {
-        for(char y = 1; y < 9; y++)
-        {
-            if(board[x][y] == 2) score += scoreboard[x-1][y-1];
-            if(board[x][y] == 1) score -= scoreboard[x-1][y-1];
-        }
-    }
-    return score;
-}
-
 int score_countstone(char board[10][10])
 {
     int score = 0;
@@ -229,52 +353,6 @@ int score_countstone(char board[10][10])
         }
     }
     return score;
-}
-
-int score_fixedstone(char board[10][10])
-{
-    int score = 0;
-    //角
-    //白
-    //辺
-    int i = 0;
-    //上
-    if(board[1][1] != 0 && board[1][2] != 0 && board[1][3] != 0 && board[1][4] != 0 && board[1][5] != 0 && board[1][6] != 0 && board[1][7] != 0 && board[1][8] != 0)
-    {
-        for (i = 1; i <= 8; ++i)
-        {
-            if(board[1][i] == 2) score += 2;
-            else if(board[1][i] == 1) score -= 2;
-        }
-    }
-    //下
-    if(board[8][1] != 0 && board[8][2] != 0 && board[8][3] != 0 && board[8][4] != 0 && board[8][5] != 0 && board[8][6] != 0 && board[8][7] != 0 && board[8][8] != 0)
-    {
-        for (i = 1; i <= 8; ++i)
-        {
-            if(board[8][i] == 2) score += 2;
-            else if(board[8][i] == 1) score -= 2;
-        }
-    }
-    //右
-    if(board[1][8] != 0 && board[2][8] != 0 && board[3][8] != 0 && board[4][8] != 0 && board[5][8] != 0 && board[6][8] != 0 && board[7][8] != 0 && board[8][8] != 0)
-    {
-        for (i = 1; i <= 8; ++i)
-        {
-            if(board[i][8] == 2) score += 2;
-            else if(board[i][8] == 1) score -= 2;
-        }
-    }
-    //左
-    if(board[1][1] != 0 && board[2][1] != 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0 && board[7][1] != 0 && board[8][1] != 0)
-    {
-        for (i = 1; i <= 8; ++i)
-        {
-            if(board[i][1] == 2) score += 2;
-            else if(board[i][1] == 1) score -= 2;
-        }
-    }
-    return 4*score;
 }
 
 int score_badcorner(char board[10][10])
@@ -505,25 +583,12 @@ int score_bomb(char board[10][10])
     return -4*block;
 }
 
-int countscore(char board[10][10], int turn, bool canput[10][10])
+int countscore(char board[10][10], int turn, bool canput[10][10], int *playerrn)
 {
     int score = 0;
-    if(turn > 50)
-    {
-        score += 10*score_countstone(board);
-    }
-    if(turn <= 55)
-    {
-        score += score_stone(board);
-        score += score_goodcorner(board);
-        score += score_badside(board);
-        score += 100 * score_side(board);
-        score += 3 * score_fixedstone(board);
-        score += 4 * score_mountain(board);
-        score += 4 * score_wing(board);
-        score += 4 * score_purewing(board);
-        score += 4 * score_halfblock(board);
-        score += score_bomb(board);
-    }
+    score += 2*score_stone(board);
+    score += 5*score_fixedstone(board);
+    if(*playerrn == 2) score += score_putable(board, canput);
+    if(*playerrn == 1) score -= score_putable(board, canput);
     return score;
 }

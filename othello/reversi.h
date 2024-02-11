@@ -56,6 +56,6 @@ void *nega_alpha_thread1(void *args);
 void *nega_alpha_thread2(void *args);
 void *nega_alpha_thread3(void *args);
 void *nega_alpha_thread4(void *args);
-int nega_alpha_deepthread(int depth, int playerrn, int alpha, int beta, int turn, char board[10][10]);
+int nega_alpha_deepthread(int depth, int playerrn, int alpha, int beta, int turn, char boards[10][10]);
 
 #endif /* othello_h */
