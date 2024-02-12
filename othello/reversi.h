@@ -13,10 +13,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <omp.h>
 
 char board[10][10];
 bool canPut[10][10];
-char threadboard[4][10][10];
 int finished = 0;
 bool skipped = false;
 bool skip = false;

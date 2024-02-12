@@ -350,6 +350,7 @@ int ai2(bool multi) {
 	if (player == 1 || finished == 1) return 0;
 	isbot = true;
 	printf("[*]Botが考え中..\n");
+	if(turn > 43) DEPTH = 16;
 	nega_alpha(DEPTH, player, -9999, 9999, turn);
 	//nega_alpha_thread(DEPTH, player, -9999, 9999, turn);
 	putstone(tmpy, tmpx);
@@ -361,14 +362,6 @@ int ai2(bool multi) {
 void nega_alpha_thread(int depth, int playerrn, int ALPHA, int BETA, int turn) {
 	
 	int ThreadArgs[] = {DEPTH, player, -9999, turn};
-	for (char i = 0; i <= 9; ++i) {
-		for (char j = 0; j <= 9; ++j) {
-			threadboard[0][i][j] = board[i][j];
-			threadboard[1][i][j] = board[i][j];
-			threadboard[2][i][j] = board[i][j];
-			threadboard[3][i][j] = board[i][j];
-		}
-	}
 	int ret;
 	pthread_t thread1;
 	pthread_t thread2;
@@ -408,21 +401,28 @@ th4:
 void *nega_alpha_thread1(void *args) {
 	int var;
 	bool canput[10][10] = {{false}};
+	char threadboard[10][10] = {{0}};
 	int depth = DEPTH;
 	int playerrn = player;
 	int alpha = -9999;
 	int turn = 10;
 	
-	check4(playerrn, canput, threadboard[0]);
+	for (char i = 1; i <= 8; ++i) {
+		for (char j = 1; j <= 8; ++j) {
+			threadboard[i][j] = board[i][j];
+		}
+	}
+	
+	check4(playerrn, canput, threadboard);
 	for (char i = 1; i <= 4; ++i) {
 		for (char j = 1; j <= 4; ++j) {
 			if (canput[i][j] == true) {
-				putstone3(i, j, playerrn, canput, threadboard[0]);
+				putstone3(i, j, playerrn, canput, threadboard);
 				
-				if (putableto2(3 - playerrn, threadboard[0]) == true) {
-					var = -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard[0]);
+				if (putableto2(3 - playerrn, threadboard) == true) {
+					var = -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard);
 				} else {
-					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard[0]);
+					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard);
 				}
 				
 				if (var > alpha) {
@@ -441,21 +441,29 @@ void *nega_alpha_thread1(void *args) {
 void *nega_alpha_thread2(void *args) {
 	int var;
 	bool canput[10][10] = {{false}};
+	char threadboard[10][10] = {{0}};
 	int depth = DEPTH;
 	int playerrn = player;
 	int alpha = -9999;
 	int turn = 10;
 	
-	check4(playerrn, canput, threadboard[1]);
+	for (char i = 1; i <= 8; ++i) {
+		for (char j = 1; j <= 8; ++j) {
+			threadboard[i][j] = board[i][j];
+		}
+	}
+	
+	
+	check4(playerrn, canput, threadboard);
 	for (char i = 1; i <= 4; ++i) {
 		for (char j = 5; j <= 8; ++j) {
 			if (canput[i][j] == true) {
-				putstone3(i, j, playerrn, canput, threadboard[1]);
+				putstone3(i, j, playerrn, canput, threadboard);
 				
-				if (putableto2(3 - playerrn, threadboard[1]) == true) {
-					var = -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard[1]);
+				if (putableto2(3 - playerrn, threadboard) == true) {
+					var = -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard);
 				} else {
-					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard[1]);
+					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard);
 				}
 				
 				if (var > alpha) {
@@ -474,21 +482,29 @@ void *nega_alpha_thread2(void *args) {
 void *nega_alpha_thread3(void *args) {
 	int var;
 	bool canput[10][10] = {{false}};
+	char threadboard[10][10] = {{0}};
 	int depth = DEPTH;
 	int playerrn = player;
 	int alpha = -9999;
 	int turn = 10;
 	
-	check4(playerrn, canput, threadboard[2]);
+	for (char i = 1; i <= 8; ++i) {
+		for (char j = 1; j <= 8; ++j) {
+			threadboard[i][j] = board[i][j];
+		}
+	}
+	
+	
+	check4(playerrn, canput, threadboard);
 	for (char i = 5; i <= 8; ++i) {
 		for (char j = 1; j <= 4; ++j) {
 			if (canput[i][j] == true) {
-				putstone3(i, j, playerrn, canput, threadboard[2]);
+				putstone3(i, j, playerrn, canput, threadboard);
 				
-				if (putableto2(3 - playerrn, threadboard[2]) == true) {
-					var =  -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard[2]);
+				if (putableto2(3 - playerrn, threadboard) == true) {
+					var =  -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard);
 				} else {
-					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard[2]);
+					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard);
 				}
 				
 				if (var > alpha) {
@@ -507,21 +523,29 @@ void *nega_alpha_thread3(void *args) {
 void *nega_alpha_thread4(void *args) {
 	int var;
 	bool canput[10][10] = {{false}};
+	char threadboard[10][10] = {{0}};
 	int depth = DEPTH;
 	int playerrn = player;
 	int alpha = -9999;
 	int turn = 10;
 	
-	check4(playerrn, canput, threadboard[3]);
+	for (char i = 1; i <= 8; ++i) {
+		for (char j = 1; j <= 8; ++j) {
+			threadboard[i][j] = board[i][j];
+		}
+	}
+	
+	
+	check4(playerrn, canput, threadboard);
 	for (char i = 5; i <= 8; ++i) {
 		for (char j = 5; j <= 8; ++j) {
 			if (canput[i][j] == true) {
-				putstone3(i, j, playerrn, canput, threadboard[3]);
+				putstone3(i, j, playerrn, canput, threadboard);
 				
-				if (putableto2(3 - playerrn, threadboard[3]) == true) {
-					var =  -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard[3]);
+				if (putableto2(3 - playerrn, threadboard) == true) {
+					var =  -nega_alpha_deepthread(depth - 1, 3 - playerrn, -9999, 9999, turn + 1, threadboard);
 				} else {
-					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard[3]);
+					var = -nega_alpha_deepthread(depth - 1, playerrn, -9999, 9999, turn + 1, threadboard);
 				}
 				
 				if (var > alpha) {

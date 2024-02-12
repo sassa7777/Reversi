@@ -217,7 +217,7 @@ class ViewController: NSViewController
 			DispatchQueue.main.async()
 			{
 				self.switchbutton(switch: false)
-				self.hakotext.stringValue = "考え中...(時間がかかることがあります)"
+				self.hakotext.stringValue = "考え中...\n(時間がかかることがあります)"
 			}
 		}
 		DispatchQueue.global().asyncAfter(deadline: .now() + 0.2)
@@ -237,7 +237,7 @@ class ViewController: NSViewController
 					DispatchQueue.main.async()
 					{
 						self.switchbutton(switch: true)
-						self.hakotext.stringValue = "君(プレイヤー)の番だよ！"
+						self.hakotext.stringValue = "君(プレイヤー)の番だよ！\n置く場所を選んでね！"
 					}
 				}
 			}
@@ -249,17 +249,17 @@ class ViewController: NSViewController
 		if winner() == 1
 		{
 			print("黒の勝ち！")
-			self.hakotext.stringValue = "君の勝ち！遊んでくれてありがとう！"
+			self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
 		}
 		else if winner() == 2
 		{
 			print("白の勝ち！")
-			self.hakotext.stringValue = "僕の勝ち！遊んでくれてありがとう！"
+			self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
 		}
 		else
 		{
 			print("引き分け")
-			self.hakotext.stringValue = "引き分け！遊んでくれてありがとう！"
+			self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
 		}
 		switchbutton(switch: false)
 		hakotext.isEditable = false
