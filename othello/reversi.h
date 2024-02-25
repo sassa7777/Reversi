@@ -13,10 +13,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <omp.h>
 
 char board[10][10];
 bool canPut[10][10];
+char moveoder[2][64] = {
+    {1, 1, 8, 8, 1, 1, 8, 8, 3, 3, 6, 6, 3, 3, 6, 6, 1, 1, 8, 8, 4, 4, 5, 5, 4, 4, 5, 5, 3, 3, 6, 6, 4, 4, 5, 5, 1, 1, 8, 8, 2, 2, 7, 7, 2, 2, 7, 7},
+    {1, 8, 1, 8, 3, 6, 3, 6, 1, 8, 1, 8, 3, 6, 3, 3, 4, 5, 4, 5, 1, 8, 1, 8, 3, 6, 3, 6, 4, 5, 4, 5, 4, 5, 4, 5, 2, 7, 2, 7, 1, 8, 1, 8, 2, 7, 2, 7}
+};
+char threadboard[4][10][10];
 int finished = 0;
 bool skipped = false;
 bool skip = false;
@@ -32,16 +36,17 @@ int result[4];
 int DEPTH;
 
 void reset(void);
-void check3(int player, bool canput[10][10]);
-void check2(int player);
-void check4(int player, bool canput[10][10], char board[10][10]);
-bool putableto(int player);
-bool putableto2(int player, char board[10][10]);
+void check3(char *player, bool canput[10][10]);
+void check2(int *player);
+void check4(int *player, bool canput[10][10], char board[10][10]);
+bool putableto(char *player);
+bool putableto2(char player, char board[10][10]);
 int putstone(int px, int py);
-int putstone2(int py, int px, int player, bool canput[10][10]);
-int putstone3(int py, int px, int player, bool canput[10][10], char board[10][10]);
-void reverse(int px, int py);
-void reverse2(int x, int y, char board[10][10]);
+int putstone2(char *py, char *px, char *player, bool canput[10][10]);
+int putstone3(int py, int px, int *player, bool canput[10][10], char board[10][10]);
+void reverse1(char **px, char **py);
+void reverse(int x, int y);
+void reverse2(int *x, int *y, char board[10][10]);
 void rebuild(bool bot);
 void countstone(void);
 int finishedsw(void);
@@ -49,13 +54,6 @@ int winner(void);
 int countstoneswift(int c);
 int ai2(bool multi);
 int returnplayer(void);
-int minimax(int depth, int playerrn);
-int nega_alpha(int depth, int playerrn, int alpha, int beta, int turn);
-void nega_alpha_thread(int depth, int playerrn, int ALPHA, int BETA, int turn);
-void *nega_alpha_thread1(void *args);
-void *nega_alpha_thread2(void *args);
-void *nega_alpha_thread3(void *args);
-void *nega_alpha_thread4(void *args);
-int nega_alpha_deepthread(int depth, int playerrn, int alpha, int beta, int turn, char boards[10][10]);
+int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn);
 
 #endif /* othello_h */
