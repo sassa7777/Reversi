@@ -44,7 +44,7 @@ void check2(int *Player) {
 								xxx += xx;
 								yyy += yy;
 							}
-							if (yyy <= 8 && xxx <= 8 && yyy >= 1 && xxx >= 1 && board[yyy][xxx] == 0) {
+							if (board[yyy][xxx] == 0) {
 								canPut[yyy][xxx] = true;
 							}
 						}
@@ -98,7 +98,7 @@ void check3(char *player, bool canput[10][10]) {
 								xxx += xx;
 								yyy += yy;
 							}
-							if (yyy <= 8 && xxx <= 8 && yyy >= 1 && xxx >= 1 && board[yyy][xxx] == 0) {
+							if (board[yyy][xxx] == 0) {
 								canput[yyy][xxx] = true;
 							}
 						}
@@ -384,35 +384,32 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn) {
 	}
 	
 	int var;
-	char i, j;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 	
 	memcpy(tmpboard, board, sizeof(board));
 	
 	check3(&playerrn, canput);
-	for (i = 1; i <= 8; ++i) {
-		for (j = 1; j <= 8; ++j) {
-			if (canput[i][j] == true) {
-				putstone2(&i, &j, &playerrn, canput);
-				
-				if (putableto(&playerrn) == true) {
-					var = -nega_alpha(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1);
-				} else {
-					var = nega_alpha(depth, playerrn, alpha, beta, turn + 1);
-				}
+	for (char i = 0; i <= 63; ++i) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone2(&moveorder[0][i], &moveorder[1][i], &playerrn, canput);
 			
-				memcpy(board, tmpboard, sizeof(board));
-				
-				if (var > alpha) {
-					alpha = var;
-					if (depth == DEPTH) {
-						tmpx = j;
-						tmpy = i;
-						printf("best place is (%d, %d), score %d\n", j, i, var);
-					}
-					if (alpha >= beta) return alpha;
+			if (putableto(&playerrn) == true) {
+				var = -nega_alpha(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1);
+			} else {
+				var = nega_alpha(depth, playerrn, alpha, beta, turn + 1);
+			}
+		
+			memcpy(board, tmpboard, sizeof(board));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (depth == DEPTH) {
+					tmpx = moveorder[1][i];
+					tmpy = moveorder[0][i];
+					printf("best place is (%d, %d), score %d\n", moveorder[1][i], moveorder[0][i], var);
 				}
+				if (alpha >= beta) return alpha;
 			}
 		}
 	}
