@@ -38,13 +38,10 @@ char moveorder[2][64] = {
 };
 
 void reset(void);
-void check3(char *player, bool canput[10][10]);
 void check2(int *player);
 void check4(char *player, bool canput[10][10], char board[10][10]);
-bool putableto(char *player);
 bool putableto2(char *player, char board[10][10]);
 int putstone(int px, int py);
-int putstone2(char *py, char *px, char *player, bool canput[10][10]);
 int putstone3(char *py, char *px, char *player, bool canput[10][10], char board[10][10]);
 void reverse1(char **px, char **py);
 void reverse(int x, int y);

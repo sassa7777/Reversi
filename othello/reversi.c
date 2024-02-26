@@ -84,41 +84,6 @@ void check2(int *Player) {
 	}
 }
 
-void check3(char *player, bool canput[10][10]) {
-	char x, y;
-	for (y = 1; y < 9; ++y) {
-		for (x = 1; x < 9; ++x) {
-			if (board[y][x] == *player) {
-				for (char xx = -1; xx < 2; ++xx) {
-					for (char yy = -1; yy < 2; ++yy) {
-						if (board[y + yy][x + xx] == (3 - *player)) {
-							char xxx = x + xx;
-							char yyy = y + yy;
-							while (board[yyy][xxx] == (3 - *player)) {
-								xxx += xx;
-								yyy += yy;
-							}
-							if (board[yyy][xxx] == 0) {
-								canput[yyy][xxx] = true;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	skip = false;
-	for (y = 1; y < 9; ++y) {
-		for (char x = 1; x < 9; ++x) {
-			if (canput[y][x] == true) {
-				skip = true;
-				return;
-			}
-		}
-	}
-}
-
 void check4(char *player, bool canput[10][10], char board[10][10]) {
 	for (char y = 1; y < 9; ++y) {
 		for (char x = 1; x < 9; ++x) {
@@ -242,7 +207,7 @@ int putstone(int py, int px) {
 	tmpx = px;
 	tmpy = py;
 	if (px > 8 || py > 8) {
-		printf("[*]そこには置けません\n");
+		printf("[*]そこには置けません\n (%d, %d)", px, py);
 		return 0;
 	}
 	if (canPut[py][px] == true) {
@@ -264,39 +229,14 @@ int putstone(int py, int px) {
 			return 0;
 		}
 	} else {
-		printf("[*]そこには置けません\n");
-		return 0;
-	}
-}
-
-int putstone2(char *py, char *px, char *player, bool canput[10][10]) {
-	if (*px > 9 || *py > 9) {
-		printf("[*]そこには置けません\n");
-		return 0;
-	}
-	if (canput[*py][*px] == true) {
-		if (*player == 1) {
-			board[*py][*px] = 1;
-			reverse1(&px, &py);
-			skip = false;
-			return 1;
-		} else if (*player == 2) {
-			board[*py][*px] = 2;
-			reverse1(&px, &py);
-			skip = false;
-			return 2;
-		} else {
-			return 0;
-		}
-	} else {
-		printf("[*]そこには置けません\n");
+		printf("[*]そこには置けません\n (%d, %d)", px, py);
 		return 0;
 	}
 }
 
 int putstone3(char *py, char *px, char *player, bool canput[10][10], char board[10][10]) {
 	if (*px > 9 || *py > 9) {
-		printf("[*]そこには置けません\n");
+		printf("[*]そこには置けません\n (%d, %d)", *px, *py);
 		return 0;
 	}
 	if (canput[*py][*px] == true) {
@@ -314,7 +254,7 @@ int putstone3(char *py, char *px, char *player, bool canput[10][10], char board[
 			return 0;
 		}
 	} else {
-		printf("[*]そこには置けません\n");
+		printf("[*]そこには置けません\n (%d, %d)", *px, *py);
 		return 0;
 	}
 }
@@ -379,7 +319,7 @@ int ai2(bool multi) {
 int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn) {
 	if (depth == 0) {
 		bool canput[10][10] = {{false}};
-		check3(&playerrn, canput);
+		check4(&playerrn, canput, board);
 		return countscore(board, &turn, canput, &playerrn);
 	}
 	
@@ -389,12 +329,12 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn) {
 	
 	memcpy(tmpboard, board, sizeof(board));
 	
-	check3(&playerrn, canput);
+	check4(&playerrn, canput, board);
 	for (char i = 0; i <= 63; ++i) {
 		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
-			putstone2(&moveorder[0][i], &moveorder[1][i], &playerrn, canput);
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, board);
 			
-			if (putableto(&playerrn) == true) {
+			if (putableto2(&playerrn, board) == true) {
 				var = -nega_alpha(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1);
 			} else {
 				var = nega_alpha(depth, playerrn, alpha, beta, turn + 1);
@@ -414,7 +354,7 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn) {
 		}
 	}
 	if (alpha == -9999) {
-		check3(&playerrn, canput);
+		check4(&playerrn, canput, board);
 		alpha = countscore(board, &turn, canput, &playerrn);
 	}
 	return alpha;
@@ -653,37 +593,13 @@ int nega_alpha_deep(int depth, char playerrn, int alpha, int beta, int turn, cha
 		}
 	}
 	if (alpha == -9999) {
-		check3(&playerrn, canput);
+		check4(&playerrn, canput, board);
 		alpha = countscore(board, &turn, canput, &playerrn);
 	}
 	return alpha;
 }
 
 int returnplayer(void) { return player; }
-
-bool putableto(char *player) {
-	char y, x, xx, yy, xxx, yyy;
-	for (y = 1; y <= 8; ++y) {
-		for (x = 1; x <= 8; ++x) {
-			if (board[y][x] == 3-*player) {
-				for (xx = -1; xx < 2; ++xx) {
-					for (yy = -1; yy < 2; ++yy) {
-						if (board[y + yy][x + xx] == (*player)) {
-							xxx = x + xx;
-							yyy = y + yy;
-							while (board[yyy][xxx] == (*player)) {
-								xxx += xx;
-								yyy += yy;
-							}
-							if (yyy <= 8 && yyy >= 1 && xxx <= 8 && xxx >= 1 && board[yyy][xxx] == 0) return true;
-						}
-					}
-				}
-			}
-		}
-	}
-	return false;
-}
 
 bool putableto2(char *player, char board[10][10]) {
 	char y, x, xx, yy, xxx, yyy;
