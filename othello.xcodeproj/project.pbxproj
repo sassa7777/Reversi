@@ -325,6 +325,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Othello;
@@ -339,8 +340,33 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_CFLAGS = (
+					"-I/usr/local/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				"OTHER_CFLAGS[arch=arm64]" = (
+					"-I/opt/homebrew/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				"OTHER_CFLAGS[arch=x86_64]" = (
+					"-I/usr/local/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				OTHER_LDFLAGS = (
+					"-L/usr/local/opt/libomp/lib",
+					"-lomp",
+				);
+				"OTHER_LDFLAGS[arch=arm64]" = (
+					"-L/opt/homebrew/opt/libomp/lib",
+					"-lomp",
+				);
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-L/usr/local/opt/libomp/lib",
+					"-lomp",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -367,6 +393,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = Othello;
@@ -381,8 +408,33 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
+				OTHER_CFLAGS = (
+					"-I/usr/local/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				"OTHER_CFLAGS[arch=arm64]" = (
+					"-I/opt/homebrew/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				"OTHER_CFLAGS[arch=x86_64]" = (
+					"-I/usr/local/opt/libomp/include",
+					"-Xpreprocessor",
+					"-fopenmp",
+				);
+				OTHER_LDFLAGS = (
+					"-L/usr/local/opt/libomp/lib",
+					"-lomp",
+				);
+				"OTHER_LDFLAGS[arch=arm64]" = (
+					"-L/opt/homebrew/opt/libomp/lib",
+					"-lomp",
+				);
+				"OTHER_LDFLAGS[arch=x86_64]" = (
+					"-L/usr/local/opt/libomp/lib",
+					"-lomp",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
