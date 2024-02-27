@@ -19,14 +19,14 @@
 //};
 
 int scoreboard[8][8] = {
-    60, -12, 0, -1, -1, 0, -12, 60,
+    30, -12, 0, -1, -1, 0, -12, 30,
     -12, -15, -3, -3, -3, -3, -15, -12,
     0, -3, 0, -1, -1, 0, -3, 0,
     -1, -3, -1, -1, -1, -1, -3, -1,
     -1, -3, -1, -1, -1, -1, -3, -1,
     0, -3, 0, -1, -1, 0, -3, 0,
     -12, -15, -3, -3, -3, -3, -15, -12,
-    60, -12, 0, -1, -1, 0, -12, 60
+    30, -12, 0, -1, -1, 0, -12, 30
 };
 
 
@@ -40,7 +40,7 @@ int score_stone(char board[10][10]) {
                 score -= (scoreboard[x-1][y-1]);
         }
     }
-    return 3*score;
+    return score;
 }
 
 int score_putable(char board[10][10], bool canput[10][10]) {
@@ -52,7 +52,6 @@ int score_putable(char board[10][10], bool canput[10][10]) {
             }
         }
     }
-    score *= 10;
     return score;
 }
 
@@ -61,208 +60,184 @@ int score_fixedstone(char board[10][10]) {
     // ひとつでも埋まっているかどうか
     if (board[1][1] != 0 || board[1][8] != 0 || board[8][1] != 0 ||
         board[8][8] != 0) {
-        // 全て埋まっている
-        if (board[1][1] != 0 && board[1][8] != 0 && board[8][1] != 0 &&
-            board[8][8] != 0) {
-            for (char i = 1; i <= 8; ++i) {
-                if (board[1][i] == 2)
+        // 左上
+        if (board[1][1] != 0) {
+            char i = 1;
+            if (board[1][1] == 2) {
+                while (board[1][i] == board[1][1]) {
                     fixedstone++;
-                else if (board[1][i] == 1)
+                    i++;
+                }
+            } else {
+                while (board[1][i] == board[1][1]) {
                     fixedstone--;
-                if (board[8][i] == 2)
+                    i++;
+                }
+            }
+        }
+        if (board[1][1] != 0) {
+            char i = 1;
+            if (board[1][1] == 2) {
+                while (board[i][1] == board[1][1]) {
                     fixedstone++;
-                else if (board[8][i] == 1)
+                    i++;
+                }
+            } else {
+                while (board[i][1] == board[1][1]) {
                     fixedstone--;
-                if (board[i][1] == 2)
+                    i++;
+                }
+            }
+        }
+        // 右上
+        if (board[1][8] != 0) {
+            char i = 1;
+            if (board[1][8] == 2) {
+                while (board[1][i] == board[1][8]) {
                     fixedstone++;
-                else if (board[i][1] == 1)
+                    i--;
+                }
+            } else {
+                while (board[1][i] == board[1][8]) {
                     fixedstone--;
-                if (board[i][8] == 2)
+                    i--;
+                }
+            }
+        }
+        if (board[1][8] != 0) {
+            char i = 1;
+            if (board[1][8] == 2) {
+                while (board[i][8] == board[1][8]) {
                     fixedstone++;
-                else if (board[i][8] == 1)
+                    i++;
+                }
+            } else {
+                while (board[i][8] == board[1][8]) {
                     fixedstone--;
-            }
-        } else // 全ては埋まっていない
-        {
-            // 左上
-            if (board[1][1] != 0 && board[1][8] == 0) {
-                char i = 1;
-                if (board[1][1] == 2) {
-                    while (board[1][i] == board[1][1]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[1][i] == board[1][1]) {
-                        fixedstone--;
-                        i++;
-                    }
+                    i++;
                 }
             }
-            if (board[1][1] != 0 && board[8][1] == 0) {
-                char i = 1;
-                if (board[1][1] == 2) {
-                    while (board[i][1] == board[1][1]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[i][1] == board[1][1]) {
-                        fixedstone--;
-                        i++;
-                    }
+        }
+        // 左下
+        if (board[8][1] != 0) {
+            char i = 1;
+            if (board[8][1] == 2) {
+                while (board[8][i] == board[8][1]) {
+                    fixedstone++;
+                    i++;
+                }
+            } else {
+                while (board[8][i] == board[8][1]) {
+                    fixedstone--;
+                    i++;
                 }
             }
-            // 右上
-            if (board[1][8] != 0 && board[1][1] == 0) {
-                char i = 1;
-                if (board[1][8] == 2) {
-                    while (board[1][i] == board[1][8]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[1][i] == board[1][8]) {
-                        fixedstone--;
-                        i--;
-                    }
+        }
+        if (board[8][1] != 0) {
+            char i = 1;
+            if (board[8][1] == 2) {
+                while (board[i][1] == board[8][1]) {
+                    fixedstone++;
+                    i--;
+                }
+            } else {
+                while (board[i][1] == board[8][1]) {
+                    fixedstone--;
+                    i--;
                 }
             }
-            if (board[1][8] != 0 && board[8][8] == 0) {
-                char i = 1;
-                if (board[1][8] == 2) {
-                    while (board[i][8] == board[1][8]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[i][8] == board[1][8]) {
-                        fixedstone--;
-                        i++;
-                    }
+        }
+        // 右下
+        if (board[8][8] != 0) {
+            char i = 1;
+            if (board[8][8] == 2) {
+                while (board[8][i] == board[8][8]) {
+                    fixedstone++;
+                    i--;
+                }
+            } else {
+                while (board[8][i] == board[8][8]) {
+                    fixedstone--;
+                    i--;
                 }
             }
-            // 左下
-            if (board[8][1] != 0 && board[8][8] == 0) {
-                char i = 1;
-                if (board[8][1] == 2) {
-                    while (board[8][i] == board[8][1]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[8][i] == board[8][1]) {
-                        fixedstone--;
-                        i++;
-                    }
+        }
+        if (board[8][8] != 0) {
+            char i = 1;
+            if (board[8][8] == 2) {
+                while (board[i][8] == board[8][8]) {
+                    fixedstone++;
+                    i--;
+                }
+            } else {
+                while (board[i][8] == board[8][8]) {
+                    fixedstone--;
+                    i--;
                 }
             }
-            if (board[8][1] != 0 && board[1][1] == 0) {
-                char i = 1;
-                if (board[8][1] == 2) {
-                    while (board[i][1] == board[8][1]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[i][1] == board[8][1]) {
-                        fixedstone--;
-                        i--;
-                    }
+        }
+        // 左上+右上
+        if (board[1][1] != 0 && board[1][2] != 0 && board[1][3] != 0 && board[1][4] != 0 && board[1][5] != 0 && board[1][6] != 0 && board[1][7] != 0 && board[1][8] != 0) {
+            char i = 1;
+            if (board[1][1] == 2) {
+                while (board[1][i] == board[1][1]) {
+                    fixedstone--;
+                    i++;
+                }
+            } else {
+                while (board[1][i] == board[1][1]) {
+                    fixedstone++;
+                    i++;
                 }
             }
-            // 右下
-            if (board[8][8] != 0 && board[8][1] == 0) {
-                char i = 1;
-                if (board[8][8] == 2) {
-                    while (board[8][i] == board[8][8]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[8][i] == board[8][8]) {
-                        fixedstone--;
-                        i--;
-                    }
+        }
+        //左上+左下
+        if (board[1][1] != 0 && board[2][1] != 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0 && board[7][1] != 0 && board[8][1] != 0) {
+            char i = 1;
+            if (board[1][1] == 2) {
+                while (board[i][1] == board[1][1]) {
+                    fixedstone--;
+                    i++;
+                }
+            } else {
+                while (board[i][1] == board[1][1]) {
+                    fixedstone++;
+                    i++;
                 }
             }
-            if (board[8][8] != 0 && board[1][8] == 0) {
-                char i = 1;
-                if (board[8][8] == 2) {
-                    while (board[i][8] == board[8][8]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[i][8] == board[8][8]) {
-                        fixedstone--;
-                        i--;
-                    }
+        }
+        // 右下+左下
+        if (board[8][8] != 0 && board[8][2] != 0 && board[8][3] != 0 && board[8][4] != 0 && board[8][5] != 0 && board[8][6] != 0 && board[8][7] != 0 && board[8][1] != 0) {
+            char i = 1;
+            if (board[8][8] == 2) {
+                while (board[8][i] == board[8][8]) {
+                    fixedstone--;
+                    i--;
+                }
+            } else {
+                while (board[8][i] == board[8][8]) {
+                    fixedstone++;
+                    i--;
                 }
             }
-            // 左上+右上
-            if (board[1][1] != 0 && board[1][8] != 0) {
-                char i = 1;
-                if (board[1][1] == 2) {
-                    while (board[1][i] == board[1][1]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[1][i] == board[1][1]) {
-                        fixedstone--;
-                        i++;
-                    }
+        }
+        // 右下+右上
+        if (board[8][8] != 0 && board[2][8] != 0 && board[3][8] != 0 && board[4][8] != 0 && board[5][8] != 0 && board[6][8] != 0 && board[7][8] != 0 && board[1][8] != 0) {
+            char i = 1;
+            if (board[8][8] == 2) {
+                while (board[i][8] == board[8][8]) {
+                    fixedstone--;
+                    i--;
                 }
-            }
-            //左上+左下
-            if (board[1][1] != 0 && board[8][1] != 0) {
-                char i = 1;
-                if (board[1][1] == 2) {
-                    while (board[i][1] == board[1][1]) {
-                        fixedstone++;
-                        i++;
-                    }
-                } else {
-                    while (board[i][1] == board[1][1]) {
-                        fixedstone--;
-                        i++;
-                    }
-                }
-            }
-            // 右下+左下
-            if (board[8][8] != 0 && board[8][1] != 0) {
-                char i = 1;
-                if (board[8][8] == 2) {
-                    while (board[8][i] == board[8][8]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[8][i] == board[8][8]) {
-                        fixedstone--;
-                        i--;
-                    }
-                }
-            }
-            // 右下+右上
-            if (board[8][8] != 0 && board[1][8] != 0) {
-                char i = 1;
-                if (board[8][8] == 2) {
-                    while (board[i][8] == board[8][8]) {
-                        fixedstone++;
-                        i--;
-                    }
-                } else {
-                    while (board[i][8] == board[8][8]) {
-                        fixedstone--;
-                        i--;
-                    }
+            } else {
+                while (board[i][8] == board[8][8]) {
+                    fixedstone++;
+                    i--;
                 }
             }
         }
     }
-    return 11*fixedstone;
+    return fixedstone;
 }
 
 int score_wing(char board[10][10]) {
@@ -1072,13 +1047,12 @@ int countscore(char board[10][10], int *turn, bool canput[10][10],
     if(is_allblack(board)) return -9999;
     if(*turn >= 60)
     {
-        if(score_countstone(board)<0) return -9999;
         return 200*score_countstone(board);
     }
     int score = 0;
-    score += 2 * score_stone(board);
-    score += 15 * score_fixedstone(board);
-    if (*playerrn == 2) score += score_putable(board, canput);
-    if (*playerrn == 1) score -= score_putable(board, canput);
+    score += 6 * score_stone(board);
+    score += 220 * score_fixedstone(board);
+    if (*playerrn == 2) score += 10*score_putable(board, canput);
+    if (*playerrn == 1) score -= 10*score_putable(board, canput);
     return score;
 }
