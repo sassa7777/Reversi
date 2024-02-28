@@ -8,7 +8,6 @@
 import Cocoa
 import Foundation
 
-var multicore: Bool = false
 
 class ViewController: NSViewController
 {
@@ -77,7 +76,6 @@ class ViewController: NSViewController
 	@IBOutlet var hg: NSButton!
 	@IBOutlet var hh: NSButton!
 	@IBOutlet var close: NSButton!
-	@IBOutlet var multi: NSButton!
 	@IBOutlet var hakotext: NSTextField!
 	
 	@IBAction func put(_ sender: NSButton)
@@ -161,21 +159,11 @@ class ViewController: NSViewController
 		}
 		if(results != 0)
 		{
-			reloadview(bot: false)
+			reloadview()
 			putai()
 		}
 	}
-	@IBAction func switchmulti(_ multiswitch: NSButton)
-	{
-		if multiswitch.state == .on
-		{
-			multicore = true;
-		}
-		else
-		{
-			multicore = false;
-		}
-	}
+	
 	@IBAction func close(_ sender: Any)
 	{
 		self.dismiss(self)
@@ -186,7 +174,7 @@ class ViewController: NSViewController
 	{
 		close.isHidden = true
 		reset()
-		reloadview(bot: false)
+		reloadview()
 		putai()
 	}
 	
@@ -220,13 +208,13 @@ class ViewController: NSViewController
 				self.hakotext.stringValue = "考え中...\n(時間がかかることがあります)"
 			}
 		}
-		DispatchQueue.global().asyncAfter(deadline: .now() + 0.2)
+		DispatchQueue.global().asyncAfter(deadline: .now())
 		{
-			if(ai2(multicore) == 1)
+			if(ai2() == 1)
 			{
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.2)
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
 				{
-					self.reloadview(bot: false)
+					self.reloadview()
 					self.putai()
 				}
 			}
@@ -265,9 +253,9 @@ class ViewController: NSViewController
 		hakotext.isEditable = false
 	}
 	
-	func reloadview(bot: Bool)
+	func reloadview()
 	{
-		rebuild(bot)
+		rebuild()
 		print("[*]場面を再構築中...")
 		let buttons: [[NSButton]] = [
 			[aa, ab, ac, ad, ae, af, ag, ah],

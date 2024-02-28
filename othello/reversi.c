@@ -162,15 +162,10 @@ void reverse2(char **x, char **y, char board[10][10]) {
 	}
 }
 
-void rebuild(bool bot) {
-	for (char i = 0; i <= 9; ++i) {
-		for (char j = 0; j <= 9; ++j) {
-			canPut[i][j] = false;
-		}
-	}
+void rebuild(void) {
+	memset(canPut, 0, sizeof(canPut));
 	countstone();
-	if (bot == false)
-		check2(&player);
+	check2(&player);
 }
 
 int putstone(int py, int px) {
@@ -274,7 +269,7 @@ int countstoneswift(int c) {
 	}
 }
 
-int ai2(bool multi) {
+int ai2(void) {
 	if (player == 1 || finished == 1) return 0;
 	isbot = true;
 	printf("[*]Botが考え中..\n");
@@ -353,7 +348,7 @@ bool putableto2(char *player, char board[10][10]) {
 								xxx += xx;
 								yyy += yy;
 							}
-							if (yyy <= 8 && yyy >= 1 && xxx <= 8 && xxx >= 1 && board[yyy][xxx] == 0) canput[yyy][xxx] = true;
+							if (board[yyy][xxx] == 0) canput[yyy][xxx] = true;
 						}
 					}
 				}

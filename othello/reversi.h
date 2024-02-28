@@ -42,12 +42,12 @@ int putstone(int px, int py);
 int putstone3(char *py, char *px, char *player, bool canput[10][10], char board[10][10]);
 void reverse(int x, int y);
 void reverse2(char **x, char **y, char board[10][10]);
-void rebuild(bool bot);
+void rebuild(void);
 void countstone(void);
 int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
-int ai2(bool multi);
+int ai2(void);
 int returnplayer(void);
 int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn);
 
