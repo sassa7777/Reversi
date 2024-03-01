@@ -13,8 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pthread.h>
 
-#define DEPTH 10
+#define DEPTH 12
 
 char board[10][10];
 bool canPut[10][10];
@@ -27,6 +28,7 @@ int turn = 0;
 int whitec = 0;
 int blackc = 0;
 int tmpx, tmpy;
+int cachex[4], cachey[4], results[4];
 bool isbot = false;
 
 char moveorder[2][64] = {
@@ -50,5 +52,11 @@ int countstoneswift(int c);
 int ai2(void);
 int returnplayer(void);
 int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn);
+void negaalphaTH(void);
+void* negaalphat1(void* args);
+void* negaalphat2(void* args);
+void* negaalphat3(void* args);
+void* negaalphat4(void* args);
+int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, char board[10][10]);
 
 #endif /* othello_h */

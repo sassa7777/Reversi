@@ -276,7 +276,8 @@ int ai2(void) {
 	tmpx = 0;
 	tmpy = 0;
 rerun:
-	nega_alpha(DEPTH, player, -100000, 100000, turn);
+	//nega_alpha(DEPTH, player, -100000, 100000, turn);
+	negaalphaTH();
 	if(tmpx == 0 || tmpy == 0)
 	{
 		printf("ERROR\n");
@@ -325,8 +326,228 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn) {
 		}
 	}
 	if (alpha == -100000) {
+		//check4(&playerrn, canput, board);
+		//alpha = countscore(board, &turn, canput, &playerrn);
+		alpha = 100*score_countstone(board);
+	}
+	return alpha;
+}
+
+void negaalphaTH(void)
+{
+	results[0] = -10000;
+	results[1] = -10000;
+	results[2] = -10000;
+	results[3] = -10000;
+	pthread_t thread1;
+	pthread_t thread2;
+	pthread_t thread3;
+	pthread_t thread4;
+	pthread_create(&thread1, NULL, negaalphat1, NULL);
+	pthread_create(&thread2, NULL, negaalphat2, NULL);
+	pthread_create(&thread3, NULL, negaalphat3, NULL);
+	pthread_create(&thread4, NULL, negaalphat4, NULL);
+	pthread_join(thread1, NULL);
+	pthread_join(thread2, NULL);
+	pthread_join(thread3, NULL);
+	pthread_join(thread4, NULL);
+	
+	int max = -100001;
+	for (char i = 0; i < 4; ++i) {
+		if(max < results[i]) max = results[i];
+	}
+	for (char i = 0; i < 4; ++i) {
+		if(results[i] == max)
+		{
+			tmpx = cachex[i];
+			tmpy = cachey[i];
+			break;
+		}
+	}
+	printf("chose (%d, %d)\n", tmpx, tmpy);
+}
+
+void* negaalphat1(void* args)
+{
+	int var;
+	char playerrn = player;
+	int depth = DEPTH, alpha = -10000, beta = 10000;
+	char tmpboard[10][10] = {{0}};
+	bool canput[10][10] = {{false}};
+		
+	memcpy(tmpboard, board, sizeof(tmpboard));
+	
+	check4(&playerrn, canput, tmpboard);
+	for (char i = 0; i <= 63; i+=4) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, tmpboard);
+			
+			if (putableto2(&playerrn, tmpboard) == true) {
+				var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+			} else {
+				var = nega_alphadeep(depth, playerrn, alpha, beta, turn + 1, tmpboard);
+			}
+			
+			memcpy(tmpboard, board, sizeof(tmpboard));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (depth == DEPTH) {
+					cachex[0] = moveorder[1][i];
+					cachey[0] = moveorder[0][i];
+				}
+			}
+		}
+	}
+	results[0] = alpha;
+	printf("TH1 best place is (%d, %d), score %d\n", cachex[0], cachey[0], alpha);
+	pthread_exit(0);
+}
+
+void* negaalphat2(void* args)
+{
+	int var;
+	char playerrn = player;
+	int depth = DEPTH, alpha = -10000, beta = 10000;
+	char tmpboard[10][10] = {{0}};
+	bool canput[10][10] = {{false}};
+		
+	memcpy(tmpboard, board, sizeof(tmpboard));
+	
+	check4(&playerrn, canput, tmpboard);
+	for (char i = 1; i <= 63; i+=4) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, tmpboard);
+			
+			if (putableto2(&playerrn, tmpboard) == true) {
+				var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+			} else {
+				var = nega_alphadeep(depth, playerrn, alpha, beta, turn + 1, tmpboard);
+			}
+			
+			memcpy(tmpboard, board, sizeof(tmpboard));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (depth == DEPTH) {
+					cachex[1] = moveorder[1][i];
+					cachey[1] = moveorder[0][i];
+				}
+			}
+		}
+	}
+	results[1] = alpha;
+	printf("TH2 best place is (%d, %d), score %d\n", cachex[1], cachey[1], alpha);
+	pthread_exit(0);
+}
+
+void* negaalphat3(void* args)
+{
+	int var;
+	char playerrn = player;
+	int depth = DEPTH, alpha = -10000, beta = 10000;
+	char tmpboard[10][10] = {{0}};
+	bool canput[10][10] = {{false}};
+		
+	memcpy(tmpboard, board, sizeof(tmpboard));
+	
+	check4(&playerrn, canput, tmpboard);
+	for (char i = 2; i <= 63; i+=4) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, tmpboard);
+			
+			if (putableto2(&playerrn, tmpboard) == true) {
+				var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+			} else {
+				var = nega_alphadeep(depth, playerrn, alpha, beta, turn + 1, tmpboard);
+			}
+			
+			memcpy(tmpboard, board, sizeof(tmpboard));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (depth == DEPTH) {
+					cachex[2] = moveorder[1][i];
+					cachey[2] = moveorder[0][i];
+				}
+			}
+		}
+	}
+	results[2] = alpha;
+	printf("TH3 best place is (%d, %d), score %d\n", cachex[2], cachey[2], alpha);
+	pthread_exit(0);
+}
+
+void* negaalphat4(void* args)
+{
+	int var;
+	char playerrn = player;
+	int depth = DEPTH, alpha = -10000, beta = 10000;
+	char tmpboard[10][10] = {{0}};
+	bool canput[10][10] = {{false}};
+		
+	memcpy(tmpboard, board, sizeof(tmpboard));
+	
+	check4(&playerrn, canput, tmpboard);
+	for (char i = 3; i <= 63; i+=4) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, tmpboard);
+			
+			if (putableto2(&playerrn, tmpboard) == true) {
+				var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+			} else {
+				var = nega_alphadeep(depth, playerrn, alpha, beta, turn + 1, tmpboard);
+			}
+			
+			memcpy(tmpboard, board, sizeof(tmpboard));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (depth == DEPTH) {
+					cachex[3] = moveorder[1][i];
+					cachey[3] = moveorder[0][i];
+				}
+			}
+		}
+	}
+	results[3] = alpha;
+	printf("TH4 best place is (%d, %d), score %d\n", cachex[3], cachey[3], alpha);
+	pthread_exit(0);
+}
+
+int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, char board[10][10]) {
+	if (depth == 0) {
+		bool canput[10][10] = {{false}};
 		check4(&playerrn, canput, board);
-		alpha = countscore(board, &turn, canput, &playerrn);
+		return countscore(board, &turn, canput, &playerrn);
+	}
+	int var;
+	char tmpboard[10][10] = {{0}};
+	bool canput[10][10] = {{false}};
+		
+	memcpy(tmpboard, board, sizeof(tmpboard));
+	
+	check4(&playerrn, canput, board);
+	for (char i = 0; i <= 63; ++i) {
+		if (canput[moveorder[0][i]][moveorder[1][i]] == true) {
+			putstone3(&moveorder[0][i], &moveorder[1][i], &playerrn, canput, board);
+			
+			if (putableto2(&playerrn, board) == true) {
+				var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, board);
+			} else {
+				var = nega_alphadeep(depth, playerrn, alpha, beta, turn + 1, board);
+			}
+			
+			memcpy(board, tmpboard, sizeof(tmpboard));
+			
+			if (var > alpha) {
+				alpha = var;
+				if (alpha >= beta) return alpha;
+			}
+		}
+	}
+	if (alpha == -100000) {
+		alpha = 100*score_countstone(board);
 	}
 	return alpha;
 }
