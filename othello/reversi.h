@@ -15,7 +15,7 @@
 #include <string.h>
 #include <pthread.h>
 
-#define DEPTH 12
+#define DEPTH 10
 
 char board[10][10];
 bool canPut[10][10];

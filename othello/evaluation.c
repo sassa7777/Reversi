@@ -270,5 +270,5 @@ int countscore(char board[10][10], int *turn, bool canput[10][10],
     if(is_allblack(board)) return -9999;
     if(*turn >= 60) return 100*score_countstone(board);
     if(*playerrn == 2) return (3 * score_stone(board))+(55 * score_fixedstone(board))+(5*score_putable(board, canput));
-    else return (3 * score_stone(board))+(100 * score_fixedstone(board))-(5*score_putable(board, canput));
+    else return (3 * score_stone(board))+(55 * score_fixedstone(board))-(5*score_putable(board, canput));
 }

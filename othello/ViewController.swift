@@ -256,7 +256,7 @@ class ViewController: NSViewController
 	func reloadview()
 	{
 		rebuild()
-		print("[*]場面を再構築中...")
+		print("[*]リロード中...")
 		let buttons: [[NSButton]] = [
 			[aa, ab, ac, ad, ae, af, ag, ah],
 			[ba, bb, bc, bd, be, bf, bg, bh],
@@ -317,6 +317,7 @@ class ViewController: NSViewController
 				}
 			}
 		}
+		print("[*]完了")
 		if(finishedsw() == 1)
 		{
 			result()
