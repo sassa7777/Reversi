@@ -174,8 +174,8 @@ class ViewController: NSViewController
 	{
 		close.isHidden = true
 		reset()
-		reloadview()
 		putai()
+		reloadview()
 	}
 	
 	func switchbutton(switch: Bool)
@@ -190,10 +190,34 @@ class ViewController: NSViewController
 			[ga, gb, gc, gd, ge, gf, gg, gh],
 			[ha, hb, hc, hd, he, hf, hg, hh]
 		]
+		
+		let canputswift: [[Bool]] = [
+			[canPut.1.1, canPut.1.2, canPut.1.3, canPut.1.4, canPut.1.5, canPut.1.6, canPut.1.7, canPut.1.8],
+			[canPut.2.1, canPut.2.2, canPut.2.3, canPut.2.4, canPut.2.5, canPut.2.6, canPut.2.7, canPut.2.8],
+			[canPut.3.1, canPut.3.2, canPut.3.3, canPut.3.4, canPut.3.5, canPut.3.6, canPut.3.7, canPut.3.8],
+			[canPut.4.1, canPut.4.2, canPut.4.3, canPut.4.4, canPut.4.5, canPut.4.6, canPut.4.7, canPut.4.8],
+			[canPut.5.1, canPut.5.2, canPut.5.3, canPut.5.4, canPut.5.5, canPut.5.6, canPut.5.7, canPut.5.8],
+			[canPut.6.1, canPut.6.2, canPut.6.3, canPut.6.4, canPut.6.5, canPut.6.6, canPut.6.7, canPut.6.8],
+			[canPut.7.1, canPut.7.2, canPut.7.3, canPut.7.4, canPut.7.5, canPut.7.6, canPut.7.7, canPut.7.8],
+			[canPut.8.1, canPut.8.2, canPut.8.3, canPut.8.4, canPut.8.5, canPut.8.6, canPut.8.7, canPut.8.8],
+		]
+		
 		for i in swiftbuttons {
 			for swiftbutton in i {
-				swiftbutton.isEnabled = `switch`
 				(swiftbutton.cell as? NSButtonCell)?.imageDimsWhenDisabled = false
+			}
+		}
+		
+		for i in 0..<8 {
+			for j in 0..<8 {
+				if(canputswift[i][j] == true && `switch` == true)
+				{
+					swiftbuttons[i][j].isEnabled = true
+				}
+				else
+				{
+					swiftbuttons[i][j].isEnabled = false
+				}
 			}
 		}
 	}

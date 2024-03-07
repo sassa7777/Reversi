@@ -340,12 +340,8 @@
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-flto",
-					"-march=native",
-					"-mtune=native",
-				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-flto";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -388,12 +384,8 @@
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 0.3;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CFLAGS = (
-					"-flto",
-					"-march=native",
-					"-mtune=native",
-				);
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = "-flto";
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";

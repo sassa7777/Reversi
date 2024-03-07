@@ -10,8 +10,16 @@
 
 void reset(void) {
 	printf("[*]初期化中...\n");
-	memset(board, 0, sizeof(board));
 	memset(canPut, 0, sizeof(canPut));
+	for (int i = 0; i < 10; ++i) {
+			for (int j = 0; j < 10; ++j) {
+				if (i == 0 || i == 9 || j == 0 || j == 9) {
+					board[i][j] = 3;
+				} else {
+					board[i][j] = 0;
+				}
+			}
+		}
 	board[4][4] = 2;
 	board[4][5] = 1;
 	board[5][4] = 1;
@@ -367,7 +375,7 @@ void* negaalphat1(void* args)
 {
 	int var;
 	char playerrn = player;
-	int depth = DEPTH, alpha = -32767, beta = 32767;
+	int  alpha = -32767, beta = 32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -380,9 +388,9 @@ void* negaalphat1(void* args)
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
 				if (putableto2(&playerrn, tmpboard) == true) {
-					var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+					var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, tmpboard);
 				} else {
-					var = nega_alphadeep(depth-1, playerrn, alpha, beta, turn + 1, tmpboard);
+					var = nega_alphadeep(DEPTH-1, playerrn, alpha, beta, turn+1, tmpboard);
 				}
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
@@ -391,7 +399,7 @@ void* negaalphat1(void* args)
 					alpha = var;
 					cachex[0] = j;
 					cachey[0] = i;
-					printf("    best place is (%d, %d), score %d\n", j, i, var);
+//					printf("    best place is (%d, %d), score %d\n", j, i, var);
 				}
 			}
 		}
@@ -405,7 +413,7 @@ void* negaalphat2(void* args)
 {
 	int var;
 	char playerrn = player;
-	int depth = DEPTH, alpha = -32767, beta = 32767;
+	int alpha = -32767, beta = 32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -418,9 +426,9 @@ void* negaalphat2(void* args)
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
 				if (putableto2(&playerrn, tmpboard) == true) {
-					var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+					var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, tmpboard);
 				} else {
-					var = nega_alphadeep(depth-1, playerrn, alpha, beta, turn + 1, tmpboard);
+					var = nega_alphadeep(DEPTH-1, playerrn, alpha, beta, turn+1, tmpboard);
 				}
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
@@ -429,7 +437,7 @@ void* negaalphat2(void* args)
 					alpha = var;
 					cachex[1] = j;
 					cachey[1] = i;
-					printf("    best place is (%d, %d), score %d\n", j, i, var);
+//					printf("    best place is (%d, %d), score %d\n", j, i, var);
 				}
 			}
 		}
@@ -443,7 +451,7 @@ void* negaalphat3(void* args)
 {
 	int var;
 	char playerrn = player;
-	int depth = DEPTH, alpha = -32767, beta = 32767;
+	int alpha = -32767, beta = 32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -456,9 +464,9 @@ void* negaalphat3(void* args)
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
 				if (putableto2(&playerrn, tmpboard) == true) {
-					var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+					var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, tmpboard);
 				} else {
-					var = nega_alphadeep(depth-1, playerrn, alpha, beta, turn + 1, tmpboard);
+					var = nega_alphadeep(DEPTH-1, playerrn, alpha, beta, turn+1, tmpboard);
 				}
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
@@ -467,7 +475,7 @@ void* negaalphat3(void* args)
 					alpha = var;
 					cachex[2] = j;
 					cachey[2] = i;
-					printf("    best place is (%d, %d), score %d\n", j, i, var);
+//					printf("    best place is (%d, %d), score %d\n", j, i, var);
 				}
 			}
 		}
@@ -481,7 +489,7 @@ void* negaalphat4(void* args)
 {
 	int var;
 	char playerrn = player;
-	int depth = DEPTH, alpha = -32767, beta = 32767;
+	int alpha = -32767, beta = 32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -494,9 +502,9 @@ void* negaalphat4(void* args)
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
 				if (putableto2(&playerrn, tmpboard) == true) {
-					var = -nega_alphadeep(depth - 1, 3 - playerrn, -beta, -alpha, turn + 1, tmpboard);
+					var = -nega_alphadeep(DEPTH-1, 3 - playerrn, -beta, -alpha, turn+1, tmpboard);
 				} else {
-					var = nega_alphadeep(depth-1, playerrn, alpha, beta, turn + 1, tmpboard);
+					var = nega_alphadeep(DEPTH-1, playerrn, alpha, beta, turn+1, tmpboard);
 				}
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
@@ -505,7 +513,7 @@ void* negaalphat4(void* args)
 					alpha = var;
 					cachex[3] = j;
 					cachey[3] = i;
-					printf("    best place is (%d, %d), score %d\n", j, i, var);
+//					printf("    best place is (%d, %d), score %d\n", j, i, var);
 				}
 			}
 		}
@@ -519,6 +527,7 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, char
 	if (depth == 0) {
 		bool canput[10][10] = {{false}};
 		check4(&playerrn, canput, board);
+		if(playerrn == 1) return -countscore(board, &turn, canput, &playerrn);
 		return countscore(board, &turn, canput, &playerrn);
 	}
 	int var;
@@ -548,7 +557,8 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, char
 	}
 	if (alpha == -32767) {
 		check4(&playerrn, canput, board);
-		alpha = countscore(board, &turn, canput, &playerrn);
+		alpha = score_countstone(board);
+		if(playerrn == 1) alpha = -alpha;
 	}
 	return alpha;
 }
@@ -557,7 +567,6 @@ int returnplayer(void) { return player; }
 
 bool putableto2(char *player, char board[10][10]) {
 	char y, x, xx, yy, xxx, yyy;
-	bool canput[10][10] = {{false}};
 	for (y = 1; y <= 8; ++y) {
 		for (x = 1; x <= 8; ++x) {
 			if (board[y][x] == 3-*player) {
@@ -570,17 +579,18 @@ bool putableto2(char *player, char board[10][10]) {
 								xxx += xx;
 								yyy += yy;
 							}
-							if (board[yyy][xxx] == 0) canput[yyy][xxx] = true;
+//							if (board[yyy][xxx] == 0) canput[yyy][xxx] = true;
+							if (board[yyy][xxx] == 0) return true;
 						}
 					}
 				}
 			}
 		}
 	}
-	for (y = 1; y <= 8; ++y) {
-		for (x = 1; x <= 8; ++x) {
-			if(canput[y][x] == true) return true;
-		}
-	}
+//	for (y = 1; y <= 8; ++y) {
+//		for (x = 1; x <= 8; ++x) {
+//			if(canput[y][x] == true) return true;
+//		}
+//	}
 	return false;
 }
