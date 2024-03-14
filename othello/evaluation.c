@@ -293,7 +293,7 @@ bool is_allblack(char board[10][10]) {
 
 int countscore(char board[10][10], int *turn) {
     if(is_allblack(board)) return -9999;
-    if(*turn >= 60) return 10*score_countstone(board);
-    if(*turn >= 44) return 4*score_stone(board)+60*score_fixedstone(board);
-    return 4*score_stone(board)+60*score_fixedstone(board)+score_putable(board);
+    if(*turn >= 60) return score_countstone(board);
+    if(*turn >= 44) return 2*score_stone(board)+60*score_fixedstone(board);
+    return 5*score_stone(board)+60*score_fixedstone(board)+2*score_putable(board);
 }

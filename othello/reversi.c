@@ -276,7 +276,6 @@ int ai2(void) {
 	printf("[*]Botが考え中..\n");
 	tmpx = 0;
 	tmpy = 0;
-rerun:
 	//nega_alpha(DEPTH, player, -32767, 32767, turn, false);
 	negaalphaTH();
 	if(tmpx == 0 || tmpy == 0)
@@ -317,12 +316,12 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn, bool pas
 					printf("best place is (%d, %d), score %d\n", tmpx, tmpy, var);
 				}
 				if (alpha >= beta) return alpha;
-				if(alpha > max_score) max_score = alpha;
 			}
+			if(alpha > max_score) max_score = alpha;
 		}
 	}
 	if (max_score == -32767) {
-		if(passed == true) return 10*score_countstone(board);
+		if(passed == true) return score_countstone(board);
 		return -nega_alpha(depth, 3-playerrn, -beta, -alpha, turn, true);
 	}
 	return max_score;
@@ -496,7 +495,7 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, bool
 	if (depth == 0) {
 		return countscore(board, &turn);
 	}
-	int var;
+	int var, max_score = -32767;
 	char tmpboard[10][10];
 	bool canput[10][10] = {{false}};
 	memcpy(tmpboard, board, sizeof(tmpboard));
@@ -510,17 +509,19 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, bool
 			
 			memcpy(board, tmpboard, sizeof(tmpboard));
 			
-			if (var >= beta) return var;
-			
-			if (var > alpha) alpha = var;
+			if (var > alpha) {
+				alpha = var;
+				if(alpha >= beta) return alpha;
+			}
+			if(alpha > max_score) max_score = alpha;
 		}
 	}
 	
-	if (alpha == -32767) {
-		if(passed == true) return 10*score_countstone(board);
+	if (max_score == -32767) {
+		if(passed == true) return score_countstone(board);
 		return -nega_alphadeep(depth, 3-playerrn, -beta, -alpha, turn, true, board);
 	}
-	return alpha;
+	return max_score;
 }
 
 int returnplayer(void) { return player; }
