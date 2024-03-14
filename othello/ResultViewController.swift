@@ -31,6 +31,7 @@ class ResultViewController: NSViewController
         let blackcount = countstoneswift(1)
         let whitecount = countstoneswift(2)
         result.stringValue = "黒: \(blackcount) 白: \(whitecount)"
+        print("黒: \(blackcount) 白: \(whitecount)")
     }
     
     @IBAction func tapclose(_ sender: Any)
