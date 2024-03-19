@@ -33,6 +33,7 @@ char moveorder[128] = {
     1,8,1,8,3,6,1,3,6,8,1,3,6,8,3,6,4,5,4,5,1,3,4,5,6,8,1,3,4,5,6,8,4,5,4,5,3,4,5,6,2,7,2,7,2,7,2,7,3,4,5,6,2,7,1,8,1,8,2,7,2,7,2,7
 };
 
+
 void reset(void);
 void check2(int *player);
 void check4(char *player, bool canput[10][10], char board[10][10]);
@@ -47,12 +48,13 @@ int winner(void);
 int countstoneswift(int c);
 int ai2(void);
 int returnplayer(void);
-int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn, bool passed);
+int nega_alpha(int depth, char playerrn, int alpha, int beta, bool passed);
 void negaalphaTH(void);
+bool putable(char *player, char board[10][10]);
 void* negaalphat1(void* args);
 void* negaalphat2(void* args);
 void* negaalphat3(void* args);
 void* negaalphat4(void* args);
-int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, bool passed, char board[10][10]);
+int nega_alphadeep(int depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]);
 
 #endif /* othello_h */

@@ -276,7 +276,7 @@ int ai2(void) {
 	printf("[*]Botが考え中..\n");
 	tmpx = 0;
 	tmpy = 0;
-	//nega_alpha(DEPTH, player, -32767, 32767, turn, false);
+	//nega_alpha(DEPTH, player, -32767, 32767, false);
 	negaalphaTH();
 	if(tmpx == 0 || tmpy == 0)
 	{
@@ -289,9 +289,9 @@ int ai2(void) {
 	return 1;
 }
 
-int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn, bool passed) {
+int nega_alpha(int depth, char playerrn, int alpha, int beta,  bool passed) {
 	if (depth == 0) {
-		return countscore(board, &turn);
+		return countscore(board, &playerrn);
 	}
 	int var, max_score = -32767;
 	char tmpboard[10][10] = {{0}};
@@ -304,7 +304,7 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn, bool pas
 		if (canput[moveorder[i]][moveorder[i+64]] == true) {
 			putstone3(&moveorder[i], &moveorder[i+64], &playerrn, canput, board);
 			
-			var = -nega_alpha(depth-1, 3-playerrn, -beta, -alpha, turn+1, false);
+			var = -nega_alpha(depth-1, 3-playerrn, -beta, -alpha, false);
 			
 			memcpy(board, tmpboard, sizeof(tmpboard));
 			
@@ -321,8 +321,8 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta, int turn, bool pas
 		}
 	}
 	if (max_score == -32767) {
-		if(passed == true) return score_countstone(board);
-		return -nega_alpha(depth, 3-playerrn, -beta, -alpha, turn, true);
+		if(passed == true) return countscore(board, &playerrn);
+		return -nega_alpha(depth, 3-playerrn, -beta, -alpha, true);
 	}
 	return max_score;
 }
@@ -375,7 +375,7 @@ void* negaalphat1(void* args)
 			if (canput[i][j] == true) {
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
@@ -408,7 +408,7 @@ void* negaalphat2(void* args)
 			if (canput[i][j] == true) {
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
@@ -441,7 +441,7 @@ void* negaalphat3(void* args)
 			if (canput[i][j] == true) {
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
@@ -474,7 +474,7 @@ void* negaalphat4(void* args)
 			if (canput[i][j] == true) {
 				putstone3(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, turn+1, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
@@ -491,9 +491,9 @@ void* negaalphat4(void* args)
 	pthread_exit(0);
 }
 
-int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, bool passed, char board[10][10]) {
+int nega_alphadeep(int depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]) {
 	if (depth == 0) {
-		return countscore(board, &turn);
+		return countscore(board, &playerrn);
 	}
 	int var, max_score = -32767;
 	char tmpboard[10][10];
@@ -505,23 +505,47 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, int turn, bool
 		if (canput[moveorder[i]][moveorder[i+64]] == true) {
 			putstone3(&moveorder[i], &moveorder[i+64], &playerrn, canput, board);
 			
-			var = -nega_alphadeep(depth-1, 3-playerrn, -beta, -alpha, turn+1, false, board);
+			var = -nega_alphadeep(depth-1, 3-playerrn, -beta, -alpha, false, board);
 			
 			memcpy(board, tmpboard, sizeof(tmpboard));
 			
 			if (var > alpha) {
 				alpha = var;
-				if(alpha >= beta) return alpha;
 			}
+			if(alpha >= beta) return alpha;
 			if(alpha > max_score) max_score = alpha;
 		}
 	}
 	
 	if (max_score == -32767) {
-		if(passed == true) return score_countstone(board);
-		return -nega_alphadeep(depth, 3-playerrn, -beta, -alpha, turn, true, board);
+		if(passed == true) return countscore(board, &playerrn);
+		return -nega_alphadeep(depth, 3-playerrn, -beta, -alpha, true, board);
 	}
 	return max_score;
 }
 
 int returnplayer(void) { return player; }
+
+bool putable(char *player, char board[10][10]) {
+	char y, x, xx, yy, xxx, yyy;
+	for (y = 1; y <= 8; ++y) {
+		for (x = 1; x <= 8; ++x) {
+			if (board[y][x] == *player) {
+				for (xx = -1; xx < 2; ++xx) {
+					for (yy = -1; yy < 2; ++yy) {
+						if (board[y + yy][x + xx] == (3-*player)) {
+							xxx = x + xx;
+							yyy = y + yy;
+							while (board[yyy][xxx] == (3-*player)) {
+								xxx += xx;
+								yyy += yy;
+							}
+							if (board[yyy][xxx] == 0) return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
