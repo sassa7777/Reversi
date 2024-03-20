@@ -40,7 +40,7 @@ void check2(char *player, bool canput[10][10], char board[10][10]);
 int putstone(int px, int py);
 int putstone2(char *py, char *px, char *player, bool canput[10][10], char board[10][10]);
 void reverse(int x, int y);
-void reverse2(char **x, char **y, char board[10][10]);
+void reverse2(char **x, char **y, char **player, char board[10][10]);
 void rebuild(void);
 void countstone(void);
 int finishedsw(void);

@@ -12,14 +12,14 @@ void reset(void) {
 	printf("[*]初期化中...\n");
 	memset(canPut, 0, sizeof(canPut));
 	for (char i = 0; i <= 9; ++i) {
-			for (char j = 0; j <= 9; ++j) {
-				if (i == 0 || i == 9 || j == 0 || j == 9) {
-					board[i][j] = 3;
-				} else {
-					board[i][j] = 0;
-				}
+		for (char j = 0; j <= 9; ++j) {
+			if (i == 0 || i == 9 || j == 0 || j == 9) {
+				board[i][j] = 3;
+			} else {
+				board[i][j] = 0;
 			}
 		}
+	}
 	board[4][4] = 2;
 	board[4][5] = 1;
 	board[5][4] = 1;
@@ -135,24 +135,24 @@ void reverse(int x, int y) {
 	}
 }
 
-void reverse2(char **x, char **y, char board[10][10]) {
-	if (board[**y][**x] == player) {
+void reverse2(char **x, char **y, char **player, char board[10][10]) {
+	if (board[**y][**x] == **player) {
 		char xx, yy, xxx, yyy;
 		for (xx = -1; xx < 2; ++xx) {
 			for (yy = -1; yy < 2; ++yy) {
 				if (xx != 0 || yy != 0) {
-					if (board[**y + yy][**x + xx] == (3 - player)) {
+					if (board[**y + yy][**x + xx] == (3 - **player)) {
 						xxx = **x + xx;
 						yyy = **y + yy;
-						while (board[yyy][xxx] == (3 - player)) {
+						while (board[yyy][xxx] == (3 - **player)) {
 							xxx += xx;
 							yyy += yy;
 						}
-						if (board[yyy][xxx] == player) {
+						if (board[yyy][xxx] == **player) {
 							xxx -= xx;
 							yyy -= yy;
-							while (board[yyy][xxx] == (3 - player)) {
-								board[yyy][xxx] = player;
+							while (board[yyy][xxx] == (3 - **player)) {
+								board[yyy][xxx] = **player;
 								yyy -= yy;
 								xxx -= xx;
 							}
@@ -205,12 +205,12 @@ int putstone2(char *py, char *px, char *player, bool canput[10][10], char board[
 	if (canput[*py][*px] == true) {
 		if (*player == 1) {
 			board[*py][*px] = 1;
-			reverse2(&px, &py, board);
+			reverse2(&px, &py, &player, board);
 			skip = false;
 			return 1;
 		} else if (*player == 2) {
 			board[*py][*px] = 2;
-			reverse2(&px, &py, board);
+			reverse2(&px, &py, &player, board);
 			skip = false;
 			return 2;
 		} else {
@@ -482,9 +482,9 @@ void* negaalphat4(void* args) {
 }
 
 int nega_alphadeep(int depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]) {
-	if (depth == 0) {
-		return countscore(board, &playerrn);
-	}
+	
+	if (depth == 0) return countscore(board, &playerrn);
+	
 	int var, max_score = -32767;
 	char tmpboard[10][10];
 	bool canput[10][10] = {{false}};

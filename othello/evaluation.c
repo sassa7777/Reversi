@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include "reversi.h"
 
-#define DEPTH 10
+#define DEPTH 8
 
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
@@ -294,12 +294,12 @@ bool is_allblack(char board[10][10]) {
 
 int countscore(char board[10][10], char *playerrn) {
     if(*playerrn == 1) {
-        if(is_allblack(board)) return -9999;
+        if(is_allblack(board)) return 9999;
         if(turn+DEPTH >= 60) return -(score_countstone(board));
         if(turn+DEPTH >= 44) return -(score_stone(board)+50*score_fixedstone(board));
         return -(3*score_stone(board)+50*score_fixedstone(board)+score_putable(board));
     } else {
-        if(is_allblack(board)) return 9999;
+        if(is_allblack(board)) return -9999;
         if(turn+DEPTH >= 60) return (score_countstone(board));
         if(turn+DEPTH >= 44) return (score_stone(board)+50*score_fixedstone(board));
         return (3*score_stone(board)+50*score_fixedstone(board)+score_putable(board));
