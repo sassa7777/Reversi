@@ -26,6 +26,8 @@ int whitec = 0;
 int blackc = 0;
 int tmpx, tmpy;
 int cachex[4], cachey[4], results[4];
+int ALPHA;
+int think_percent;
 bool isbot = false;
 
 char moveorder[128] = {

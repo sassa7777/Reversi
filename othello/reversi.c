@@ -325,6 +325,8 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta,  bool passed) {
 void negaalphaTH(void) {
 	memset(cachex, 0, sizeof(cachex));
 	memset(cachey, 0, sizeof(cachey));
+	ALPHA = -32767;
+	think_percent = 0;
 	pthread_t thread1;
 	pthread_t thread2;
 	pthread_t thread3;
@@ -337,7 +339,7 @@ void negaalphaTH(void) {
 	pthread_join(thread2, NULL);
 	pthread_join(thread3, NULL);
 	pthread_join(thread4, NULL);
-	
+	printf("Thinking: %d%%\n", 100);
 	int max = -100001;
 	for (char i = 0; i < 4; ++i) {
 		if(max < results[i]) max = results[i];
@@ -356,7 +358,7 @@ void negaalphaTH(void) {
 void* negaalphat1(void* args) {
 	int var;
 	char playerrn = player;
-	int  alpha = -32767, beta = 32767;
+	int  beta = 32767, maxscore = -32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -368,27 +370,29 @@ void* negaalphat1(void* args) {
 			if (canput[i][j] == true) {
 				putstone2(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -ALPHA, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
-				if (var > alpha) {
-					alpha = var;
+				if (var > ALPHA) {
+					ALPHA = var;
+					maxscore = var;
 					cachex[0] = j;
 					cachey[0] = i;
 				}
 			}
 		}
 	}
-	results[0] = alpha;
-	if(alpha != -32767) printf("TH1 best place is (%d, %d), score %d\n", cachex[0], cachey[0], alpha);
+	results[0] = maxscore;
+	think_percent += 25;
+	printf("Thinking: %d%%\n", think_percent);
 	pthread_exit(0);
 }
 
 void* negaalphat2(void* args) {
 	int var;
 	char playerrn = player;
-	int alpha = -32767, beta = 32767;
+	int beta = 32767, maxscore = -32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -400,27 +404,28 @@ void* negaalphat2(void* args) {
 			if (canput[i][j] == true) {
 				putstone2(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -ALPHA, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
-				if (var > alpha) {
-					alpha = var;
+				if (var > ALPHA) {
+					ALPHA = var;
+					maxscore = var;
 					cachex[1] = j;
 					cachey[1] = i;
 				}
 			}
 		}
 	}
-	results[1] = alpha;
-	if(alpha != -32767) printf("TH2 best place is (%d, %d), score %d\n", cachex[1], cachey[1], alpha);
+	results[1] = maxscore;
+	//if(alpha != -32767) printf("TH2 best place is (%d, %d), score %d\n", cachex[1], cachey[1], alpha);
 	pthread_exit(0);
 }
 
 void* negaalphat3(void* args) {
 	int var;
 	char playerrn = player;
-	int alpha = -32767, beta = 32767;
+	int alpha = -32767, beta = 32767, maxscore = -32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -432,27 +437,29 @@ void* negaalphat3(void* args) {
 			if (canput[i][j] == true) {
 				putstone2(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -ALPHA, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
-				if (var > alpha) {
-					alpha = var;
+				if (var > ALPHA) {
+					ALPHA = var;
+					maxscore = var;
 					cachex[2] = j;
 					cachey[2] = i;
 				}
 			}
 		}
 	}
-	results[2] = alpha;
-	if(alpha != -32767) printf("TH3 best place is (%d, %d), score %d\n", cachex[2], cachey[2], alpha);
+	results[2] = maxscore;
+	think_percent += 25;
+	printf("Thinking: %d%%\n", think_percent);
 	pthread_exit(0);
 }
 
 void* negaalphat4(void* args) {
 	int var;
 	char playerrn = player;
-	int alpha = -32767, beta = 32767;
+	int beta = 32767, maxscore = -32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -464,20 +471,22 @@ void* negaalphat4(void* args) {
 			if (canput[i][j] == true) {
 				putstone2(&i, &j, &playerrn, canput, tmpboard);
 				
-				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -alpha, false, tmpboard);
+				var = -nega_alphadeep(DEPTH-1, 3-playerrn, -beta, -ALPHA, false, tmpboard);
 				
 				memcpy(tmpboard, board, sizeof(tmpboard));
 				
-				if (var > alpha) {
-					alpha = var;
+				if (var > ALPHA) {
+					ALPHA = var;
+					maxscore = var;
 					cachex[3] = j;
 					cachey[3] = i;
 				}
 			}
 		}
 	}
-	results[3] = alpha;
-	if(alpha != -32767) printf("TH4 best place is (%d, %d), score %d\n", cachex[3], cachey[3], alpha);
+	results[3] = maxscore;
+	think_percent += 25;
+	printf("Thinking: %d%%\n", think_percent);
 	pthread_exit(0);
 }
 

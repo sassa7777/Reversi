@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include "reversi.h"
 
-#define DEPTH 8
+#define DEPTH 9
 
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
