@@ -350,5 +350,16 @@ class ViewController: NSViewController
 			return
 		}
 	}
+	
+	@objc class SwiftFunctions: NSObject {
+		@objc class func thinking_hako() {
+			DispatchQueue.main.async {
+				if let viewController = NSApplication.shared.keyWindow?.contentViewController as? ViewController {
+					viewController.hakotext.stringValue = "考え中... (\(think_percent)%)"
+				}
+			}
+		}
+	}
+	
 }
 

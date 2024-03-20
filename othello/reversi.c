@@ -7,6 +7,7 @@
 
 #include "reversi.h"
 #include "evaluation.c"
+#import "Objective-C-Wrapper.h"
 
 void reset(void) {
 	printf("[*]初期化中...\n");
@@ -327,6 +328,8 @@ void negaalphaTH(void) {
 	memset(cachey, 0, sizeof(cachey));
 	ALPHA = -32767;
 	think_percent = 0;
+	printf("Thinking: %d%%\n", 0);
+	update_hakostring();
 	pthread_t thread1;
 	pthread_t thread2;
 	pthread_t thread3;
@@ -386,6 +389,7 @@ void* negaalphat1(void* args) {
 	results[0] = maxscore;
 	think_percent += 25;
 	printf("Thinking: %d%%\n", think_percent);
+	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -418,14 +422,16 @@ void* negaalphat2(void* args) {
 		}
 	}
 	results[1] = maxscore;
-	//if(alpha != -32767) printf("TH2 best place is (%d, %d), score %d\n", cachex[1], cachey[1], alpha);
+	think_percent += 25;
+	printf("Thinking: %d%%\n", think_percent);
+	update_hakostring();
 	pthread_exit(0);
 }
 
 void* negaalphat3(void* args) {
 	int var;
 	char playerrn = player;
-	int alpha = -32767, beta = 32767, maxscore = -32767;
+	int beta = 32767, maxscore = -32767;
 	char tmpboard[10][10] = {{0}};
 	bool canput[10][10] = {{false}};
 		
@@ -453,6 +459,7 @@ void* negaalphat3(void* args) {
 	results[2] = maxscore;
 	think_percent += 25;
 	printf("Thinking: %d%%\n", think_percent);
+	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -487,6 +494,7 @@ void* negaalphat4(void* args) {
 	results[3] = maxscore;
 	think_percent += 25;
 	printf("Thinking: %d%%\n", think_percent);
+	update_hakostring();
 	pthread_exit(0);
 }
 
