@@ -234,7 +234,7 @@ class ViewController: NSViewController
 		}
 		DispatchQueue.global().asyncAfter(deadline: .now())
 		{
-			if(ai2() == 1)
+			if(ai() == 1)
 			{
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
 				{

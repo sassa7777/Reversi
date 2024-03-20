@@ -35,10 +35,10 @@ char moveorder[128] = {
 
 
 void reset(void);
-void check2(int *player);
-void check4(char *player, bool canput[10][10], char board[10][10]);
+void check(int *player);
+void check2(char *player, bool canput[10][10], char board[10][10]);
 int putstone(int px, int py);
-int putstone3(char *py, char *px, char *player, bool canput[10][10], char board[10][10]);
+int putstone2(char *py, char *px, char *player, bool canput[10][10], char board[10][10]);
 void reverse(int x, int y);
 void reverse2(char **x, char **y, char board[10][10]);
 void rebuild(void);
@@ -46,11 +46,10 @@ void countstone(void);
 int finishedsw(void);
 int winner(void);
 int countstoneswift(int c);
-int ai2(void);
+int ai(void);
 int returnplayer(void);
 int nega_alpha(int depth, char playerrn, int alpha, int beta, bool passed);
 void negaalphaTH(void);
-bool putable(char *player, char board[10][10]);
 void* negaalphat1(void* args);
 void* negaalphat2(void* args);
 void* negaalphat3(void* args);
