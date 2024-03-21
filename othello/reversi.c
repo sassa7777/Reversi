@@ -7,7 +7,7 @@
 
 #include "reversi.h"
 #include "evaluation.c"
-#import "Objective-C-Wrapper.h"
+#include "Objective-C-Wrapper.h"
 
 void reset(void) {
 	printf("[*]初期化中...\n");
@@ -273,12 +273,19 @@ int ai(void) {
 	printf("[*]Botが考え中..\n");
 	tmpx = 0;
 	tmpy = 0;
+	think_percent = 0;
+	printf("Thinking: %d%%\n", 0);
+	update_hakostring();
+	think_count = 100/putable_counter(&player, board);
 	//nega_alpha(DEPTH, player, -32767, 32767, false);
 	negaalphaTH();
 	if(tmpx == 0 || tmpy == 0) {
 		printf("ERROR\n");
 		exit(1);
 	}
+	printf("Thinking: %d%%\n", 100);
+	think_percent = 100;
+	update_hakostring();
 	putstone(tmpy, tmpx);
 	check(&player);
 	isbot = false;
@@ -312,6 +319,11 @@ int nega_alpha(int depth, char playerrn, int alpha, int beta,  bool passed) {
 					printf("best place is (%d, %d), score %d\n", tmpx, tmpy, var);
 				}
 			}
+			if(depth == DEPTH) {
+				think_percent += think_count;
+				printf("Thinking: %d%%\n", think_percent);
+				update_hakostring();
+			}
 			if (var >= beta) return var;
 			if(alpha > max_score) max_score = alpha;
 		}
@@ -327,9 +339,6 @@ void negaalphaTH(void) {
 	memset(cachex, 0, sizeof(cachex));
 	memset(cachey, 0, sizeof(cachey));
 	ALPHA = -32767;
-	think_percent = 0;
-	printf("Thinking: %d%%\n", 0);
-	update_hakostring();
 	pthread_t thread1;
 	pthread_t thread2;
 	pthread_t thread3;
@@ -342,7 +351,6 @@ void negaalphaTH(void) {
 	pthread_join(thread2, NULL);
 	pthread_join(thread3, NULL);
 	pthread_join(thread4, NULL);
-	printf("Thinking: %d%%\n", 100);
 	int max = -100001;
 	for (char i = 0; i < 4; ++i) {
 		if(max < results[i]) max = results[i];
@@ -383,13 +391,13 @@ void* negaalphat1(void* args) {
 					cachex[0] = j;
 					cachey[0] = i;
 				}
+				think_percent += think_count;
+				printf("Thinking: %d%%\n", think_percent);
+				update_hakostring();
 			}
 		}
 	}
 	results[0] = maxscore;
-	think_percent += 25;
-	printf("Thinking: %d%%\n", think_percent);
-	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -418,13 +426,13 @@ void* negaalphat2(void* args) {
 					cachex[1] = j;
 					cachey[1] = i;
 				}
+				think_percent += think_count;
+				printf("Thinking: %d%%\n", think_percent);
+				update_hakostring();
 			}
 		}
 	}
 	results[1] = maxscore;
-	think_percent += 25;
-	printf("Thinking: %d%%\n", think_percent);
-	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -453,13 +461,13 @@ void* negaalphat3(void* args) {
 					cachex[2] = j;
 					cachey[2] = i;
 				}
+				think_percent += think_count;
+				printf("Thinking: %d%%\n", think_percent);
+				update_hakostring();
 			}
 		}
 	}
 	results[2] = maxscore;
-	think_percent += 25;
-	printf("Thinking: %d%%\n", think_percent);
-	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -488,13 +496,13 @@ void* negaalphat4(void* args) {
 					cachex[3] = j;
 					cachey[3] = i;
 				}
+				think_percent += think_count;
+				printf("Thinking: %d%%\n", think_percent);
+				update_hakostring();
 			}
 		}
 	}
 	results[3] = maxscore;
-	think_percent += 25;
-	printf("Thinking: %d%%\n", think_percent);
-	update_hakostring();
 	pthread_exit(0);
 }
 
@@ -530,3 +538,31 @@ int nega_alphadeep(int depth, char playerrn, int alpha, int beta, bool passed, c
 }
 
 int returnplayer(void) { return player; }
+
+
+int putable_counter(int *player, char board[10][10]) {
+	char y, x, yy, xx, yyy, xxx;
+	int count = 0;
+	for (y = 1; y < 9; ++y) {
+		for (x = 1; x < 9; ++x) {
+			if (board[y][x] == *player) {
+				for (xx = -1; xx < 2; ++xx) {
+					for (yy = -1; yy < 2; ++yy) {
+						if (board[y + yy][x + xx] == (3 - *player)) {
+							xxx = x + xx;
+							yyy = y + yy;
+							while (board[yyy][xxx] == (3 - *player)) {
+								xxx += xx;
+								yyy += yy;
+							}
+							if (board[yyy][xxx] == 0) {
+								count++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return count;
+}

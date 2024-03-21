@@ -5,7 +5,6 @@
 //  Created by sasa on 2024/01/15.
 //
 
-#include <stdbool.h>
 #include "reversi.h"
 
 #define DEPTH 10

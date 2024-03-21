@@ -28,6 +28,7 @@ int tmpx, tmpy;
 int cachex[4], cachey[4], results[4];
 int ALPHA;
 int think_percent;
+int think_count;
 bool isbot = false;
 
 char moveorder[128] = {
@@ -57,5 +58,6 @@ void* negaalphat2(void* args);
 void* negaalphat3(void* args);
 void* negaalphat4(void* args);
 int nega_alphadeep(int depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]);
+int putable_counter(int *player, char board[10][10]);
 
 #endif /* othello_h */

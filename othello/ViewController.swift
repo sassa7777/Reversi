@@ -360,6 +360,5 @@ class ViewController: NSViewController
 			}
 		}
 	}
-	
 }
 
