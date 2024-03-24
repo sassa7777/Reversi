@@ -7,8 +7,6 @@
 
 #include "reversi.h"
 
-#define DEPTH 10
-
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
     -12, -15, -3, -3, -3, -3, -15, -12,
@@ -22,12 +20,9 @@ int scoreboard[8][8] = {
 
 int score_stone(char board[10][10]) {
     int score = 0;
-    for (char x = 1; x < 9; ++x) {
-        for (char y = 1; y < 9; ++y) {
-            if (board[x][y] == 2)
-                score += scoreboard[x-1][y-1];
-            else if (board[x][y] == 1)
-                score -= scoreboard[x-1][y-1];
+    for (char x = 0; x < 8; ++x) {
+        for (char y = 0; y < 8; ++y) {
+            score += scoreboard[x][y] * (board[x + 1][y + 1] == 2) - scoreboard[x][y] * (board[x + 1][y + 1] == 1);
         }
     }
     return score;
@@ -35,48 +30,33 @@ int score_stone(char board[10][10]) {
 
 int score_putable(char board[10][10]) {
     int score = 0;
-    char y, x, xx, yy, xxx, yyy;
-    for (y = 1; y <= 8; ++y) {
-        for (x = 1; x <= 8; ++x) {
-            //白
-            if (board[y][x] == 2) {
-                for (xx = -1; xx < 2; ++xx) {
-                    for (yy = -1; yy < 2; ++yy) {
-                        if (board[y + yy][x + xx] == 1) {
-                            xxx = x + xx;
-                            yyy = y + yy;
-                            while (board[yyy][xxx] == 1) {
+    for (int y = 1; y <= 8; ++y) {
+        for (int x = 1; x <= 8; ++x) {
+            int currentCell = board[y][x];
+            if (currentCell == 2 || currentCell == 1) {
+                int opponentCell = (currentCell == 2) ? 1 : 2;
+                for (int yy = -1; yy <= 1; ++yy) {
+                    for (int xx = -1; xx <= 1; ++xx) {
+                        if (board[y + yy][x + xx] == opponentCell) {
+                            int xxx = x + xx;
+                            int yyy = y + yy;
+                            while (board[yyy][xxx] == opponentCell) {
                                 xxx += xx;
                                 yyy += yy;
                             }
-                            if (board[yyy][xxx] == 0)
-                            {
-                                score++;
+                            if (board[yyy][xxx] == 0) {
+                                if (currentCell == 2)
+                                    score++;
+                                else
+                                    score--;
                             }
-                        }
-                    }
-                }
-            }
-            //黒
-            else if (board[y][x] == 1) {
-                for (xx = -1; xx < 2; ++xx) {
-                    for (yy = -1; yy < 2; ++yy) {
-                        if (board[y + yy][x + xx] == 2) {
-                            xxx = x + xx;
-                            yyy = y + yy;
-                            while (board[yyy][xxx] == 2) {
-                                xxx += xx;
-                                yyy += yy;
-                            }
-                            if (board[yyy][xxx] == 0) score--;
                         }
                     }
                 }
             }
         }
     }
-    return score;
-}
+    return score;}
 
 int score_fixedstone(char board[10][10]) {
     int fixedstone = 0;
@@ -201,63 +181,35 @@ int score_fixedstone(char board[10][10]) {
             }
         }
         // 左上+右上
-        if (board[1][1] != 0 && board[1][2] != 0 && board[1][3] != 0 && board[1][4] != 0 && board[1][5] != 0 && board[1][6] != 0 && board[1][7] != 0 && board[1][8] != 0) {
-            i = 1;
+        if ((board[1][1] == 1 && board[1][2] == 1 && board[1][3] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 1) || (board[1][1] == 2 && board[1][2] == 2 && board[1][3] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 2 && board[1][8] == 2)) {
             if (board[1][1] == 2) {
-                while (board[1][i] == board[1][1]) {
-                    fixedstone--;
-                    i++;
-                }
+                fixedstone-=8;
             } else {
-                while (board[1][i] == board[1][1]) {
-                    fixedstone++;
-                    i++;
-                }
+                fixedstone+=8;
             }
         }
         //左上+左下
-        if (board[1][1] != 0 && board[2][1] != 0 && board[3][1] != 0 && board[4][1] != 0 && board[5][1] != 0 && board[6][1] != 0 && board[7][1] != 0 && board[8][1] != 0) {
-            i = 1;
+        if ((board[1][1] == 1 && board[2][1] == 1 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 1 && board[8][1] == 1) || (board[1][1] == 2 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 2)) {
             if (board[1][1] == 2) {
-                while (board[i][1] == board[1][1]) {
-                    fixedstone--;
-                    i++;
-                }
+                fixedstone-=8;
             } else {
-                while (board[i][1] == board[1][1]) {
-                    fixedstone++;
-                    i++;
-                }
+                fixedstone+=8;
             }
         }
         // 右下+左下
-        if (board[8][8] != 0 && board[8][2] != 0 && board[8][3] != 0 && board[8][4] != 0 && board[8][5] != 0 && board[8][6] != 0 && board[8][7] != 0 && board[8][1] != 0) {
-            i = 1;
+        if ((board[8][8] == 1 && board[8][2] == 1 && board[8][3] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][1] == 1) || (board[8][8] == 2 && board[8][2] == 2 && board[8][3] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 2 && board[8][1] == 2)) {
             if (board[8][8] == 2) {
-                while (board[8][i] == board[8][8]) {
-                    fixedstone--;
-                    i++;
-                }
+                fixedstone-=8;
             } else {
-                while (board[8][i] == board[8][8]) {
-                    fixedstone++;
-                    i++;
-                }
+                fixedstone+=8;
             }
         }
         // 右下+右上
-        if (board[8][8] != 0 && board[2][8] != 0 && board[3][8] != 0 && board[4][8] != 0 && board[5][8] != 0 && board[6][8] != 0 && board[7][8] != 0 && board[1][8] != 0) {
-            i = 1;
+        if ((board[8][8] == 1 && board[2][8] == 1 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[1][8] == 1) || (board[8][8] == 2 && board[2][8] == 2 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 2 && board[1][8] == 2)) {
             if (board[8][8] == 2) {
-                while (board[i][8] == board[8][8]) {
-                    fixedstone--;
-                    i++;
-                }
+                fixedstone-=8;
             } else {
-                while (board[i][8] == board[8][8]) {
-                    fixedstone++;
-                    i++;
-                }
+                fixedstone+=8;
             }
         }
     }
@@ -292,16 +244,23 @@ bool is_allblack(char board[10][10]) {
 }
 
 int countscore(char board[10][10], char *playerrn) {
-    if(*playerrn == 1) {
-        if(is_allblack(board)) return 9999;
-        if(turn+DEPTH >= 60) return -(score_countstone(board));
-        if(turn+DEPTH >= 44) return -(score_stone(board)+50*score_fixedstone(board));
-        return -(3*score_stone(board)+50*score_fixedstone(board)+score_putable(board));
+    if(DEPTH == 1) {
+        if(*playerrn == 1) {
+            return -score_countstone(board);
+        } else {
+            return score_countstone(board);
+        }
     } else {
-        if(is_allblack(board)) return -9999;
-        if(turn+DEPTH >= 60) return (score_countstone(board));
-        if(turn+DEPTH >= 44) return (score_stone(board)+50*score_fixedstone(board));
-        return (3*score_stone(board)+50*score_fixedstone(board)+score_putable(board));
+        if(*playerrn == 1) {
+            if(is_allblack(board)) return 9999;
+            else if(turn+DEPTH >= 60) return -(score_countstone(board));
+            else if(turn+DEPTH >= 44) return -(score_stone(board)+50*score_fixedstone(board));
+            else return -(3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
+        } else {
+            if(is_allblack(board)) return -9999;
+            else if(turn+DEPTH >= 60) return (score_countstone(board));
+            else if(turn+DEPTH >= 44) return (score_stone(board)+50*score_fixedstone(board));
+            else return (3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
+        }
     }
 }
-    

@@ -10,3 +10,7 @@
 void update_hakostring(void) {
     [SwiftFunctions thinking_hako];
 }
+
+void error_hakostring(void) {
+    [SwiftFunctions error_hako];
+}

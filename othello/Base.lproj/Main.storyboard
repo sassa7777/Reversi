@@ -114,9 +114,47 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="top" imageScaling="proportionallyDown" image="title" id="e4g-tO-xmD"/>
                             </imageView>
+                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UT9-J6-1Jz">
+                                <rect key="frame" x="208" y="76" width="339" height="24"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="fPc-1d-sZu">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="最弱" tag="1"/>
+                                        <segment label="弱い" selected="YES" tag="1"/>
+                                        <segment label="普通"/>
+                                        <segment label="少し強い"/>
+                                        <segment label="強い"/>
+                                        <segment label="٩( ᐛ )و(非常に遅い)"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="select_strength:" target="gOt-pg-uBu" id="yY0-ka-yEc"/>
+                                </connections>
+                            </segmentedControl>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="opn-7a-g0o">
+                                <rect key="frame" x="272" y="46" width="209" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="オセロ初心者向け" id="YRR-TT-uBs">
+                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="125-xt-q8v">
+                                <rect key="frame" x="155" y="81" width="41" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="レベル" id="iMr-tq-SQo">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="strength_select" destination="UT9-J6-1Jz" id="NTU-Yf-CPj"/>
+                        <outlet property="strength_txt" destination="opn-7a-g0o" id="nc7-Hf-LO4"/>
                         <segue destination="XfG-lQ-9wD" kind="popover" identifier="start" popoverBehavior="t" preferredEdge="maxY" id="38P-On-4PM"/>
                     </connections>
                 </viewController>
@@ -885,17 +923,6 @@
                                     <action selector="put:" target="XfG-lQ-9wD" id="47p-16-qSA"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NBt-XF-21B">
-                                <rect key="frame" x="315" y="74" width="71" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7TP-HQ-gNp">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="close:" target="XfG-lQ-9wD" id="dIw-cr-thi"/>
-                                </connections>
-                            </button>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eCE-Dh-RO6" userLabel="hako">
                                 <rect key="frame" x="93" y="114" width="48" height="48"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -910,6 +937,28 @@
                                     <color key="backgroundColor" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T8a-Lw-af0">
+                                <rect key="frame" x="309" y="74" width="83" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="もう一度" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="aQw-ge-xkl">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="restart:" target="XfG-lQ-9wD" id="6os-ia-l92"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NBt-XF-21B">
+                                <rect key="frame" x="315" y="30" width="71" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7TP-HQ-gNp">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="XfG-lQ-9wD" id="dIw-cr-thi"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
@@ -979,6 +1028,7 @@
                         <outlet property="hf" destination="ZIE-x3-5gW" id="ZDz-4a-YUV"/>
                         <outlet property="hg" destination="nYk-2f-yrf" id="bLc-ew-rhB"/>
                         <outlet property="hh" destination="Ffc-32-V9f" id="Rkp-te-oEs"/>
+                        <outlet property="restart" destination="T8a-Lw-af0" id="UeX-hc-Rc8"/>
                         <segue destination="AIO-dW-Itm" kind="popover" identifier="popup" popoverBehavior="t" preferredEdge="maxY" id="Zel-KA-FWB"/>
                     </connections>
                 </viewController>

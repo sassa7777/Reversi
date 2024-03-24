@@ -16,22 +16,17 @@ class ResultViewController: NSViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        if(winner() == 1)
-        {
+        switch winner() {
+        case 1:
             win_player.stringValue = "黒の勝ち！"
-        }
-        else if(winner() == 2)
-        {
+        case 2:
             win_player.stringValue = "白の勝ち！"
-        }
-        else if(winner() == 0)
-        {
+        case 3:
+            win_player.stringValue = "引き分け"
+        default:
             win_player.stringValue = "引き分け"
         }
-        let blackcount = countstoneswift(1)
-        let whitecount = countstoneswift(2)
-        result.stringValue = "黒: \(blackcount) 白: \(whitecount)"
-        print("黒: \(blackcount) 白: \(whitecount)")
+        result.stringValue = "黒: \(countstoneswift(1)) 白: \(countstoneswift(2))"
     }
     
     @IBAction func tapclose(_ sender: Any)

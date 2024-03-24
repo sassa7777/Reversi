@@ -11,5 +11,6 @@
 #import "othello-Swift.h"
 
 void update_hakostring(void);
+void error_hakostring(void);
 
 #endif /* Objective_C_Wrapper_h */

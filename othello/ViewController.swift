@@ -76,7 +76,10 @@ class ViewController: NSViewController
 	@IBOutlet var hg: NSButton!
 	@IBOutlet var hh: NSButton!
 	@IBOutlet var close: NSButton!
+	@IBOutlet var restart: NSButton!
 	@IBOutlet var hakotext: NSTextField!
+	
+	var strength: Int32 = 0
 	
 	@IBAction func put(_ sender: NSButton)
 	{
@@ -164,15 +167,19 @@ class ViewController: NSViewController
 		}
 	}
 	
-	@IBAction func close(_ sender: Any)
-	{
+	@IBAction func close(_ sender: Any) {
 		self.dismiss(self)
+	}
+	@IBAction func restart(_ sender: Any) {
+		self.viewDidLoad()
 	}
 	
 	
 	override func viewDidLoad()
 	{
+		DEPTH = strength
 		close.isHidden = true
+		restart.isHidden = true
 		reset()
 		putai()
 		reloadview()
@@ -347,6 +354,7 @@ class ViewController: NSViewController
 			result()
 			performSegue(withIdentifier: "popup", sender: self)
 			close.isHidden = false
+			restart.isHidden = false
 			return
 		}
 	}
@@ -356,6 +364,13 @@ class ViewController: NSViewController
 			DispatchQueue.main.async {
 				if let viewController = NSApplication.shared.keyWindow?.contentViewController as? ViewController {
 					viewController.hakotext.stringValue = "考え中... (\(think_percent)%)"
+				}
+			}
+		}
+		@objc class func error_hako() {
+			DispatchQueue.main.async {
+				if let viewController = NSApplication.shared.keyWindow?.contentViewController as? ViewController {
+					viewController.hakotext.stringValue = "ERROR"
 				}
 			}
 		}
