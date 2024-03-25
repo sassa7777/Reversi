@@ -12,6 +12,7 @@
 void reset(void) {
 	printf("[*]初期化中...\n");
 	printf("DEPTH=%d\n", DEPTH);
+	printf("Player: %d\n", botplayer);
 	memset(canPut, 0, sizeof(canPut));
 	for (char i = 0; i <= 9; ++i) {
 		for (char j = 0; j <= 9; ++j) {
@@ -269,7 +270,7 @@ int countstoneswift(int c) {
 }
 
 int ai(void) {
-	if (player == 1 || finished == 1) return 0;
+	if (player == (3-botplayer) || finished == 1) return 0;
 	isbot = true;
 	printf("[*]Botが考え中..\n");
 	tmpx = 0;

@@ -80,6 +80,7 @@ class ViewController: NSViewController
 	@IBOutlet var hakotext: NSTextField!
 	
 	var strength: Int32 = 0
+	var playerbot: Int32 = 2
 	
 	@IBAction func put(_ sender: NSButton)
 	{
@@ -178,6 +179,7 @@ class ViewController: NSViewController
 	override func viewDidLoad()
 	{
 		DEPTH = strength
+		botplayer = playerbot
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
@@ -265,20 +267,30 @@ class ViewController: NSViewController
 	
 	func result()
 	{
-		if winner() == 1
-		{
-			print("黒の勝ち！")
-			self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
-		}
-		else if winner() == 2
-		{
-			print("白の勝ち！")
-			self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
-		}
-		else
-		{
-			print("引き分け")
-			self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
+		if(playerbot == 2) {
+			switch winner() {
+			case 1:
+				print("黒の勝ち！")
+				self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
+			case 2:
+				print("白の勝ち！")
+				self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
+			default:
+				print("引き分け")
+				self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
+			}
+		} else {
+			switch winner() {
+			case 1:
+				print("黒の勝ち！")
+				self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
+			case 2:
+				print("白の勝ち！")
+				self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
+			default:
+				print("引き分け")
+				self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
+			}
 		}
 		switchbutton(switch: false)
 		hakotext.isEditable = false
@@ -341,7 +353,7 @@ class ViewController: NSViewController
 					}
 				default:
 					buttons[i][j].image = NSImage(named: "null")
-					if canputswift[i][j] == true && returnplayer() == 1
+					if canputswift[i][j] == true && returnplayer() == (3-playerbot)
 					{
 						buttons[i][j].image = NSImage(named: "null2")
 					}

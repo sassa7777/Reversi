@@ -12,7 +12,10 @@ class FirstViewController: NSViewController
 {
     @IBOutlet var strength_select: NSSegmentedControl!
     @IBOutlet var strength_txt: NSTextField!
+    @IBOutlet var selectplayer: NSSegmentedControl!
+    
     var streng: Int32 = 2
+    var player_bot: Int32 = 2
     
     override func viewDidLoad()
     {
@@ -38,11 +41,19 @@ class FirstViewController: NSViewController
         case 4:
             streng = 10
             strength_txt.stringValue = "オセロに自信がある人向け"
-        case 5:
-            streng = 11
-            strength_txt.stringValue = "٩( ᐛ )و"
         default:
             streng = 10
+        }
+    }
+    
+    @IBAction func select_player(_ sender: NSSegmentedControl) {
+        switch sender.selectedSegment {
+        case 0:
+            player_bot = 1
+        case 1:
+            player_bot = 2
+        default:
+            player_bot = 2
         }
     }
     
@@ -54,8 +65,8 @@ class FirstViewController: NSViewController
     override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
         if segue.identifier == "start" {
             if let nextViewController = segue.destinationController as? ViewController {
-                // ここでデータをセットアップ
                 nextViewController.strength = streng
+                nextViewController.playerbot = player_bot
             }
         }
     }

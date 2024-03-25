@@ -31,6 +31,7 @@ int cachex[4], cachey[4], results[4];
 int ALPHA;
 int think_percent;
 int think_count;
+int botplayer;
 bool isbot = false;
 
 char moveorder[128] = {
