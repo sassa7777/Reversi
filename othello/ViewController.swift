@@ -183,7 +183,13 @@ class ViewController: NSViewController
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
-		putai()
+		if(playerbot == 1) {
+			DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
+				self.putai()
+			}
+		} else {
+			putai()
+		}
 		reloadview()
 	}
 	

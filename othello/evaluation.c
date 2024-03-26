@@ -65,152 +65,156 @@ int score_fixedstone(char board[10][10]) {
         board[8][8] != 0) {
         char i;
         // 左上
-        if (board[1][1] != 0) {
-            i = 1;
-            if (board[1][1] == 2) {
+        switch (board[1][1]) {
+            case 2:
+                i=1;
                 while (board[1][i] == 2) {
                     fixedstone++;
                     i++;
                 }
-            } else {
-                while (board[1][i] == 1) {
-                    fixedstone--;
-                    i++;
-                }
-            }
-        }
-        if (board[1][1] != 0) {
-            i = 1;
-            if (board[1][1] == 2) {
+                i=1;
                 while (board[i][1] == 2) {
                     fixedstone++;
                     i++;
                 }
-            } else {
+                if(board[1][2] == 2 && board[2][1] == 2 && board[2][2] == 2) fixedstone++;
+                break;
+            case 1:
+                i=1;
+                while (board[1][i] == 1) {
+                    fixedstone--;
+                    i++;
+                }
+                i=1;
                 while (board[i][1] == 1) {
                     fixedstone--;
                     i++;
                 }
-            }
+                if(board[1][2] == 1 && board[2][1] == 1 && board[2][2] == 1) fixedstone--;
+                break;
+            default:
+                break;
         }
         // 右上
-        if (board[1][8] != 0) {
-            i = 8;
-            if (board[1][8] == 2) {
+        switch (board[1][8]) {
+            case 2:
+                i=8;
                 while (board[1][i] == 2) {
                     fixedstone++;
                     i--;
                 }
-            } else {
+                i=1;
+                while (board[i][8] == 2) {
+                    fixedstone++;
+                    i++;
+                }
+                if(board[1][7] == 2 && board[2][8] == 2 && board[2][7] == 2) fixedstone++;
+                break;
+            case 1:
+                i=8;
                 while (board[1][i] == 1) {
                     fixedstone--;
                     i--;
                 }
-            }
-        }
-        if (board[1][8] != 0) {
-            i = 1;
-            if (board[1][8] == 2) {
-                while (board[i][8] == 2) {
-                    fixedstone++;
-                    i++;
-                }
-            } else {
+                i=1;
                 while (board[i][8] == 1) {
                     fixedstone--;
                     i++;
                 }
-            }
+                if(board[1][7] == 1 && board[2][8] == 1 && board[2][7] == 1) fixedstone--;
+                break;
+            default:
+                break;
         }
         // 左下
-        if (board[8][1] != 0) {
-            i = 1;
-            if (board[8][1] == 2) {
+        switch (board[8][1]) {
+            case 2:
+                i=1;
                 while (board[8][i] == 2) {
                     fixedstone++;
                     i++;
                 }
-            } else {
-                while (board[8][i] == 1) {
-                    fixedstone--;
-                    i++;
-                }
-            }
-        }
-        if (board[8][1] != 0) {
-            i = 8;
-            if (board[8][1] == 2) {
+                i=8;
                 while (board[i][1] == 2) {
                     fixedstone++;
                     i--;
                 }
-            } else {
+                if(board[8][2] == 2 && board[7][1] == 2 && board[7][2] == 2) fixedstone++;
+                break;
+            case 1:
+                i=1;
+                while (board[8][i] == 1) {
+                    fixedstone--;
+                    i++;
+                }
+                i=8;
                 while (board[i][1] == 1) {
                     fixedstone--;
                     i--;
                 }
-            }
+                if(board[8][2] == 1 && board[7][1] == 1 && board[7][2] == 1) fixedstone--;
+                break;
+            default:
+                break;
         }
         // 右下
-        if (board[8][8] != 0) {
-            i = 8;
-            if (board[8][8] == 2) {
+        switch (board[8][8]) {
+            case 2:
+                i=8;
                 while (board[8][i] == 2) {
                     fixedstone++;
                     i--;
                 }
-            } else {
-                while (board[8][i] == 1) {
-                    fixedstone--;
-                    i--;
-                }
-            }
-        }
-        if (board[8][8] != 0) {
-            i = 8;
-            if (board[8][8] == 2) {
+                i=8;
                 while (board[i][8] == 2) {
                     fixedstone++;
                     i--;
                 }
-            } else {
+                if(board[8][7] == 2 && board[7][8] == 2 && board[7][7] == 2) fixedstone++;
+                break;
+            case 1:
+                i=8;
+                while (board[8][i] == 1) {
+                    fixedstone--;
+                    i--;
+                }
+                i=8;
                 while (board[i][8] == 1) {
                     fixedstone--;
                     i--;
                 }
-            }
+                if(board[8][7] == 1 && board[7][8] == 1 && board[7][7] == 1) fixedstone--;
+                break;
+            default:
+                break;
         }
         // 左上+右上
-        if ((board[1][1] == 1 && board[1][2] == 1 && board[1][3] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 1) || (board[1][1] == 2 && board[1][2] == 2 && board[1][3] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 2 && board[1][8] == 2)) {
-            if (board[1][1] == 2) {
-                fixedstone-=8;
-            } else {
-                fixedstone+=8;
-            }
+        if (board[1][1] == 1 && board[1][2] == 1 && board[1][3] == 1 && board[1][4] == 1 && board[1][5] == 1 && board[1][6] == 1 && board[1][7] == 1 && board[1][8] == 1) {
+            fixedstone-=8;
+        }
+        if (board[1][1] == 2 && board[1][2] == 2 && board[1][3] == 2 && board[1][4] == 2 && board[1][5] == 2 && board[1][6] == 2 && board[1][7] == 2 && board[1][8] == 2) {
+            fixedstone+=8;
         }
         //左上+左下
-        if ((board[1][1] == 1 && board[2][1] == 1 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 1 && board[8][1] == 1) || (board[1][1] == 2 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 2)) {
-            if (board[1][1] == 2) {
-                fixedstone-=8;
-            } else {
-                fixedstone+=8;
-            }
+        if (board[1][1] == 1 && board[2][1] == 1 && board[3][1] == 1 && board[4][1] == 1 && board[5][1] == 1 && board[6][1] == 1 && board[7][1] == 1 && board[8][1] == 1) {
+            fixedstone-=8;
+        }
+        if (board[1][1] == 2 && board[2][1] == 2 && board[3][1] == 2 && board[4][1] == 2 && board[5][1] == 2 && board[6][1] == 2 && board[7][1] == 2 && board[8][1] == 2) {
+            fixedstone+=8;
         }
         // 右下+左下
-        if ((board[8][8] == 1 && board[8][2] == 1 && board[8][3] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][1] == 1) || (board[8][8] == 2 && board[8][2] == 2 && board[8][3] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 2 && board[8][1] == 2)) {
-            if (board[8][8] == 2) {
-                fixedstone-=8;
-            } else {
-                fixedstone+=8;
-            }
+        if (board[8][8] == 1 && board[8][2] == 1 && board[8][3] == 1 && board[8][4] == 1 && board[8][5] == 1 && board[8][6] == 1 && board[8][7] == 1 && board[8][1] == 1) {
+            fixedstone-=8;
+        }
+        if (board[8][8] == 2 && board[8][2] == 2 && board[8][3] == 2 && board[8][4] == 2 && board[8][5] == 2 && board[8][6] == 2 && board[8][7] == 2 && board[8][1] == 2) {
+            fixedstone+=8;
         }
         // 右下+右上
-        if ((board[8][8] == 1 && board[2][8] == 1 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[1][8] == 1) || (board[8][8] == 2 && board[2][8] == 2 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 2 && board[1][8] == 2)) {
-            if (board[8][8] == 2) {
-                fixedstone-=8;
-            } else {
-                fixedstone+=8;
-            }
+        if (board[8][8] == 1 && board[2][8] == 1 && board[3][8] == 1 && board[4][8] == 1 && board[5][8] == 1 && board[6][8] == 1 && board[7][8] == 0 && board[1][8] == 1) {
+            fixedstone-=8;
+        }
+        if (board[8][8] == 2 && board[2][8] == 2 && board[3][8] == 2 && board[4][8] == 2 && board[5][8] == 2 && board[6][8] == 2 && board[7][8] == 2 && board[1][8] == 2) {
+            fixedstone+=8;
         }
     }
     return fixedstone;
@@ -221,10 +225,15 @@ int score_countstone(char board[10][10]) {
     char j;
     for (char i = 1; i < 9; ++i) {
         for (j = 1; j < 9; ++j) {
-            if (board[i][j] == 1) {
-                score--;
-            } else if (board[i][j] == 2) {
-                score++;
+            switch (board[i][j]) {
+                case 1:
+                    score--;
+                    break;
+                case 2:
+                    score++;
+                    break;
+                default:
+                    break;
             }
         }
     }

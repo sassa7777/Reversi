@@ -115,16 +115,16 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="top" imageScaling="proportionallyDown" image="title" id="e4g-tO-xmD"/>
                             </imageView>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UT9-J6-1Jz">
-                                <rect key="frame" x="269" y="76" width="217" height="24"/>
+                                <rect key="frame" x="302" y="76" width="160" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="fPc-1d-sZu">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment label="最弱" tag="1"/>
-                                        <segment label="弱い" selected="YES" tag="1"/>
-                                        <segment label="普通"/>
-                                        <segment label="少し強い"/>
-                                        <segment label="強い"/>
+                                        <segment label="⭐︎1" tag="1"/>
+                                        <segment label="⭐︎3" selected="YES" tag="1"/>
+                                        <segment label="⭐︎5"/>
+                                        <segment label="⭐︎6"/>
+                                        <segment label="⭐︎7"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -141,7 +141,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="125-xt-q8v">
-                                <rect key="frame" x="155" y="81" width="41" height="16"/>
+                                <rect key="frame" x="229" y="80" width="41" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="レベル" id="iMr-tq-SQo">
                                     <font key="font" metaFont="system"/>
@@ -149,8 +149,17 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XCa-QK-w73">
+                                <rect key="frame" x="544" y="108" width="65" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="プレイヤー" id="Gbc-BW-446">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p72-vY-vPi">
-                                <rect key="frame" x="514" y="77" width="125" height="24"/>
+                                <rect key="frame" x="514" y="76" width="125" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="TUG-Nb-K7V">
                                     <font key="font" metaFont="system"/>
@@ -163,15 +172,6 @@
                                     <action selector="select_player:" target="gOt-pg-uBu" id="uOB-Bc-oWw"/>
                                 </connections>
                             </segmentedControl>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XCa-QK-w73">
-                                <rect key="frame" x="544" y="108" width="65" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="プレイヤー" id="Gbc-BW-446">
-                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                     </view>
                     <connections>

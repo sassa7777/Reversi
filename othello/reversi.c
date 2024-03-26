@@ -306,15 +306,15 @@ int nega_alpha(char depth, char playerrn, int alpha, int beta,  bool passed) {
 	
 	check2(&playerrn, canput, board);
 	for (char i = 0; i <= 63; ++i) {
-		if (canput[moveorder[i]][moveorder[i+64]]) {
-			putstone2(&moveorder[i], &moveorder[i+64], &playerrn, canput, board);
+		if (canput[moveorder[i][1]][moveorder[i][0]]) {
+			putstone2(&moveorder[i][1], &moveorder[i][0], &playerrn, canput, board);
 			var = -nega_alpha(depth-1, 3-playerrn, -beta, -alpha, false);
 			memcpy(board, tmpboard, sizeof(tmpboard));
 			if (var > alpha) {
 				alpha = var;
 				if (depth == DEPTH) {
-					tmpx = moveorder[i+64];
-					tmpy = moveorder[i];
+					tmpx = moveorder[i][0];
+					tmpy = moveorder[i][1];
 				}
 			}
 			if(depth == DEPTH) {
@@ -501,8 +501,8 @@ int nega_alphadeep(char depth, char playerrn, int alpha, int beta, bool passed, 
 	copyboard(board, tmpboard);
 	check2(&playerrn, canput, board);
 	for (char i = 0; i <= 63; ++i) {
-		if (canput[moveorder[i]][moveorder[i+64]]) {
-			putstone2(&moveorder[i], &moveorder[i+64], &playerrn, canput, board);
+		if (canput[moveorder[i][1]][moveorder[i][0]]) {
+			putstone2(&moveorder[i][1], &moveorder[i][0], &playerrn, canput, board);
 			
 			var = -nega_alphadeep(depth-1, 3-playerrn, -beta, -alpha, false, board);
 			
