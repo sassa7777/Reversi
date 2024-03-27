@@ -21,8 +21,6 @@ class ResultViewController: NSViewController
             win_player.stringValue = "黒の勝ち！"
         case 2:
             win_player.stringValue = "白の勝ち！"
-        case 3:
-            win_player.stringValue = "引き分け"
         default:
             win_player.stringValue = "引き分け"
         }

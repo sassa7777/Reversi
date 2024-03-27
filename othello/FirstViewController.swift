@@ -21,26 +21,26 @@ class FirstViewController: NSViewController
     {
         super.viewDidLoad()
         // Do view setup here.
-        strength_txt.stringValue = "オセロ初心者向け"
+        strength_txt.stringValue = "初心者よりはできる人向け向け"
     }
     
     @IBAction func select_strength(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case 0:
             streng = 1
-            strength_txt.stringValue = "オセロのルールだけ知ってる人向け"
+            strength_txt.stringValue = "初心者向け"
         case 1:
             streng = 2
-            strength_txt.stringValue = "オセロ初心者向け"
+            strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
             streng = 5
-            strength_txt.stringValue = "オセロできるぜ！という人向け"
+            strength_txt.stringValue = "ある程度できる人向け"
         case 3:
             streng = 8
-            strength_txt.stringValue = "オセロに少し自信がある人向け"
+            strength_txt.stringValue = "少し自信がある人向け"
         case 4:
             streng = 10
-            strength_txt.stringValue = "オセロに自信がある人向け"
+            strength_txt.stringValue = "自信がある人向け"
         default:
             streng = 10
         }
