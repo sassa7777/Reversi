@@ -176,10 +176,36 @@ class ViewController: NSViewController
 	}
 	
 	
+	func shell(_ command: String) -> String {
+		let task = Process()
+		task.launchPath = "/bin/zsh" // or "/bin/bash" depending on your shell
+		task.arguments = ["-c", command]
+		
+		let pipe = Pipe()
+		task.standardOutput = pipe
+		task.launch()
+		
+		let data = pipe.fileHandleForReading.readDataToEndOfFile()
+		let output = String(data: data, encoding: .utf8)!
+		return output.trimmingCharacters(in: .whitespacesAndNewlines)
+	}
+	
+	
 	override func viewDidLoad()
 	{
 		DEPTH = strength
 		botplayer = playerbot
+		let command1 = "arch"
+		if(shell(command1) == "arm64") {
+			let command2 = "sysctl -n hw.perflevel0.physicalcpu"
+			let cpu_coreString = shell(command2)
+			cpu_core = Int32(cpu_coreString) ?? 1
+		} else {
+			let command2 = "sysctl -n hw.physicalcpu"
+			let cpu_coreString = shell(command2)
+			cpu_core = Int32(cpu_coreString) ?? 1
+			cpu_core = cpu_core/2
+		}
 		close.isHidden = true
 		restart.isHidden = true
 		reset()

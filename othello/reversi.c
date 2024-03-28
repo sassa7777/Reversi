@@ -13,6 +13,7 @@ void reset(void) {
 	printf("[*]初期化中...\n");
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
+	printf("CPU Core count: %d\n", cpu_core);
 	memset(canPut, 0, sizeof(canPut));
 	for (char i = 0; i <= 9; ++i) {
 		for (char j = 0; j <= 9; ++j) {
@@ -330,36 +331,10 @@ void negaalphaTH(void) {
 	ALPHA = -32767;
 	char putable_num = putable_counter(&player, board);
 	putable_saver(player, board);
-//	pthread_t thread[putable_num];
-//	pthread_attr_t attr[putable_num];
-//	for (int i=0; i<putable_num; ++i) {
-//		pthread_attr_init(&attr[i]);
-//		pthread_attr_set_qos_class_np(&attr[i], QOS_CLASS_USER_INTERACTIVE, 1);
-//	}
-//	pthread_create(&thread[0], NULL, negaalphat1, NULL);
-//	pthread_create(&thread[1], NULL, negaalphat2, NULL);
-//	pthread_create(&thread[2], NULL, negaalphat3, NULL);
-//	pthread_create(&thread[3], NULL, negaalphat4, NULL);
-//	pthread_join(thread[0], NULL);
-//	pthread_join(thread[1], NULL);
-//	pthread_join(thread[2], NULL);
-//	pthread_join(thread[3], NULL);
-//	int task[putable_num];
-#pragma omp parallel for num_threads(6)
+#pragma omp parallel for num_threads(cpu_core)
 	for (int i=0; i<putable_num; ++i) {
-		//task[i] = i;
-		//pthread_create(&thread[i], &attr[i], negaalphat, (void*)&task[i]);
 		negaalpha_omp(i);
 	}
-//	for (int i=0; i<putable_num; ++i) {
-//		pthread_join(thread[i], NULL);
-//	}
-//	for (int i=0; i<64; i+=4) {
-//		pthread_join(thread[i], NULL);
-//		pthread_join(thread[i+1], NULL);
-//		pthread_join(thread[i+2], NULL);
-//		pthread_join(thread[i+3], NULL);
-//	}
 	int max = -100001;
 	for (char i = 0; i < putable_num; ++i) {
 		if(max < results[i]) max = results[i];

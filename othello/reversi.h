@@ -16,7 +16,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdint.h>
-#include "/opt/homebrew/Cellar/libomp/17.0.6/include/omp.h"
+#include <omp.h>
 
 int DEPTH;
 char board[10][10];
@@ -36,6 +36,7 @@ int ALPHA;
 int think_percent;
 int think_count;
 int botplayer;
+int cpu_core;
 bool isbot = false;
 
 char moveorder[64][2] = {
