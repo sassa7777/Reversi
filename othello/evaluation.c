@@ -6,6 +6,7 @@
 //
 
 #include "reversi.h"
+#include <stdint.h>
 
 int scoreboard[8][8] = {
     30, -12, 0, -1, -1, 0, -12, 30,
@@ -252,24 +253,30 @@ bool is_allblack(char board[10][10]) {
     return true;
 }
 
-int countscore(char board[10][10], char *playerrn) {
-    if(DEPTH == 1) {
-        if(*playerrn == 1) {
-            return -score_countstone(board);
-        } else {
-            return score_countstone(board);
-        }
-    } else {
-        if(*playerrn == 1) {
-            if(is_allblack(board)) return 9999;
-            else if(turn+DEPTH >= 60) return -(score_countstone(board));
-            else if(turn+DEPTH >= 44) return -(score_stone(board)+50*score_fixedstone(board));
-            else return -(3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
-        } else {
-            if(is_allblack(board)) return -9999;
-            else if(turn+DEPTH >= 60) return (score_countstone(board));
-            else if(turn+DEPTH >= 44) return (score_stone(board)+50*score_fixedstone(board));
-            else return (3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
-        }
-    }
+int countscore(uint64_t playerboard, uint64_t oppenentboard, char *playerrn) {
+//    if(DEPTH == 1) {
+//        if(*playerrn == 1) {
+//            return -score_countstone(board);
+//        } else {
+//            return score_countstone(board);
+//        }
+//    } else {
+//        if(*playerrn == 1) {
+//            if(is_allblack(board)) return 9999;
+//            else if(turn+DEPTH >= 60) return -(score_countstone(board));
+//            else if(turn+DEPTH >= 44) return -(score_stone(board)+50*score_fixedstone(board));
+//            else return -(3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
+//        } else {
+//            if(is_allblack(board)) return -9999;
+//            else if(turn+DEPTH >= 60) return (score_countstone(board));
+//            else if(turn+DEPTH >= 44) return (score_stone(board)+50*score_fixedstone(board));
+//            else return (3*score_stone(board)+50*score_fixedstone(board)+2*score_putable(board));
+//        }
+//    }
+//    if(*playerrn == 1) {
+//        return bitcount(*oppenentboard)-bitcount(*playerboard);
+//    } else {
+//        return bitcount(*playerboard)-bitcount(*oppenentboard);
+//    }
+    return bitcount(playerboard)-bitcount(oppenentboard);
 }

@@ -24,7 +24,11 @@ class ResultViewController: NSViewController
         default:
             win_player.stringValue = "引き分け"
         }
-        result.stringValue = "黒: \(countstoneswift(1)) 白: \(countstoneswift(2))"
+        if(nowTurn == BLACK_TURN) {
+            result.stringValue = "黒: \(bitcount(playerboard)) 白: \(bitcount(oppenentboard))"
+        } else {
+            result.stringValue = "黒: \(bitcount(oppenentboard)) 白: \(bitcount(playerboard))"
+        }
     }
     
     @IBAction func tapclose(_ sender: Any)

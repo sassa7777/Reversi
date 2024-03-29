@@ -9,6 +9,8 @@
 #define othello_h
 
 #define NUM_THREADS 40
+#define BLACK_TURN 100
+#define WHITE_TURN -100
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -40,14 +42,7 @@ int cpu_core;
 bool isbot = false;
 
 char moveorder[64][2] = {
-    {1,1},{1,8},{8,1},{8,8},{1,3},{1,6},{3,1},{3,3},
-    {3,6},{3,8},{6,1},{6,3},{6,6},{6,8},{8,3},{8,6},
-    {1,4},{1,5},{3,4},{3,5},{4,1},{4,3},{4,4},{4,5},
-    {4,6},{4,8},{5,1},{5,3},{5,4},{5,5},{5,6},{5,8},
-    {6,4},{6,5},{8,4},{8,5},{2,3},{2,4},{2,5},{2,6},
-    {3,2},{3,7},{4,2},{4,7},{5,2},{5,7},{6,2},{6,7},
-    {7,3},{7,4},{7,5},{7,6},{1,2},{1,7},{2,1},{2,8},
-    {7,1},{7,8},{8,2},{8,7},{2,2},{2,7},{7,2},{7,7}
+    {0,0}, {0,7}, {7,0}, {7,7}, {0,2}, {0,5}, {2,0}, {2,2}, {2,5}, {2,7}, {5,0}, {5,2}, {5,5}, {5,7}, {7,2}, {7,5}, {0,3}, {0,4}, {2,3}, {2,4}, {3,0}, {3,2}, {3,3}, {3,4}, {3,5}, {3,7}, {4,0}, {4,2}, {4,3}, {4,4}, {4,5}, {4,7}, {5,3}, {5,4}, {7,3}, {7,4}, {1,2}, {1,3}, {1,4}, {1,5}, {2,1}, {2,6}, {3,1}, {3,6}, {4,1}, {4,6}, {5,1}, {5,6}, {6,2}, {6,3}, {6,4}, {6,5}, {0,1}, {0,6}, {1,0}, {1,7}, {6,0}, {6,7}, {7,1}, {7,6}, {1,1}, {1,6}, {6,1}, {6,6},
 };
 
 char moveorder2[8][16] = {
@@ -63,26 +58,30 @@ char moveorder2[8][16] = {
 
 
 void reset(void);
-void check(int *player);
-void check2(char *player, bool canput[10][10], char board[10][10]);
-int putstone(int px, int py);
-void putstone2(char *py, char *px, char *player, char board[10][10]);
-void reverse(int x, int y);
-void reverse2(char **x, char **y, char **player, char board[10][10]);
-void rebuild(void);
-void countstone(void);
-int finishedsw(void);
 int winner(void);
-int countstoneswift(int c);
-int ai(void);
-void copyboard(char src[10][10], char dest[10][10]);
 int returnplayer(void);
-int nega_alpha(char depth, char playerrn, int alpha, int beta, bool passed);
-void negaalphaTH(void);
-void* negaalphat(void* args);
-int nega_alphadeep(char depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]);
-void negaalpha_omp(int task);
 int putable_counter(int *player, char board[10][10]);
 void putable_saver(int player, char board[10][10]);
+
+
+
+int nowTurn;
+int nowIndex;
+uint64_t playerboard;
+uint64_t oppenentboard;
+uint64_t legalboard;
+
+int ai(void);
+int putstone(char y, char x);
+uint64_t cordinate_to_bit(char x, char y);
+bool canput(uint64_t put, uint64_t legalboard);
+uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard);
+void reversebit(uint64_t put);
+uint64_t transfer(uint64_t put, char i);
+int passorfinish(void);
+void swapboard(void);
+int bitcount(uint64_t board);
+int nega_alpha_bit(char depth, char playerrn, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard);
+
 
 #endif /* othello_h */
