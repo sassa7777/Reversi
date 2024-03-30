@@ -80,88 +80,87 @@ class ViewController: NSViewController
 	@IBOutlet var hakotext: NSTextField!
 	
 	var strength: Int32 = 0
-	var playerbot: Int32 = 2
+	var playerbot: Int32 = -100
 	
 	@IBAction func put(_ sender: NSButton)
 	{
 		var results: Int32 = 0
 		switch sender
 		{
-		case aa: results = putstone(1, 1)
-		case ab: results = putstone(1, 2)
-		case ac: results = putstone(1, 3)
-		case ad: results = putstone(1, 4)
-		case ae: results = putstone(1, 5)
-		case af: results = putstone(1, 6)
-		case ag: results = putstone(1, 7)
-		case ah: results = putstone(1, 8)
+		case aa: results = putstone(0, 0)
+		case ab: results = putstone(0, 1)
+		case ac: results = putstone(0, 2)
+		case ad: results = putstone(0, 3)
+		case ae: results = putstone(0, 4)
+		case af: results = putstone(0, 5)
+		case ag: results = putstone(0, 6)
+		case ah: results = putstone(0, 7)
 			
-		case ba: results = putstone(2, 1)
-		case bb: results = putstone(2, 2)
-		case bc: results = putstone(2, 3)
-		case bd: results = putstone(2, 4)
-		case be: results = putstone(2, 5)
-		case bf: results = putstone(2, 6)
-		case bg: results = putstone(2, 7)
-		case bh: results = putstone(2, 8)
+		case ba: results = putstone(1, 0)
+		case bb: results = putstone(1, 1)
+		case bc: results = putstone(1, 2)
+		case bd: results = putstone(1, 3)
+		case be: results = putstone(1, 4)
+		case bf: results = putstone(1, 5)
+		case bg: results = putstone(1, 6)
+		case bh: results = putstone(1, 7)
 
-		case ca: results = putstone(3, 1)
-		case cb: results = putstone(3, 2)
-		case cc: results = putstone(3, 3)
-		case cd: results = putstone(3, 4)
-		case ce: results = putstone(3, 5)
-		case cf: results = putstone(3, 6)
-		case cg: results = putstone(3, 7)
-		case ch: results = putstone(3, 8)
+		case ca: results = putstone(2, 0)
+		case cb: results = putstone(2, 1)
+		case cc: results = putstone(2, 2)
+		case cd: results = putstone(2, 3)
+		case ce: results = putstone(2, 4)
+		case cf: results = putstone(2, 5)
+		case cg: results = putstone(2, 6)
+		case ch: results = putstone(2, 7)
 
-		case da: results = putstone(4, 1)
-		case db: results = putstone(4, 2)
-		case dc: results = putstone(4, 3)
-		case dd: results = putstone(4, 4)
-		case de: results = putstone(4, 5)
-		case df: results = putstone(4, 6)
-		case dg: results = putstone(4, 7)
-		case dh: results = putstone(4, 8)
+		case da: results = putstone(3, 0)
+		case db: results = putstone(3, 1)
+		case dc: results = putstone(3, 2)
+		case dd: results = putstone(3, 3)
+		case de: results = putstone(4, 4)
+		case df: results = putstone(3, 5)
+		case dg: results = putstone(3, 6)
+		case dh: results = putstone(3, 7)
 
-		case ea: results = putstone(5, 1)
-		case eb: results = putstone(5, 2)
-		case ec: results = putstone(5, 3)
-		case ed: results = putstone(5, 4)
-		case ee: results = putstone(5, 5)
-		case ef: results = putstone(5, 6)
-		case eg: results = putstone(5, 7)
-		case eh: results = putstone(5, 8)
+		case ea: results = putstone(4, 0)
+		case eb: results = putstone(4, 1)
+		case ec: results = putstone(4, 2)
+		case ed: results = putstone(4, 3)
+		case ee: results = putstone(4, 4)
+		case ef: results = putstone(4, 5)
+		case eg: results = putstone(4, 6)
+		case eh: results = putstone(4, 7)
 
-		case fa: results = putstone(6, 1)
-		case fb: results = putstone(6, 2)
-		case fc: results = putstone(6, 3)
-		case fd: results = putstone(6, 4)
-		case fe: results = putstone(6, 5)
-		case ff: results = putstone(6, 6)
-		case fg: results = putstone(6, 7)
-		case fh: results = putstone(6, 8)
+		case fa: results = putstone(5, 0)
+		case fb: results = putstone(5, 1)
+		case fc: results = putstone(5, 2)
+		case fd: results = putstone(5, 3)
+		case fe: results = putstone(5, 4)
+		case ff: results = putstone(5, 5)
+		case fg: results = putstone(5, 6)
+		case fh: results = putstone(5, 7)
 
-		case ga: results = putstone(7, 1)
-		case gb: results = putstone(7, 2)
-		case gc: results = putstone(7, 3)
-		case gd: results = putstone(7, 4)
-		case ge: results = putstone(7, 5)
-		case gf: results = putstone(7, 6)
-		case gg: results = putstone(7, 7)
-		case gh: results = putstone(7, 8)
+		case ga: results = putstone(6, 0)
+		case gb: results = putstone(6, 1)
+		case gc: results = putstone(6, 2)
+		case gd: results = putstone(6, 3)
+		case ge: results = putstone(6, 4)
+		case gf: results = putstone(6, 5)
+		case gg: results = putstone(6, 6)
+		case gh: results = putstone(6, 7)
 
-		case ha: results = putstone(8, 1)
-		case hb: results = putstone(8, 2)
-		case hc: results = putstone(8, 3)
-		case hd: results = putstone(8, 4)
-		case he: results = putstone(8, 5)
-		case hf: results = putstone(8, 6)
-		case hg: results = putstone(8, 7)
-		case hh: results = putstone(8, 8)
+		case ha: results = putstone(7, 0)
+		case hb: results = putstone(7, 1)
+		case hc: results = putstone(7, 2)
+		case hd: results = putstone(7, 3)
+		case he: results = putstone(7, 4)
+		case hf: results = putstone(7, 5)
+		case hg: results = putstone(7, 6)
+		case hh: results = putstone(7, 7)
 
 		default: break
 		}
-		//reloadview()
 		if(results != 0)
 		{
 			reloadview()
@@ -257,7 +256,7 @@ class ViewController: NSViewController
 	
 	func putai()
 	{
-		if(passorfinish() != 2)
+		if(isFinished() == false)
 		{
 			DispatchQueue.main.async()
 			{
@@ -277,7 +276,7 @@ class ViewController: NSViewController
 			}
 			else
 			{
-				if passorfinish() != 2
+				if isFinished() == false
 				{
 					DispatchQueue.main.async()
 					{
@@ -291,7 +290,7 @@ class ViewController: NSViewController
 	
 	func result()
 	{
-		if(playerbot == 2) {
+		if(playerbot == -100) {
 			switch winner() {
 			case 1:
 				print("黒の勝ち！")
@@ -335,40 +334,24 @@ class ViewController: NSViewController
 			[ha, hb, hc, hd, he, hf, hg, hh]
 		]
 		
+		let legalboard: UInt64 = makelegalBoard(oppenentboard, playerboard)
 		var mask: UInt64 = 0x8000000000000000
 		
 		for i in 0..<8
 		{
 			for j in 0..<8
 			{
-//				switch boardswift[i][j]
-//				{
-//				case 1:
-//					buttons[i][j].image = NSImage(named: "black")
-//					if(tmpy == i+1 && tmpx == j+1)
-//					{
-//						buttons[i][j].image = NSImage(named: "blackb")
-//					}
-//				case 2:
-//					buttons[i][j].image = NSImage(named: "white")
-//					if(tmpy == i+1 && tmpx == j+1)
-//					{
-//						buttons[i][j].image = NSImage(named: "whiteb")
-//					}
-//				default:
-//					buttons[i][j].image = NSImage(named: "null")
-//					if canputswift[i][j] == true && returnplayer() == (3-playerbot)
-//					{
-//						buttons[i][j].image = NSImage(named: "null2")
-//					}
-//				}
 				if(nowTurn == BLACK_TURN) {
 					if((playerboard & mask) != 0) {
 						buttons[i][j].image = NSImage(named: "black")
 					} else if((oppenentboard & mask) != 0) {
 						buttons[i][j].image = NSImage(named: "white")
 					} else {
-						buttons[i][j].image = NSImage(named: "null")
+						if(botplayer == WHITE_TURN && (legalboard & mask) != 0) {
+							buttons[i][j].image = NSImage(named: "null2")
+						} else {
+							buttons[i][j].image = NSImage(named: "null")
+						}
 					}
 				} else {
 					if((oppenentboard & mask) != 0) {
@@ -376,15 +359,18 @@ class ViewController: NSViewController
 					} else if((playerboard & mask) != 0) {
 						buttons[i][j].image = NSImage(named: "white")
 					} else {
-						buttons[i][j].image = NSImage(named: "null")
+						if(botplayer == BLACK_TURN && (legalboard & mask) != 0) {
+							buttons[i][j].image = NSImage(named: "null2")
+						} else {
+							buttons[i][j].image = NSImage(named: "null")
+						}
 					}
 				}
-				
 				mask = mask >> 1
 			}
 		}
 		print("[*]完了")
-		if(passorfinish() == 2)
+		if(isFinished() == true)
 		{
 			result()
 			performSegue(withIdentifier: "popup", sender: self)

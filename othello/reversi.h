@@ -60,8 +60,6 @@ char moveorder2[8][16] = {
 void reset(void);
 int winner(void);
 int returnplayer(void);
-int putable_counter(int *player, char board[10][10]);
-void putable_saver(int player, char board[10][10]);
 
 
 
@@ -77,11 +75,13 @@ uint64_t cordinate_to_bit(char x, char y);
 bool canput(uint64_t put, uint64_t legalboard);
 uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard);
 void reversebit(uint64_t put);
+void reversebit2(uint64_t put, uint64_t playerboard, uint64_t oppenentboard);
 uint64_t transfer(uint64_t put, char i);
-int passorfinish(void);
+bool isPass(void);
+bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t board);
-int nega_alpha_bit(char depth, char playerrn, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard);
+int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard);
 
 
 #endif /* othello_h */

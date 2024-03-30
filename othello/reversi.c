@@ -19,7 +19,6 @@ void reset(void) {
 	nowIndex = 1;
 	playerboard = 0x0000000810000000;
 	oppenentboard = 0x0000001008000000;
-	player = 1;
 	skip = false;
 	finished = 0;
 	skipped = false;
@@ -27,38 +26,45 @@ void reset(void) {
 	return;
 }
 
-//void print_board(uint64_t oppenentboard, uint64_t playerboard) {
-//	printf("  a b c d e f g h\n");
-//	uint64_t mask = 0x8000000000000000;
-//	for (int i = 0; i < 8; i++) {
-//		printf("%d ", i + 1);
-//		for (int j = 0; j < 8; j++) {
-//			if (playerboard & mask) {
-//				printf("O ");
-//			} else if (oppenentboard & mask) {
-//				printf("X ");
-//			} else {
-//				printf(". ");
-//			}
-//			mask >>= 1;
-//		}
-//		printf("\n");
-//	}
-//}
+void print_board(uint64_t oppenentboard, uint64_t playerboard) {
+	printf("  a b c d e f g h\n");
+	uint64_t mask = 0x8000000000000000;
+	for (int i = 0; i < 8; i++) {
+		printf("%d ", i + 1);
+		for (int j = 0; j < 8; j++) {
+			if (playerboard & mask) {
+				printf("O ");
+			} else if (oppenentboard & mask) {
+				printf("X ");
+			} else {
+				printf(". ");
+			}
+			mask >>= 1;
+		}
+		printf("\n");
+	}
+}
 
 int putstone(char y, char x) {
-	y-=1;
-	x-=1;
 	uint64_t put = cordinate_to_bit(x, y);
 	legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(canput(put, legalboard)) {
 		reversebit(put);
 		swapboard();
-		player = 3-player;
-		if(passorfinish() == 1) {
+		nowIndex++;
+		if(isPass()) {
 			swapboard();
-			player = 3-player;
 		}
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int putstone2(char y, char x, uint64_t playerboard, uint64_t oppenentboard, uint64_t legalboard) {
+	uint64_t put = cordinate_to_bit(x, y);
+	if(canput(put, legalboard)) {
+		reversebit2(put, playerboard, oppenentboard);
 		return 1;
 	} else {
 		return 0;
@@ -67,10 +73,7 @@ int putstone(char y, char x) {
 
 //座標をbitに変換
 uint64_t cordinate_to_bit(char x, char y) {
-	uint64_t mask = 0x8000000000000000;
-	mask = mask >> x;
-	mask = mask >> (y*8);
-	return mask;
+	return 0x8000000000000000 >> ((y*8)+x);
 }
 
 bool canput(uint64_t put, uint64_t legalboard) {
@@ -175,7 +178,22 @@ void reversebit(uint64_t put) {
 	//反転
 	playerboard ^= (put | rev);
 	oppenentboard ^= rev;
-	nowIndex++;
+}
+
+void reversebit2(uint64_t put, uint64_t playerboard, uint64_t oppenentboard) {
+	uint64_t rev = 0;
+	for (char i = 0; i<8; ++i) {
+		uint64_t rev_ = 0;
+		uint64_t mask = transfer(put, i);
+		while ((mask != 0) && ((mask & oppenentboard) != 0)) {
+			rev_ |= mask;
+			mask = transfer(mask, i);
+		}
+		if((mask & playerboard) != 0) rev |= rev_;
+	}
+	//反転
+	playerboard ^= (put | rev);
+	oppenentboard ^= rev;
 }
 
 uint64_t transfer(uint64_t put, char i) {
@@ -211,23 +229,18 @@ uint64_t transfer(uint64_t put, char i) {
 	}
 }
 
-int passorfinish(void) {
+bool isPass(void) {
 	uint64_t playerlegalboard = makelegalBoard(oppenentboard, playerboard);
-	struct tmpBoard {
-		int nowTurn;
-		int nowIndex;
-		uint64_t playerboard;
-		uint64_t oppenentboard;
-	};
-	struct tmpBoard tmpboard;
-	tmpboard.nowTurn = nowTurn;
-	tmpboard.nowIndex = nowIndex;
-	tmpboard.playerboard = oppenentboard;
-	tmpboard.oppenentboard = playerboard;
-	uint64_t oppenentlegalboard = makelegalBoard(tmpboard.oppenentboard, tmpboard.playerboard);
-	if(playerlegalboard == 0x0000000000000000 && oppenentlegalboard != 0x0000000000000000) return 1;
-	else if(playerlegalboard == 0x0000000000000000 && oppenentlegalboard == 0x0000000000000000) return 2;
-	else return 0;
+	uint64_t oppenentlegalboard = makelegalBoard(playerboard, oppenentboard);
+	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
+	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000));
+}
+
+bool isFinished(void) {
+	uint64_t playerlegalboard = makelegalBoard(oppenentboard, playerboard);
+	uint64_t oppenentlegalboard = makelegalBoard(playerboard, oppenentboard);
+	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
+	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard == 0x0000000000000000));
 }
 
 void swapboard(void) {
@@ -248,7 +261,7 @@ int bitcount(uint64_t board) {
 }
 
 int ai(void) {
-	if (player == (3-botplayer) || finished == 1) {
+	if (nowTurn == (botplayer*-1) || isFinished() == true) {
 		return 0;
 	}
 	isbot = true;
@@ -257,47 +270,49 @@ int ai(void) {
 	tmpy = 0;
 	think_percent = 0;
 	update_hakostring();
-	//think_count = 100/putable_counter(&player, board);
-	nega_alpha_bit(DEPTH, player, -32767, 32767, false, playerboard, oppenentboard);
+	legalboard = makelegalBoard(oppenentboard, playerboard);
+	think_count = 100/bitcount(legalboard);
+	nega_alpha_bit(DEPTH, -32767, 32767, false, playerboard, oppenentboard);
 	if(tmpx == 0 || tmpy == 0) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
+	//print_board(oppenentboard, playerboard);
 	legalboard = makelegalBoard(oppenentboard, playerboard);
 	isbot = false;
 	return 1;
 }
 
-int nega_alpha_bit(char depth, char playerrn, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard) {
-	if(depth == 0) return countscore(playerboard, oppenentboard, &playerrn);
+int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard);
 	int var, max_score = -32767;
-	uint64_t tmpplayerboard, tmpoppenentboard;
-	tmpplayerboard = playerboard;
-	tmpoppenentboard = oppenentboard;
-	uint64_t put;
+	uint64_t playerboard2 = playerboard, oppenentboard2 = oppenentboard;
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	for (char i = 0; i<64; ++i) {
-		put = cordinate_to_bit(moveorder[i][0], moveorder[i][1]);
-		if(canput(put, legalboard)) {
-			reversebit(put);
-			var = -nega_alpha_bit(depth-1, 3-playerrn, -beta, -alpha, false, oppenentboard, playerboard);
-			playerboard = tmpplayerboard;
-			oppenentboard = tmpoppenentboard;
+		if(putstone2(moveorder[i][0], moveorder[i][1], playerboard, oppenentboard, legalboard) == 1) {
+			var = -nega_alpha_bit(depth-1, -beta, -alpha, false, oppenentboard, playerboard);
+			playerboard = playerboard2;
+			oppenentboard = oppenentboard2;
 			if(var > alpha) {
 				alpha = var;
 				if(depth == DEPTH) {
-					tmpx = moveorder[i][0];
-					tmpy = moveorder[i][1];
+					tmpx = moveorder[i][1];
+					tmpy = moveorder[i][0];
+					printf("score = %d\n", var);
 				}
+			}
+			if(depth == DEPTH) {
+				think_percent += think_count;
+				update_hakostring();
 			}
 			if (var >= beta) return var;
 			if(alpha > max_score) max_score = alpha;
 		}
 	}
 	if (max_score == -32767) {
-		if(passed) countscore(playerboard, oppenentboard, &playerrn);
-		return -nega_alpha_bit(depth, 3-playerrn, -beta, -alpha, true, oppenentboard, playerboard);
+		if(passed) return countscore(playerboard, oppenentboard);
+		return -nega_alpha_bit(depth, -beta, -alpha, true, oppenentboard, playerboard);
 	}
 	return max_score;
 }
@@ -483,58 +498,3 @@ int finishedsw(void) {
 //}
 
 int returnplayer(void) { return player; }
-
-int putable_counter(int *player, char board[10][10]) {
-	char y, x, yy, xx, yyy, xxx;
-	int count = 0;
-	for (y = 1; y < 9; ++y) {
-		for (x = 1; x < 9; ++x) {
-			if (board[y][x] == *player) {
-				for (xx = -1; xx < 2; ++xx) {
-					for (yy = -1; yy < 2; ++yy) {
-						if (board[y + yy][x + xx] == (3 - *player)) {
-							xxx = x + xx;
-							yyy = y + yy;
-							while (board[yyy][xxx] == (3 - *player)) {
-								xxx += xx;
-								yyy += yy;
-							}
-							if (board[yyy][xxx] == 0) {
-								count++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return count;
-}
-
-void putable_saver(int player, char board[10][10]) {
-	char y, x, yy, xx, yyy, xxx;
-	char i=0;
-	for (y = 1; y < 9; ++y) {
-		for (x = 1; x < 9; ++x) {
-			if (board[y][x] == player) {
-				for (xx = -1; xx < 2; ++xx) {
-					for (yy = -1; yy < 2; ++yy) {
-						if (board[y + yy][x + xx] == (3 - player)) {
-							xxx = x + xx;
-							yyy = y + yy;
-							while (board[yyy][xxx] == (3 - player)) {
-								xxx += xx;
-								yyy += yy;
-							}
-							if (board[yyy][xxx] == 0) {
-								putable_list[i][0]=xxx;
-								putable_list[i][1]=yyy;
-								i++;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}

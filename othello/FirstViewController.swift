@@ -15,7 +15,7 @@ class FirstViewController: NSViewController
     @IBOutlet var selectplayer: NSSegmentedControl!
     
     var streng: Int32 = 2
-    var player_bot: Int32 = 2
+    var player_bot: Int32 = WHITE_TURN
     
     override func viewDidLoad()
     {
@@ -49,11 +49,11 @@ class FirstViewController: NSViewController
     @IBAction func select_player(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case 0:
-            player_bot = 1
+            player_bot = BLACK_TURN
         case 1:
-            player_bot = 2
+            player_bot = WHITE_TURN
         default:
-            player_bot = 2
+            player_bot = WHITE_TURN
         }
     }
     
