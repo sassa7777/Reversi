@@ -46,9 +46,11 @@ void print_board(uint64_t oppenentboard, uint64_t playerboard) {
 }
 
 int putstone(char y, char x) {
-	uint64_t put = cordinate_to_bit(x, y);
-	legalboard = makelegalBoard(oppenentboard, playerboard);
-	if(canput(put, legalboard)) {
+	tmpy = y;
+	tmpx = x;
+	uint64_t put = cordinate_to_bit(&x, &y);
+	legalboard = makelegalBoard(&oppenentboard, &playerboard);
+	if(canput(&put, &legalboard)) {
 		reversebit(put);
 		swapboard();
 		nowIndex++;
@@ -61,10 +63,10 @@ int putstone(char y, char x) {
 	}
 }
 
-int putstone2(char y, char x, uint64_t playerboard, uint64_t oppenentboard, uint64_t legalboard) {
+int putstone2(char *y, char *x, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard) {
 	uint64_t put = cordinate_to_bit(x, y);
-	if(canput(put, legalboard)) {
-		reversebit2(put, playerboard, oppenentboard);
+	if(canput(&put, legalboard)) {
+		reversebit2(&put, playerboard, oppenentboard);
 		return 1;
 	} else {
 		return 0;
@@ -72,25 +74,25 @@ int putstone2(char y, char x, uint64_t playerboard, uint64_t oppenentboard, uint
 }
 
 //座標をbitに変換
-uint64_t cordinate_to_bit(char x, char y) {
-	return 0x8000000000000000 >> ((y*8)+x);
+uint64_t cordinate_to_bit(char *x, char *y) {
+	return 0x8000000000000000 >> ((*y*8)+*x);
 }
 
-bool canput(uint64_t put, uint64_t legalboard) {
-	return (put & legalboard) == put;
+bool canput(uint64_t *put, uint64_t *legalboard) {
+	return (*put & *legalboard) == *put;
 }
 
-uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
-	const uint64_t horizontalboard = (oppenentboard & 0x7e7e7e7e7e7e7e7e);
-	const uint64_t verticalboard = (oppenentboard & 0x00FFFFFFFFFFFF00);
-	const uint64_t allsideboard = (oppenentboard & 0x007e7e7e7e7e7e00);
-	const uint64_t blankboard = ~(playerboard | oppenentboard);
+uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard) {
+	const uint64_t horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
+	const uint64_t verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
+	const uint64_t allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
+	const uint64_t blankboard = ~(*playerboard | *oppenentboard);
 	
 	uint64_t tmp;
 	uint64_t legalboard;
 	
 	//左
-	tmp = horizontalboard & (playerboard << 1);
+	tmp = horizontalboard & (*playerboard << 1);
 	tmp |= horizontalboard & (tmp << 1);
 	tmp |= horizontalboard & (tmp << 1);
 	tmp |= horizontalboard & (tmp << 1);
@@ -99,7 +101,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard = blankboard & (tmp << 1);
 	
 	//右
-	tmp = horizontalboard & (playerboard >> 1);
+	tmp = horizontalboard & (*playerboard >> 1);
 	tmp |= horizontalboard & (tmp >> 1);
 	tmp |= horizontalboard & (tmp >> 1);
 	tmp |= horizontalboard & (tmp >> 1);
@@ -108,7 +110,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp >> 1);
 
 	//上
-	tmp = verticalboard & (playerboard << 8);
+	tmp = verticalboard & (*playerboard << 8);
 	tmp |= verticalboard & (tmp << 8);
 	tmp |= verticalboard & (tmp << 8);
 	tmp |= verticalboard & (tmp << 8);
@@ -117,7 +119,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp << 8);
 	
 	//下
-	tmp = verticalboard & (playerboard >> 8);
+	tmp = verticalboard & (*playerboard >> 8);
 	tmp |= verticalboard & (tmp >> 8);
 	tmp |= verticalboard & (tmp >> 8);
 	tmp |= verticalboard & (tmp >> 8);
@@ -126,7 +128,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp >> 8);
 	
 	//右斜め上
-	tmp = allsideboard & (playerboard << 7);
+	tmp = allsideboard & (*playerboard << 7);
 	tmp |= allsideboard & (tmp << 7);
 	tmp |= allsideboard & (tmp << 7);
 	tmp |= allsideboard & (tmp << 7);
@@ -135,7 +137,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp << 7);
 	
 	//左斜め上
-	tmp = allsideboard & (playerboard << 9);
+	tmp = allsideboard & (*playerboard << 9);
 	tmp |= allsideboard & (tmp << 9);
 	tmp |= allsideboard & (tmp << 9);
 	tmp |= allsideboard & (tmp << 9);
@@ -144,7 +146,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp << 9);
 	
 	//右斜め下
-	tmp = allsideboard & (playerboard >> 9);
+	tmp = allsideboard & (*playerboard >> 9);
 	tmp |= allsideboard & (tmp >> 9);
 	tmp |= allsideboard & (tmp >> 9);
 	tmp |= allsideboard & (tmp >> 9);
@@ -153,7 +155,7 @@ uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard) {
 	legalboard |= blankboard & (tmp >> 9);
 	
 	//左斜め下
-	tmp = allsideboard & (playerboard >> 7);
+	tmp = allsideboard & (*playerboard >> 7);
 	tmp |= allsideboard & (tmp >> 7);
 	tmp |= allsideboard & (tmp >> 7);
 	tmp |= allsideboard & (tmp >> 7);
@@ -168,10 +170,10 @@ void reversebit(uint64_t put) {
 	uint64_t rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
-		uint64_t mask = transfer(put, i);
+		uint64_t mask = transfer(&put, &i);
 		while ((mask != 0) && ((mask & oppenentboard) != 0)) {
 			rev_ |= mask;
-			mask = transfer(mask, i);
+			mask = transfer(&mask, &i);
 		}
 		if((mask & playerboard) != 0) rev |= rev_;
 	}
@@ -180,47 +182,47 @@ void reversebit(uint64_t put) {
 	oppenentboard ^= rev;
 }
 
-void reversebit2(uint64_t put, uint64_t playerboard, uint64_t oppenentboard) {
+void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
 	uint64_t rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
-		uint64_t mask = transfer(put, i);
-		while ((mask != 0) && ((mask & oppenentboard) != 0)) {
+		uint64_t mask = transfer(put, &i);
+		while ((mask != 0) && ((mask & *oppenentboard) != 0)) {
 			rev_ |= mask;
-			mask = transfer(mask, i);
+			mask = transfer(&mask, &i);
 		}
-		if((mask & playerboard) != 0) rev |= rev_;
+		if((mask & *playerboard) != 0) rev |= rev_;
 	}
 	//反転
-	playerboard ^= (put | rev);
-	oppenentboard ^= rev;
+	*playerboard ^= (*put | rev);
+	*oppenentboard ^= rev;
 }
 
-uint64_t transfer(uint64_t put, char i) {
-	switch (i) {
+uint64_t transfer(uint64_t *put, char *i) {
+	switch (*i) {
 		case 0:
-			return (put << 8) & 0xffffffffffffff00;
+			return (*put << 8) & 0xffffffffffffff00;
 			break;
 		case 1:
-			return (put << 7) & 0x7f7f7f7f7f7f7f00;
+			return (*put << 7) & 0x7f7f7f7f7f7f7f00;
 			break;
 		case 2:
-			return (put >> 1) & 0x7f7f7f7f7f7f7f7f;
+			return (*put >> 1) & 0x7f7f7f7f7f7f7f7f;
 			break;
 		case 3:
-			return (put >> 9) & 0x007f7f7f7f7f7f7f;
+			return (*put >> 9) & 0x007f7f7f7f7f7f7f;
 			break;
 		case 4:
-			return (put >> 8) & 0x00ffffffffffffff;
+			return (*put >> 8) & 0x00ffffffffffffff;
 			break;
 		case 5:
-			return (put >> 7) & 0x00fefefefefefefe;
+			return (*put >> 7) & 0x00fefefefefefefe;
 			break;
 		case 6:
-			return (put << 1) & 0xfefefefefefefefe;
+			return (*put << 1) & 0xfefefefefefefefe;
 			break;
 		case 7:
-			return (put << 9) & 0xfefefefefefefe00;
+			return (*put << 9) & 0xfefefefefefefe00;
 			break;
 		default:
 			printf("error\n");
@@ -230,15 +232,15 @@ uint64_t transfer(uint64_t put, char i) {
 }
 
 bool isPass(void) {
-	uint64_t playerlegalboard = makelegalBoard(oppenentboard, playerboard);
-	uint64_t oppenentlegalboard = makelegalBoard(playerboard, oppenentboard);
+	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
+	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
 	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
 	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000));
 }
 
 bool isFinished(void) {
-	uint64_t playerlegalboard = makelegalBoard(oppenentboard, playerboard);
-	uint64_t oppenentlegalboard = makelegalBoard(playerboard, oppenentboard);
+	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
+	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
 	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
 	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard == 0x0000000000000000));
 }
@@ -250,11 +252,11 @@ void swapboard(void) {
 	nowTurn*=(-1);
 }
 
-int bitcount(uint64_t board) {
+int bitcount(uint64_t *board) {
 	uint64_t mask = 0x8000000000000000;
 	int count = 0;
 	for (char i = 0; i<64; ++i) {
-		if((mask & board) != 0) count++;
+		if((mask & *board) != 0) count++;
 		mask = mask >> 1;
 	}
 	return count;
@@ -270,30 +272,30 @@ int ai(void) {
 	tmpy = 0;
 	think_percent = 0;
 	update_hakostring();
-	legalboard = makelegalBoard(oppenentboard, playerboard);
-	think_count = 100/bitcount(legalboard);
-	nega_alpha_bit(DEPTH, -32767, 32767, false, playerboard, oppenentboard);
+	legalboard = makelegalBoard(&oppenentboard, &playerboard);
+	think_count = 100/bitcount(&legalboard);
+	nega_alpha_bit(DEPTH, -32767, 32767, false, &playerboard, &oppenentboard);
 	if(tmpx == 0 || tmpy == 0) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
 	//print_board(oppenentboard, playerboard);
-	legalboard = makelegalBoard(oppenentboard, playerboard);
+	legalboard = makelegalBoard(&oppenentboard, &playerboard);
 	isbot = false;
 	return 1;
 }
 
-int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard) {
+int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *playerboard, uint64_t *oppenentboard) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);
 	int var, max_score = -32767;
-	uint64_t playerboard2 = playerboard, oppenentboard2 = oppenentboard;
+	uint64_t playerboard2 = *playerboard, oppenentboard2 = *oppenentboard;
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	for (char i = 0; i<64; ++i) {
-		if(putstone2(moveorder[i][0], moveorder[i][1], playerboard, oppenentboard, legalboard) == 1) {
+		if(putstone2(&moveorder[i][0], &moveorder[i][1], playerboard, oppenentboard, &legalboard) == 1) {
 			var = -nega_alpha_bit(depth-1, -beta, -alpha, false, oppenentboard, playerboard);
-			playerboard = playerboard2;
-			oppenentboard = oppenentboard2;
+			*playerboard = playerboard2;
+			*oppenentboard = oppenentboard2;
 			if(var > alpha) {
 				alpha = var;
 				if(depth == DEPTH) {
@@ -319,11 +321,11 @@ int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t playe
 
 int winner(void) {
 	if(nowTurn == BLACK_TURN) {
-		blackc = bitcount(playerboard);
-		whitec = bitcount(oppenentboard);
+		blackc = bitcount(&playerboard);
+		whitec = bitcount(&oppenentboard);
 	} else {
-		whitec = bitcount(playerboard);
-		blackc = bitcount(oppenentboard);
+		whitec = bitcount(&playerboard);
+		blackc = bitcount(&oppenentboard);
 	}
 	if (blackc > whitec) {
 		return 1;

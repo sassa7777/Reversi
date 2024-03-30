@@ -238,7 +238,7 @@ class ViewController: NSViewController
 				(swiftbutton.cell as? NSButtonCell)?.imageDimsWhenDisabled = false
 			}
 		}
-		let legalboard: UInt64 = makelegalBoard(oppenentboard, playerboard)
+		let legalboard: UInt64 = makelegalBoard(&oppenentboard, &playerboard)
 		var mask: UInt64 = 0x8000000000000000
 		for i in 0..<8 {
 			for j in 0..<8 {
@@ -321,7 +321,6 @@ class ViewController: NSViewController
 	
 	func reloadview()
 	{
-		//rebuild()
 		print("[*]リロード中...")
 		let buttons: [[NSButton]] = [
 			[aa, ab, ac, ad, ae, af, ag, ah],
@@ -334,7 +333,7 @@ class ViewController: NSViewController
 			[ha, hb, hc, hd, he, hf, hg, hh]
 		]
 		
-		let legalboard: UInt64 = makelegalBoard(oppenentboard, playerboard)
+		let legalboard: UInt64 = makelegalBoard(&oppenentboard, &playerboard)
 		var mask: UInt64 = 0x8000000000000000
 		
 		for i in 0..<8
@@ -343,9 +342,17 @@ class ViewController: NSViewController
 			{
 				if(nowTurn == BLACK_TURN) {
 					if((playerboard & mask) != 0) {
-						buttons[i][j].image = NSImage(named: "black")
+						if(tmpx == j && tmpy == i) {
+							buttons[i][j].image = NSImage(named: "blackb")
+						} else {
+							buttons[i][j].image = NSImage(named: "black")
+						}
 					} else if((oppenentboard & mask) != 0) {
-						buttons[i][j].image = NSImage(named: "white")
+						if(tmpx == j && tmpy == i) {
+							buttons[i][j].image = NSImage(named: "whiteb")
+						} else {
+							buttons[i][j].image = NSImage(named: "white")
+						}
 					} else {
 						if(botplayer == WHITE_TURN && (legalboard & mask) != 0) {
 							buttons[i][j].image = NSImage(named: "null2")
@@ -355,9 +362,17 @@ class ViewController: NSViewController
 					}
 				} else {
 					if((oppenentboard & mask) != 0) {
-						buttons[i][j].image = NSImage(named: "black")
+						if(tmpx == j && tmpy == i) {
+							buttons[i][j].image = NSImage(named: "blackb")
+						} else {
+							buttons[i][j].image = NSImage(named: "black")
+						}
 					} else if((playerboard & mask) != 0) {
-						buttons[i][j].image = NSImage(named: "white")
+						if(tmpx == j && tmpy == i) {
+							buttons[i][j].image = NSImage(named: "whiteb")
+						} else {
+							buttons[i][j].image = NSImage(named: "white")
+						}
 					} else {
 						if(botplayer == BLACK_TURN && (legalboard & mask) != 0) {
 							buttons[i][j].image = NSImage(named: "null2")

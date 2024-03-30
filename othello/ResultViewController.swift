@@ -25,9 +25,9 @@ class ResultViewController: NSViewController
             win_player.stringValue = "引き分け"
         }
         if(nowTurn == BLACK_TURN) {
-            result.stringValue = "黒: \(bitcount(playerboard)) 白: \(bitcount(oppenentboard))"
+            result.stringValue = "黒: \(bitcount(&playerboard)) 白: \(bitcount(&oppenentboard))"
         } else {
-            result.stringValue = "黒: \(bitcount(oppenentboard)) 白: \(bitcount(playerboard))"
+            result.stringValue = "黒: \(bitcount(&oppenentboard)) 白: \(bitcount(&playerboard))"
         }
     }
     

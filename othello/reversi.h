@@ -71,17 +71,18 @@ uint64_t legalboard;
 
 int ai(void);
 int putstone(char y, char x);
-uint64_t cordinate_to_bit(char x, char y);
-bool canput(uint64_t put, uint64_t legalboard);
-uint64_t makelegalBoard(uint64_t oppenentboard, uint64_t playerboard);
+int putstone2(char *y, char *x, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard);
+uint64_t cordinate_to_bit(char *x, char *y);
+bool canput(uint64_t *put, uint64_t *legalboard);
+uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard);
 void reversebit(uint64_t put);
-void reversebit2(uint64_t put, uint64_t playerboard, uint64_t oppenentboard);
-uint64_t transfer(uint64_t put, char i);
+void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
+uint64_t transfer(uint64_t *put, char *i);
 bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
-int bitcount(uint64_t board);
-int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t playerboard, uint64_t oppenentboard);
+int bitcount(uint64_t *board);
+int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *playerboard, uint64_t *oppenentboard);
 
 
 #endif /* othello_h */
