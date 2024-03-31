@@ -64,9 +64,9 @@ int putstone(char y, char x) {
 }
 
 int putstone2(char *y, char *x, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard) {
-	uint64_t put = cordinate_to_bit(x, y);
-	if(canput(&put, legalboard)) {
-		reversebit2(&put, playerboard, oppenentboard);
+	uint64_t put_putstone = cordinate_to_bit(x, y);
+	if(canput(&put_putstone, legalboard)) {
+		reversebit2(&put_putstone, playerboard, oppenentboard);
 		return 1;
 	} else {
 		return 0;
@@ -83,10 +83,10 @@ bool canput(uint64_t *put, uint64_t *legalboard) {
 }
 
 uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard) {
-	const uint64_t horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
-	const uint64_t verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
-	const uint64_t allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
-	const uint64_t blankboard = ~(*playerboard | *oppenentboard);
+	horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
+	verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
+	allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
+	blankboard = ~(*playerboard | *oppenentboard);
 	
 	uint64_t tmp;
 	uint64_t legalboard;
@@ -183,7 +183,7 @@ void reversebit(uint64_t put) {
 }
 
 void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
-	uint64_t rev = 0;
+	rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(put, &i);
@@ -279,7 +279,6 @@ int ai(void) {
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
-	//print_board(oppenentboard, playerboard);
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
 	isbot = false;
 	return 1;

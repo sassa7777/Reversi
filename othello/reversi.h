@@ -39,6 +39,11 @@ int think_percent;
 int think_count;
 int botplayer;
 int cpu_core;
+uint64_t horizontalboard;
+uint64_t verticalboard;
+uint64_t allsideboard;
+uint64_t blankboard;
+uint64_t rev;
 bool isbot = false;
 
 char moveorder[64][2] = {

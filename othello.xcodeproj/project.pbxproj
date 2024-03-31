@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -135,7 +135,7 @@
 				};
 			};
 			buildConfigurationList = 1BA79BE12AC835CF00E864A1 /* Build configuration list for PBXProject "othello" */;
-			compatibilityVersion = "Xcode 14.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -356,13 +356,11 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-flto",
-					"-I/usr/local/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-flto",
-					"-I/opt/homebrew/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 					"-march=native",
@@ -370,7 +368,6 @@
 				);
 				"OTHER_CFLAGS[arch=x86_64]" = (
 					"-flto",
-					"-I/usr/local/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 				);
@@ -430,13 +427,11 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-flto",
-					"-I/usr/local/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-flto",
-					"-I/opt/homebrew/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 					"-march=native",
@@ -444,7 +439,6 @@
 				);
 				"OTHER_CFLAGS[arch=x86_64]" = (
 					"-flto",
-					"-I/usr/local/opt/libomp/include",
 					"-Xpreprocessor",
 					"-fopenmp",
 				);
