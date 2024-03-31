@@ -63,10 +63,9 @@ int putstone(char y, char x) {
 	}
 }
 
-int putstone2(char *y, char *x, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard) {
-	uint64_t put_putstone = cordinate_to_bit(x, y);
-	if(canput(&put_putstone, legalboard)) {
-		reversebit2(&put_putstone, playerboard, oppenentboard);
+int putstone2(uint64_t *put, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard) {
+	if(canput(put, legalboard)) {
+		reversebit2(put, playerboard, oppenentboard);
 		return 1;
 	} else {
 		return 0;
@@ -289,8 +288,12 @@ int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *play
 	int var, max_score = -32767;
 	uint64_t playerboard2 = *playerboard, oppenentboard2 = *oppenentboard;
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
+	if(legalboard == 0) {
+		if(passed) return countscore(playerboard, oppenentboard);
+		return -nega_alpha_bit(depth, -beta, -alpha, true, oppenentboard, playerboard);
+	}
 	for (char i = 0; i<64; ++i) {
-		if(putstone2(&moveorder[i][0], &moveorder[i][1], playerboard, oppenentboard, &legalboard) == 1) {
+		if(putstone2(&moveorder_bit[i], playerboard, oppenentboard, &legalboard)) {
 			var = -nega_alpha_bit(depth-1, -beta, -alpha, false, oppenentboard, playerboard);
 			*playerboard = playerboard2;
 			*oppenentboard = oppenentboard2;
@@ -309,10 +312,6 @@ int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *play
 			if (var >= beta) return var;
 			if(alpha > max_score) max_score = alpha;
 		}
-	}
-	if (max_score == -32767) {
-		if(passed) return countscore(playerboard, oppenentboard);
-		return -nega_alpha_bit(depth, -beta, -alpha, true, oppenentboard, playerboard);
 	}
 	return max_score;
 }
