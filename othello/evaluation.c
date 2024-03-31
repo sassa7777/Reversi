@@ -41,105 +41,143 @@ int score_putable(uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *lega
 int score_fixedstone(uint64_t playerboard, uint64_t oppenentboard, uint64_t *mask) {
     int fixedstone = 0;
     //左上
-    *mask = 0x8000000000000000ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask >>= 1;
-    }
-    *mask = 0x8000000000000000ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask >>= 8;
-    }
-    *mask = 0x8000000000000000ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask >>= 1;
-    }
-    *mask = 0x8000000000000000ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask >>= 8;
-    }
+    //右方向
+    if(playerboard & 0xfe00000000000000ULL) fixedstone+=7;
+    if(playerboard & 0xfc00000000000000ULL) fixedstone+=6;
+    if(playerboard & 0xf800000000000000ULL) fixedstone+=5;
+    if(playerboard & 0xf000000000000000ULL) fixedstone+=4;
+    if(playerboard & 0xe000000000000000ULL) fixedstone+=3;
+    if(playerboard & 0xc000000000000000ULL) fixedstone+=2;
+    if(playerboard & 0x8000000000000000ULL) fixedstone+=1;
+    //下方向
+    if(playerboard & 0x8080808080808000ULL) fixedstone+=7;
+    if(playerboard & 0x8080808080800000ULL) fixedstone+=6;
+    if(playerboard & 0x8080808080000000ULL) fixedstone+=5;
+    if(playerboard & 0x8080808000000000ULL) fixedstone+=4;
+    if(playerboard & 0x8080800000000000ULL) fixedstone+=3;
+    if(playerboard & 0x8080008000000000ULL) fixedstone+=2;
+    if(playerboard & 0x8000000000000000ULL) fixedstone+=1;
     //右上
-    *mask = 0x0100000000000000ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask <<= 1;
-    }
-    *mask = 0x0100000000000000ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask >>= 8;
-    }
-    *mask = 0x0100000000000000ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask <<= 1;
-    }
-    *mask = 0x0100000000000000ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask >>= 8;
-    }
+    //左方向
+    if(playerboard & 0x7f00000000000000ULL) fixedstone+=7;
+    if(playerboard & 0x3f00000000000000ULL) fixedstone+=6;
+    if(playerboard & 0x1f00000000000000ULL) fixedstone+=5;
+    if(playerboard & 0x0f00000000000000ULL) fixedstone+=4;
+    if(playerboard & 0x0700000000000000ULL) fixedstone+=3;
+    if(playerboard & 0x0300000000000000ULL) fixedstone+=2;
+    if(playerboard & 0x0100000000000000ULL) fixedstone+=1;
+    //下方向
+    if(playerboard & 0x0101010101010100ULL) fixedstone+=7;
+    if(playerboard & 0x0101010101010000ULL) fixedstone+=6;
+    if(playerboard & 0x0101010101000000ULL) fixedstone+=5;
+    if(playerboard & 0x0101010100000000ULL) fixedstone+=4;
+    if(playerboard & 0x0101010000000000ULL) fixedstone+=3;
+    if(playerboard & 0x0101000000000000ULL) fixedstone+=2;
+    if(playerboard & 0x0100000000000000ULL) fixedstone+=1;
     //左下
-    *mask = 0x0000000000000080ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask >>= 1;
-    }
-    *mask = 0x0000000000000080ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask <<= 8;
-    }
-    *mask = 0x0000000000000080ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask >>= 1;
-    }
-    *mask = 0x0000000000000080ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask <<= 8;
-    }
+    //上方向
+    if(playerboard & 0x0080808080808080ULL) fixedstone+=7;
+    if(playerboard & 0x0000808080808080ULL) fixedstone+=6;
+    if(playerboard & 0x0000008080808080ULL) fixedstone+=5;
+    if(playerboard & 0x0000000080808080ULL) fixedstone+=4;
+    if(playerboard & 0x0000008000808080ULL) fixedstone+=3;
+    if(playerboard & 0x0000008000008080ULL) fixedstone+=2;
+    if(playerboard & 0x0000008000000080ULL) fixedstone+=1;
+    //左方向
+    if(playerboard & 0x00000000000000feULL) fixedstone+=7;
+    if(playerboard & 0x00000000000000fcULL) fixedstone+=6;
+    if(playerboard & 0x00000000000000f8ULL) fixedstone+=5;
+    if(playerboard & 0x00000000000000f0ULL) fixedstone+=4;
+    if(playerboard & 0x00000000000000e0ULL) fixedstone+=3;
+    if(playerboard & 0x00000000000000c0ULL) fixedstone+=2;
+    if(playerboard & 0x0000000000000080ULL) fixedstone+=1;
     //右下
-    *mask = 0x0000000000000001ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask <<= 1;
-    }
-    *mask = 0x0000000000000001ULL;
-    while(playerboard & *mask) {
-        fixedstone++;
-        *mask <<= 8;
-    }
-    *mask = 0x0000000000000001ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask <<= 1;
-    }
-    *mask = 0x0000000000000001ULL;
-    while(oppenentboard & *mask) {
-        fixedstone--;
-        *mask <<= 8;
-    }
-    //上一列
-    if(playerboard & 0xFF00000000000000ULL) fixedstone -= 8;
-    //下一列
-    if(playerboard & 0x00000000000000FFULL) fixedstone -= 8;
-    //左一列
-    if(playerboard & 0x8080808080808080ULL) fixedstone -= 8;
-    //右一列
-    if(playerboard & 0x0101010101010101ULL) fixedstone -= 8;
-    //上一列
-    if(oppenentboard & 0xFF00000000000000ULL) fixedstone += 8;
-    //下一列
-    if(oppenentboard & 0x00000000000000FFULL) fixedstone += 8;
-    //左一列
-    if(oppenentboard & 0x8080808080808080ULL) fixedstone += 8;
-    //右一列
-    if(oppenentboard & 0x0101010101010101ULL) fixedstone += 8;
+    if(playerboard & 0x000000000000007fULL) fixedstone+=7;
+    if(playerboard & 0x000000000000003fULL) fixedstone+=6;
+    if(playerboard & 0x000000000000001fULL) fixedstone+=5;
+    if(playerboard & 0x000000000000000fULL) fixedstone+=4;
+    if(playerboard & 0x0000000000000007ULL) fixedstone+=3;
+    if(playerboard & 0x0000000000000003ULL) fixedstone+=2;
+    if(playerboard & 0x0000000000000001ULL) fixedstone+=1;
+    
+    //一列
+    if(playerboard & 0xff00000000000000ULL) fixedstone+=7;
+    if(playerboard & 0x00ff000000000000ULL) fixedstone+=6;
+    if(playerboard & 0x0000ff0000000000ULL) fixedstone+=5;
+    if(playerboard & 0x000000ff00000000ULL) fixedstone+=4;
+    if(playerboard & 0x00000000ff000000ULL) fixedstone+=3;
+    if(playerboard & 0x0000000000ff0000ULL) fixedstone+=2;
+    if(playerboard & 0x000000000000ff00ULL) fixedstone+=1;
+    if(playerboard & 0x00000000000000ffULL) fixedstone+=1;
+    
+    //左上
+    //右方向
+    if(oppenentboard & 0xfe00000000000000ULL) fixedstone-=7;
+    if(oppenentboard & 0xfc00000000000000ULL) fixedstone-=6;
+    if(oppenentboard & 0xf800000000000000ULL) fixedstone-=5;
+    if(oppenentboard & 0xf000000000000000ULL) fixedstone-=4;
+    if(oppenentboard & 0xe000000000000000ULL) fixedstone-=3;
+    if(oppenentboard & 0xc000000000000000ULL) fixedstone-=2;
+    if(oppenentboard & 0x8000000000000000ULL) fixedstone-=1;
+    //下方向
+    if(oppenentboard & 0x8080808080808000ULL) fixedstone-=7;
+    if(oppenentboard & 0x8080808080800000ULL) fixedstone-=6;
+    if(oppenentboard & 0x8080808080000000ULL) fixedstone-=5;
+    if(oppenentboard & 0x8080808000000000ULL) fixedstone-=4;
+    if(oppenentboard & 0x8080800000000000ULL) fixedstone-=3;
+    if(oppenentboard & 0x8080008000000000ULL) fixedstone-=2;
+    if(oppenentboard & 0x8000000000000000ULL) fixedstone-=1;
+    //右上
+    //左方向
+    if(oppenentboard & 0x7f00000000000000ULL) fixedstone-=7;
+    if(oppenentboard & 0x3f00000000000000ULL) fixedstone-=6;
+    if(oppenentboard & 0x1f00000000000000ULL) fixedstone-=5;
+    if(oppenentboard & 0x0f00000000000000ULL) fixedstone-=4;
+    if(oppenentboard & 0x0700000000000000ULL) fixedstone-=3;
+    if(oppenentboard & 0x0300000000000000ULL) fixedstone-=2;
+    if(oppenentboard & 0x0100000000000000ULL) fixedstone-=1;
+    //下方向
+    if(oppenentboard & 0x0101010101010100ULL) fixedstone-=7;
+    if(oppenentboard & 0x0101010101010000ULL) fixedstone-=6;
+    if(oppenentboard & 0x0101010101000000ULL) fixedstone-=5;
+    if(oppenentboard & 0x0101010100000000ULL) fixedstone-=4;
+    if(oppenentboard & 0x0101010000000000ULL) fixedstone-=3;
+    if(oppenentboard & 0x0101000000000000ULL) fixedstone-=2;
+    if(oppenentboard & 0x0100000000000000ULL) fixedstone-=1;
+    //左下
+    //上方向
+    if(oppenentboard & 0x0080808080808080ULL) fixedstone-=7;
+    if(oppenentboard & 0x0000808080808080ULL) fixedstone-=6;
+    if(oppenentboard & 0x0000008080808080ULL) fixedstone-=5;
+    if(oppenentboard & 0x0000000080808080ULL) fixedstone-=4;
+    if(oppenentboard & 0x0000008000808080ULL) fixedstone-=3;
+    if(oppenentboard & 0x0000008000008080ULL) fixedstone-=2;
+    if(oppenentboard & 0x0000008000000080ULL) fixedstone-=1;
+    //左方向
+    if(oppenentboard & 0x00000000000000feULL) fixedstone-=7;
+    if(oppenentboard & 0x00000000000000fcULL) fixedstone-=6;
+    if(oppenentboard & 0x00000000000000f8ULL) fixedstone-=5;
+    if(oppenentboard & 0x00000000000000f0ULL) fixedstone-=4;
+    if(oppenentboard & 0x00000000000000e0ULL) fixedstone-=3;
+    if(oppenentboard & 0x00000000000000c0ULL) fixedstone-=2;
+    if(oppenentboard & 0x0000000000000080ULL) fixedstone-=1;
+    //右下
+    if(oppenentboard & 0x000000000000007fULL) fixedstone-=7;
+    if(oppenentboard & 0x000000000000003fULL) fixedstone-=6;
+    if(oppenentboard & 0x000000000000001fULL) fixedstone-=5;
+    if(oppenentboard & 0x000000000000000fULL) fixedstone-=4;
+    if(oppenentboard & 0x0000000000000007ULL) fixedstone-=3;
+    if(oppenentboard & 0x0000000000000003ULL) fixedstone-=2;
+    if(oppenentboard & 0x0000000000000001ULL) fixedstone-=1;
+    //一列
+    if(oppenentboard & 0xff00000000000000ULL) fixedstone-=7;
+    if(oppenentboard & 0x00ff000000000000ULL) fixedstone-=6;
+    if(oppenentboard & 0x0000ff0000000000ULL) fixedstone-=5;
+    if(oppenentboard & 0x000000ff00000000ULL) fixedstone-=4;
+    if(oppenentboard & 0x00000000ff000000ULL) fixedstone-=3;
+    if(oppenentboard & 0x0000000000ff0000ULL) fixedstone-=2;
+    if(oppenentboard & 0x000000000000ff00ULL) fixedstone-=1;
+    if(oppenentboard & 0x00000000000000ffULL) fixedstone-=1;
     return fixedstone;
 }
 
