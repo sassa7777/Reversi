@@ -17,8 +17,8 @@ void reset(void) {
 	memset(canPut, 0, sizeof(canPut));
 	nowTurn = BLACK_TURN;
 	nowIndex = 1;
-	playerboard = 0x0000000810000000;
-	oppenentboard = 0x0000001008000000;
+	playerboard = 0x0000000810000000ULL;
+	oppenentboard = 0x0000001008000000ULL;
 	skip = false;
 	finished = 0;
 	skipped = false;
@@ -28,7 +28,7 @@ void reset(void) {
 
 void print_board(uint64_t oppenentboard, uint64_t playerboard) {
 	printf("  a b c d e f g h\n");
-	uint64_t mask = 0x8000000000000000;
+	uint64_t mask = 0x8000000000000000ULL;
 	for (int i = 0; i < 8; i++) {
 		printf("%d ", i + 1);
 		for (int j = 0; j < 8; j++) {
@@ -75,7 +75,7 @@ int putstone2(char *y, char *x, uint64_t* playerboard, uint64_t *oppenentboard, 
 
 //座標をbitに変換
 uint64_t cordinate_to_bit(char *x, char *y) {
-	return 0x8000000000000000 >> ((*y*8)+*x);
+	return 0x8000000000000000ULL >> ((*y*8)+*x);
 }
 
 bool canput(uint64_t *put, uint64_t *legalboard) {
@@ -234,15 +234,15 @@ uint64_t transfer(uint64_t *put, char *i) {
 bool isPass(void) {
 	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
 	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
-	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
-	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000));
+	if((playerlegalboard == 0x0000000000000000ULL) && (oppenentlegalboard != 0x0000000000000000ULL)) return 1;
+	return ((playerlegalboard == 0x0000000000000000ULL) && (oppenentlegalboard != 0x0000000000000000ULL));
 }
 
 bool isFinished(void) {
 	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
 	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
-	if((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard != 0x0000000000000000)) return 1;
-	return ((playerlegalboard == 0x0000000000000000) && (oppenentlegalboard == 0x0000000000000000));
+	if((playerlegalboard == 0x0000000000000000ULL) && (oppenentlegalboard != 0x0000000000000000ULL)) return 1;
+	return ((playerlegalboard == 0x0000000000000000ULL) && (oppenentlegalboard == 0x0000000000000000ULL));
 }
 
 void swapboard(void) {
@@ -252,14 +252,13 @@ void swapboard(void) {
 	nowTurn*=(-1);
 }
 
-int bitcount(uint64_t *board) {
-	uint64_t mask = 0x8000000000000000;
-	int count = 0;
-	for (char i = 0; i<64; ++i) {
-		if((mask & *board) != 0) count++;
-		mask = mask >> 1;
-	}
-	return count;
+uint64_t bitcount(uint64_t bits) {
+	bits = (bits & 0x5555555555555555ULL) + (bits >> 1 & 0x5555555555555555ULL);
+	bits = (bits & 0x3333333333333333ULL) + (bits >> 2 & 0x3333333333333333ULL);
+	bits = (bits & 0x0f0f0f0f0f0f0f0fULL) + (bits >> 4 & 0x0f0f0f0f0f0f0f0fULL);
+	bits = (bits & 0x00ff00ff00ff00ffULL) + (bits >> 8 & 0x00ff00ff00ff00ffULL);
+	bits = (bits & 0x0000ffff0000ffffULL) + (bits >> 16 & 0x0000ffff0000ffffULL);
+	return (bits & 0x00000000ffffffffULL) + (bits >> 32 & 0x00000000ffffffffULL);
 }
 
 int ai(void) {
@@ -273,7 +272,7 @@ int ai(void) {
 	think_percent = 0;
 	update_hakostring();
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
-	think_count = 100/bitcount(&legalboard);
+	think_count = 100/bitcount(legalboard);
 	nega_alpha_bit(DEPTH, -32767, 32767, false, &playerboard, &oppenentboard);
 	if(tmpx == 0 || tmpy == 0) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
@@ -321,11 +320,11 @@ int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *play
 
 int winner(void) {
 	if(nowTurn == BLACK_TURN) {
-		blackc = bitcount(&playerboard);
-		whitec = bitcount(&oppenentboard);
+		blackc = (int)bitcount(playerboard);
+		whitec = (int)bitcount(oppenentboard);
 	} else {
-		whitec = bitcount(&playerboard);
-		blackc = bitcount(&oppenentboard);
+		whitec = (int)bitcount(playerboard);
+		blackc = (int)bitcount(oppenentboard);
 	}
 	if (blackc > whitec) {
 		return 1;
@@ -345,158 +344,5 @@ int finishedsw(void) {
 		return 0;
 	}
 }
-
-//int nega_alpha(char depth, char playerrn, int alpha, int beta,  bool passed) {
-//	if (depth == 0) return countscore(board, &playerrn);
-//	int var, max_score = -32767;
-//	char tmpboard[10][10];
-//	bool canput[10][10] = {{false}};
-//	copyboard(board, tmpboard);
-//	
-//	check2(&playerrn, canput, board);
-//	for (char i = 0; i <= 63; ++i) {
-//		if (canput[moveorder[i][1]][moveorder[i][0]]) {
-//			putstone2(&moveorder[i][1], &moveorder[i][0], &playerrn, board);
-//			var = -nega_alpha(depth-1, 3-playerrn, -beta, -alpha, false);
-//			copyboard(tmpboard, board);
-//			if (var > alpha) {
-//				alpha = var;
-//				if (depth == DEPTH) {
-//					tmpx = moveorder[i][0];
-//					tmpy = moveorder[i][1];
-//				}
-//			}
-//			if(depth == DEPTH) {
-//				think_percent += think_count;
-//				update_hakostring();
-//			}
-//			if (var >= beta) return var;
-//			if(alpha > max_score) max_score = alpha;
-//		}
-//	}
-//	if (max_score == -32767) {
-//		if(passed) return countscore(board, &playerrn);
-//		return -nega_alpha(depth, 3-playerrn, -beta, -alpha, true);
-//	}
-//	return max_score;
-//}
-
-//void negaalphaTH(void) {
-//	memset(cachex, 0, sizeof(cachex));
-//	memset(cachey, 0, sizeof(cachey));
-//	memset(putable_list, 0, sizeof(putable_list));
-//	ALPHA = -32767;
-//	char putable_num = putable_counter(&player, board);
-//	putable_saver(player, board);
-//#pragma omp parallel for num_threads(cpu_core)
-//	for (int i=0; i<putable_num; ++i) {
-//		negaalpha_omp(i);
-//	}
-//	int max = -100001;
-//	for (char i = 0; i < putable_num; ++i) {
-//		if(max < results[i]) max = results[i];
-//	}
-//	for (char i = 0; i < putable_num; ++i) {
-//		if(results[i] == max)
-//		{
-//			tmpx = cachex[i];
-//			tmpy = cachey[i];
-//			break;
-//		}
-//	}
-//	printf("chose (%d, %d)\n", tmpx, tmpy);
-//}
-
-//int nega_alphadeep(char depth, char playerrn, int alpha, int beta, bool passed, char board[10][10]) {
-//	int var, max_score = -32767;
-//	char tmpboard[10][10];
-//	bool canput[10][10] = {{false}};
-//	copyboard(board, tmpboard);
-//	check2(&playerrn, canput, board);
-//	if(depth == 1) {
-//		for (char i = 0; i <= 63; ++i) {
-//			if (canput[moveorder[i][0]][moveorder[i][1]]) {
-//				putstone2(&moveorder[i][0], &moveorder[i][1], &playerrn, board);
-//				var = countscore(board, &playerrn);
-//				copyboard(tmpboard, board);
-//				
-//				if(var >= beta) return var;
-//				if(var > alpha) alpha = var;
-//				if(alpha > max_score) max_score = alpha;
-//			}
-//		}
-//	} else {
-//		for (char i = 0; i <= 63; ++i) {
-//			if (canput[moveorder[i][0]][moveorder[i][1]]) {
-//				putstone2(&moveorder[i][0], &moveorder[i][1], &playerrn, board);
-//				var = -nega_alphadeep(depth-1, 3-playerrn, -beta, -alpha, false, board);
-//				copyboard(tmpboard, board);
-//				
-//				if(var >= beta) return var;
-//				if(var > alpha) alpha = var;
-//				if(alpha > max_score) max_score = alpha;
-//			}
-//		}
-//	}
-//	
-//	if (max_score == -32767) {
-//		if(passed) return countscore(board, &playerrn);
-//		return -nega_alphadeep(depth, 3-playerrn, -beta, -alpha, true, board);
-//	}
-//	return max_score;
-//}
-
-//void* negaalphat(void* args) {
-//	int task = *((int*)args);
-//	int var;
-//	char playerrn = player;
-//	int  maxscore = -32767;
-//	char tmpboard[10][10] = {{0}};
-//		
-//	copyboard(board, tmpboard);
-//	
-//	putstone2(&putable_list[task][1], &putable_list[task][0], &playerrn, tmpboard);
-//	
-//	var = -nega_alphadeep(DEPTH-1, 3-playerrn, -32767, -ALPHA, false, tmpboard);
-//	
-//	copyboard(board, tmpboard);
-//	
-//	if (var > ALPHA) {
-//		ALPHA = var;
-//		maxscore = var;
-//		cachex[task] = putable_list[task][0];
-//		cachey[task] = putable_list[task][1];
-//	}
-//	think_percent += think_count;
-//	update_hakostring();
-//	results[task] = maxscore;
-//	pthread_exit(0);
-//}
-
-//void negaalpha_omp(int task) {
-//	int var;
-//	char playerrn = player;
-//	int  maxscore = -32767;
-//	char tmpboard[10][10] = {{0}};
-//		
-//	copyboard(board, tmpboard);
-//	
-//	putstone2(&putable_list[task][1], &putable_list[task][0], &playerrn, tmpboard);
-//	
-//	var = -nega_alphadeep(DEPTH-1, 3-playerrn, -32767, -ALPHA, false, tmpboard);
-//	
-//	copyboard(board, tmpboard);
-//	
-//	if (var > ALPHA) {
-//		ALPHA = var;
-//		maxscore = var;
-//		cachex[task] = putable_list[task][0];
-//		cachey[task] = putable_list[task][1];
-//	}
-//	think_percent += think_count;
-//	update_hakostring();
-//	results[task] = maxscore;
-//	return;
-//}
 
 int returnplayer(void) { return player; }
