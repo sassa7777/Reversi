@@ -39,7 +39,7 @@ class FirstViewController: NSViewController
             streng = 9
             strength_txt.stringValue = "少し自信がある人向け"
         case 4:
-            streng = 11
+            streng = 10
             strength_txt.stringValue = "自信がある人向け"
         default:
             streng = 10
