@@ -66,7 +66,6 @@ char moveorder2[8][16] = {
 
 void reset(void);
 int winner(void);
-int returnplayer(void);
 
 
 

@@ -72,7 +72,6 @@ int putstone2(uint64_t *put, uint64_t* playerboard, uint64_t *oppenentboard, uin
 	}
 }
 
-//座標をbitに変換
 uint64_t cordinate_to_bit(char *x, char *y) {
 	return 0x8000000000000000ULL >> ((*y*8)+*x);
 }
@@ -266,6 +265,7 @@ int ai(void) {
 	}
 	isbot = true;
 	printf("[*]Botが考え中..\n");
+	if(DEPTH == 10 && nowIndex >= 42) DEPTH = 20;
 	tmpx = 0;
 	tmpy = 0;
 	think_percent = 0;
@@ -334,13 +334,3 @@ int winner(void) {
 		return 0;
 	}
 }
-
-int finishedsw(void) {
-	if (finished == 1) {
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
-int returnplayer(void) { return player; }
