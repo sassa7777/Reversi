@@ -1,2 +1,4 @@
-# othello
-An othello app written in C and Swift
+# Reversi
+CとSwiftで書かれていて、ベーシックなAlpha-Betaアルゴリズムを使用しています
+
+ボードの実装が配列で行われているものはarrayブランチにあります
