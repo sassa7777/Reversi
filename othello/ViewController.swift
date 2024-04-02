@@ -80,7 +80,7 @@ class ViewController: NSViewController
 	@IBOutlet var hakotext: NSTextField!
 	
 	var strength: Int32 = 0
-	var playerbot: Int32 = -100
+	var playerbot: Int32 = WHITE_TURN
 	
 	@IBAction func put(_ sender: NSButton)
 	{
@@ -209,7 +209,8 @@ class ViewController: NSViewController
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
-		if(playerbot == 1) {
+		if(playerbot == BLACK_TURN) {
+			reloadview()
 			DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
 				self.putai()
 			}
@@ -290,7 +291,7 @@ class ViewController: NSViewController
 	
 	func result()
 	{
-		if(playerbot == -100) {
+		if(playerbot == WHITE_TURN) {
 			switch winner() {
 			case 1:
 				print("黒の勝ち！")
@@ -410,7 +411,7 @@ class ViewController: NSViewController
 				}
 			}
 		}
-		@objc class func bitcount(_ bit: UInt64) -> Int {
+		@objc class func bitcounter(_ bit: UInt64) -> Int {
 			return bit.nonzeroBitCount
 		}
 	}

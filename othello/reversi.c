@@ -19,10 +19,6 @@ void reset(void) {
 	nowIndex = 1;
 	playerboard = 0x0000000810000000ULL;
 	oppenentboard = 0x0000001008000000ULL;
-	skip = false;
-	finished = 0;
-	skipped = false;
-	turn = 1;
 	return;
 }
 
@@ -265,14 +261,14 @@ int ai(void) {
 	}
 	isbot = true;
 	printf("[*]Botが考え中..\n");
-	if(DEPTH == 10 && nowIndex >= 45) DEPTH = 20;
+	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
 	tmpx = 0;
 	tmpy = 0;
 	think_percent = 0;
 	update_hakostring();
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
 	think_count = 100/bitcount(legalboard);
-	nega_alpha_bit(DEPTH, -32767, 32767, false, &playerboard, &oppenentboard);
+	nega_alpha_bit(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == 0 || tmpy == 0) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -283,18 +279,18 @@ int ai(void) {
 	return 1;
 }
 
-int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(*playerboard, *oppenentboard);
+int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard);
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(legalboard == 0) {
-		if(passed) return countscore(*playerboard, *oppenentboard);
-		return -nega_alpha_bit(depth, -beta, -alpha, true, oppenentboard, playerboard);
+		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
+		else return -nega_alpha_bit(depth, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t playerboard2 = *playerboard, oppenentboard2 = *oppenentboard;
 	int var, max_score = -32767;
 	for (char i = 0; i<64; ++i) {
 		if(putstone2(&moveorder_bit[i], playerboard, oppenentboard, &legalboard)) {
-			var = -nega_alpha_bit(depth-1, -beta, -alpha, false, oppenentboard, playerboard);
+			var = -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
 			*playerboard = playerboard2;
 			*oppenentboard = oppenentboard2;
 			if(var > alpha) {

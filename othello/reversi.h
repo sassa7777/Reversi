@@ -17,26 +17,23 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdint.h>
-#include <omp.h>
 
 int DEPTH;
 char board[10][10];
 bool canPut[10][10];
-char putable_list[50][2];
-int finished = 0;
-bool skipped = false;
-bool skip = false;
 int px, py;
-int player;
-int turn = 0;
 int whitec = 0;
 int blackc = 0;
 int tmpx, tmpy;
-int ALPHA;
 int think_percent;
 int think_count;
 int botplayer;
 int cpu_core;
+int nowTurn;
+int nowIndex;
+uint64_t playerboard;
+uint64_t oppenentboard;
+uint64_t legalboard;
 bool isbot = false;
 
 char moveorder[64][2] = {
@@ -61,15 +58,6 @@ char moveorder2[8][16] = {
 
 void reset(void);
 int winner(void);
-
-
-
-int nowTurn;
-int nowIndex;
-uint64_t playerboard;
-uint64_t oppenentboard;
-uint64_t legalboard;
-
 int ai(void);
 int putstone(char y, char x);
 int putstone2(uint64_t *put, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard);
@@ -83,7 +71,7 @@ bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
 uint64_t bitcount(uint64_t bits);
-int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *playerboard, uint64_t *oppenentboard);
+int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
 
 
 #endif /* othello_h */

@@ -16,5 +16,5 @@ void error_hakostring(void) {
 }
 
 int bit_count(uint64_t *bit) {
-    return [SwiftFunctions bitcount:*bit];
+    return (int)[SwiftFunctions bitcounter:*bit];
 }

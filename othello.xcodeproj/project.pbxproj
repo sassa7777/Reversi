@@ -335,6 +335,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
+				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
@@ -354,23 +355,13 @@
 				MARKETING_VERSION = 0.3;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
-				);
+				OTHER_CFLAGS = "";
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
 					"-march=native",
 					"-mtune=native",
 				);
-				"OTHER_CFLAGS[arch=x86_64]" = (
-					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
-				);
+				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=arm64]" = (
 					"-L/opt/homebrew/opt/libomp/lib",
@@ -408,6 +399,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
+				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
@@ -425,23 +417,13 @@
 				MARKETING_VERSION = 0.3;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
-				);
+				OTHER_CFLAGS = "-flto";
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
 					"-march=native",
 					"-mtune=native",
 				);
-				"OTHER_CFLAGS[arch=x86_64]" = (
-					"-flto",
-					"-Xpreprocessor",
-					"-fopenmp",
-				);
+				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=arm64]" = (
 					"-L/opt/homebrew/opt/libomp/lib",
