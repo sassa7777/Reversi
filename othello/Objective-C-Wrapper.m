@@ -14,3 +14,7 @@ void update_hakostring(void) {
 void error_hakostring(void) {
     [SwiftFunctions error_hako];
 }
+
+int bit_count(uint64_t *bit) {
+    return [SwiftFunctions bitcount:*bit];
+}

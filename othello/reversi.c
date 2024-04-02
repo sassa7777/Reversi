@@ -81,10 +81,10 @@ bool canput(uint64_t *put, uint64_t *legalboard) {
 }
 
 uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard) {
-	horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
-	verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
-	allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
-	blankboard = ~(*playerboard | *oppenentboard);
+	uint64_t horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
+	uint64_t verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
+	uint64_t allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
+	uint64_t blankboard = ~(*playerboard | *oppenentboard);
 	
 	uint64_t tmp;
 	uint64_t legalboard;
@@ -181,7 +181,7 @@ void reversebit(uint64_t put) {
 }
 
 void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
-	rev = 0;
+	uint64_t rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(put, &i);
@@ -265,7 +265,7 @@ int ai(void) {
 	}
 	isbot = true;
 	printf("[*]Botが考え中..\n");
-	if(DEPTH == 10 && nowIndex >= 42) DEPTH = 20;
+	if(DEPTH == 10 && nowIndex >= 45) DEPTH = 20;
 	tmpx = 0;
 	tmpy = 0;
 	think_percent = 0;
@@ -284,14 +284,14 @@ int ai(void) {
 }
 
 int nega_alpha_bit(char depth, int alpha, int beta,  bool passed, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(playerboard, oppenentboard);
-	int var, max_score = -32767;
-	uint64_t playerboard2 = *playerboard, oppenentboard2 = *oppenentboard;
+	if(depth == 0) return countscore(*playerboard, *oppenentboard);
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(legalboard == 0) {
-		if(passed) return countscore(playerboard, oppenentboard);
+		if(passed) return countscore(*playerboard, *oppenentboard);
 		return -nega_alpha_bit(depth, -beta, -alpha, true, oppenentboard, playerboard);
 	}
+	uint64_t playerboard2 = *playerboard, oppenentboard2 = *oppenentboard;
+	int var, max_score = -32767;
 	for (char i = 0; i<64; ++i) {
 		if(putstone2(&moveorder_bit[i], playerboard, oppenentboard, &legalboard)) {
 			var = -nega_alpha_bit(depth-1, -beta, -alpha, false, oppenentboard, playerboard);

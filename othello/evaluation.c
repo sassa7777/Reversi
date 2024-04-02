@@ -5,6 +5,7 @@
 //  Created by sasa on 2024/01/15.
 //
 
+#include "Objective-C-Wrapper.h"
 #include "reversi.h"
 
 int scoreboard[64] = {
@@ -21,7 +22,7 @@ int scoreboard[64] = {
 int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
     int score = 0;
     uint64_t mask = 0x8000000000000000ULL;
-    for (char i = 0; i<64; ++i) {
+    for (int i = 0; i<64; ++i) {
         if(*playerboard & mask) score += scoreboard[i];
         else if(*oppenentboard & mask) score -= scoreboard[i];
         mask >>= 1;
@@ -30,12 +31,19 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
+//    int score = 0;
+//    uint64_t legalboard;
+//    legalboard = makelegalBoard(oppenentboard, playerboard);
+//    score += (int)bitcount(legalboard);
+//    legalboard = makelegalBoard(playerboard, oppenentboard);
+//    score -= (int)bitcount(legalboard);
+//    return score;
     int score = 0;
     uint64_t legalboard;
     legalboard = makelegalBoard(oppenentboard, playerboard);
-    score += bitcount(legalboard);
+    score += bit_count(&legalboard);
     legalboard = makelegalBoard(playerboard, oppenentboard);
-    score -= bitcount(legalboard);
+    score -= bit_count(&legalboard);
     return score;
 }
 
@@ -205,11 +213,10 @@ bool is_all_oppenent(uint64_t *playerboard) {
     return (*playerboard == 0);
 }
 
-
-int countscore(uint64_t *playerboard, uint64_t *oppenentboard) {
-    if(is_all_oppenent(playerboard)) return -9999;
-    if(nowIndex+DEPTH >= 60) return (int)bitcount(*playerboard)-(int)bitcount(*oppenentboard);
-    if(nowIndex+DEPTH >= 44) return 3*score_stone(playerboard, oppenentboard)+55*score_fixedstone(playerboard, oppenentboard);
-//    return 3*score_stone(playerboard, oppenentboard)+55*score_fixedstone(playerboard, oppenentboard);
-    return 3*score_stone(playerboard, oppenentboard)+55*score_fixedstone(playerboard, oppenentboard)+2*score_putable(playerboard, oppenentboard);
+int countscore(uint64_t playerboard, uint64_t oppenentboard) {
+    if(is_all_oppenent(&playerboard)) return -9999;
+//    if(nowIndex+DEPTH >= 60) return (int)bitcount(playerboard)-(int)bitcount(oppenentboard);
+    if(nowIndex+DEPTH >= 60) return bit_count(&playerboard)-bit_count(&oppenentboard);
+    if(nowIndex+DEPTH >= 44) return 3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard);
+    return 2*score_stone(&playerboard, &oppenentboard)+5*score_fixedstone(&playerboard, &oppenentboard)+score_putable(&playerboard, &oppenentboard);
 }

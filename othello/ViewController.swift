@@ -410,6 +410,9 @@ class ViewController: NSViewController
 				}
 			}
 		}
+		@objc class func bitcount(_ bit: UInt64) -> Int {
+			return bit.nonzeroBitCount
+		}
 	}
 }
 
