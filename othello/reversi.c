@@ -14,7 +14,6 @@ void reset(void) {
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
 	printf("CPU Core count: %d\n", cpu_core);
-	memset(canPut, 0, sizeof(canPut));
 	nowTurn = BLACK_TURN;
 	nowIndex = 1;
 	playerboard = 0x0000000810000000ULL;

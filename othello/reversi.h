@@ -18,8 +18,6 @@
 #include <stdint.h>
 
 int DEPTH;
-char board[10][10];
-bool canPut[10][10];
 int px, py;
 int whitec = 0;
 int blackc = 0;
