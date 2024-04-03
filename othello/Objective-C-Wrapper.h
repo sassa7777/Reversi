@@ -8,7 +8,7 @@
 #ifndef Objective_C_Wrapper_h
 #define Objective_C_Wrapper_h
 
-#import "othello-Swift.h"
+#import "Reversi-Swift.h"
 
 void update_hakostring(void);
 void error_hakostring(void);

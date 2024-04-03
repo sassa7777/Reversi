@@ -210,6 +210,6 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard) {
     if(is_all_oppenent(playerboard)) return -9999;
 //    if(nowIndex+DEPTH >= 60) return (int)bitcount(playerboard)-(int)bitcount(oppenentboard);
     if(nowIndex+DEPTH >= 60) return bit_count(playerboard)-bit_count(oppenentboard);
-    if(nowIndex+DEPTH >= 44) return 3*score_stone(playerboard, oppenentboard)+55*score_fixedstone(playerboard, oppenentboard);
-    return 3*score_stone(playerboard, oppenentboard)+5*score_fixedstone(playerboard, oppenentboard)+2*score_putable(playerboard, oppenentboard);
+    if(nowIndex+DEPTH >= 44) return 2*score_stone(playerboard, oppenentboard)+55*score_fixedstone(playerboard, oppenentboard);
+    return 2*score_stone(playerboard, oppenentboard)+5*score_fixedstone(playerboard, oppenentboard)/*+score_putable(playerboard, oppenentboard)*/;
 }

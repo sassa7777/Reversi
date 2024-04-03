@@ -39,7 +39,7 @@
 		1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "othello-Bridging-Header.h"; path = "othello/othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1B84B9A92AD2F01200E10BFB /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
-		1BA79BE62AC835CF00E864A1 /* othello.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = othello.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BA79BE62AC835CF00E864A1 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1BA79BEB2AC835CF00E864A1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; usesTabs = 1; };
 		1BA79BED2AC835D000E864A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -78,7 +78,7 @@
 		1BA79BE72AC835CF00E864A1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1BA79BE62AC835CF00E864A1 /* othello.app */,
+				1BA79BE62AC835CF00E864A1 /* Reversi.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,9 +100,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1BA79BE52AC835CF00E864A1 /* othello */ = {
+		1BA79BE52AC835CF00E864A1 /* Reversi */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1BA79BF52AC835D000E864A1 /* Build configuration list for PBXNativeTarget "othello" */;
+			buildConfigurationList = 1BA79BF52AC835D000E864A1 /* Build configuration list for PBXNativeTarget "Reversi" */;
 			buildPhases = (
 				1BA79BE22AC835CF00E864A1 /* Sources */,
 				1BA79BE32AC835CF00E864A1 /* Frameworks */,
@@ -113,9 +113,9 @@
 			);
 			dependencies = (
 			);
-			name = othello;
+			name = Reversi;
 			productName = othello;
-			productReference = 1BA79BE62AC835CF00E864A1 /* othello.app */;
+			productReference = 1BA79BE62AC835CF00E864A1 /* Reversi.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -147,7 +147,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1BA79BE52AC835CF00E864A1 /* othello */,
+				1BA79BE52AC835CF00E864A1 /* Reversi */,
 			);
 		};
 /* End PBXProject section */
@@ -195,7 +195,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1BA79BF32AC835D000E864A1 /* Debug */ = {
+		1BA79BF32AC835D000E864A1 /* I */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -258,7 +258,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = Debug;
+			name = I;
 		};
 		1BA79BF42AC835D000E864A1 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -318,7 +318,7 @@
 			};
 			name = Release;
 		};
-		1BA79BF62AC835D000E864A1 /* Debug */ = {
+		1BA79BF62AC835D000E864A1 /* I */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD)";
@@ -340,9 +340,8 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				"HEADER_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/opt/libomp/include;
-				"HEADER_SEARCH_PATHS[arch=x86_64]" = /usr/local/opt/libomp/include;
-				INFOPLIST_KEY_CFBundleDisplayName = Othello;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_KEY_CFBundleDisplayName = Reversi;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -352,7 +351,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.3;
+				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "";
@@ -362,14 +361,9 @@
 					"-mtune=native",
 				);
 				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
-				OTHER_LDFLAGS = "";
-				"OTHER_LDFLAGS[arch=arm64]" = (
-					"-L/opt/homebrew/opt/libomp/lib",
-					"-lomp",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"-L/usr/local/opt/libomp/lib",
-					"-lomp",
+				OTHER_LDFLAGS = (
+					"-L/opt/homebrew/opt/llvm/lib",
+					"-Wl,-rpath,/opt/homebrew/opt/llvm/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -380,7 +374,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 			};
-			name = Debug;
+			name = I;
 		};
 		1BA79BF72AC835D000E864A1 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -404,7 +398,8 @@
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Othello;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_KEY_CFBundleDisplayName = Reversi;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -414,7 +409,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.3;
+				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-flto";
@@ -424,14 +419,9 @@
 					"-mtune=native",
 				);
 				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
-				OTHER_LDFLAGS = "";
-				"OTHER_LDFLAGS[arch=arm64]" = (
-					"-L/opt/homebrew/opt/libomp/lib",
-					"-lomp",
-				);
-				"OTHER_LDFLAGS[arch=x86_64]" = (
-					"-L/usr/local/opt/libomp/lib",
-					"-lomp",
+				OTHER_LDFLAGS = (
+					"-L/opt/homebrew/opt/llvm/lib",
+					"-Wl,-rpath,/opt/homebrew/opt/llvm/lib",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -450,16 +440,16 @@
 		1BA79BE12AC835CF00E864A1 /* Build configuration list for PBXProject "othello" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1BA79BF32AC835D000E864A1 /* Debug */,
+				1BA79BF32AC835D000E864A1 /* I */,
 				1BA79BF42AC835D000E864A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1BA79BF52AC835D000E864A1 /* Build configuration list for PBXNativeTarget "othello" */ = {
+		1BA79BF52AC835D000E864A1 /* Build configuration list for PBXNativeTarget "Reversi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1BA79BF62AC835D000E864A1 /* Debug */,
+				1BA79BF62AC835D000E864A1 /* I */,
 				1BA79BF72AC835D000E864A1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
