@@ -194,9 +194,16 @@ bool is_all_oppenent(uint64_t *playerboard) {
     return (*playerboard == 0);
 }
 
-int countscore(uint64_t playerboard, uint64_t oppenentboard) {
-    if(is_all_oppenent(&playerboard)) return -32766;
-    if(afterIndex >= 60) return bitcount(playerboard)-bitcount(oppenentboard);
-    if(afterIndex >= 44) return 2*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard);
-    return 3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard)+2*score_putable(&playerboard, &oppenentboard);
+int countscore(uint64_t playerboard, uint64_t oppenentboard, char *isbotturn) {
+    if((*isbotturn == 1 && isdepth_odd == false) || (*isbotturn == -1 && isdepth_odd == true)) {
+        if(is_all_oppenent(&playerboard)) return -32766;
+        if(afterIndex >= 60) return bitcount(playerboard)-bitcount(oppenentboard);
+        if(afterIndex >= 44) return 2*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard);
+        return 3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard)+2*score_putable(&playerboard, &oppenentboard);
+    } else {
+        if(is_all_oppenent(&playerboard)) return 32766;
+        if(afterIndex >= 60) return -(bitcount(playerboard)-bitcount(oppenentboard));
+        if(afterIndex >= 44) return -(2*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard));
+        return -(3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard)+2*score_putable(&playerboard, &oppenentboard));
+    }
 }
