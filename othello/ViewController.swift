@@ -193,7 +193,7 @@ class ViewController: NSViewController
 	
 	override func viewDidLoad()
 	{
-		DEPTH = strength
+		//DEPTH = strength
 		botplayer = playerbot
 		let command1 = "arch"
 		if(shell(command1) == "arm64") {
@@ -410,9 +410,6 @@ class ViewController: NSViewController
 					viewController.hakotext.stringValue = "ERROR"
 				}
 			}
-		}
-		@objc class func bitcounter(_ bit: UInt64) -> Int {
-			return bit.nonzeroBitCount
 		}
 	}
 }

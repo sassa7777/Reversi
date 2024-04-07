@@ -62,7 +62,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="othello" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="Reversi" customModuleProvider="target"/>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -93,7 +93,7 @@
         <!--ハコくんオセロ-->
         <scene sceneID="VH7-Na-mJo">
             <objects>
-                <viewController title="ハコくんオセロ" id="gOt-pg-uBu" customClass="FirstViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="ハコくんオセロ" id="gOt-pg-uBu" customClass="FirstViewController" customModule="Reversi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="iNX-Uh-vd0">
                         <rect key="frame" x="0.0" y="0.0" width="750" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -189,7 +189,7 @@
         <scene sceneID="4Np-vB-ebT">
             <objects>
                 <customObject id="iTW-H4-4qe" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController title="結果" id="AIO-dW-Itm" customClass="ResultViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="結果" id="AIO-dW-Itm" customClass="ResultViewController" customModule="Reversi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="popup" id="awY-XK-Ued">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -237,7 +237,7 @@
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-                <viewController title="対局" id="XfG-lQ-9wD" customClass="ViewController" customModule="othello" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="対局" id="XfG-lQ-9wD" customClass="ViewController" customModule="Reversi" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="700" height="600"/>
                         <autoresizingMask key="autoresizingMask"/>

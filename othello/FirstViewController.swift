@@ -27,22 +27,22 @@ class FirstViewController: NSViewController
     @IBAction func select_strength(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case 0:
-            streng = 1
+            DEPTH = 1
             strength_txt.stringValue = "初心者向け"
         case 1:
-            streng = 2
+            DEPTH = 2
             strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
-            streng = 5
+            DEPTH = 4
             strength_txt.stringValue = "ある程度できる人向け"
         case 3:
-            streng = 8
+            DEPTH = 8
             strength_txt.stringValue = "少し自信がある人向け"
         case 4:
-            streng = 10
+            DEPTH = 10
             strength_txt.stringValue = "自信がある人向け"
         default:
-            streng = 10
+            DEPTH = 10
         }
     }
     

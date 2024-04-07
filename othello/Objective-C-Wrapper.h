@@ -12,6 +12,5 @@
 
 void update_hakostring(void);
 void error_hakostring(void);
-int bit_count(uint64_t *bit);
 
 #endif /* Objective_C_Wrapper_h */

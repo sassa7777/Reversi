@@ -28,6 +28,7 @@ int botplayer;
 int cpu_core;
 int nowTurn;
 int nowIndex;
+int afterIndex;
 uint64_t playerboard;
 uint64_t oppenentboard;
 uint64_t legalboard;
@@ -67,8 +68,9 @@ uint64_t transfer(uint64_t *put, char *i);
 bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
-uint64_t bitcount(uint64_t bits);
-int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
+int bitcount(uint64_t bits);
+uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
+int nega_alpha_bit(char depth, int alpha, int beta, uint64_t playerboard, uint64_t oppenentboard);
 
 
 #endif /* othello_h */
