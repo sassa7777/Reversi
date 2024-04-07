@@ -6,7 +6,6 @@
 //
 
 #include "reversi.h"
-#include "Objective-C-Wrapper.h"
 
 int scoreboard[64] = {
     30, -12, 0, -1, -1, 0, -12, 30,
@@ -22,11 +21,10 @@ int scoreboard[64] = {
 int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
     int score = 0;
     uint64_t mask = 0x8000000000000000ULL;
-    for (int i = 0; i<64; ++i) {
+    for (char i = 0; i<64; ++i) {
         if(*playerboard & mask) {
             score += scoreboard[i];
-        }
-        else if(*oppenentboard & mask) {
+        } else if(*oppenentboard & mask) {
             score -= scoreboard[i];
         }
         mask >>= 1;
@@ -197,7 +195,7 @@ bool is_all_oppenent(uint64_t *playerboard) {
 }
 
 int countscore(uint64_t playerboard, uint64_t oppenentboard) {
-    if(is_all_oppenent(&playerboard)) return -9999;
+    if(is_all_oppenent(&playerboard)) return -32766;
     if(afterIndex >= 60) return bitcount(playerboard)-bitcount(oppenentboard);
     if(afterIndex >= 44) return 2*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard);
     return 3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard)+2*score_putable(&playerboard, &oppenentboard);

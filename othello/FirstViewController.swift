@@ -22,6 +22,7 @@ class FirstViewController: NSViewController
         super.viewDidLoad()
         // Do view setup here.
         strength_txt.stringValue = "初心者よりはできる人向け向け"
+        DEPTH = 2
     }
     
     @IBAction func select_strength(_ sender: NSSegmentedControl) {
@@ -30,7 +31,7 @@ class FirstViewController: NSViewController
             DEPTH = 1
             strength_txt.stringValue = "初心者向け"
         case 1:
-            DEPTH = 2
+            DEPTH = 3
             strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
             DEPTH = 4
