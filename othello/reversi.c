@@ -276,7 +276,7 @@ int ai(void) {
 	update_hakostring();
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
 	think_count = 100/bitcount(legalboard);
-	nega_alpha_bit(DEPTH, 1, -32767, 32767, &playerboard, &oppenentboard);
+	nega_alpha_bit(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == 0 || tmpy == 0) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -287,12 +287,12 @@ int ai(void) {
 	return 1;
 }
 
-int nega_alpha_bit(char depth, char isbotturn, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(*playerboard, *oppenentboard, &isbotturn);
+int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(*playerboard, *oppenentboard);
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(legalboard == 0) {
-		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(*playerboard, *oppenentboard, &isbotturn);
-		else return -nega_alpha_bit(depth, -isbotturn, -beta, -alpha, oppenentboard, playerboard);
+		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(*playerboard, *oppenentboard);
+		else return -nega_alpha_bit(depth, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
 	int var, max_score = -32767;
@@ -301,7 +301,7 @@ int nega_alpha_bit(char depth, char isbotturn, int alpha, int beta, uint64_t *pl
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
-			var = -nega_alpha_bit(depth-1, -isbotturn, -beta, -alpha, oppenentboard, playerboard);
+			var = -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
 			if(depth == DEPTH) {

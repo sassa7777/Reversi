@@ -71,7 +71,7 @@ bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t bits);
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
-int nega_alpha_bit(char depth, char isbotturn, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
+int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
 
 
 #endif /* othello_h */

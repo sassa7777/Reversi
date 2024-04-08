@@ -22,6 +22,7 @@ class FirstViewController: NSViewController
         super.viewDidLoad()
         // Do view setup here.
         strength_txt.stringValue = "初心者よりはできる人向け向け"
+        botplayer = WHITE_TURN
         DEPTH = 3
     }
     
@@ -55,25 +56,16 @@ class FirstViewController: NSViewController
     @IBAction func select_player(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case 0:
-            player_bot = BLACK_TURN
+            botplayer = BLACK_TURN
         case 1:
-            player_bot = WHITE_TURN
+            botplayer = WHITE_TURN
         default:
-            player_bot = WHITE_TURN
+            botplayer = WHITE_TURN
         }
     }
     
     @IBAction func tapstart(_ sender: Any)
     {
         performSegue(withIdentifier: "start", sender: self)
-    }
-    
-    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
-        if segue.identifier == "start" {
-            if let nextViewController = segue.destinationController as? ViewController {
-                nextViewController.strength = streng
-                nextViewController.playerbot = player_bot
-            }
-        }
     }
 }

@@ -79,9 +79,6 @@ class ViewController: NSViewController
 	@IBOutlet var restart: NSButton!
 	@IBOutlet var hakotext: NSTextField!
 	
-	var strength: Int32 = 0
-	var playerbot: Int32 = WHITE_TURN
-	
 	@IBAction func put(_ sender: NSButton)
 	{
 		var results: Int32 = 0
@@ -193,8 +190,6 @@ class ViewController: NSViewController
 	
 	override func viewDidLoad()
 	{
-		//DEPTH = strength
-		botplayer = playerbot
 		let command1 = "arch"
 		if(shell(command1) == "arm64") {
 			let command2 = "sysctl -n hw.perflevel0.physicalcpu"
@@ -209,7 +204,7 @@ class ViewController: NSViewController
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
-		if(playerbot == BLACK_TURN) {
+		if(botplayer == BLACK_TURN) {
 			reloadview()
 			DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
 				self.putai()
@@ -291,7 +286,7 @@ class ViewController: NSViewController
 	
 	func result()
 	{
-		if(playerbot == WHITE_TURN) {
+		if(botplayer == WHITE_TURN) {
 			switch winner() {
 			case 1:
 				print("黒の勝ち！")
