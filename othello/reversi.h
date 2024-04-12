@@ -32,6 +32,7 @@ int afterIndex;
 uint64_t playerboard;
 uint64_t oppenentboard;
 uint64_t legalboard;
+uint64_t rev;
 bool isbot = false;
 bool isdepth_odd;
 

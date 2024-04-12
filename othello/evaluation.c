@@ -36,9 +36,9 @@ int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
     int score = 0;
     uint64_t legalboard;
     legalboard = makelegalBoard(oppenentboard, playerboard);
-    score += bitcount(legalboard);
+    score += __builtin_popcountll(legalboard);
     legalboard = makelegalBoard(playerboard, oppenentboard);
-    score -= bitcount(legalboard);
+    score -= __builtin_popcountll(legalboard);
     return score;
 }
 
@@ -196,7 +196,7 @@ bool is_all_oppenent(uint64_t *playerboard) {
 
 int countscore(uint64_t playerboard, uint64_t oppenentboard) {
     if(is_all_oppenent(&playerboard)) return -32766;
-    if(afterIndex >= 60) return (bitcount(playerboard)-bitcount(oppenentboard));
+    if(afterIndex >= 60) return (__builtin_popcountll(playerboard)-__builtin_popcountll(oppenentboard));
     if(afterIndex >= 44) return (2*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard));
     return (3*score_stone(&playerboard, &oppenentboard)+55*score_fixedstone(&playerboard, &oppenentboard)+2*score_putable(&playerboard, &oppenentboard));
 }

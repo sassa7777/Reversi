@@ -74,7 +74,7 @@ uint64_t cordinate_to_bit(char *x, char *y) {
 }
 
 bool canput(uint64_t *put, uint64_t *legalboard) {
-	return (*put & *legalboard) == *put;
+	return ((*put & *legalboard) == *put);
 }
 
 uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard) {
@@ -194,7 +194,7 @@ void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) 
 }
 
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
-	uint64_t rev = 0;
+	rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(put, &i);
