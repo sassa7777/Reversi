@@ -273,7 +273,7 @@ int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint6
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(!(legalboard)) {
 		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
-		else return -nega_alpha_bit(depth, -beta, -alpha, oppenentboard, playerboard);
+		else return ~nega_alpha_bit(depth-1, ~beta+1, ~alpha+1, oppenentboard, playerboard)+1;
 	}
 	uint64_t rev = 0;
 	int var, max_score = -32767;
@@ -282,7 +282,7 @@ int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint6
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
-			var = -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
+			var = ~nega_alpha_bit(depth-1, ~beta+1, ~alpha+1, oppenentboard, playerboard)+1;
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
 			if(depth == DEPTH) {
