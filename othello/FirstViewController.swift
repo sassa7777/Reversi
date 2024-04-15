@@ -20,7 +20,6 @@ class FirstViewController: NSViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        // Do view setup here.
         strength_txt.stringValue = "初心者よりはできる人向け向け"
         botplayer = WHITE_TURN
         DEPTH = 3

@@ -22,25 +22,6 @@ void reset(void) {
 	return;
 }
 
-void print_board(uint64_t oppenentboard, uint64_t playerboard) {
-	printf("  a b c d e f g h\n");
-	uint64_t mask = 0x8000000000000000ULL;
-	for (int i = 0; i < 8; i++) {
-		printf("%d ", i + 1);
-		for (int j = 0; j < 8; j++) {
-			if (playerboard & mask) {
-				printf("O ");
-			} else if (oppenentboard & mask) {
-				printf("X ");
-			} else {
-				printf(". ");
-			}
-			mask >>= 1;
-		}
-		printf("\n");
-	}
-}
-
 int putstone(char y, char x) {
 	tmpy = y;
 	tmpx = x;
@@ -288,10 +269,10 @@ int ai(void) {
 }
 
 int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(*playerboard, *oppenentboard);
+	if(!(depth)) return countscore(playerboard, oppenentboard);
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
-	if(legalboard == 0) {
-		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(*playerboard, *oppenentboard);
+	if(!(legalboard)) {
+		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
 		else return -nega_alpha_bit(depth, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
