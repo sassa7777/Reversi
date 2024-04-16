@@ -183,13 +183,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
     return fixedstone;
 }
 
-
-bool is_all_oppenent(uint64_t *playerboard) {
-    return (*playerboard == 0);
-}
-
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard) {
-    if(is_all_oppenent(playerboard)) return -32766;
+    if(!(*playerboard)) return -32766;
     if(afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
     if(afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)<<6));
     return ((score_stone(playerboard, oppenentboard)<<2)+(score_fixedstone(playerboard, oppenentboard)<<6)+(score_putable(playerboard, oppenentboard)<<1));

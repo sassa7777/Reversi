@@ -13,9 +13,10 @@ void reset(void) {
 	printf("[*]初期化中...\n");
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
-	printf("CPU Core count: %d\n", cpu_core);
+	//printf("CPU Core count: %d\n", cpu_core);
 	nowTurn = BLACK_TURN;
 	nowIndex = 1;
+	DEPTH = firstDEPTH;
 	afterIndex = nowIndex+DEPTH;
 	playerboard = 0x0000000810000000ULL;
 	oppenentboard = 0x0000001008000000ULL;
@@ -222,15 +223,11 @@ uint64_t transfer(uint64_t *put, char *i) {
 }
 
 bool isPass(void) {
-	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
-	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
-	return ((playerlegalboard == 0) && (oppenentlegalboard != 0));
+	return (!(makelegalBoard(&oppenentboard, &playerboard)) && makelegalBoard(&playerboard, &oppenentboard));
 }
 
 bool isFinished(void) {
-	uint64_t playerlegalboard = makelegalBoard(&oppenentboard, &playerboard);
-	uint64_t oppenentlegalboard = makelegalBoard(&playerboard, &oppenentboard);
-	return ((playerlegalboard == 0) && (oppenentlegalboard == 0));
+	return (!(makelegalBoard(&oppenentboard, &playerboard)) && !(makelegalBoard(&playerboard, &oppenentboard)));
 }
 
 void swapboard(void) {
@@ -251,8 +248,8 @@ int ai(void) {
 	isbot = true;
 	printf("[*]Botが考え中..\n");
 	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
-	tmpx = 0;
-	tmpy = 0;
+	tmpx = -1;
+	tmpy = -1;
 	think_percent = 0;
 	update_hakostring();
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
@@ -273,7 +270,7 @@ int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint6
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(!(legalboard)) {
 		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
-		else return ~nega_alpha_bit(depth-1, ~beta+1, ~alpha+1, oppenentboard, playerboard)+1;
+		else return -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
 	int var, max_score = -32767;
@@ -282,7 +279,7 @@ int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint6
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
-			var = ~nega_alpha_bit(depth-1, ~beta+1, ~alpha+1, oppenentboard, playerboard)+1;
+			var = -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
 			if(depth == DEPTH) {

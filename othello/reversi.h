@@ -28,6 +28,7 @@ int botplayer;
 int cpu_core;
 int nowTurn;
 int nowIndex;
+int firstDEPTH;
 int afterIndex;
 uint64_t playerboard;
 uint64_t oppenentboard;

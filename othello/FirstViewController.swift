@@ -22,33 +22,33 @@ class FirstViewController: NSViewController
         super.viewDidLoad()
         strength_txt.stringValue = "初心者よりはできる人向け向け"
         botplayer = WHITE_TURN
-        DEPTH = 3
+        firstDEPTH = 3
     }
     
     @IBAction func select_strength(_ sender: NSSegmentedControl) {
         switch sender.selectedSegment {
         case 0:
-            DEPTH = 1
+            firstDEPTH = 1
             isdepth_odd = true;
             strength_txt.stringValue = "初心者向け"
         case 1:
-            DEPTH = 3
+            firstDEPTH = 3
             isdepth_odd = true;
             strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
-            DEPTH = 4
+            firstDEPTH = 4
             isdepth_odd = false;
             strength_txt.stringValue = "ある程度できる人向け"
         case 3:
-            DEPTH = 8
+            firstDEPTH = 8
             isdepth_odd = false;
             strength_txt.stringValue = "少し自信がある人向け"
         case 4:
-            DEPTH = 10
+            firstDEPTH = 10
             isdepth_odd = false;
             strength_txt.stringValue = "自信がある人向け"
         default:
-            DEPTH = 10
+            firstDEPTH = 10
         }
     }
     
