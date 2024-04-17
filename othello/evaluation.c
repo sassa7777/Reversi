@@ -18,7 +18,7 @@ int scoreboard[64] = {
     30, -12, 0, -1, -1, 0, -12, 30
 };
 
-int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
+short score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
     int score = 0;
     uint64_t mask = 0x8000000000000000ULL;
     for (char i = 0; i<64; ++i) {
@@ -32,11 +32,11 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
     return score;
 }
 
-int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
+short score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
     return __builtin_popcountll(makelegalBoard(oppenentboard, playerboard)) - __builtin_popcountll(makelegalBoard(playerboard, oppenentboard));
 }
 
-int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
+short score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
     int fixedstone = 0;
     
     //上
@@ -183,7 +183,7 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
     return fixedstone;
 }
 
-int countscore(uint64_t *playerboard, uint64_t *oppenentboard) {
+short countscore(uint64_t *playerboard, uint64_t *oppenentboard) {
     if(!(*playerboard)) return -32766;
     if(afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
     if(afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)<<6));

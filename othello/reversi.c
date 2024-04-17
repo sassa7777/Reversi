@@ -234,7 +234,7 @@ void swapboard(void) {
 	uint64_t tmp = playerboard;
 	playerboard = oppenentboard;
 	oppenentboard = tmp;
-	nowTurn*=(-1);
+	nowTurn = -nowTurn;
 }
 
 int bitcount(uint64_t bits) {
@@ -242,21 +242,32 @@ int bitcount(uint64_t bits) {
 }
 
 int ai(void) {
-	if (nowTurn == (botplayer*-1) || isFinished() == true) {
+	if (nowTurn == -botplayer || isFinished() == true) {
 		return 0;
 	}
 	isbot = true;
 	printf("[*]Botが考え中..\n");
 	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
+	for (char i = 0; i<11; ++i) {
+		transposetable_max[i] = -32767;
+		transposetable_low[i] = 32767;
+	}
 	tmpx = -1;
 	tmpy = -1;
 	think_percent = 0;
 	update_hakostring();
 	legalboard = makelegalBoard(&oppenentboard, &playerboard);
 	think_count = 100/bitcount(legalboard);
-	nega_alpha_bit(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	if(tmpx == 0 || tmpy == 0) error_hakostring();
+	int score;
+	//score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	if(DEPTH < 20) {
+		score = nega_scout(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	} else {
+		score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	}
+	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
+	printf("score: %d\n", score);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
@@ -265,21 +276,22 @@ int ai(void) {
 	return 1;
 }
 
-int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(!(depth)) return countscore(playerboard, oppenentboard);
+short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard);
+	
 	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
 	if(!(legalboard)) {
 		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
-		else return -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
+		else return -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
-	int var, max_score = -32767;
+	short var, max_score = -32767;
 	for (char i = 0; i<64; ++i) {
 		if(canput(&moveorder_bit[i], &legalboard)) {
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
-			var = -nega_alpha_bit(depth-1, -beta, -alpha, oppenentboard, playerboard);
+			var = -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
 			if(depth == DEPTH) {
@@ -293,10 +305,87 @@ int nega_alpha_bit(char depth, int alpha, int beta, uint64_t *playerboard, uint6
 					tmpy = moveorder[i][0];
 				}
 			}
-			if (var >= beta) return var;
-			if(alpha > max_score) max_score = alpha;
+			if (var >= beta) {
+				return var;
+			}
 		}
 	}
+	if(alpha > max_score) max_score = alpha;
+	return max_score;
+}
+
+short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard);
+	
+	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
+	if(!(legalboard)) {
+		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
+		else return -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
+	}
+	uint64_t rev = 0;
+	short var, max_score = -32767;
+	char isput = 0;
+	for (char i = 0; i<64; ++i) {
+		if(canput(&moveorder_bit[i], &legalboard)) {
+			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
+			*playerboard ^= (moveorder_bit[i] | rev);
+			*oppenentboard ^= rev;
+			var = -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
+			*playerboard ^= (moveorder_bit[i] | rev);
+			*oppenentboard ^= rev;
+			if(depth == DEPTH) {
+				think_percent += think_count;
+				update_hakostring();
+			}
+			if(var > alpha) {
+				alpha = var;
+				if(depth == DEPTH) {
+					tmpx = moveorder[i][1];
+					tmpy = moveorder[i][0];
+				}
+			}
+			if (var >= beta) {
+				return var;
+			}
+			if(alpha > max_score) max_score = alpha;
+			isput = i;
+			break;
+		}
+	}
+	for (char i = isput+1; i<64; ++i) {
+		if(canput(&moveorder_bit[i], &legalboard)) {
+			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
+			*playerboard ^= (moveorder_bit[i] | rev);
+			*oppenentboard ^= rev;
+			//null window search
+			var = -nega_alpha(depth-1, -(alpha+1), -alpha, oppenentboard, playerboard);
+			*playerboard ^= (moveorder_bit[i] | rev);
+			*oppenentboard ^= rev;
+			if(depth == DEPTH) {
+				think_percent += think_count;
+				update_hakostring();
+			}
+			if (var >= beta) {
+				return var;
+			}
+			if(var > alpha) {
+				alpha = var;
+				//良い手があれば再探索
+				var = -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
+				if(var > alpha) {
+					alpha = var;
+					if(depth == DEPTH) {
+						tmpx = moveorder[i][1];
+						tmpy = moveorder[i][0];
+					}
+				}
+				if (var >= beta) {
+					return var;
+				}
+			}
+		}
+	}
+	if(alpha > max_score) max_score = alpha;
 	return max_score;
 }
 
