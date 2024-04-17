@@ -234,7 +234,7 @@ class ViewController: NSViewController
 				(swiftbutton.cell as? NSButtonCell)?.imageDimsWhenDisabled = false
 			}
 		}
-		let legalboard: UInt64 = makelegalBoard(&oppenentboard, &playerboard)
+		let legalboard: UInt64 = makelegalBoard(&playerboard, &oppenentboard)
 		var mask: UInt64 = 0x8000000000000000
 		for i in 0..<8 {
 			for j in 0..<8 {
@@ -329,7 +329,7 @@ class ViewController: NSViewController
 			[ha, hb, hc, hd, he, hf, hg, hh]
 		]
 		
-		let legalboard: UInt64 = makelegalBoard(&oppenentboard, &playerboard)
+		let legalboard: UInt64 = makelegalBoard(&playerboard, &oppenentboard)
 		var mask: UInt64 = 0x8000000000000000
 		
 		for i in 0..<8

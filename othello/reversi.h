@@ -66,7 +66,7 @@ int putstone(char y, char x);
 int putstone2(uint64_t *put, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard);
 uint64_t cordinate_to_bit(char *x, char *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
-uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard);
+uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *oppenentboard);
 void reversebit(uint64_t put);
 void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
 uint64_t transfer(uint64_t *put, char *i);

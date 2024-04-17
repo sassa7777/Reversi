@@ -33,7 +33,7 @@ short score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 short score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
-    return __builtin_popcountll(makelegalBoard(oppenentboard, playerboard)) - __builtin_popcountll(makelegalBoard(playerboard, oppenentboard));
+    return __builtin_popcountll(makelegalBoard(playerboard, oppenentboard)) - __builtin_popcountll(makelegalBoard(oppenentboard, playerboard));
 }
 
 short score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {

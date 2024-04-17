@@ -27,7 +27,7 @@ int putstone(char y, char x) {
 	tmpy = y;
 	tmpx = x;
 	uint64_t put = cordinate_to_bit(&x, &y);
-	legalboard = makelegalBoard(&oppenentboard, &playerboard);
+	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	if(canput(&put, &legalboard)) {
 		reversebit(put);
 		swapboard();
@@ -59,7 +59,7 @@ bool canput(uint64_t *put, uint64_t *legalboard) {
 	return ((*put & *legalboard) == *put);
 }
 
-uint64_t makelegalBoard(uint64_t *oppenentboard, uint64_t *playerboard) {
+uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *oppenentboard) {
 	uint64_t horizontalboard = (*oppenentboard & 0x7e7e7e7e7e7e7e7e);
 	uint64_t verticalboard = (*oppenentboard & 0x00FFFFFFFFFFFF00);
 	uint64_t allsideboard = (*oppenentboard & 0x007e7e7e7e7e7e00);
@@ -223,11 +223,11 @@ uint64_t transfer(uint64_t *put, char *i) {
 }
 
 bool isPass(void) {
-	return (!(makelegalBoard(&oppenentboard, &playerboard)) && makelegalBoard(&playerboard, &oppenentboard));
+	return (!(makelegalBoard(&playerboard, &oppenentboard)) && makelegalBoard(&oppenentboard, &playerboard));
 }
 
 bool isFinished(void) {
-	return (!(makelegalBoard(&oppenentboard, &playerboard)) && !(makelegalBoard(&playerboard, &oppenentboard)));
+	return (!(makelegalBoard(&playerboard, &oppenentboard)) && !(makelegalBoard(&oppenentboard, &playerboard)));
 }
 
 void swapboard(void) {
@@ -256,7 +256,7 @@ int ai(void) {
 	tmpy = -1;
 	think_percent = 0;
 	update_hakostring();
-	legalboard = makelegalBoard(&oppenentboard, &playerboard);
+	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	think_count = 100/bitcount(legalboard);
 	int score;
 	//score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
@@ -271,7 +271,7 @@ int ai(void) {
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
-	legalboard = makelegalBoard(&oppenentboard, &playerboard);
+	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	isbot = false;
 	return 1;
 }
@@ -279,9 +279,9 @@ int ai(void) {
 short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);
 	
-	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
+	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	if(!(legalboard)) {
-		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
+		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard);
 		else return -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
@@ -317,9 +317,9 @@ short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uin
 short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);
 	
-	uint64_t legalboard = makelegalBoard(oppenentboard, playerboard);
+	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	if(!(legalboard)) {
-		if(!(makelegalBoard(playerboard, oppenentboard))) return countscore(playerboard, oppenentboard);
+		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard);
 		else return -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
