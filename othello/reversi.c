@@ -42,15 +42,6 @@ int putstone(char y, char x) {
 	}
 }
 
-int putstone2(uint64_t *put, uint64_t* playerboard, uint64_t *oppenentboard, uint64_t *legalboard) {
-	if(canput(put, legalboard)) {
-		reversebit2(put, playerboard, oppenentboard);
-		return 1;
-	} else {
-		return 0;
-	}
-}
-
 uint64_t cordinate_to_bit(char *x, char *y) {
 	return 0x8000000000000000ULL >> ((*y*8)+*x);
 }
@@ -159,21 +150,6 @@ void reversebit(uint64_t put) {
 	oppenentboard ^= rev;
 }
 
-void reversebit2(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
-	uint64_t rev = 0;
-	for (char i = 0; i<8; ++i) {
-		uint64_t rev_ = 0;
-		uint64_t mask = transfer(put, &i);
-		while ((mask != 0) && ((mask & *oppenentboard) != 0)) {
-			rev_ |= mask;
-			mask = transfer(&mask, &i);
-		}
-		if((mask & *playerboard) != 0) rev |= rev_;
-	}
-	//反転
-	*playerboard ^= (*put | rev);
-	*oppenentboard ^= rev;
-}
 
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
 	rev = 0;
@@ -259,12 +235,12 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	think_count = 100/bitcount(legalboard);
 	int score;
-	//score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	if(DEPTH < 20) {
-		score = nega_scout(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	} else {
-		score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	}
+	score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+//	if(DEPTH < 20) {
+//		score = nega_scout(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+//	} else {
+//		score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+//	}
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	printf("score: %d\n", score);
@@ -298,15 +274,15 @@ short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uin
 				think_percent += think_count;
 				update_hakostring();
 			}
+			if (var >= beta) {
+				return var;
+			}
 			if(var > alpha) {
 				alpha = var;
 				if(depth == DEPTH) {
 					tmpx = moveorder[i][1];
 					tmpy = moveorder[i][0];
 				}
-			}
-			if (var >= beta) {
-				return var;
 			}
 		}
 	}
@@ -337,15 +313,15 @@ short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uin
 				think_percent += think_count;
 				update_hakostring();
 			}
+			if (var >= beta) {
+				return var;
+			}
 			if(var > alpha) {
 				alpha = var;
 				if(depth == DEPTH) {
 					tmpx = moveorder[i][1];
 					tmpy = moveorder[i][0];
 				}
-			}
-			if (var >= beta) {
-				return var;
 			}
 			if(alpha > max_score) max_score = alpha;
 			isput = i;
