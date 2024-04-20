@@ -29,23 +29,18 @@ class FirstViewController: NSViewController
         switch sender.selectedSegment {
         case 0:
             firstDEPTH = 1
-            isdepth_odd = true;
             strength_txt.stringValue = "初心者向け"
         case 1:
             firstDEPTH = 3
-            isdepth_odd = true;
             strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
             firstDEPTH = 4
-            isdepth_odd = false;
             strength_txt.stringValue = "ある程度できる人向け"
         case 3:
             firstDEPTH = 8
-            isdepth_odd = false;
             strength_txt.stringValue = "少し自信がある人向け"
         case 4:
             firstDEPTH = 10
-            isdepth_odd = false;
             strength_txt.stringValue = "自信がある人向け"
         default:
             firstDEPTH = 10

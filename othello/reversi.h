@@ -22,6 +22,7 @@ int px, py;
 int whitec = 0;
 int blackc = 0;
 int tmpx, tmpy;
+uint64_t tmpbit;
 int think_percent;
 int think_count;
 int botplayer;
@@ -34,9 +35,6 @@ uint64_t playerboard;
 uint64_t oppenentboard;
 uint64_t legalboard;
 uint64_t rev;
-int transposetable_max[11];
-int transposetable_low[11];
-bool isdepth_odd;
 
 char moveorder[64][2] = {
     {0,0}, {0,7}, {7,0}, {7,7}, {0,2}, {0,5}, {2,0}, {2,2}, {2,5}, {2,7}, {5,0}, {5,2}, {5,5}, {5,7}, {7,2}, {7,5}, {0,3}, {0,4}, {2,3}, {2,4}, {3,0}, {3,2}, {3,3}, {3,4}, {3,5}, {3,7}, {4,0}, {4,2}, {4,3}, {4,4}, {4,5}, {4,7}, {5,3}, {5,4}, {7,3}, {7,4}, {1,2}, {1,3}, {1,4}, {1,5}, {2,1}, {2,6}, {3,1}, {3,6}, {4,1}, {4,6}, {5,1}, {5,6}, {6,2}, {6,3}, {6,4}, {6,5}, {0,1}, {0,6}, {1,0}, {1,7}, {6,0}, {6,7}, {7,1}, {7,6}, {1,1}, {1,6}, {6,1}, {6,6}
@@ -72,7 +70,9 @@ bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t bits);
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
+void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard);
 short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
-short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
+short nega_alpha_move_order(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
+short nega_alpha_root(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
 
 #endif /* othello_h */

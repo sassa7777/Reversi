@@ -213,32 +213,102 @@ int bitcount(uint64_t bits) {
 	return __builtin_popcountll(bits);
 }
 
+void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard) {
+	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
+	int putable_count = (int)__builtin_popcountll(legalboard);
+	char j=0;
+	uint64_t mask = 0x8000000000000000ULL;
+	for (char i=0; i<64; ++i) {
+		if(canput(&mask, &legalboard)) {
+			moveorder[j] = mask;
+			++j;
+		} else {
+			moveorder[i] = 0;
+		}
+		mask >>= 1;
+	}
+	for (char i=0; i<putable_count; ++i) {
+		moveorder_score[i] = nega_alpha_move_order(DEPTH, -32767, 32767, playerboard, oppenentboard, &moveorder[i]);
+	}
+	short temp = 0;
+	uint64_t temp2 = 0;
+	for (char i = 0; i < putable_count-1; i++) {
+		for (char j = 0; j < putable_count-1; j++) {
+			if (moveorder_score[j+1] < moveorder_score[j]) {
+				temp = moveorder_score[j];
+				moveorder_score[j] = moveorder_score[j+1];
+				moveorder_score[j+1] = temp;
+				temp2 = moveorder[j];
+				moveorder[j] = moveorder[j+1];
+				moveorder[j+1] = temp2;
+			}
+		}
+	}
+}
+
 int ai(void) {
 	if (nowTurn == -botplayer) {
 		return 0;
 	}
 	printf("[*]Botが考え中..\n");
 	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
-	for (char i = 0; i<11; ++i) {
-		transposetable_max[i] = -32767;
-		transposetable_low[i] = 32767;
-	}
 	tmpx = -1;
 	tmpy = -1;
+	tmpbit = 0;
 	think_percent = 0;
 	update_hakostring();
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
-	think_count = 100/bitcount(legalboard);
-	int score = (int)nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	int putable_count = (int)__builtin_popcountll(legalboard);
+	think_count = 100/putable_count;
+	if(DEPTH != 20) {
+		nega_alpha_root(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+		int shiftcount = 0;
+		while (tmpbit != 0x8000000000000000ULL) {
+			tmpbit <<= 1;
+			++shiftcount;
+		}
+		tmpy = shiftcount/8;
+		tmpx = shiftcount%8;
+	} else {
+		nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	}
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
-	printf("score: %d\n", score);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
-	//legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	return 1;
 }
+
+short nega_alpha_root(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard);
+	int putable_count = (int)__builtin_popcountll(legalboard);
+	uint64_t moveorder2_bit[64];
+	short moveorder2_score[64];
+	moveordering(moveorder2_bit, moveorder2_score, playerboard, oppenentboard);
+	uint64_t rev = 0;
+	short var = 0;
+	for (char i = 0; i<putable_count; ++i) {
+		rev = revbit(&moveorder2_bit[i], playerboard, oppenentboard);
+		*playerboard ^= (moveorder2_bit[i] | rev);
+		*oppenentboard ^= rev;
+		var = -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
+		*playerboard ^= (moveorder2_bit[i] | rev);
+		*oppenentboard ^= rev;
+		if(depth == DEPTH) {
+			think_percent += think_count;
+			update_hakostring();
+		}
+		if(var > alpha) {
+			alpha = var;
+			if(depth == DEPTH) {
+				tmpbit = moveorder2_bit[i];
+			}
+		}
+	}
+	return alpha;
+}
+
 
 short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);
@@ -278,79 +348,17 @@ short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uin
 	return max_score;
 }
 
-short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+short nega_alpha_move_order(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);
-	
-	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
-	if(!(legalboard)) {
-		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard);
-		else return -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
-	}
 	uint64_t rev = 0;
-	short var, max_score = -32767;
-	char isput = 0;
-	for (char i = 0; i<64; ++i) {
-		if(canput(&moveorder_bit[i], &legalboard)) {
-			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*oppenentboard ^= rev;
-			var = -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*oppenentboard ^= rev;
-			if(depth == DEPTH) {
-				think_percent += think_count;
-				update_hakostring();
-			}
-			if (var >= beta) {
-				return var;
-			}
-			if(var > alpha) {
-				alpha = var;
-				if(depth == DEPTH) {
-					tmpx = moveorder[i][1];
-					tmpy = moveorder[i][0];
-				}
-			}
-			if(alpha > max_score) max_score = alpha;
-			isput = i;
-			break;
-		}
-	}
-	for (char i = isput+1; i<64; ++i) {
-		if(canput(&moveorder_bit[i], &legalboard)) {
-			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*oppenentboard ^= rev;
-			//null window search
-			var = -nega_alpha(depth-1, -(alpha+1), -alpha, oppenentboard, playerboard);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*oppenentboard ^= rev;
-			if(depth == DEPTH) {
-				think_percent += think_count;
-				update_hakostring();
-			}
-			if (var >= beta) {
-				return var;
-			}
-			if(var > alpha) {
-				alpha = var;
-				//良い手があれば再探索
-				var = -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
-				if (var >= beta) {
-					return var;
-				}
-				if(var > alpha) {
-					alpha = var;
-					if(depth == DEPTH) {
-						tmpx = moveorder[i][1];
-						tmpy = moveorder[i][0];
-					}
-				}
-			}
-		}
-	}
-	if(alpha > max_score) max_score = alpha;
-	return max_score;
+	short var;
+	rev = revbit(put, playerboard, oppenentboard);
+	*playerboard ^= (*put | rev);
+	*oppenentboard ^= rev;
+	var = countscore(playerboard, oppenentboard);
+	*playerboard ^= (*put | rev);
+	*oppenentboard ^= rev;
+	return var;
 }
 
 int winner(void) {
