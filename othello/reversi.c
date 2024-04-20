@@ -30,12 +30,8 @@ int putstone(char y, char x) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	if(canput(&put, &legalboard)) {
 		reversebit(put);
-		swapboard();
 		nowIndex++;
 		afterIndex++;
-		if(isPass()) {
-			swapboard();
-		}
 		return 1;
 	} else {
 		return 0;
@@ -199,11 +195,11 @@ uint64_t transfer(uint64_t *put, char *i) {
 }
 
 bool isPass(void) {
-	return (!(makelegalBoard(&playerboard, &oppenentboard)) && makelegalBoard(&oppenentboard, &playerboard));
+	return (makelegalBoard(&playerboard, &oppenentboard) == 0 && makelegalBoard(&oppenentboard, &playerboard) != 0);
 }
 
 bool isFinished(void) {
-	return (!(makelegalBoard(&playerboard, &oppenentboard)) && !(makelegalBoard(&oppenentboard, &playerboard)));
+	return (makelegalBoard(&playerboard, &oppenentboard) == 0 && makelegalBoard(&oppenentboard, &playerboard) == 0);
 }
 
 void swapboard(void) {
@@ -218,10 +214,9 @@ int bitcount(uint64_t bits) {
 }
 
 int ai(void) {
-	if (nowTurn == -botplayer || isFinished() == true) {
+	if (nowTurn == -botplayer) {
 		return 0;
 	}
-	isbot = true;
 	printf("[*]Botが考え中..\n");
 	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
 	for (char i = 0; i<11; ++i) {
@@ -234,21 +229,14 @@ int ai(void) {
 	update_hakostring();
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	think_count = 100/bitcount(legalboard);
-	int score;
-	score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-//	if(DEPTH < 20) {
-//		score = nega_scout(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-//	} else {
-//		score = nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-//	}
+	int score = (int)nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	printf("score: %d\n", score);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
-	legalboard = makelegalBoard(&playerboard, &oppenentboard);
-	isbot = false;
+	//legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	return 1;
 }
 
@@ -348,15 +336,15 @@ short nega_scout(char depth, short alpha, short beta, uint64_t *playerboard, uin
 				alpha = var;
 				//良い手があれば再探索
 				var = -nega_scout(depth-1, -beta, -alpha, oppenentboard, playerboard);
+				if (var >= beta) {
+					return var;
+				}
 				if(var > alpha) {
 					alpha = var;
 					if(depth == DEPTH) {
 						tmpx = moveorder[i][1];
 						tmpy = moveorder[i][0];
 					}
-				}
-				if (var >= beta) {
-					return var;
 				}
 			}
 		}

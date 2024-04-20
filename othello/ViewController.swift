@@ -7,6 +7,7 @@
 
 import Cocoa
 import Foundation
+import AVFoundation
 
 
 class ViewController: NSViewController
@@ -78,6 +79,7 @@ class ViewController: NSViewController
 	@IBOutlet var close: NSButton!
 	@IBOutlet var restart: NSButton!
 	@IBOutlet var hakotext: NSTextField!
+	var music_player:AVAudioPlayer!
 	
 	@IBAction func put(_ sender: NSButton)
 	{
@@ -158,8 +160,13 @@ class ViewController: NSViewController
 
 		default: break
 		}
-		if(results != 0)
+		if(results == 1)
 		{
+			putsound();
+			swapboard();
+			if(isPass() == true) {
+				swapboard();
+			}
 			reloadview()
 			putai()
 		}
@@ -172,6 +179,16 @@ class ViewController: NSViewController
 		self.viewDidLoad()
 	}
 	
+	func putsound(){
+		var asset: NSDataAsset!
+		if(nowTurn == BLACK_TURN) {
+			asset = NSDataAsset(name:"stone2")
+		} else {
+			asset = NSDataAsset(name:"stone1")
+		}
+		music_player = try! AVAudioPlayer(data:asset!.data, fileTypeHint:"mp3")
+		music_player.play()
+	}
 	
 	func shell(_ command: String) -> String {
 		let task = Process()
@@ -254,30 +271,32 @@ class ViewController: NSViewController
 	{
 		if(isFinished() == false)
 		{
-			DispatchQueue.main.async()
+			self.switchbutton(switch: false)
+			self.hakotext.stringValue = "考え中...\n(時間がかかることがあります)"
+			DispatchQueue.global().asyncAfter(deadline: .now())
 			{
-				self.switchbutton(switch: false)
-				self.hakotext.stringValue = "考え中...\n(時間がかかることがあります)"
-			}
-		}
-		DispatchQueue.global().asyncAfter(deadline: .now())
-		{
-			if(ai() == 1)
-			{
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
+				if(ai() == 1)
 				{
-					self.reloadview()
-					self.putai()
-				}
-			}
-			else
-			{
-				if isFinished() == false
-				{
-					DispatchQueue.main.async()
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
 					{
-						self.switchbutton(switch: true)
-						self.hakotext.stringValue = "君(プレイヤー)の番だよ！\n置く場所を選んでね！"
+						self.putsound();
+						swapboard();
+						if(isPass() == true) {
+							swapboard();
+						}
+						self.reloadview()
+						self.putai()
+					}
+				}
+				else
+				{
+					if isFinished() == false
+					{
+						DispatchQueue.main.async()
+						{
+							self.switchbutton(switch: true)
+							self.hakotext.stringValue = "君(プレイヤー)の番だよ！\n置く場所を選んでね！"
+						}
 					}
 				}
 			}
@@ -403,6 +422,13 @@ class ViewController: NSViewController
 			DispatchQueue.main.async {
 				if let viewController = NSApplication.shared.keyWindow?.contentViewController as? ViewController {
 					viewController.hakotext.stringValue = "ERROR"
+				}
+			}
+		}
+		@objc class func play_put_sound() {
+			DispatchQueue.main.async {
+				if let viewController = NSApplication.shared.keyWindow?.contentViewController as? ViewController {
+					viewController.putsound()
 				}
 			}
 		}

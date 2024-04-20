@@ -36,7 +36,6 @@ uint64_t legalboard;
 uint64_t rev;
 int transposetable_max[11];
 int transposetable_low[11];
-bool isbot = false;
 bool isdepth_odd;
 
 char moveorder[64][2] = {
