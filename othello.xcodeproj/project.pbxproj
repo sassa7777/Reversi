@@ -256,9 +256,16 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-Xpreprocessor",
+					"-fopenmp",
+					"-I/opt/homebrew/opt/libomp/include",
+				);
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SYSTEM_HEADER_SEARCH_PATHS = /opt/homebrew/opt/libomp/include;
 			};
 			name = I;
 		};
@@ -318,8 +325,15 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
+				OTHER_CFLAGS = (
+					"-Xpreprocessor",
+					"-fopenmp",
+					"-I/opt/homebrew/opt/libomp/include",
+				);
+				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SYSTEM_HEADER_SEARCH_PATHS = /opt/homebrew/opt/libomp/include;
 			};
 			name = Release;
 		};
@@ -329,6 +343,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_ENTITLEMENTS = othello/othello.entitlements;
@@ -340,6 +355,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu23;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
@@ -350,6 +366,7 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD = /opt/homebrew/opt/llvm/bin/clang;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -359,17 +376,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
-				"OTHER_CFLAGS[arch=arm64]" = (
+				OTHER_CFLAGS = (
 					"-flto",
-					"-march=native",
-					"-mtune=native",
-				);
-				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
-				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
-					"-Wl,-rpath,/opt/homebrew/opt/llvm/lib",
 				);
+				OTHER_LDFLAGS = "-L/opt/homebrew/opt/llvm/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -387,6 +398,7 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_ENTITLEMENTS = othello/othello.entitlements;
@@ -398,6 +410,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu23;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
@@ -408,6 +421,7 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD = /opt/homebrew/opt/llvm/bin/clang;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -417,17 +431,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-flto";
-				"OTHER_CFLAGS[arch=arm64]" = (
+				OTHER_CFLAGS = (
 					"-flto",
-					"-march=native",
-					"-mtune=native",
-				);
-				"OTHER_CFLAGS[arch=x86_64]" = "-flto";
-				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
-					"-Wl,-rpath,/opt/homebrew/opt/llvm/lib",
 				);
+				OTHER_LDFLAGS = "-L/opt/homebrew/opt/llvm/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;

@@ -39,7 +39,7 @@ int putstone(char y, char x) {
 }
 
 uint64_t cordinate_to_bit(char *x, char *y) {
-	return 0x8000000000000000ULL >> ((*y*8)+*x);
+	return 0x8000000000000000ULL >> ((*y<<3)+*x);
 }
 
 bool canput(uint64_t *put, uint64_t *legalboard) {
@@ -260,18 +260,7 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	think_count = 100/putable_count;
-	if(DEPTH != 20) {
-		nega_alpha_root(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-		int shiftcount = 0;
-		while (tmpbit != 0x8000000000000000ULL) {
-			tmpbit <<= 1;
-			++shiftcount;
-		}
-		tmpy = shiftcount/8;
-		tmpx = shiftcount%8;
-	} else {
-		nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	}
+	nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -279,36 +268,6 @@ int ai(void) {
 	putstone(tmpy, tmpx);
 	return 1;
 }
-
-short nega_alpha_root(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(playerboard, oppenentboard);
-	int putable_count = (int)__builtin_popcountll(legalboard);
-	uint64_t moveorder2_bit[64];
-	short moveorder2_score[64];
-	moveordering(moveorder2_bit, moveorder2_score, playerboard, oppenentboard);
-	uint64_t rev = 0;
-	short var = 0;
-	for (char i = 0; i<putable_count; ++i) {
-		rev = revbit(&moveorder2_bit[i], playerboard, oppenentboard);
-		*playerboard ^= (moveorder2_bit[i] | rev);
-		*oppenentboard ^= rev;
-		var = -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
-		*playerboard ^= (moveorder2_bit[i] | rev);
-		*oppenentboard ^= rev;
-		if(depth == DEPTH) {
-			think_percent += think_count;
-			update_hakostring();
-		}
-		if(var > alpha) {
-			alpha = var;
-			if(depth == DEPTH) {
-				tmpbit = moveorder2_bit[i];
-			}
-		}
-	}
-	return alpha;
-}
-
 
 short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
 	if(depth == 0) return countscore(playerboard, oppenentboard);

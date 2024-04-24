@@ -73,6 +73,5 @@ uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
 void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard);
 short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
 short nega_alpha_move_order(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
-short nega_alpha_root(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
 
 #endif /* othello_h */

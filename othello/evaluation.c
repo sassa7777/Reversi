@@ -29,6 +29,19 @@ short score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
         }
         mask >>= 1;
     }
+    
+    if(*playerboard & 0x0000808080800000) score += 2;
+    else if(*oppenentboard & 0x0000808080800000) score -= 2;
+    
+    if(*playerboard & 0x0000010101010000) score += 2;
+    else if(*oppenentboard & 0x0000010101010000) score -= 2;
+    
+    if(*playerboard & 0x3c00000000000000) score += 2;
+    else if(*oppenentboard & 0x3c00000000000000) score -= 2;
+    
+    if(*playerboard & 0x000000000000003c) score += 2;
+    else if(*oppenentboard & 0x000000000000003c) score -= 2;
+    
     return score;
 }
 
