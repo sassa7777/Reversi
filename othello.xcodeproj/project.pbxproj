@@ -372,7 +372,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-flto";
+				OTHER_CFLAGS = (
+					"-flto",
+					"-mllvm",
+					"-polly",
+				);
 				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
 					"-fuse-ld=lld",
@@ -427,7 +431,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "-flto";
+				OTHER_CFLAGS = (
+					"-flto",
+					"-mllvm",
+					"-polly",
+				);
 				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
 					"-fuse-ld=lld",

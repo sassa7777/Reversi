@@ -359,10 +359,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*oppenentboard & LEFT_BOARD) == 0x0000008080000000ULL) score -= 4;
 			break;
 		case 0x0000800080800000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x0000808000800000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x0080808080808000ULL:
 			score += 25;
@@ -378,10 +378,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*playerboard & LEFT_BOARD) == 0x0000008080000000ULL) score += 4;
 			break;
 		case 0x0000800080800000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x0000808000800000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x0080808080808000ULL:
 			score -= 25;
@@ -398,10 +398,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*oppenentboard & RIGHT_BOARD) == 0x0000000101000000ULL) score -= 4;
 			break;
 		case 0x0000010001010000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x0000010100010000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x0001010101010100ULL:
 			score += 25;
@@ -417,10 +417,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*playerboard & RIGHT_BOARD) == 0x0000000101000000ULL) score += 4;
 			break;
 		case 0x0000010001010000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x0000010100010000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x0001010101010100ULL:
 			score -= 25;
@@ -437,10 +437,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*oppenentboard & UP_BOARD) == 0x1800000000000000ULL) score -= 4;
 			break;
 		case 0x2c00000000000000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x1c00000000000000ULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x7e00000000000000ULL:
 			score += 25;
@@ -456,10 +456,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*playerboard & UP_BOARD) == 0x1800000000000000ULL) score += 4;
 			break;
 		case 0x2c00000000000000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x1c00000000000000ULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x7e00000000000000ULL:
 			score -= 25;
@@ -476,10 +476,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*oppenentboard & DOWN_BOARD) == 0x0000000000000018ULL) score += 4;
 			break;
 		case 0x000000000000002cULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x000000000000001cULL:
-			score -= 1;
+			score -= 2;
 			break;
 		case 0x000000000000007eULL:
 			score += 25;
@@ -495,10 +495,10 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 			if((*playerboard & DOWN_BOARD) == 0x0000000000000018ULL) score -= 4;
 			break;
 		case 0x000000000000002cULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x000000000000001cULL:
-			score += 1;
+			score += 2;
 			break;
 		case 0x000000000000007eULL:
 			score -= 25;
@@ -665,5 +665,6 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) 
 	if(!(*playerboard)) return -32766;
 	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
 	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)*55));
-	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
+	if(*afterIndex >= 18) return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
+	return ((score_stone(playerboard, oppenentboard)*2)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<2));
 }
