@@ -269,7 +269,7 @@ int ai(void) {
 }
 
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(playerboard, oppenentboard, &afterIndex);
+	if(!(depth)) return countscore(playerboard, oppenentboard, &afterIndex);
 	
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	if(!(legalboard)) {
@@ -351,17 +351,161 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	
 	//左
-	if((*playerboard & LEFT_BOARD) == 0x0000808080800000ULL) score += 2;
-	else if((*oppenentboard & LEFT_BOARD) == 0x0000808080800000ULL) score -= 2;
+	switch (*playerboard & LEFT_BOARD) {
+		case 0x0000808080800000ULL:
+			score += 2;
+			break;
+		case 0x0000800000800000ULL:
+			if((*oppenentboard & LEFT_BOARD) == 0x0000008080000000ULL) score -= 4;
+			break;
+		case 0x0000800080800000ULL:
+			score -= 1;
+			break;
+		case 0x0000808000800000ULL:
+			score -= 1;
+			break;
+		case 0x0080808080808000ULL:
+			score += 25;
+			break;
+		default:
+			break;
+	}
+	switch (*oppenentboard & LEFT_BOARD) {
+		case 0x0000808080800000ULL:
+			score -= 2;
+			break;
+		case 0x0000800000800000ULL:
+			if((*playerboard & LEFT_BOARD) == 0x0000008080000000ULL) score += 4;
+			break;
+		case 0x0000800080800000ULL:
+			score += 1;
+			break;
+		case 0x0000808000800000ULL:
+			score += 1;
+			break;
+		case 0x0080808080808000ULL:
+			score -= 25;
+			break;
+		default:
+			break;
+	}
 	//右
-	if((*playerboard & RIGHT_BOARD) == 0x0000010101010000ULL) score += 2;
-	else if((*oppenentboard & RIGHT_BOARD) == 0x0000010101010000ULL) score -= 2;
+	switch (*playerboard & RIGHT_BOARD) {
+		case 0x0000010101010000ULL:
+			score += 2;
+			break;
+		case 0x0000010000010000ULL:
+			if((*oppenentboard & RIGHT_BOARD) == 0x0000000101000000ULL) score -= 4;
+			break;
+		case 0x0000010001010000ULL:
+			score -= 1;
+			break;
+		case 0x0000010100010000ULL:
+			score -= 1;
+			break;
+		case 0x0001010101010100ULL:
+			score += 25;
+			break;
+		default:
+			break;
+	}
+	switch (*oppenentboard & RIGHT_BOARD) {
+		case 0x0000010101010000ULL:
+			score -= 2;
+			break;
+		case 0x0000010000010000ULL:
+			if((*playerboard & RIGHT_BOARD) == 0x0000000101000000ULL) score += 4;
+			break;
+		case 0x0000010001010000ULL:
+			score += 1;
+			break;
+		case 0x0000010100010000ULL:
+			score += 1;
+			break;
+		case 0x0001010101010100ULL:
+			score -= 25;
+			break;
+		default:
+			break;
+	}
 	//上
-	if((*playerboard & UP_BOARD) == 0x3c00000000000000ULL) score += 2;
-	else if((*oppenentboard & UP_BOARD) == 0x3c00000000000000ULL) score -= 2;
+	switch (*playerboard & UP_BOARD) {
+		case 0x3c00000000000000ULL:
+			score += 2;
+			break;
+		case 0x2400000000000000ULL:
+			if((*oppenentboard & UP_BOARD) == 0x1800000000000000ULL) score -= 4;
+			break;
+		case 0x2c00000000000000ULL:
+			score -= 1;
+			break;
+		case 0x1c00000000000000ULL:
+			score -= 1;
+			break;
+		case 0x7e00000000000000ULL:
+			score += 25;
+			break;
+		default:
+			break;
+	}
+	switch (*oppenentboard & UP_BOARD) {
+		case 0x3c00000000000000ULL:
+			score -= 2;
+			break;
+		case 0x2400000000000000ULL:
+			if((*playerboard & UP_BOARD) == 0x1800000000000000ULL) score += 4;
+			break;
+		case 0x2c00000000000000ULL:
+			score += 1;
+			break;
+		case 0x1c00000000000000ULL:
+			score += 1;
+			break;
+		case 0x7e00000000000000ULL:
+			score -= 25;
+			break;
+		default:
+			break;
+	}
 	//下
-	if((*playerboard & DOWN_BOARD) == 0x000000000000003cULL)score += 2;
-	else if((*oppenentboard & DOWN_BOARD) == 0x000000000000003cULL) score -= 2;
+	switch (*playerboard & DOWN_BOARD) {
+		case 0x000000000000003cULL:
+			score += 2;
+			break;
+		case 0x0000000000000024ULL:
+			if((*oppenentboard & DOWN_BOARD) == 0x0000000000000018ULL) score += 4;
+			break;
+		case 0x000000000000002cULL:
+			score -= 1;
+			break;
+		case 0x000000000000001cULL:
+			score -= 1;
+			break;
+		case 0x000000000000007eULL:
+			score += 25;
+			break;
+		default:
+			break;
+	}
+	switch (*oppenentboard & DOWN_BOARD) {
+		case 0x000000000000003cULL:
+			score -= 2;
+			break;
+		case 0x0000000000000024ULL:
+			if((*playerboard & DOWN_BOARD) == 0x0000000000000018ULL) score -= 4;
+			break;
+		case 0x000000000000002cULL:
+			score += 1;
+			break;
+		case 0x000000000000001cULL:
+			score += 1;
+			break;
+		case 0x000000000000007eULL:
+			score -= 25;
+			break;
+		default:
+			break;
+	}
 	
 	return score;
 }
