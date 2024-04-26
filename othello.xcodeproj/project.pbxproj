@@ -17,7 +17,6 @@
 		1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BEB2AC835CF00E864A1 /* ViewController.swift */; };
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
 		1BA79BF12AC835D000E864A1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BEF2AC835D000E864A1 /* Main.storyboard */; };
-		1BC0B1672B4AC229004B9DBF /* evaluation.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BC0B1622B4A8B57004B9DBF /* evaluation.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,7 +46,6 @@
 		1BA79BF22AC835D000E864A1 /* othello.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = othello.entitlements; sourceTree = "<group>"; };
 		1BA79BFC2AC848F600E864A1 /* reversi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = reversi.h; path = othello/reversi.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* reversi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reversi.c; path = othello/reversi.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		1BC0B1622B4A8B57004B9DBF /* evaluation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = evaluation.c; path = othello/evaluation.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +66,6 @@
 				1BA79BE72AC835CF00E864A1 /* Products */,
 				1BA79BFD2AC848F600E864A1 /* reversi.c */,
 				1BA79BFC2AC848F600E864A1 /* reversi.h */,
-				1BC0B1622B4A8B57004B9DBF /* evaluation.c */,
 				1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */,
 				1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */,
 				1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */,
@@ -172,7 +169,6 @@
 				1B8310342BAB276400B22C62 /* Objective-C-Wrapper.h in Sources */,
 				1B8654E72B5CFD99007402B0 /* reversi.c in Sources */,
 				1B8654E62B5CF121007402B0 /* reversi.h in Sources */,
-				1BC0B1672B4AC229004B9DBF /* evaluation.c in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
 				1B6D3C3B2BAB2231001C1CD7 /* Objective-C-Wrapper.m in Sources */,
 				1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */,
@@ -355,7 +351,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu23;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
@@ -376,11 +372,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-flto",
+				OTHER_CFLAGS = "-flto";
+				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
+					"-fuse-ld=lld",
 				);
-				OTHER_LDFLAGS = "-L/opt/homebrew/opt/llvm/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -410,7 +406,7 @@
 				DEVELOPMENT_TEAM = A9H2JMQLV7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_MODULE_VERIFIER = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu23;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
@@ -431,11 +427,11 @@
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = (
-					"-flto",
+				OTHER_CFLAGS = "-flto";
+				OTHER_LDFLAGS = (
 					"-L/opt/homebrew/opt/llvm/lib",
+					"-fuse-ld=lld",
 				);
-				OTHER_LDFLAGS = "-L/opt/homebrew/opt/llvm/lib";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;

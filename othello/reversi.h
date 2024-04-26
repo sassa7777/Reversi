@@ -10,6 +10,10 @@
 
 #define BLACK_TURN 100
 #define WHITE_TURN -100
+#define UP_BOARD 0xFF00000000000000ULL
+#define DOWN_BOARD 0x00000000000000FFULL
+#define LEFT_BOARD 0x8080808080808080ULL
+#define RIGHT_BOARD 0x0101010101010101ULL
 
 #include <stdbool.h>
 #include <stdio.h>
@@ -55,7 +59,19 @@ char moveorder2[8][16] = {
     {8,6,8,6,5,8,5,6,5,7,7,5,6,7,8,7}
 };
 
+int scoreboard[64] = {
+    30, -12, 0, -1, -1, 0, -12, 30,
+    -12, -15, -3, -3, -3, -3, -15, -12,
+    0, -3, 0, -1, -1, 0, -3, 0,
+    -1, -3, -1, -1, -1, -1, -3, -1,
+    -1, -3, -1, -1, -1, -1, -3, -1,
+    0, -3, 0, -1, -1, 0, -3, 0,
+    -12, -15, -3, -3, -3, -3, -15, -12,
+    30, -12, 0, -1, -1, 0, -12, 30
+};
 
+
+//main functions
 void reset(void);
 int winner(void);
 int ai(void);
@@ -70,8 +86,15 @@ bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t bits);
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard);
-void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard);
-short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard);
-short nega_alpha_move_order(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
+void moveordering(uint64_t moveorder[64], int moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard);
+int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
+int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
+
+
+//evaluation
+int score_stone(uint64_t *playerboard, uint64_t *oppenentboard);
+int score_putable(uint64_t *playerboard, uint64_t *oppenentboard);
+int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard);
+int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex);
 
 #endif /* othello_h */

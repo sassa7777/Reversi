@@ -6,7 +6,6 @@
 //
 
 #include "reversi.h"
-#include "evaluation.c"
 #include "Objective-C-Wrapper.h"
 
 void reset(void) {
@@ -213,7 +212,7 @@ int bitcount(uint64_t bits) {
 	return __builtin_popcountll(bits);
 }
 
-void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard) {
+void moveordering(uint64_t moveorder[64], int moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard) {
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	char j=0;
@@ -230,7 +229,7 @@ void moveordering(uint64_t moveorder[64], short moveorder_score[64], uint64_t *p
 	for (char i=0; i<putable_count; ++i) {
 		moveorder_score[i] = nega_alpha_move_order(DEPTH, -32767, 32767, playerboard, oppenentboard, &moveorder[i]);
 	}
-	short temp = 0;
+	int temp = 0;
 	uint64_t temp2 = 0;
 	for (char i = 0; i < putable_count-1; i++) {
 		for (char j = 0; j < putable_count-1; j++) {
@@ -269,16 +268,16 @@ int ai(void) {
 	return 1;
 }
 
-short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(depth == 0) return countscore(playerboard, oppenentboard);
+int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	if(depth == 0) return countscore(playerboard, oppenentboard, &afterIndex);
 	
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	if(!(legalboard)) {
-		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard);
+		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard, &afterIndex);
 		else return -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
-	short var, max_score = -32767;
+	int var, max_score = -32767;
 	for (char i = 0; i<64; ++i) {
 		if(canput(&moveorder_bit[i], &legalboard)) {
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
@@ -307,14 +306,14 @@ short nega_alpha(char depth, short alpha, short beta, uint64_t *playerboard, uin
 	return max_score;
 }
 
-short nega_alpha_move_order(char depth, short alpha, short beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put) {
-	if(depth == 0) return countscore(playerboard, oppenentboard);
+int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put) {
+	if(depth == 0) return countscore(playerboard, oppenentboard, &afterIndex);
 	uint64_t rev = 0;
-	short var;
+	int var;
 	rev = revbit(put, playerboard, oppenentboard);
 	*playerboard ^= (*put | rev);
 	*oppenentboard ^= rev;
-	var = countscore(playerboard, oppenentboard);
+	var = countscore(playerboard, oppenentboard, &afterIndex);
 	*playerboard ^= (*put | rev);
 	*oppenentboard ^= rev;
 	return var;
@@ -335,4 +334,192 @@ int winner(void) {
 	} else {
 		return 0;
 	}
+}
+
+//evaluation
+
+int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
+	int score = 0;
+	uint64_t mask = 0x8000000000000000ULL;
+	for (char i = 0; i<64; ++i) {
+		if(*playerboard & mask) {
+			score += scoreboard[i];
+		} else if(*oppenentboard & mask) {
+			score -= scoreboard[i];
+		}
+		mask >>= 1;
+	}
+	
+	//左
+	if((*playerboard & LEFT_BOARD) == 0x0000808080800000ULL) score += 2;
+	else if((*oppenentboard & LEFT_BOARD) == 0x0000808080800000ULL) score -= 2;
+	//右
+	if((*playerboard & RIGHT_BOARD) == 0x0000010101010000ULL) score += 2;
+	else if((*oppenentboard & RIGHT_BOARD) == 0x0000010101010000ULL) score -= 2;
+	//上
+	if((*playerboard & UP_BOARD) == 0x3c00000000000000ULL) score += 2;
+	else if((*oppenentboard & UP_BOARD) == 0x3c00000000000000ULL) score -= 2;
+	//下
+	if((*playerboard & DOWN_BOARD) == 0x000000000000003cULL)score += 2;
+	else if((*oppenentboard & DOWN_BOARD) == 0x000000000000003cULL) score -= 2;
+	
+	return score;
+}
+
+int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
+	return __builtin_popcountll(makelegalBoard(playerboard, oppenentboard)) - __builtin_popcountll(makelegalBoard(oppenentboard, playerboard));
+}
+
+int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
+	int fixedstone = 0;
+	
+	//上
+	if((*playerboard | *oppenentboard) & UP_BOARD) {
+		for (uint64_t i = 0x8000000000000000ULL; i>=0x0100000000000000ULL; i>>=1) {
+			if(*playerboard & i) fixedstone++;
+			else fixedstone--;
+		}
+	} else {
+		//左上左方向
+		if(*playerboard & 0xfe00000000000000ULL) fixedstone+=7;
+		else if(*playerboard & 0xfc00000000000000ULL) fixedstone+=6;
+		else if(*playerboard & 0xf800000000000000ULL) fixedstone+=5;
+		else if(*playerboard & 0xf000000000000000ULL) fixedstone+=4;
+		else if(*playerboard & 0xe000000000000000ULL) fixedstone+=3;
+		else if(*playerboard & 0xc000000000000000ULL) fixedstone+=2;
+		else if(*playerboard & 0x8000000000000000ULL) fixedstone+=1;
+		
+		if(*oppenentboard & 0xfe00000000000000ULL) fixedstone-=7;
+		else if(*oppenentboard & 0xfc00000000000000ULL) fixedstone-=6;
+		else if(*oppenentboard & 0xf800000000000000ULL) fixedstone-=5;
+		else if(*oppenentboard & 0xf000000000000000ULL) fixedstone-=4;
+		else if(*oppenentboard & 0xe000000000000000ULL) fixedstone-=3;
+		else if(*oppenentboard & 0xc000000000000000ULL) fixedstone-=2;
+		else if(*oppenentboard & 0x8000000000000000ULL) fixedstone-=1;
+		//右上左方向
+		if(*playerboard & 0x7f00000000000000ULL) fixedstone+=7;
+		else if(*playerboard & 0x3f00000000000000ULL) fixedstone+=6;
+		else if(*playerboard & 0x1f00000000000000ULL) fixedstone+=5;
+		else if(*playerboard & 0x0f00000000000000ULL) fixedstone+=4;
+		else if(*playerboard & 0x0700000000000000ULL) fixedstone+=3;
+		else if(*playerboard & 0x0300000000000000ULL) fixedstone+=2;
+		else if(*playerboard & 0x0100000000000000ULL) fixedstone+=1;
+		
+		if(*oppenentboard & 0x7f00000000000000ULL) fixedstone-=7;
+		else if(*oppenentboard & 0x3f00000000000000ULL) fixedstone-=6;
+		else if(*oppenentboard & 0x1f00000000000000ULL) fixedstone-=5;
+		else if(*oppenentboard & 0x0f00000000000000ULL) fixedstone-=4;
+		else if(*oppenentboard & 0x0700000000000000ULL) fixedstone-=3;
+		else if(*oppenentboard & 0x0300000000000000ULL) fixedstone-=2;
+		else if(*oppenentboard & 0x0100000000000000ULL) fixedstone-=1;
+	}
+	//左
+	if((*playerboard | *oppenentboard) & LEFT_BOARD) {
+		for (uint64_t i = 0x8000000000000000ULL; i>=0x0000000000000080ULL; i>>=8) {
+			if(*playerboard & i) fixedstone++;
+			else fixedstone--;
+		}
+	} else {
+		//左上下方向
+		if(*playerboard & 0x8080808080808000ULL) fixedstone+=7;
+		else if(*playerboard & 0x8080808080800000ULL) fixedstone+=6;
+		else if(*playerboard & 0x8080808080000000ULL) fixedstone+=5;
+		else if(*playerboard & 0x8080808000000000ULL) fixedstone+=4;
+		else if(*playerboard & 0x8080800000000000ULL) fixedstone+=3;
+		else if(*playerboard & 0x8080008000000000ULL) fixedstone+=2;
+		
+		if(*oppenentboard & 0x8080808080808000ULL) fixedstone-=7;
+		else if(*oppenentboard & 0x8080808080800000ULL) fixedstone-=6;
+		else if(*oppenentboard & 0x8080808080000000ULL) fixedstone-=5;
+		else if(*oppenentboard & 0x8080808000000000ULL) fixedstone-=4;
+		else if(*oppenentboard & 0x8080800000000000ULL) fixedstone-=3;
+		else if(*oppenentboard & 0x8080008000000000ULL) fixedstone-=2;
+		
+		//左下上方向
+		if(*playerboard & 0x0080808080808080ULL) fixedstone+=7;
+		else if(*playerboard & 0x0000808080808080ULL) fixedstone+=6;
+		else if(*playerboard & 0x0000008080808080ULL) fixedstone+=5;
+		else if(*playerboard & 0x0000000080808080ULL) fixedstone+=4;
+		else if(*playerboard & 0x0000008000808080ULL) fixedstone+=3;
+		else if(*playerboard & 0x0000008000008080ULL) fixedstone+=2;
+		else if(*playerboard & 0x0000008000000080ULL) fixedstone+=1;
+		
+		if(*oppenentboard & 0x0080808080808080ULL) fixedstone-=7;
+		else if(*oppenentboard & 0x0000808080808080ULL) fixedstone-=6;
+		else if(*oppenentboard & 0x0000008080808080ULL) fixedstone-=5;
+		else if(*oppenentboard & 0x0000000080808080ULL) fixedstone-=4;
+		else if(*oppenentboard & 0x0000008000808080ULL) fixedstone-=3;
+		else if(*oppenentboard & 0x0000008000008080ULL) fixedstone-=2;
+		else if(*oppenentboard & 0x0000008000000080ULL) fixedstone-=1;
+	}
+	//右
+	if((*playerboard | *oppenentboard) & RIGHT_BOARD) {
+		for (uint64_t i = 0x0100000000000000ULL; i>=0x0000000000000001ULL; i>>=8) {
+			if(*playerboard & i) fixedstone++;
+			else fixedstone--;
+		}
+	} else {
+		//右上下方向
+		if(*playerboard & 0x0101010101010100ULL) fixedstone+=7;
+		else if(*playerboard & 0x0101010101010000ULL) fixedstone+=6;
+		else if(*playerboard & 0x0101010101000000ULL) fixedstone+=5;
+		else if(*playerboard & 0x0101010100000000ULL) fixedstone+=4;
+		else if(*playerboard & 0x0101010000000000ULL) fixedstone+=3;
+		else if(*playerboard & 0x0101000000000000ULL) fixedstone+=2;
+		
+		if(*oppenentboard & 0x0101010101010100ULL) fixedstone-=7;
+		else if(*oppenentboard & 0x0101010101010000ULL) fixedstone-=6;
+		else if(*oppenentboard & 0x0101010101000000ULL) fixedstone-=5;
+		else if(*oppenentboard & 0x0101010100000000ULL) fixedstone-=4;
+		else if(*oppenentboard & 0x0101010000000000ULL) fixedstone-=3;
+		else if(*oppenentboard & 0x0101000000000000ULL) fixedstone-=2;
+		//右下上方向
+		if(*playerboard & 0x001010101010101ULL) fixedstone+=7;
+		else if(*playerboard & 0x000010101010101ULL) fixedstone+=6;
+		else if(*playerboard & 0x000000101010101ULL) fixedstone+=5;
+		else if(*playerboard & 0x000000001010101ULL) fixedstone+=4;
+		else if(*playerboard & 0x000000000010101ULL) fixedstone+=3;
+		else if(*playerboard & 0x000000000000101ULL) fixedstone+=2;
+		else if(*playerboard & 0x000000000000001ULL) fixedstone+=1;
+		
+		if(*oppenentboard & 0x001010101010101ULL) fixedstone-=7;
+		else if(*oppenentboard & 0x000010101010101ULL) fixedstone-=6;
+		else if(*oppenentboard & 0x000000101010101ULL) fixedstone-=5;
+		else if(*oppenentboard & 0x000000001010101ULL) fixedstone-=4;
+		else if(*oppenentboard & 0x000000000010101ULL) fixedstone-=3;
+		else if(*oppenentboard & 0x000000000000101ULL) fixedstone-=2;
+		else if(*oppenentboard & 0x000000000000001ULL) fixedstone-=1;
+	}
+	//下
+	if((*playerboard | *oppenentboard) & DOWN_BOARD) {
+		for (uint64_t i = 0x0000000000000080ULL; i>=0x0000000000000001ULL; i>>=1) {
+			if(*playerboard & i) fixedstone++;
+			else fixedstone--;
+		}
+	} else {
+		//左下右方向
+		if(*playerboard & 0x00000000000000feULL) fixedstone+=7;
+		else if(*playerboard & 0x00000000000000fcULL) fixedstone+=6;
+		else if(*playerboard & 0x00000000000000f8ULL) fixedstone+=5;
+		else if(*playerboard & 0x00000000000000f0ULL) fixedstone+=4;
+		else if(*playerboard & 0x00000000000000e0ULL) fixedstone+=3;
+		else if(*playerboard & 0x00000000000000c0ULL) fixedstone+=2;
+		
+		//右下左方向
+		if(*playerboard & 0x000000000000007fULL) fixedstone+=7;
+		else if(*playerboard & 0x000000000000003fULL) fixedstone+=6;
+		else if(*playerboard & 0x000000000000001fULL) fixedstone+=5;
+		else if(*playerboard & 0x000000000000000fULL) fixedstone+=4;
+		else if(*playerboard & 0x0000000000000007ULL) fixedstone+=3;
+		else if(*playerboard & 0x0000000000000003ULL) fixedstone+=2;
+		
+	}
+	return fixedstone;
+}
+
+int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
+	if(!(*playerboard)) return -32766;
+	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
+	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)*55));
+	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
 }
