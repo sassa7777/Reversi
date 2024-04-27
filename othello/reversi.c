@@ -300,9 +300,9 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 					tmpy = moveorder[i][0];
 				}
 			}
+			if(alpha > max_score) max_score = alpha;
 		}
 	}
-	if(alpha > max_score) max_score = alpha;
 	return max_score;
 }
 
@@ -665,6 +665,5 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) 
 	if(!(*playerboard)) return -32766;
 	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
 	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)*55));
-	if(*afterIndex >= 18) return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
-	return ((score_stone(playerboard, oppenentboard)*2)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<2));
+	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
 }
