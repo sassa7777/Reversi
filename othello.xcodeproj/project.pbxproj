@@ -33,6 +33,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1B6BA4992BDF771A00EF1E94 /* libomp.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libomp.dylib; path = ../../../../usr/local/Cellar/libomp/18.1.4/lib/libomp.dylib; sourceTree = "<group>"; };
 		1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "Objective-C-Wrapper.m"; path = "othello/Objective-C-Wrapper.m"; sourceTree = "<group>"; };
 		1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Objective-C-Wrapper.h"; path = "othello/Objective-C-Wrapper.h"; sourceTree = "<group>"; };
 		1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "othello-Bridging-Header.h"; path = "othello/othello-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -59,6 +60,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B6BA4982BDF771A00EF1E94 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1B6BA4992BDF771A00EF1E94 /* libomp.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		1BA79BDD2AC835CF00E864A1 = {
 			isa = PBXGroup;
 			children = (
@@ -69,6 +78,7 @@
 				1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */,
 				1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */,
 				1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */,
+				1B6BA4982BDF771A00EF1E94 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -339,7 +349,6 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_ENTITLEMENTS = othello/othello.entitlements;
@@ -354,33 +363,33 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_UNROLL_LOOPS = YES;
+				GCC_UNROLL_LOOPS = NO;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/opt/libomp/include;
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = /usr/local/opt/libomp/include;
 				INFOPLIST_KEY_CFBundleDisplayName = Reversi;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD = /opt/homebrew/opt/llvm/bin/clang;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/libomp/18.1.4/lib;
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/opt/libomp/lib;
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = /usr/local/opt/libomp/lib;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-flto",
-					"-mllvm",
-					"-polly",
+					"-Xpreprocessor",
+					"-fopenmp",
 				);
-				OTHER_LDFLAGS = (
-					"-L/opt/homebrew/opt/llvm/lib",
-					"-fuse-ld=lld",
-				);
+				OTHER_LDFLAGS = "-lomp";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -389,6 +398,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "othello/othello-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_HEADER_SEARCH_PATHS = "";
 			};
 			name = I;
 		};
@@ -398,7 +408,6 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_X86_VECTOR_INSTRUCTIONS = default;
 				CODE_SIGN_ENTITLEMENTS = othello/othello.entitlements;
@@ -413,33 +422,33 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_FAST_MATH = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_UNROLL_LOOPS = YES;
+				GCC_UNROLL_LOOPS = NO;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "";
+				"HEADER_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/opt/libomp/include;
+				"HEADER_SEARCH_PATHS[arch=x86_64]" = /usr/local/opt/libomp/include;
 				INFOPLIST_KEY_CFBundleDisplayName = Reversi;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
-				LD = /opt/homebrew/opt/llvm/bin/clang;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /usr/local/Cellar/libomp/18.1.4/lib;
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/opt/libomp/lib;
+				"LIBRARY_SEARCH_PATHS[arch=x86_64]" = /usr/local/opt/libomp/lib;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 2.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = (
 					"-flto",
-					"-mllvm",
-					"-polly",
+					"-Xpreprocessor",
+					"-fopenmp",
 				);
-				OTHER_LDFLAGS = (
-					"-L/opt/homebrew/opt/llvm/lib",
-					"-fuse-ld=lld",
-				);
+				OTHER_LDFLAGS = "-lomp";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.othello;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -448,6 +457,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "othello/othello-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};

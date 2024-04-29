@@ -12,7 +12,7 @@ void reset(void) {
 	printf("[*]初期化中...\n");
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
-	//printf("CPU Core count: %d\n", cpu_core);
+	printf("CPU Core count: %d\n", cpu_core);
 	nowTurn = BLACK_TURN;
 	nowIndex = 1;
 	DEPTH = firstDEPTH;
@@ -146,8 +146,8 @@ void reversebit(uint64_t put) {
 }
 
 
-uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
-	rev = 0;
+uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *rev) {
+	*rev = 0;
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(put, &i);
@@ -155,9 +155,9 @@ uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard) {
 			rev_ |= mask;
 			mask = transfer(&mask, &i);
 		}
-		if((mask & *playerboard) != 0) rev |= rev_;
+		if((mask & *playerboard) != 0) *rev |= rev_;
 	}
-	return rev;
+	return *rev;
 }
 
 uint64_t transfer(uint64_t *put, char *i) {
@@ -212,7 +212,8 @@ int bitcount(uint64_t bits) {
 	return __builtin_popcountll(bits);
 }
 
-void moveordering(uint64_t moveorder[64], int moveorder_score[64], uint64_t *playerboard, uint64_t *oppenentboard) {
+void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *oppenentboard) {
+	int moveorder_score[64];
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	char j=0;
@@ -259,13 +260,44 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	think_count = 100/putable_count;
-	nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	//nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	nega_alpha_parallel(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
 	return 1;
+}
+
+void nega_alpha_parallel(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
+	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
+
+	uint64_t rev = 0;
+	uint64_t playerboard2[64];
+	uint64_t oppenentboard2[64];
+	for (int i = 0; i < 64; ++i) {
+		playerboard2[i] = *playerboard;
+		oppenentboard2[i] = *oppenentboard;
+	}
+	int var, max_score = -32767;
+#pragma omp parallel for num_threads(cpu_core) shared(alpha)
+	for (char i = 0; i<64; ++i) {
+		if(canput(&moveorder_bit[i], &legalboard)) {
+			rev = revbit(&moveorder_bit[i], &playerboard2[i], &oppenentboard2[i], &rev);
+			playerboard2[i] ^= (moveorder_bit[i] | rev);
+			oppenentboard2[i] ^= rev;
+			var = -nega_alpha(depth-1, -beta, -alpha, &oppenentboard2[i], &playerboard2[i]);
+			think_percent += think_count;
+			update_hakostring();
+			if(var > alpha) {
+				alpha = var;
+				tmpx = moveorder[i][1];
+				tmpy = moveorder[i][0];
+			}
+			if(alpha > max_score) max_score = alpha;
+		}
+	}
 }
 
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
@@ -280,7 +312,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 	int var, max_score = -32767;
 	for (char i = 0; i<64; ++i) {
 		if(canput(&moveorder_bit[i], &legalboard)) {
-			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard);
+			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard, &rev);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*oppenentboard ^= rev;
 			var = -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
@@ -310,7 +342,7 @@ int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard
 	if(depth == 0) return countscore(playerboard, oppenentboard, &afterIndex);
 	uint64_t rev = 0;
 	int var;
-	rev = revbit(put, playerboard, oppenentboard);
+	rev = revbit(put, playerboard, oppenentboard, &rev);
 	*playerboard ^= (*put | rev);
 	*oppenentboard ^= rev;
 	var = countscore(playerboard, oppenentboard, &afterIndex);

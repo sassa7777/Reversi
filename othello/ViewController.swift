@@ -207,17 +207,17 @@ class ViewController: NSViewController
 	
 	override func viewDidLoad()
 	{
-//		let command1 = "arch"
-//		if(shell(command1) == "arm64") {
-//			let command2 = "sysctl -n hw.perflevel0.physicalcpu"
-//			let cpu_coreString = shell(command2)
-//			cpu_core = Int32(cpu_coreString) ?? 1
-//		} else {
-//			let command2 = "sysctl -n hw.logicalcpu"
-//			let cpu_coreString = shell(command2)
-//			cpu_core = Int32(cpu_coreString) ?? 1
-//			cpu_core = cpu_core/2
-//		}
+		let command1 = "arch"
+		if(shell(command1) == "arm64") {
+			let command2 = "sysctl -n hw.perflevel0.physicalcpu"
+			let cpu_coreString = shell(command2)
+			cpu_core = Int32(cpu_coreString) ?? 1
+		} else {
+			let command2 = "sysctl -n hw.logicalcpu"
+			let cpu_coreString = shell(command2)
+			cpu_core = Int32(cpu_coreString) ?? 1
+			cpu_core = cpu_core/2
+		}
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
