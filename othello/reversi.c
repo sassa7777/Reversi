@@ -251,7 +251,7 @@ int ai(void) {
 		return 0;
 	}
 	printf("[*]Botが考え中..\n");
-	if(DEPTH >= 10 && nowIndex >= 44) DEPTH = 20;
+	if(DEPTH >= 10 && nowIndex >= 43) DEPTH = 20;
 	tmpx = -1;
 	tmpy = -1;
 	tmpbit = 0;
@@ -260,44 +260,13 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	think_count = 100/putable_count;
-	//nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
-	nega_alpha_parallel(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) error_hakostring();
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
 	update_hakostring();
 	putstone(tmpy, tmpx);
 	return 1;
-}
-
-void nega_alpha_parallel(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
-
-	uint64_t rev = 0;
-	uint64_t playerboard2[64];
-	uint64_t oppenentboard2[64];
-	for (int i = 0; i < 64; ++i) {
-		playerboard2[i] = *playerboard;
-		oppenentboard2[i] = *oppenentboard;
-	}
-	int var, max_score = -32767;
-#pragma omp parallel for num_threads(cpu_core) shared(alpha)
-	for (char i = 0; i<64; ++i) {
-		if(canput(&moveorder_bit[i], &legalboard)) {
-			rev = revbit(&moveorder_bit[i], &playerboard2[i], &oppenentboard2[i], &rev);
-			playerboard2[i] ^= (moveorder_bit[i] | rev);
-			oppenentboard2[i] ^= rev;
-			var = -nega_alpha(depth-1, -beta, -alpha, &oppenentboard2[i], &playerboard2[i]);
-			think_percent += think_count;
-			update_hakostring();
-			if(var > alpha) {
-				alpha = var;
-				tmpx = moveorder[i][1];
-				tmpy = moveorder[i][0];
-			}
-			if(alpha > max_score) max_score = alpha;
-		}
-	}
 }
 
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
@@ -543,7 +512,7 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
-	return __builtin_popcountll(makelegalBoard(playerboard, oppenentboard)) - __builtin_popcountll(makelegalBoard(oppenentboard, playerboard));
+	return ((__builtin_popcountll(makelegalBoard(playerboard, oppenentboard)))-(__builtin_popcountll(makelegalBoard(oppenentboard, playerboard))));
 }
 
 int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
@@ -696,6 +665,6 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
 	if(!(*playerboard)) return -32766;
 	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
-	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard)<<1)+(score_fixedstone(playerboard, oppenentboard)*55));
-	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)<<1));
+	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
+	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)*10));
 }

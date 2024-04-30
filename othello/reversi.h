@@ -77,7 +77,6 @@ int bitcount(uint64_t bits);
 uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *rev);
 void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *oppenentboard);
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
-void nega_alpha_parallel(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
 int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
 
 //evaluation

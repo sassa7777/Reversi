@@ -76,6 +76,7 @@ class ViewController: NSViewController
 	@IBOutlet var hf: NSButton!
 	@IBOutlet var hg: NSButton!
 	@IBOutlet var hh: NSButton!
+	@IBOutlet var hakoface: NSImageView!
 	@IBOutlet var close: NSButton!
 	@IBOutlet var restart: NSButton!
 	@IBOutlet var hakotext: NSTextField!
@@ -218,6 +219,7 @@ class ViewController: NSViewController
 			cpu_core = Int32(cpu_coreString) ?? 1
 			cpu_core = cpu_core/2
 		}
+		hakoface.image = NSImage(named: "hako")
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
@@ -273,6 +275,7 @@ class ViewController: NSViewController
 		{
 			self.switchbutton(switch: false)
 			self.hakotext.stringValue = "考え中...\n(時間がかかることがあります)"
+			hakoface.image = NSImage(named: "thinking")
 			DispatchQueue.global().asyncAfter(deadline: .now())
 			{
 				if(ai() == 1)
@@ -296,6 +299,7 @@ class ViewController: NSViewController
 						{
 							self.switchbutton(switch: true)
 							self.hakotext.stringValue = "君(プレイヤー)の番だよ！\n置く場所を選んでね！"
+							self.hakoface.image = NSImage(named: "hako")
 						}
 					}
 				}
@@ -310,24 +314,30 @@ class ViewController: NSViewController
 			case 1:
 				print("黒の勝ち！")
 				self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "win")
 			case 2:
 				print("白の勝ち！")
 				self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "lose")
 			default:
 				print("引き分け")
 				self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "draw")
 			}
 		} else {
 			switch winner() {
 			case 1:
 				print("黒の勝ち！")
 				self.hakotext.stringValue = "僕の勝ち！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "lose")
 			case 2:
 				print("白の勝ち！")
 				self.hakotext.stringValue = "君の勝ち！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "win")
 			default:
 				print("引き分け")
 				self.hakotext.stringValue = "引き分け！\n遊んでくれてありがとう！"
+				self.hakoface.image = NSImage(named: "draw")
 			}
 		}
 		switchbutton(switch: false)
