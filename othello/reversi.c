@@ -5,8 +5,8 @@
 //  Created by sasa on 2023/09/30.
 //
 
-#include "reversi.h"
-#include "Objective-C-Wrapper.h"
+#include "../header/reversi.h"
+#include "../header/Objective-C-Wrapper.h"
 
 void reset(void) {
 	printf("[*]初期化中...\n");

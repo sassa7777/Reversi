@@ -13,6 +13,7 @@
 		1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */; };
 		1B8654E62B5CF121007402B0 /* reversi.h in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFC2AC848F600E864A1 /* reversi.h */; };
 		1B8654E72B5CFD99007402B0 /* reversi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* reversi.c */; };
+		1B9978082BE1C52E0002BA56 /* CMakeLists.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1B9978072BE1C52E0002BA56 /* CMakeLists.txt */; };
 		1BA79BEA2AC835CF00E864A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */; };
 		1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BEB2AC835CF00E864A1 /* ViewController.swift */; };
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
@@ -34,17 +35,18 @@
 
 /* Begin PBXFileReference section */
 		1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = "Objective-C-Wrapper.m"; path = "othello/Objective-C-Wrapper.m"; sourceTree = "<group>"; };
-		1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Objective-C-Wrapper.h"; path = "othello/Objective-C-Wrapper.h"; sourceTree = "<group>"; };
-		1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "othello-Bridging-Header.h"; path = "othello/othello-Bridging-Header.h"; sourceTree = "<group>"; };
+		1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Objective-C-Wrapper.h"; sourceTree = "<group>"; };
+		1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "othello-Bridging-Header.h"; sourceTree = "<group>"; };
 		1B84B9A92AD2F01200E10BFB /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
+		1B9978072BE1C52E0002BA56 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		1BA79BE62AC835CF00E864A1 /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1BA79BEB2AC835CF00E864A1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; usesTabs = 1; };
 		1BA79BED2AC835D000E864A1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1BA79BF02AC835D000E864A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		1BA79BF22AC835D000E864A1 /* othello.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = othello.entitlements; sourceTree = "<group>"; };
-		1BA79BFC2AC848F600E864A1 /* reversi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = reversi.h; path = othello/reversi.h; sourceTree = "<group>"; };
+		1BA79BFC2AC848F600E864A1 /* reversi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = reversi.h; sourceTree = "<group>"; };
 		1BA79BFD2AC848F600E864A1 /* reversi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = reversi.c; path = othello/reversi.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 /* End PBXFileReference section */
 
@@ -59,16 +61,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1B9978062BE1C31D0002BA56 /* header */ = {
+			isa = PBXGroup;
+			children = (
+				1BA79BFC2AC848F600E864A1 /* reversi.h */,
+				1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */,
+				1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */,
+			);
+			path = header;
+			sourceTree = "<group>";
+		};
 		1BA79BDD2AC835CF00E864A1 = {
 			isa = PBXGroup;
 			children = (
+				1B9978072BE1C52E0002BA56 /* CMakeLists.txt */,
 				1BA79BE82AC835CF00E864A1 /* othello */,
 				1BA79BE72AC835CF00E864A1 /* Products */,
 				1BA79BFD2AC848F600E864A1 /* reversi.c */,
-				1BA79BFC2AC848F600E864A1 /* reversi.h */,
-				1B8310362BAB352300B22C62 /* othello-Bridging-Header.h */,
 				1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */,
-				1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */,
+				1B9978062BE1C31D0002BA56 /* header */,
 			);
 			sourceTree = "<group>";
 		};
@@ -156,6 +167,7 @@
 			files = (
 				1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */,
 				1BA79BF12AC835D000E864A1 /* Main.storyboard in Resources */,
+				1B9978082BE1C52E0002BA56 /* CMakeLists.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +381,7 @@
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "othello/othello-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "header/othello-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_HEADER_SEARCH_PATHS = "";
@@ -420,7 +432,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INCLUDE_PATHS = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "othello/othello-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "header/othello-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				SYSTEM_HEADER_SEARCH_PATHS = "";
