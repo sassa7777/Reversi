@@ -666,5 +666,5 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) 
 	if(!(*playerboard)) return -32766;
 	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
 	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
-	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)*12));
+	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)*2));
 }

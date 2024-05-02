@@ -80,6 +80,9 @@ class ViewController: NSViewController
 	@IBOutlet var close: NSButton!
 	@IBOutlet var restart: NSButton!
 	@IBOutlet var hakotext: NSTextField!
+	@IBOutlet var white_cnt: NSTextField!
+	@IBOutlet var black_cnt: NSTextField!
+	@IBOutlet var lev_txt: NSTextField!
 	var music_player:AVAudioPlayer!
 	
 	@IBAction func put(_ sender: NSButton)
@@ -205,6 +208,9 @@ class ViewController: NSViewController
 		return output.trimmingCharacters(in: .whitespacesAndNewlines)
 	}
 	
+	override func viewDidAppear() {
+		
+	}
 	
 	override func viewDidLoad()
 	{
@@ -223,6 +229,26 @@ class ViewController: NSViewController
 		close.isHidden = true
 		restart.isHidden = true
 		reset()
+		switch DEPTH {
+		case 1:
+			lev_txt.stringValue = "Level: 1"
+			break
+		case 2:
+			lev_txt.stringValue = "Level: 2"
+			break
+		case 4:
+			lev_txt.stringValue = "Level: 3"
+			break
+		case 6:
+			lev_txt.stringValue = "Level: 4"
+			break
+		case 10:
+			lev_txt.stringValue = "Level: 5"
+			break
+		default:
+			lev_txt.stringValue = "Level: 5"
+			break
+		}
 		if(botplayer == BLACK_TURN) {
 			reloadview()
 			DispatchQueue.main.asyncAfter(deadline: .now()+0.3) {
@@ -408,6 +434,13 @@ class ViewController: NSViewController
 				}
 				mask = mask >> 1
 			}
+		}
+		if(nowTurn == BLACK_TURN) {
+			black_cnt.stringValue = "黒: \(bitcount(playerboard))"
+			white_cnt.stringValue = "白: \(bitcount(oppenentboard))"
+		} else {
+			black_cnt.stringValue = "黒: \(bitcount(oppenentboard))"
+			white_cnt.stringValue = "白: \(bitcount(playerboard))"
 		}
 		print("[*]完了")
 		if(isFinished() == true)

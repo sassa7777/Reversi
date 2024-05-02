@@ -247,15 +247,6 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="hako" id="c0Y-EB-lNb"/>
                             </imageView>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-cl-HZJ" userLabel="hakotext">
-                                <rect key="frame" x="158" y="109" width="286" height="65"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="truncatingTail" alignment="left" drawsBackground="YES" id="NG6-NI-yb2">
-                                    <font key="font" metaFont="system" size="20"/>
-                                    <color key="textColor" name="gridColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NBt-XF-21B">
                                 <rect key="frame" x="315" y="30" width="71" height="32"/>
                                 <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7TP-HQ-gNp">
@@ -988,6 +979,42 @@
                                     <action selector="restart:" target="XfG-lQ-9wD" id="6os-ia-l92"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-cl-HZJ" userLabel="hakotext">
+                                <rect key="frame" x="158" y="112" width="204" height="51"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingTail" alignment="left" drawsBackground="YES" id="NG6-NI-yb2">
+                                    <font key="font" metaFont="system" size="15"/>
+                                    <color key="textColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="alternateSelectedControlTextColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfn-I0-NHG" userLabel="black_cnt">
+                                <rect key="frame" x="456" y="114" width="37" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="Zqh-Km-jzw">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qQr-KA-XsH" userLabel="white_cnt">
+                                <rect key="frame" x="531" y="114" width="37" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="peL-ft-bFU">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="YeP-63-cYh" userLabel="level_txt">
+                                <rect key="frame" x="57" y="528" width="55" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Label" id="hPt-uq-X6v">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="JdM-w6-lWw" secondAttribute="bottom" constant="181" id="4ii-Sl-aua"/>
@@ -1014,6 +1041,7 @@
                         <outlet property="bf" destination="vlS-jd-rfn" id="ggY-pO-44B"/>
                         <outlet property="bg" destination="Nui-49-f17" id="NUM-st-KzD"/>
                         <outlet property="bh" destination="Z4o-zP-PUh" id="RN9-Bi-nZy"/>
+                        <outlet property="black_cnt" destination="xfn-I0-NHG" id="d6R-2M-sfy"/>
                         <outlet property="ca" destination="qfK-EM-E4B" id="a4H-hL-Peh"/>
                         <outlet property="cb" destination="vZm-Eg-vjy" id="anG-qD-z7V"/>
                         <outlet property="cc" destination="G7V-Ru-6LT" id="DuO-PD-drQ"/>
@@ -1065,7 +1093,9 @@
                         <outlet property="hf" destination="ZIE-x3-5gW" id="ZDz-4a-YUV"/>
                         <outlet property="hg" destination="nYk-2f-yrf" id="bLc-ew-rhB"/>
                         <outlet property="hh" destination="Ffc-32-V9f" id="Rkp-te-oEs"/>
+                        <outlet property="lev_txt" destination="YeP-63-cYh" id="aWG-XH-8FJ"/>
                         <outlet property="restart" destination="T8a-Lw-af0" id="UeX-hc-Rc8"/>
+                        <outlet property="white_cnt" destination="qQr-KA-XsH" id="A36-nF-XeJ"/>
                         <segue destination="AIO-dW-Itm" kind="popover" identifier="popup" popoverBehavior="t" preferredEdge="maxY" id="Zel-KA-FWB"/>
                     </connections>
                 </viewController>

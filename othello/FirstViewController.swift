@@ -31,13 +31,13 @@ class FirstViewController: NSViewController
             firstDEPTH = 1
             strength_txt.stringValue = "初心者向け"
         case 1:
-            firstDEPTH = 3
+            firstDEPTH = 2
             strength_txt.stringValue = "初心者よりはできる人向け"
         case 2:
             firstDEPTH = 4
             strength_txt.stringValue = "ある程度できる人向け"
         case 3:
-            firstDEPTH = 8
+            firstDEPTH = 6
             strength_txt.stringValue = "少し自信がある人向け"
         case 4:
             firstDEPTH = 10
