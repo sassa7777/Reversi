@@ -260,7 +260,7 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = (int)__builtin_popcountll(legalboard);
 	think_count = 100/putable_count;
-	nega_alpha(DEPTH, -32767, 32767, &playerboard, &oppenentboard);
+	nega_alpha(DEPTH, INT_MIN, INT_MAX, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -341,14 +341,10 @@ int winner(void) {
 
 int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	int score = 0;
-	uint64_t mask = 0x8000000000000000ULL;
-	for (char i = 0; i<64; ++i) {
-		if(*playerboard & mask) {
-			score += scoreboard[i];
-		} else if(*oppenentboard & mask) {
-			score -= scoreboard[i];
-		}
-		mask >>= 1;
+	
+	for (char i = 0; i < 6; ++i) {
+		score += scoreboard_score[i] * __builtin_popcountll(*playerboard & scoreboard_weight[i]);
+		score -= scoreboard_score[i] * __builtin_popcountll(*oppenentboard & scoreboard_weight[i]);
 	}
 	
 	//左
@@ -663,7 +659,7 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
-	if(!(*playerboard)) return -32766;
+	if(!(*playerboard)) return -INT_MIN+1;
 	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
 	if(*afterIndex >= 44) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)*2));

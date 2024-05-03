@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1B15E9C22BE4D6B000CA86C2 /* reversi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* reversi.c */; };
 		1B6D3C3B2BAB2231001C1CD7 /* Objective-C-Wrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1B6D3C3A2BAB2231001C1CD7 /* Objective-C-Wrapper.m */; };
 		1B8310342BAB276400B22C62 /* Objective-C-Wrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = 1B8310332BAB259E00B22C62 /* Objective-C-Wrapper.h */; };
 		1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B84B9A92AD2F01200E10BFB /* ResultViewController.swift */; };
 		1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B84B9AB2AD2F12600E10BFB /* FirstViewController.swift */; };
 		1B8654E62B5CF121007402B0 /* reversi.h in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFC2AC848F600E864A1 /* reversi.h */; };
-		1B8654E72B5CFD99007402B0 /* reversi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BFD2AC848F600E864A1 /* reversi.c */; };
 		1BA79BEA2AC835CF00E864A1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BE92AC835CF00E864A1 /* AppDelegate.swift */; };
 		1BA79BEC2AC835CF00E864A1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA79BEB2AC835CF00E864A1 /* ViewController.swift */; };
 		1BA79BEE2AC835D000E864A1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1BA79BED2AC835D000E864A1 /* Assets.xcassets */; };
@@ -175,8 +175,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B8310342BAB276400B22C62 /* Objective-C-Wrapper.h in Sources */,
-				1B8654E72B5CFD99007402B0 /* reversi.c in Sources */,
 				1B8654E62B5CF121007402B0 /* reversi.h in Sources */,
+				1B15E9C22BE4D6B000CA86C2 /* reversi.c in Sources */,
 				1B84B9AC2AD2F12600E10BFB /* FirstViewController.swift in Sources */,
 				1B6D3C3B2BAB2231001C1CD7 /* Objective-C-Wrapper.m in Sources */,
 				1B84B9AA2AD2F01200E10BFB /* ResultViewController.swift in Sources */,

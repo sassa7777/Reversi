@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <limits.h>
 
 int DEPTH;
 int px, py;
@@ -59,6 +60,18 @@ int scoreboard[64] = {
     30, -12, 0, -1, -1, 0, -12, 30
 };
 
+int scoreboard_score[6] = {
+    30,  0, -1, -3, -12, -15
+};
+
+uint64_t scoreboard_weight[6] = {
+    0x8100000000000081ULL,
+    0x2400A50000A50024ULL,
+    0x180018BDBD180018ULL,
+    0x003C424242423C00ULL,
+    0x4281000000008142ULL,
+    0x0042000000004200ULL,
+};
 
 //main functions
 void reset(void);
