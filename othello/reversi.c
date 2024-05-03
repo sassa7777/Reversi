@@ -516,10 +516,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	
 	//上
 	if((*playerboard | *oppenentboard) & UP_BOARD) {
-		for (uint64_t i = 0x8000000000000000ULL; i>=0x0100000000000000ULL; i>>=1) {
-			if(*playerboard & i) fixedstone++;
-			else fixedstone--;
-		}
+		fixedstone += __builtin_popcountll(*playerboard & UP_BOARD);
+		fixedstone -= __builtin_popcountll(*oppenentboard & UP_BOARD);
 	} else {
 		//左上左方向
 		if(*playerboard & 0xfe00000000000000ULL) fixedstone+=7;
@@ -556,10 +554,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//左
 	if((*playerboard | *oppenentboard) & LEFT_BOARD) {
-		for (uint64_t i = 0x8000000000000000ULL; i>=0x0000000000000080ULL; i>>=8) {
-			if(*playerboard & i) fixedstone++;
-			else fixedstone--;
-		}
+		fixedstone += __builtin_popcountll(*playerboard & LEFT_BOARD);
+		fixedstone -= __builtin_popcountll(*oppenentboard & LEFT_BOARD);
 	} else {
 		//左上下方向
 		if(*playerboard & 0x8080808080808000ULL) fixedstone+=7;
@@ -595,10 +591,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//右
 	if((*playerboard | *oppenentboard) & RIGHT_BOARD) {
-		for (uint64_t i = 0x0100000000000000ULL; i>=0x0000000000000001ULL; i>>=8) {
-			if(*playerboard & i) fixedstone++;
-			else fixedstone--;
-		}
+		fixedstone += __builtin_popcountll(*playerboard & RIGHT_BOARD);
+		fixedstone -= __builtin_popcountll(*oppenentboard & RIGHT_BOARD);
 	} else {
 		//右上下方向
 		if(*playerboard & 0x0101010101010100ULL) fixedstone+=7;
@@ -633,10 +627,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//下
 	if((*playerboard | *oppenentboard) & DOWN_BOARD) {
-		for (uint64_t i = 0x0000000000000080ULL; i>=0x0000000000000001ULL; i>>=1) {
-			if(*playerboard & i) fixedstone++;
-			else fixedstone--;
-		}
+		fixedstone += __builtin_popcountll(*playerboard & DOWN_BOARD);
+		fixedstone -= __builtin_popcountll(*oppenentboard & DOWN_BOARD);
 	} else {
 		//左下右方向
 		if(*playerboard & 0x00000000000000feULL) fixedstone+=7;
