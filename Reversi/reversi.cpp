@@ -8,6 +8,7 @@
 #include "reversi.h"
 
 int DEPTH;
+int Level;
 int px, py;
 int whitec;
 int blackc;

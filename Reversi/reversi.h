@@ -24,6 +24,7 @@
 #include <bits/stdc++.h>
 
 extern int DEPTH;
+extern int Level;
 extern int px, py;
 extern int whitec;
 extern int blackc;
