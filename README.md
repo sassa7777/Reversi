@@ -1,4 +1,4 @@
 # Reversi
-CとSwiftで書かれていて、ベーシックなAlpha-Betaアルゴリズムを使用しています
+CとObjective-Cで書かれていて、ベーシックなAlpha-Betaアルゴリズムを使用しています
 
 ボードの実装が配列で行われているものはarrayブランチにあります
