@@ -50,6 +50,14 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         default:
             break;
     }
+    if(botplayer == BLACK_TURN) {
+        [self reloadview];
+        sleep(1);
+        [self botput];
+    } else {
+        [self botput];
+    }
+    [self reloadview];
 }
 
 
@@ -275,7 +283,9 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
             if((legalboard & mask) != 0) {
                 if(s == YES) buttons[i][j].enabled = YES;
                 else buttons[i][j].enabled = NO;
-            }
+            } else {
+                buttons[i][j].enabled = NO;
+1            }
             mask >>= 1;
         }
     }
