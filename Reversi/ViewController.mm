@@ -13,6 +13,7 @@ NSImage *hako_default = [NSImage imageNamed:@"hako"];
 NSImage *hako_think = [NSImage imageNamed:@"thinking"];
 NSImage *hako_win = [NSImage imageNamed:@"win"];
 NSImage *hako_lose = [NSImage imageNamed:@"lose"];
+NSImage *hako_draw = [NSImage imageNamed:@"draw"];
 NSImage *null_icon = [NSImage imageNamed:@"null"];
 NSImage *null_icon2 = [NSImage imageNamed:@"null2"];
 NSImage *black_stone = [NSImage imageNamed:@"black"];
@@ -126,7 +127,15 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     else if(sender == self.he) results = putstone(7, 4);
     else if(sender == self.hf) results = putstone(7, 5);
     else if(sender == self.hg) results = putstone(7, 6);
-    else if(sender == self.hh) results = putstone(7, 7);
+    else results = putstone(7, 7);
+    if(results == 1) {
+        swapboard();
+        if(isPass()) {
+            swapboard();
+        }
+        [self reloadview];
+        [self botput];
+    }
 }
 
 - (void)reloadview {
@@ -196,15 +205,108 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 }
 
 - (void)restart:(id)sender __attribute__((ibaction)) {
+    [self viewDidLoad];
 }
 
 - (void)results {
+    if(botplayer == WHITE_TURN) {
+        switch (winner()) {
+            case 1:
+                NSLog(@"黒の勝ち！");
+                [self.hakoface setImage:hako_win];
+                _hakotext.stringValue = @"君の勝ち！";
+                break;
+            case 2:
+                NSLog(@"白の勝ち！");
+                [self.hakoface setImage:hako_lose];
+                _hakotext.stringValue = @"僕の勝ち！";
+                break;
+            default:
+                NSLog(@"引き分け");
+                [self.hakoface setImage:hako_draw];
+                _hakotext.stringValue = @"引き分け！";
+                break;
+        }
+    } else {
+        switch (winner()) {
+            case 1:
+                NSLog(@"黒の勝ち！");
+                [self.hakoface setImage:hako_lose];
+                _hakotext.stringValue = @"僕の勝ち！";
+                break;
+            case 2:
+                NSLog(@"白の勝ち！");
+                [self.hakoface setImage:hako_win];
+                _hakotext.stringValue = @"君の勝ち！";
+                break;
+            default:
+                NSLog(@"引き分け");
+                [self.hakoface setImage:hako_draw];
+                _hakotext.stringValue = @"引き分け！";
+                break;
+        }
+    }
 }
 
 - (void)switchbuttons:(BOOL)s {
+    NSArray<NSArray<NSButton *> *> *buttons = @[
+        @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
+        @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
+        @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
+        @[self.da, self.db, self.dc, self.dd, self.de, self.df, self.dg, self.dh],
+        @[self.ea, self.eb, self.ec, self.ed, self.ee, self.ef, self.eg, self.eh],
+        @[self.fa, self.fb, self.fc, self.fd, self.fe, self.ff, self.fg, self.fh],
+        @[self.ga, self.gb, self.gc, self.gd, self.ge, self.gf, self.gg, self.gh],
+        @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
+    ];
+    
+    for (NSArray<NSButton *> *buttonArray in buttons) {
+        for (NSButton *swiftButton in buttonArray) {
+            NSButtonCell *buttonCell = [swiftButton cell];
+            if ([buttonCell isKindOfClass:[NSButtonCell class]]) {
+                [(NSButtonCell *)buttonCell setImageDimsWhenDisabled:NO];
+            }
+        }
+    }
+    uint64_t legalboard = makelegalBoard(&playerboard, &oppenentboard);
+    uint64_t mask = 0x8000000000000000;
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            if((legalboard & mask) != 0) {
+                if(s == YES) buttons[i][j].enabled = YES;
+                else buttons[i][j].enabled = NO;
+            }
+            mask >>= 1;
+        }
+    }
+    
 }
 
 - (void)botput {
+    if(!isFinished()) {
+        [self switchbuttons:NO];
+        _hakotext.stringValue = @"考え中...\n(時間がかかることがあります)";
+        [self.hakoface setImage:hako_think];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+            int results = ai();
+            if(results == 1) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    swapboard();
+                    if(isPass()) {
+                        swapboard();
+                    }
+                    [self reloadview];
+                    [self botput];
+                });
+            } else {
+                dispatch_async(dispatch_get_main_queue(), ^(void) {
+                    [self switchbuttons:YES];
+                    self->_hakotext.stringValue = @"君の番だよ！\n置く場所を選んでね！";
+                    [self.hakoface setImage:hako_default];
+                });
+            }
+        });
+    }
 }
 
 @end
