@@ -25,12 +25,11 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    ViewController *functions = [[ViewController alloc] init];
     [self.hakoface setImage:hako_default];
     self.close.hidden = YES;
     self.restart.hidden = YES;
     reset();
-    [functions reloadview];
+    [self reloadview];
     switch (Level) {
         case 1:
             _lev_txt.stringValue = @"Level: 1";
@@ -63,7 +62,6 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 }
 
 - (void)put:(NSButton *)sender __attribute__((ibaction)) {
-    ViewController *functions = [[ViewController alloc] init];
     int results;
     if(sender == self.aa) results = putstone(0, 0);
     else if(sender == self.ab) results = putstone(0, 1);
@@ -129,7 +127,6 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     else if(sender == self.hf) results = putstone(7, 5);
     else if(sender == self.hg) results = putstone(7, 6);
     else if(sender == self.hh) results = putstone(7, 7);
-    [functions reloadview];
 }
 
 - (void)reloadview {
