@@ -210,6 +210,12 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(playerboard)];
     }
     NSLog(@"完了");
+    if(isFinished()) {
+        [self results];
+        [self performSegueWithIdentifier:@"results" sender:self];
+        self.close.hidden = NO;
+        self.restart.hidden = NO;
+    }
 }
 
 - (void)restart:(id)sender __attribute__((ibaction)) {

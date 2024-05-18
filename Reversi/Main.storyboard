@@ -144,6 +144,9 @@
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <connections>
+                                    <action selector="close:" target="SbF-TJ-wzJ" id="uNb-5X-Cef"/>
+                                </connections>
                             </button>
                         </subviews>
                     </view>

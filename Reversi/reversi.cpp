@@ -259,13 +259,13 @@ void swapboard(void) {
 }
 
 int bitcount(uint64_t bits) {
-	return __builtin_popcountll(bits);
+	return std::popcount(bits);
 }
 
 void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *oppenentboard) {
 	int moveorder_score[64];
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
-	int putable_count = (int)__builtin_popcountll(legalboard);
+	int putable_count = std::popcount(legalboard);
 	char j=0;
 	uint64_t mask = 0x8000000000000000ULL;
 	for (char i=0; i<64; ++i) {
@@ -308,7 +308,7 @@ int ai(void) {
 	think_percent = 0;
 	//update_hakostring();
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
-	int putable_count = __builtin_popcountll(legalboard);
+	int putable_count = std::popcount(legalboard);
 	think_count = 100/putable_count;
 	nega_alpha(DEPTH, -2147483647, 2147483647, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) exit(1);
@@ -393,8 +393,8 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	int score = 0;
 	
 	for (char i = 0; i < 5; ++i) {
-		score += scoreboard_score[i] * __builtin_popcountll(*playerboard & scoreboard_weight[i]);
-		score -= scoreboard_score[i] * __builtin_popcountll(*oppenentboard & scoreboard_weight[i]);
+		score += scoreboard_score[i] * std::popcount(*playerboard & scoreboard_weight[i]);
+		score -= scoreboard_score[i] * std::popcount(*oppenentboard & scoreboard_weight[i]);
 	}
 	
 	//左
@@ -558,7 +558,7 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
-	return ((__builtin_popcountll(makelegalBoard(playerboard, oppenentboard)))-(__builtin_popcountll(makelegalBoard(oppenentboard, playerboard))));
+	return ((std::popcount(makelegalBoard(playerboard, oppenentboard)))-(std::popcount(makelegalBoard(oppenentboard, playerboard))));
 }
 
 int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
@@ -566,8 +566,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	
 	//上
 	if((*playerboard | *oppenentboard) & UP_BOARD) {
-		fixedstone += __builtin_popcountll(*playerboard & UP_BOARD);
-		fixedstone -= __builtin_popcountll(*oppenentboard & UP_BOARD);
+		fixedstone += std::popcount(*playerboard & UP_BOARD);
+		fixedstone -= std::popcount(*oppenentboard & UP_BOARD);
 	} else {
 		//左上左方向
 		if(*playerboard & 0xfe00000000000000ULL) fixedstone+=7;
@@ -604,8 +604,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//左
 	if((*playerboard | *oppenentboard) & LEFT_BOARD) {
-		fixedstone += __builtin_popcountll(*playerboard & LEFT_BOARD);
-		fixedstone -= __builtin_popcountll(*oppenentboard & LEFT_BOARD);
+		fixedstone += std::popcount(*playerboard & LEFT_BOARD);
+		fixedstone -= std::popcount(*oppenentboard & LEFT_BOARD);
 	} else {
 		//左上下方向
 		if(*playerboard & 0x8080808080808000ULL) fixedstone+=7;
@@ -641,8 +641,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//右
 	if((*playerboard | *oppenentboard) & RIGHT_BOARD) {
-		fixedstone += __builtin_popcountll(*playerboard & RIGHT_BOARD);
-		fixedstone -= __builtin_popcountll(*oppenentboard & RIGHT_BOARD);
+		fixedstone += std::popcount(*playerboard & RIGHT_BOARD);
+		fixedstone -= std::popcount(*oppenentboard & RIGHT_BOARD);
 	} else {
 		//右上下方向
 		if(*playerboard & 0x0101010101010100ULL) fixedstone+=7;
@@ -677,8 +677,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	}
 	//下
 	if((*playerboard | *oppenentboard) & DOWN_BOARD) {
-		fixedstone += __builtin_popcountll(*playerboard & DOWN_BOARD);
-		fixedstone -= __builtin_popcountll(*oppenentboard & DOWN_BOARD);
+		fixedstone += std::popcount(*playerboard & DOWN_BOARD);
+		fixedstone -= std::popcount(*oppenentboard & DOWN_BOARD);
 	} else {
 		//左下右方向
 		if(*playerboard & 0x00000000000000feULL) fixedstone+=7;
@@ -703,7 +703,7 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
 	if(!(*playerboard)) return -2147483646;
 	if(!(*oppenentboard)) return 2147483646;
-	if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*oppenentboard));
+	if(*afterIndex >= 60) return (std::popcount(*playerboard)-std::popcount(*oppenentboard));
 	if(*afterIndex >= 40) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 }
