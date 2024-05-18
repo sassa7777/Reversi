@@ -111,6 +111,51 @@
             </objects>
             <point key="canvasLocation" x="450" y="-52"/>
         </scene>
+        <!--結果-->
+        <scene sceneID="Of1-5o-bav">
+            <objects>
+                <viewController title="結果" id="SbF-TJ-wzJ" customClass="ResultsViewController" sceneMemberID="viewController">
+                    <view key="view" id="c2l-Y9-tD2">
+                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ves-Tl-wdq">
+                                <rect key="frame" x="166" y="233" width="119" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="vuM-zk-KMV">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mM0-MQ-dHQ">
+                                <rect key="frame" x="172" y="182" width="107" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="fIB-v0-ejh">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kv8-ea-1tB">
+                                <rect key="frame" x="190" y="49" width="71" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vyW-IN-Q7N">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                    </view>
+                    <connections>
+                        <outlet property="results" destination="Ves-Tl-wdq" id="iol-Pp-k1q"/>
+                        <outlet property="win_player" destination="mM0-MQ-dHQ" id="XjH-GY-uW6"/>
+                    </connections>
+                </viewController>
+                <customObject id="xBU-lM-IiE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="535" y="588"/>
+        </scene>
         <!--対局-->
         <scene sceneID="woc-Pk-d8x">
             <objects>
@@ -960,6 +1005,7 @@
                         <outlet property="lev_txt" destination="BtJ-B1-u9h" id="Edb-T4-Dy5"/>
                         <outlet property="restart" destination="mmj-J8-tXX" id="UNs-1k-z9I"/>
                         <outlet property="white_cnt" destination="kaf-yY-C1L" id="JSW-zg-ich"/>
+                        <segue destination="SbF-TJ-wzJ" kind="popover" identifier="results" popoverBehavior="t" preferredEdge="maxY" id="dPV-Ov-zoL"/>
                     </connections>
                 </viewController>
                 <customObject id="o1I-38-Rnz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

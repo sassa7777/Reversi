@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5AB5882B2BF89AFD0031E6ED /* ResultsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */; };
 		5ADA43182BF73B6600D600AD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5ADA43172BF73B6600D600AD /* AppDelegate.m */; };
 		5ADA431B2BF73B6600D600AD /* ViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5ADA431A2BF73B6600D600AD /* ViewController.mm */; };
 		5ADA431D2BF73B6700D600AD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5ADA431C2BF73B6700D600AD /* Assets.xcassets */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResultsViewController.mm; sourceTree = "<group>"; };
+		5AB5882C2BF89B450031E6ED /* ResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResultsViewController.h; sourceTree = "<group>"; };
 		5ADA43132BF73B6600D600AD /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ADA43162BF73B6600D600AD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5ADA43172BF73B6600D600AD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -72,6 +75,8 @@
 				5ADA43232BF73B6700D600AD /* Reversi.entitlements */,
 				5ADA43292BF7402F00D600AD /* FirstViewController.h */,
 				5ADA432A2BF7402F00D600AD /* FirstViewController.mm */,
+				5AB5882C2BF89B450031E6ED /* ResultsViewController.h */,
+				5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */,
 				5ADA432C2BF7428200D600AD /* reversi.cpp */,
 				5ADA432D2BF7428200D600AD /* reversi.hpp */,
 			);
@@ -150,6 +155,7 @@
 				5AF1C0452BF76EEE00C6FD8B /* main.m in Sources */,
 				5ADA431B2BF73B6600D600AD /* ViewController.mm in Sources */,
 				5ADA432E2BF7428200D600AD /* reversi.cpp in Sources */,
+				5AB5882B2BF89AFD0031E6ED /* ResultsViewController.mm in Sources */,
 				5ADA432B2BF7402F00D600AD /* FirstViewController.mm in Sources */,
 				5ADA43182BF73B6600D600AD /* AppDelegate.m in Sources */,
 			);

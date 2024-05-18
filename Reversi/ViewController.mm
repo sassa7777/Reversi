@@ -285,7 +285,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
                 else buttons[i][j].enabled = NO;
             } else {
                 buttons[i][j].enabled = NO;
-1            }
+            }
             mask >>= 1;
         }
     }
@@ -293,7 +293,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 }
 
 - (void)botput {
-    if(!isFinished()) {
+    if(isFinished() == false) {
         [self switchbuttons:NO];
         _hakotext.stringValue = @"考え中...\n(時間がかかることがあります)";
         [self.hakoface setImage:hako_think];
