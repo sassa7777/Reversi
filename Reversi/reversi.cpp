@@ -5,7 +5,7 @@
 //  Created by sasa on 2023/09/30.
 //
 
-#include "reversi.h"
+#include "reversi.hpp"
 
 int DEPTH;
 int Level;
@@ -60,15 +60,15 @@ uint64_t scoreboard_weight[5] = {
 
 void reset(void) {
 	printf("[*]初期化中...\n");
+    nowTurn = BLACK_TURN;
+    nowIndex = 1;
+    DEPTH = firstDEPTH;
+    afterIndex = nowIndex+DEPTH;
+    playerboard = 0x0000000810000000ULL;
+    oppenentboard = 0x0000001008000000ULL;
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
 	printf("CPU Core count: %d\n", cpu_core);
-	nowTurn = BLACK_TURN;
-	nowIndex = 1;
-	DEPTH = firstDEPTH;
-	afterIndex = nowIndex+DEPTH;
-	playerboard = 0x0000000810000000ULL;
-	oppenentboard = 0x0000001008000000ULL;
 	return;
 }
 

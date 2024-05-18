@@ -15,12 +15,6 @@
 #define LEFT_BOARD 0x8080808080808080ULL
 #define RIGHT_BOARD 0x0101010101010101ULL
 
-//#include <stdbool.h>
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <string.h>
-//#include <stdint.h>
-//#include <limits.h>
 #include <bits/stdc++.h>
 
 extern int DEPTH;

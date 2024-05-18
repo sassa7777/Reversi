@@ -85,7 +85,7 @@
                                 <rect key="frame" x="541" y="119" width="65" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="プレイヤー" id="ahb-c7-TSB">
-                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -147,7 +147,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="もう一度" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="R3w-hy-SYb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                    <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="restart:" target="z7b-xv-Ky4" id="s1v-HP-doc"/>
@@ -158,7 +158,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="閉じる" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ji2-Xb-nob">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" size="13" name=".HiraKakuInterface-W3"/>
+                                    <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="close:" target="z7b-xv-Ky4" id="FQe-qo-bx6"/>
@@ -889,7 +889,7 @@
                         </subviews>
                     </view>
                     <connections>
-                        <outlet property="aa" destination="9YI-Nr-r0g" id="PlZ-zC-UtX"/>
+                        <outlet property="aa" destination="9YI-Nr-r0g" id="hzB-eb-fos"/>
                         <outlet property="ab" destination="atB-Se-VBI" id="0TM-P5-U6R"/>
                         <outlet property="ac" destination="hJ8-5G-LLk" id="1Z2-98-MzJ"/>
                         <outlet property="ad" destination="uPT-JV-Z8n" id="bZ6-UP-8do"/>
@@ -949,6 +949,7 @@
                         <outlet property="gh" destination="wC5-Ur-cc7" id="gsz-qe-gPW"/>
                         <outlet property="ha" destination="lMx-I9-f3b" id="ATf-Hh-heE"/>
                         <outlet property="hakoface" destination="OBF-Xv-p9I" id="Vzs-Cb-XkD"/>
+                        <outlet property="hakotext" destination="2RS-zu-gha" id="daX-LE-4eQ"/>
                         <outlet property="hb" destination="Pbs-Bf-9Hr" id="lRQ-Fj-Zng"/>
                         <outlet property="hc" destination="5XR-tS-saj" id="BI7-D1-ixP"/>
                         <outlet property="hd" destination="x93-GO-Dcy" id="zGK-Ld-Kb8"/>

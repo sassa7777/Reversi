@@ -7,20 +7,30 @@
 
 #import "ViewController.h"
 
-NSImage *hako_default = [[NSImage alloc] initWithContentsOfFile:@"hako"];
-NSImage *hako_think = [[NSImage alloc] initWithContentsOfFile:@"thinking"];
-NSImage *hako_win = [[NSImage alloc] initWithContentsOfFile:@"win"];
-NSImage *hako_lose = [[NSImage alloc] initWithContentsOfFile:@"lose"];
+using namespace std;
+
+NSImage *hako_default = [NSImage imageNamed:@"hako"];
+NSImage *hako_think = [NSImage imageNamed:@"thinking"];
+NSImage *hako_win = [NSImage imageNamed:@"win"];
+NSImage *hako_lose = [NSImage imageNamed:@"lose"];
+NSImage *null_icon = [NSImage imageNamed:@"null"];
+NSImage *null_icon2 = [NSImage imageNamed:@"null2"];
+NSImage *black_stone = [NSImage imageNamed:@"black"];
+NSImage *black_stone2 = [NSImage imageNamed:@"blackb"];
+NSImage *white_stone = [NSImage imageNamed:@"white"];
+NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    ViewController *functions = [[ViewController alloc] init];
     [self.hakoface setImage:hako_default];
     self.close.hidden = YES;
     self.restart.hidden = YES;
     reset();
+    [functions reloadview];
     switch (Level) {
         case 1:
             _lev_txt.stringValue = @"Level: 1";
@@ -45,7 +55,6 @@ NSImage *hako_lose = [[NSImage alloc] initWithContentsOfFile:@"lose"];
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
-
     // Update the view, if already loaded.
 }
 
@@ -54,6 +63,7 @@ NSImage *hako_lose = [[NSImage alloc] initWithContentsOfFile:@"lose"];
 }
 
 - (void)put:(NSButton *)sender __attribute__((ibaction)) {
+    ViewController *functions = [[ViewController alloc] init];
     int results;
     if(sender == self.aa) results = putstone(0, 0);
     else if(sender == self.ab) results = putstone(0, 1);
@@ -119,11 +129,73 @@ NSImage *hako_lose = [[NSImage alloc] initWithContentsOfFile:@"lose"];
     else if(sender == self.hf) results = putstone(7, 5);
     else if(sender == self.hg) results = putstone(7, 6);
     else if(sender == self.hh) results = putstone(7, 7);
-    
+    [functions reloadview];
 }
 
 - (void)reloadview {
+    NSArray *buttons = @[
+        @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
+        @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
+        @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
+        @[self.da, self.db, self.dc, self.dd, self.de, self.df, self.dg, self.dh],
+        @[self.ea, self.eb, self.ec, self.ed, self.ee, self.ef, self.eg, self.eh],
+        @[self.fa, self.fb, self.fc, self.fd, self.fe, self.ff, self.fg, self.fh],
+        @[self.ga, self.gb, self.gc, self.gd, self.ge, self.gf, self.gg, self.gh],
+        @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
+    ];
     
+    uint64_t legalboard = makelegalBoard(&playerboard, &oppenentboard);
+    uint64_t mask = 0x8000000000000000;
+    for (char i = 0; i < 8; ++i) {
+        for (char j = 0; j < 8; ++j) {
+            if(nowTurn == BLACK_TURN) {
+                if((playerboard & mask) != 0) {
+                    if(tmpx == j && tmpy == i) {
+                        [buttons[i][j] setImage:black_stone2];
+                    } else {
+                        [buttons[i][j] setImage:black_stone];
+                    }
+                } else if(((oppenentboard & mask) != 0)) {
+                    if(tmpx == j && tmpy == i) {
+                        [buttons[i][j] setImage:white_stone2];
+                    } else {
+                        [buttons[i][j] setImage:white_stone];
+                    }
+                } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
+                    [buttons[i][j] setImage:null_icon2];
+                } else {
+                    [buttons[i][j] setImage:null_icon];
+                }
+            } else {
+                if((oppenentboard & mask) != 0) {
+                    if(tmpx == j && tmpy == i) {
+                        [buttons[i][j] setImage:black_stone2];
+                    } else {
+                        [buttons[i][j] setImage:black_stone];
+                    }
+                } else if(((playerboard & mask) != 0)) {
+                    if(tmpx == j && tmpy == i) {
+                        [buttons[i][j] setImage:white_stone2];
+                    } else {
+                        [buttons[i][j] setImage:white_stone];
+                    }
+                } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
+                    [buttons[i][j] setImage:null_icon2];
+                } else {
+                    [buttons[i][j] setImage:null_icon];
+                }
+            }
+            mask >>=1;
+        }
+    }
+    if(nowTurn == BLACK_TURN) {
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(playerboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(oppenentboard)];
+    } else {
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(oppenentboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(playerboard)];
+    }
+    NSLog(@"完了");
 }
 
 - (void)restart:(id)sender __attribute__((ibaction)) {

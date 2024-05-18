@@ -6,7 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "reversi.h"
+#import "reversi.hpp"
 
 
 @interface FirstViewController : NSViewController
