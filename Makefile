@@ -1,5 +1,5 @@
-PROJECT_NAME = othello.xcodeproj
-TARGET_NAME = othello
+PROJECT_NAME = Reversi.xcodeproj
+TARGET_NAME = Reversi
 CONFIGURATION = Release
 SDK = macosx
 CPU_COUNT := $(shell sysctl -n hw.ncpu)

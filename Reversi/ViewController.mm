@@ -7,6 +7,9 @@
 
 #import "ViewController.h"
 
+
+extern "C" void cppfunction();
+
 using namespace std;
 
 NSImage *hako_default = [NSImage imageNamed:@"hako"];
@@ -301,12 +304,13 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 - (void)botput {
     if(isFinished() == false) {
         [self switchbuttons:NO];
-        _hakotext.stringValue = @"考え中...\n(時間がかかることがあります)";
+        think_percent = 0;
+        _hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)\n(時間がかかることがあります)", think_percent];
         [self.hakoface setImage:hako_think];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
             int results = ai();
             if(results == 1) {
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     swapboard();
                     if(isPass()) {
                         swapboard();
@@ -324,5 +328,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         });
     }
 }
+
+
 
 @end

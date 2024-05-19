@@ -6,6 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <objc/runtime.h>
 #import "reversi.hpp"
 
 @interface ViewController : NSViewController
@@ -77,7 +78,7 @@
 @property (nonatomic, weak) IBOutlet NSImageView *hakoface;
 @property (nonatomic, weak) IBOutlet NSButton *close;
 @property (nonatomic, weak) IBOutlet NSButton *restart;
-@property (nonatomic, weak) IBOutlet NSTextField *hakotext;
+@property (nonatomic, strong) IBOutlet NSTextField *hakotext;
 @property (nonatomic, weak) IBOutlet NSTextField *white_cnt;
 @property (nonatomic, weak) IBOutlet NSTextField *black_cnt;
 @property (nonatomic, weak) IBOutlet NSTextField *lev_txt;

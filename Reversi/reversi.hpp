@@ -16,6 +16,7 @@
 #define RIGHT_BOARD 0x0101010101010101ULL
 
 #include <bits/stdc++.h>
+#include <objc/message.h>
 
 extern int DEPTH;
 extern int Level;

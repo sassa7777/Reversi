@@ -6,6 +6,7 @@
 //
 
 #include "reversi.hpp"
+#include "Wrapper.h"
 
 int DEPTH;
 int Level;
@@ -306,7 +307,7 @@ int ai(void) {
 	tmpy = -1;
 	tmpbit = 0;
 	think_percent = 0;
-	//update_hakostring();
+    update_think_percent();
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = std::popcount(legalboard);
 	think_count = 100/putable_count;
@@ -314,7 +315,7 @@ int ai(void) {
 	if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
-	//update_hakostring();
+    update_think_percent();
 	putstone(tmpy, tmpx);
 	return 1;
 }
@@ -339,7 +340,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 			*oppenentboard ^= rev;
 			if(depth == DEPTH) {
 				think_percent += think_count;
-				//update_hakostring();
+                update_think_percent();
 			}
 			if (var >= beta) {
 				return var;
@@ -707,3 +708,4 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) 
 	if(*afterIndex >= 40) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 }
+
