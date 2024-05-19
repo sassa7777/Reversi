@@ -19,21 +19,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5AAE78312BF8E1BE005976A2 /* Wrapper.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Wrapper.hpp; sourceTree = "<group>"; };
+		5AAE78312BF8E1BE005976A2 /* Wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Wrapper.h; sourceTree = "<group>"; };
 		5AAE78322BF8E1CB005976A2 /* Wrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Wrapper.mm; sourceTree = "<group>"; };
 		5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResultsViewController.mm; sourceTree = "<group>"; };
-		5AB5882C2BF89B450031E6ED /* ResultsViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ResultsViewController.hpp; sourceTree = "<group>"; };
+		5AB5882C2BF89B450031E6ED /* ResultsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ResultsViewController.h; sourceTree = "<group>"; };
 		5ADA43132BF73B6600D600AD /* Reversi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reversi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5ADA43162BF73B6600D600AD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5ADA43172BF73B6600D600AD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		5ADA43192BF73B6600D600AD /* ViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ViewController.hpp; sourceTree = "<group>"; };
+		5ADA43192BF73B6600D600AD /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		5ADA431A2BF73B6600D600AD /* ViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
 		5ADA431C2BF73B6700D600AD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5ADA43232BF73B6700D600AD /* Reversi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Reversi.entitlements; sourceTree = "<group>"; };
-		5ADA43292BF7402F00D600AD /* FirstViewController.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FirstViewController.hpp; sourceTree = "<group>"; };
+		5ADA43292BF7402F00D600AD /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
 		5ADA432A2BF7402F00D600AD /* FirstViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstViewController.mm; sourceTree = "<group>"; };
 		5ADA432C2BF7428200D600AD /* reversi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reversi.cpp; sourceTree = "<group>"; };
-		5ADA432D2BF7428200D600AD /* reversi.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reversi.hpp; sourceTree = "<group>"; };
+		5ADA432D2BF7428200D600AD /* reversi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reversi.h; sourceTree = "<group>"; };
 		5AF1C0442BF76EEE00C6FD8B /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5AF1C0652BF7737000C6FD8B /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -68,22 +68,22 @@
 		5ADA43152BF73B6600D600AD /* Reversi */ = {
 			isa = PBXGroup;
 			children = (
-				5AAE78312BF8E1BE005976A2 /* Wrapper.hpp */,
+				5AAE78312BF8E1BE005976A2 /* Wrapper.h */,
 				5AAE78322BF8E1CB005976A2 /* Wrapper.mm */,
 				5ADA43162BF73B6600D600AD /* AppDelegate.h */,
 				5ADA43172BF73B6600D600AD /* AppDelegate.m */,
-				5ADA43192BF73B6600D600AD /* ViewController.hpp */,
+				5ADA43192BF73B6600D600AD /* ViewController.h */,
 				5ADA431A2BF73B6600D600AD /* ViewController.mm */,
 				5ADA431C2BF73B6700D600AD /* Assets.xcassets */,
 				5AF1C0442BF76EEE00C6FD8B /* main.m */,
 				5AF1C0652BF7737000C6FD8B /* Main.storyboard */,
 				5ADA43232BF73B6700D600AD /* Reversi.entitlements */,
-				5ADA43292BF7402F00D600AD /* FirstViewController.hpp */,
+				5ADA43292BF7402F00D600AD /* FirstViewController.h */,
 				5ADA432A2BF7402F00D600AD /* FirstViewController.mm */,
-				5AB5882C2BF89B450031E6ED /* ResultsViewController.hpp */,
+				5AB5882C2BF89B450031E6ED /* ResultsViewController.h */,
 				5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */,
 				5ADA432C2BF7428200D600AD /* reversi.cpp */,
-				5ADA432D2BF7428200D600AD /* reversi.hpp */,
+				5ADA432D2BF7428200D600AD /* reversi.h */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";
