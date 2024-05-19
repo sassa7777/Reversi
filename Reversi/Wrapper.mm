@@ -4,8 +4,8 @@
 //
 //  Created by sasa on 2024/05/18.
 //
-#import "Wrapper.h"
-#import "ViewController.h"
+#import "Wrapper.hpp"
+#import "ViewController.hpp"
 #import <objc/message.h>
 
 void update_think_percent() {

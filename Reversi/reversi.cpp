@@ -6,7 +6,7 @@
 //
 
 #include "reversi.hpp"
-#include "Wrapper.h"
+#include "Wrapper.hpp"
 
 using namespace std;
 
