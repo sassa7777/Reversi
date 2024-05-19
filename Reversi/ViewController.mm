@@ -5,7 +5,7 @@
 //  Created by sasa on 2024/05/17.
 //
 
-#import "ViewController.hpp"
+#import "ViewController.h"
 
 using namespace std;
 
@@ -203,11 +203,11 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         }
     }
     if(nowTurn == BLACK_TURN) {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(playerboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(oppenentboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(playerboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(oppenentboard)];
     } else {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(oppenentboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(playerboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(oppenentboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(playerboard)];
     }
     NSLog(@"完了");
     if(isFinished()) {

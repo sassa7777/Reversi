@@ -5,7 +5,7 @@
 //  Created by sasa on 2024/05/18.
 //
 
-#import "ResultsViewController.hpp"
+#import "ResultsViewController.h"
 
 using namespace std;
 

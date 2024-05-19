@@ -4,9 +4,8 @@
 //
 //  Created by sasa on 2024/05/18.
 //
-#import "Wrapper.hpp"
-#import "ViewController.hpp"
-#import <objc/message.h>
+#import "Wrapper.h"
+#import "ViewController.h"
 
 void update_think_percent() {
     dispatch_async(dispatch_get_main_queue(), ^(void) {

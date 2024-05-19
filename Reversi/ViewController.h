@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <objc/runtime.h>
-#import "reversi.hpp"
+#import "reversi.h"
 
 @interface ViewController : NSViewController
 

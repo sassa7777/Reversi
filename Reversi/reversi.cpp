@@ -5,61 +5,11 @@
 //  Created by sasa on 2023/09/30.
 //
 
-#include "reversi.hpp"
-#include "Wrapper.hpp"
+#include "reversi.h"
+#include "variables.h"
+#include "Wrapper.h"
 
 using namespace std;
-
-int DEPTH;
-int Level;
-int px, py;
-int whitec;
-int blackc;
-int tmpx, tmpy;
-uint64_t tmpbit;
-int think_percent;
-int think_count;
-int botplayer;
-int cpu_core;
-int nowTurn;
-int nowIndex;
-int firstDEPTH;
-int afterIndex;
-uint64_t playerboard;
-uint64_t oppenentboard;
-uint64_t legalboard;
-uint64_t rev;
-
-char moveorder[64][2] = {
-    {0,0}, {0,7}, {7,0}, {7,7}, {0,2}, {0,5}, {2,0}, {2,2}, {2,5}, {2,7}, {5,0}, {5,2}, {5,5}, {5,7}, {7,2}, {7,5}, {0,3}, {0,4}, {2,3}, {2,4}, {3,0}, {3,2}, {3,3}, {3,4}, {3,5}, {3,7}, {4,0}, {4,2}, {4,3}, {4,4}, {4,5}, {4,7}, {5,3}, {5,4}, {7,3}, {7,4}, {1,2}, {1,3}, {1,4}, {1,5}, {2,1}, {2,6}, {3,1}, {3,6}, {4,1}, {4,6}, {5,1}, {5,6}, {6,2}, {6,3}, {6,4}, {6,5}, {0,1}, {0,6}, {1,0}, {1,7}, {6,0}, {6,7}, {7,1}, {7,6}, {1,1}, {1,6}, {6,1}, {6,6}
-};
-
-uint64_t moveorder_bit[64] = {
-    0x8000000000000000ULL, 0x100000000000000ULL, 0x80ULL, 0x1ULL, 0x2000000000000000ULL, 288230376151711744, 140737488355328, 35184372088832, 4398046511104, 1099511627776, 8388608, 2097152, 262144, 65536, 32, 4, 1152921504606846976, 576460752303423488, 17592186044416, 8796093022208, 549755813888, 137438953472, 68719476736, 34359738368, 17179869184, 4294967296, 2147483648, 536870912, 268435456, 134217728, 67108864, 16777216, 1048576, 524288, 16, 8, 9007199254740992, 4503599627370496, 2251799813685248, 1125899906842624, 70368744177664, 2199023255552, 274877906944, 8589934592, 1073741824, 33554432, 4194304, 131072, 8192, 4096, 2048, 1024, 4611686018427387904, 144115188075855872, 36028797018963968, 281474976710656, 32768, 256, 64, 2, 18014398509481984, 562949953421312, 16384, 512
-};
-
-int scoreboard[64] = {
-    30, -12, 0, -1, -1, 0, -12, 30,
-    -12, -15, -3, -3, -3, -3, -15, -12,
-    0, -3, 0, -1, -1, 0, -3, 0,
-    -1, -3, -1, -1, -1, -1, -3, -1,
-    -1, -3, -1, -1, -1, -1, -3, -1,
-    0, -3, 0, -1, -1, 0, -3, 0,
-    -12, -15, -3, -3, -3, -3, -15, -12,
-    30, -12, 0, -1, -1, 0, -12, 30
-};
-
-int scoreboard_score[5] = {
-    30, -1, -3, -12, -15
-};
-
-uint64_t scoreboard_weight[5] = {
-    0x8100000000000081ULL,
-    0x180018BDBD180018ULL,
-    0x003C424242423C00ULL,
-    0x4281000000008142ULL,
-    0x0042000000004200ULL,
-};
 
 void reset(void) {
 	printf("[*]初期化中...\n");
@@ -304,7 +254,10 @@ int ai(void) {
 		return 0;
 	}
 	printf("[*]Botが考え中..\n");
-	if(DEPTH >= 10 && nowIndex >= 43) DEPTH = 20;
+    if(DEPTH >= 10 && nowIndex >= 43) {
+        DEPTH = 20;
+        afterIndex+=10;
+    }
 	tmpx = -1;
 	tmpy = -1;
 	tmpbit = 0;
@@ -375,11 +328,11 @@ int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard
 
 int winner(void) {
 	if(nowTurn == BLACK_TURN) {
-		blackc = bitcount(playerboard);
-		whitec = bitcount(oppenentboard);
+		blackc = popcount(playerboard);
+		whitec = popcount(oppenentboard);
 	} else {
-		whitec = bitcount(playerboard);
-		blackc = bitcount(oppenentboard);
+		whitec = popcount(playerboard);
+		blackc = popcount(oppenentboard);
 	}
 	if (blackc > whitec) {
 		return 1;
@@ -560,6 +513,16 @@ int score_stone(uint64_t *playerboard, uint64_t *oppenentboard) {
 	return score;
 }
 
+int score_stone2(uint64_t *playerboard, uint64_t *oppenentboard) {
+    int score = 0;
+    
+    for (char i = 0; i < 10; ++i) {
+        score += cell_weight_score[i] * popcount(*playerboard & cell_weight_mask[i]);
+        score -= cell_weight_score[i] * popcount(*oppenentboard & cell_weight_mask[i]);
+    }
+    return score;
+}
+
 int score_putable(uint64_t *playerboard, uint64_t *oppenentboard) {
 	return ((popcount(makelegalBoard(playerboard, oppenentboard)))-(popcount(makelegalBoard(oppenentboard, playerboard))));
 }
@@ -704,10 +667,11 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 }
 
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
+    if(*afterIndex >= 60) return (popcount(*playerboard)-popcount(*oppenentboard));
 	if(!(*playerboard)) return -2147483646;
 	if(!(*oppenentboard)) return 2147483646;
-	if(*afterIndex >= 60) return (popcount(*playerboard)-popcount(*oppenentboard));
-	if(*afterIndex >= 40) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
+	if(*afterIndex >= 40) return ((score_stone2(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*300));
+    if(*afterIndex >= 25) return ((score_stone2(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*300)+(score_putable(playerboard, oppenentboard)*20));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 }
 

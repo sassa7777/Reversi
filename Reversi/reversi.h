@@ -15,8 +15,10 @@
 #define LEFT_BOARD 0x8080808080808080ULL
 #define RIGHT_BOARD 0x0101010101010101ULL
 
-#include <bits/stdc++.h>
-#include <objc/message.h>
+//#include <bits/stdc++.h>
+#include <iostream>
+#include <bit>
+#include <cstdint>
 
 extern int DEPTH;
 extern int Level;
@@ -37,16 +39,6 @@ extern uint64_t playerboard;
 extern uint64_t oppenentboard;
 extern uint64_t legalboard;
 extern uint64_t rev;
-
-extern char moveorder[64][2];
-
-extern uint64_t moveorder_bit[64];
-
-extern int scoreboard[64];
-
-extern int scoreboard_score[5];
-
-extern uint64_t scoreboard_weight[5];
 
 
 //main functions

@@ -6,7 +6,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "reversi.hpp"
+#import "reversi.h"
 
 @interface ResultsViewController : NSViewController
 

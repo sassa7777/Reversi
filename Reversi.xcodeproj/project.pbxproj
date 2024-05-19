@@ -19,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5A1A5CDD2BF9F3E200E50DEB /* variables.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = variables.h; sourceTree = "<group>"; };
 		5AAE78312BF8E1BE005976A2 /* Wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Wrapper.h; sourceTree = "<group>"; };
 		5AAE78322BF8E1CB005976A2 /* Wrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Wrapper.mm; sourceTree = "<group>"; };
 		5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ResultsViewController.mm; sourceTree = "<group>"; };
@@ -84,6 +85,7 @@
 				5AB5882A2BF89AFD0031E6ED /* ResultsViewController.mm */,
 				5ADA432C2BF7428200D600AD /* reversi.cpp */,
 				5ADA432D2BF7428200D600AD /* reversi.h */,
+				5A1A5CDD2BF9F3E200E50DEB /* variables.h */,
 			);
 			path = Reversi;
 			sourceTree = "<group>";
