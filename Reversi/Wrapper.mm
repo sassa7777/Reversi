@@ -18,5 +18,4 @@ void update_think_percent() {
           }
         });
     });
-    
 }

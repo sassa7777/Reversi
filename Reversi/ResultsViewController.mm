@@ -7,6 +7,8 @@
 
 #import "ResultsViewController.h"
 
+using namespace std;
+
 @implementation ResultsViewController
 
 -(void)viewDidLoad {
@@ -23,9 +25,9 @@
             break;
     }
     if(nowTurn == BLACK_TURN) {
-        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", std::popcount(playerboard), std::popcount(oppenentboard)];
+        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", popcount(playerboard), popcount(oppenentboard)];
     } else {
-        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", std::popcount(oppenentboard), std::popcount(playerboard)];
+        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", popcount(oppenentboard), popcount(playerboard)];
     }
 }
 

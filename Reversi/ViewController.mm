@@ -7,9 +7,6 @@
 
 #import "ViewController.h"
 
-
-extern "C" void cppfunction();
-
 using namespace std;
 
 NSImage *hako_default = [NSImage imageNamed:@"hako"];
