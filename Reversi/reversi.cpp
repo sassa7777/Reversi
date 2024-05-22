@@ -670,8 +670,8 @@ int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) 
     if(*afterIndex >= 60) return (popcount(*playerboard)-popcount(*oppenentboard));
 	if(!(*playerboard)) return -2147483646;
 	if(!(*oppenentboard)) return 2147483646;
-	if(*afterIndex >= 40) return ((score_stone2(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*300));
-    if(*afterIndex >= 25) return ((score_stone2(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*300)+(score_putable(playerboard, oppenentboard)*20));
+	if(*afterIndex >= 40) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
+    if(*afterIndex >= 25) return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 }
 

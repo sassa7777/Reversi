@@ -19,6 +19,7 @@
 #include <iostream>
 #include <bit>
 #include <cstdint>
+#include <vector>
 
 extern int DEPTH;
 extern int Level;
