@@ -14,12 +14,15 @@
 #define DOWN_BOARD 0x00000000000000FFULL
 #define LEFT_BOARD 0x8080808080808080ULL
 #define RIGHT_BOARD 0x0101010101010101ULL
+#define MIN_INF -2147483646
+#define MAX_INF 2147483646
 
-//#include <bits/stdc++.h>
 #include <iostream>
 #include <bit>
 #include <cstdint>
 #include <vector>
+#include <algorithm>
+#include <unordered_map>
 
 extern int DEPTH;
 extern int Level;

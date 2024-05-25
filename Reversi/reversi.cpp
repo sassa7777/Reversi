@@ -9,6 +9,7 @@
 #include "variables.h"
 #include "Wrapper.h"
 
+
 using namespace std;
 
 void reset(void) {
@@ -266,7 +267,7 @@ int ai(void) {
 	legalboard = makelegalBoard(&playerboard, &oppenentboard);
 	int putable_count = popcount(legalboard);
 	think_count = 100/putable_count;
-	nega_alpha(DEPTH, -2147483647, 2147483647, &playerboard, &oppenentboard);
+	nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &playerboard, &oppenentboard);
 	if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -284,7 +285,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 		else return -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
 	uint64_t rev = 0;
-	int var, max_score = -32767;
+	int var, max_score = MIN_INF;
 	for (char i = 0; i<64; ++i) {
 		if(canput(&moveorder_bit[i], &legalboard)) {
 			rev = revbit(&moveorder_bit[i], playerboard, oppenentboard, &rev);
@@ -307,7 +308,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 					tmpy = moveorder[i][0];
 				}
 			}
-			if(alpha > max_score) max_score = alpha;
+            max_score = max(max_score, alpha);
 		}
 	}
 	return max_score;
@@ -668,8 +669,8 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard) {
 
 int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex) {
     if(*afterIndex >= 60) return (popcount(*playerboard)-popcount(*oppenentboard));
-	if(!(*playerboard)) return -2147483646;
-	if(!(*oppenentboard)) return 2147483646;
+	if(!(*playerboard)) return MIN_INF;
+	if(!(*oppenentboard)) return MAX_INF;
 	if(*afterIndex >= 40) return ((score_stone(playerboard, oppenentboard))+(score_fixedstone(playerboard, oppenentboard)*55));
     if(*afterIndex >= 25) return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
 	return ((score_stone(playerboard, oppenentboard)*3)+(score_fixedstone(playerboard, oppenentboard)*55)+(score_putable(playerboard, oppenentboard)));
