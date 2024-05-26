@@ -31,29 +31,12 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     self.restart.hidden = YES;
     reset();
     [self reloadview];
-    switch (Level) {
-        case 1:
-            _lev_txt.stringValue = @"Level: 1";
-            break;
-        case 2:
-            _lev_txt.stringValue = @"Level: 2";
-            break;
-        case 3:
-            _lev_txt.stringValue = @"Level: 3";
-            break;
-        case 4:
-            _lev_txt.stringValue = @"Level: 4";
-            break;
-        case 5:
-            _lev_txt.stringValue = @"Level: 5";
-            break;
-        default:
-            break;
-    }
+    _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {
         [self reloadview];
-        sleep(1);
-        [self botput];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self botput];
+        });
     } else {
         [self botput];
     }
