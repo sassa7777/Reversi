@@ -22,7 +22,6 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
 
 extern int DEPTH;
 extern int Level;

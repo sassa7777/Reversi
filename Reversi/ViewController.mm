@@ -33,8 +33,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {
-        [self reloadview];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self botput];
         });
     } else {
@@ -195,7 +194,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     NSLog(@"完了");
     if(isFinished()) {
         [self results];
-        [self performSegueWithIdentifier:@"results" sender:self];
+        [self performSegueWithIdentifier:@"results" sender:nil];
         self.close.hidden = NO;
         self.restart.hidden = NO;
     }

@@ -74,7 +74,7 @@
 }
 
 - (void)tapstart:(id)sender __attribute__((ibaction)) {
-    [self performSegueWithIdentifier:@"start" sender:self];
+    [self performSegueWithIdentifier:@"start" sender:nil];
 }
 
 @end
