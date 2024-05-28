@@ -84,9 +84,10 @@ bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t bits);
-uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
+void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
 void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put);
 
 //evaluation
