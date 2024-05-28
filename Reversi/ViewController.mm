@@ -139,7 +139,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
     ];
     
-    uint64_t legalboard = makelegalBoard(&b.playerboard, &b.oppenentboard);
+    uint64_t legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
     uint64_t mask = 0x8000000000000000;
     for (char i = 0; i < 8; ++i) {
         for (char j = 0; j < 8; ++j) {
@@ -150,7 +150,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
                     } else {
                         [buttons[i][j] setImage:black_stone];
                     }
-                } else if(((b.oppenentboard & mask) != 0)) {
+                } else if(((b.opponentboard & mask) != 0)) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:white_stone2];
                     } else {
@@ -162,7 +162,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
                     [buttons[i][j] setImage:null_icon];
                 }
             } else {
-                if((b.oppenentboard & mask) != 0) {
+                if((b.opponentboard & mask) != 0) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:black_stone2];
                     } else {
@@ -185,9 +185,9 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     }
     if(nowTurn == BLACK_TURN) {
         _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(b.playerboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(b.oppenentboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(b.opponentboard)];
     } else {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(b.oppenentboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(b.opponentboard)];
         _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(b.playerboard)];
     }
     NSLog(@"完了");
@@ -263,7 +263,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
             }
         }
     }
-    uint64_t legalboard = makelegalBoard(&b.playerboard, &b.oppenentboard);
+    uint64_t legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
     uint64_t mask = 0x8000000000000000;
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {

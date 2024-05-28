@@ -40,26 +40,22 @@ extern int nowTurn;
 extern int nowIndex;
 extern int firstDEPTH;
 extern int afterIndex;
-//extern uint64_t playerboard;
-//extern uint64_t oppenentboard;
 extern uint64_t legalboard;
 extern uint64_t rev;
 
 class board{
 public:
     uint64_t playerboard;
-    uint64_t oppenentboard;
+    uint64_t opponentboard;
     
 public:
-    board(uint64_t player, uint64_t opponent) : playerboard(player), oppenentboard(opponent) {}
+    board(uint64_t player, uint64_t opponent) : playerboard(player), opponentboard(opponent) {}
 
-    board() : playerboard(0), oppenentboard(0) {}
-    // Convert the playerboard and opponentboard to string and concatenate them
+    board() : playerboard(0), opponentboard(0) {}
     std::string to_string() const {
-        return std::to_string(playerboard) + std::to_string(oppenentboard);
+        return std::to_string(playerboard) + std::to_string(opponentboard);
     }
 
-    // Override hash function to be used in unordered_map
     struct hash {
         size_t operator()(const board& b) const {
             // Hash the concatenated string representation of playerboard and opponentboard
@@ -67,9 +63,8 @@ public:
         }
     };
 
-    // Override equality operator to be used in unordered_map
     bool operator==(const board& other) const {
-        return playerboard == other.playerboard && oppenentboard == other.oppenentboard;
+        return playerboard == other.playerboard && opponentboard == other.opponentboard;
     }
 };
 
@@ -83,22 +78,22 @@ int ai(void);
 int putstone(char y, char x);
 uint64_t cordinate_to_bit(char *x, char *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
-uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *oppenentboard);
+uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *opponentboard);
 void reversebit(uint64_t put);
 uint64_t transfer(uint64_t *put, char *i);
 bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
 int bitcount(uint64_t bits);
-uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *rev);
-void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *oppenentboard);
-int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard);
-int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard, uint64_t *put);
+uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
+void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put);
 
 //evaluation
-int score_stone(uint64_t *playerboard, uint64_t *oppenentboard);
-int score_putable(uint64_t *playerboard, uint64_t *oppenentboard);
-int score_fixedstone(uint64_t *playerboard, uint64_t *oppenentboard);
-int countscore(uint64_t *playerboard, uint64_t *oppenentboard, int *afterIndex);
+int score_stone(uint64_t *playerboard, uint64_t *opponentboard);
+int score_putable(uint64_t *playerboard, uint64_t *opponentboard);
+int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard);
+int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex);
 
 #endif /* othello_h */

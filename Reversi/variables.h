@@ -26,7 +26,7 @@ int nowIndex;
 int firstDEPTH;
 int afterIndex;
 //uint64_t playerboard;
-//uint64_t oppenentboard;
+//uint64_t opponentboard;
 uint64_t legalboard;
 uint64_t rev;
 
