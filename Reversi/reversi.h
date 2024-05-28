@@ -51,7 +51,7 @@ public:
 public:
     struct hash {
         size_t operator()(const board& a) const {
-            return std::hash<uint64_t>{}(a.playerboard) ^ std::hash<uint64_t>{}(a.opponentboard);
+            return std::hash<std::string>{}(std::to_string(a.playerboard)+std::to_string(a.opponentboard));
         }
     };
     bool operator==(const board& other) const {
@@ -81,6 +81,15 @@ void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *oppon
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put);
+
+//flip boards
+void flipHorizontal(uint64_t *x);
+void flipVertical(uint64_t *x);
+void flipDiagonalA8H1(uint64_t *x);
+void flipDiagonalA1H8(uint64_t *x);
+void rotateClockwise90(uint64_t *x);
+void rotateCounterclockwise90(uint64_t *x);
+void rotate180(uint64_t *x);
 
 //evaluation
 int score_stone(uint64_t *playerboard, uint64_t *opponentboard);
