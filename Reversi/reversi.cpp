@@ -317,6 +317,11 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
 		}
 	}
     transpose_table[b] = max_score;
+    *playerboard = __builtin_bswap64(*playerboard);
+    *opponentboard = __builtin_bswap64(*opponentboard);
+    transpose_table[b] = max_score;
+    *playerboard = __builtin_bswap64(*playerboard);
+    *opponentboard = __builtin_bswap64(*opponentboard);
 	return max_score;
 }
 
