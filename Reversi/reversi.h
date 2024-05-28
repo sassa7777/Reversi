@@ -49,21 +49,13 @@ public:
     uint64_t opponentboard;
     
 public:
-    board(uint64_t player, uint64_t opponent) : playerboard(player), opponentboard(opponent) {}
-
-    board() : playerboard(0), opponentboard(0) {}
-    std::string to_string() const {
-        return std::to_string(playerboard) + std::to_string(opponentboard);
-    }
-
     struct hash {
-        size_t operator()(const board& b) const {
-            return std::hash<std::string>{}(b.to_string());
+        size_t operator()(const board& a) const {
+            return std::hash<uint64_t>{}(a.playerboard) ^ std::hash<uint64_t>{}(a.opponentboard);
         }
     };
-
     bool operator==(const board& other) const {
-        return playerboard == other.playerboard && opponentboard == other.opponentboard;
+        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
 };
 

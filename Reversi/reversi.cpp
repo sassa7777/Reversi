@@ -326,13 +326,16 @@ int ai(void) {
 	int putable_count = popcount(legalboard);
 	think_count = 100/putable_count;
     transpose_table.clear();
+    visited_nodes = 0;
     if(afterIndex >= 60) {
         nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
     } else {
         nega_alpha_transpose_table(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
     }
+    //nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
 	if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
+    cout << "Visited nodes:" << visited_nodes << endl;
 	think_percent = 100;
     update_think_percent();
 	putstone(tmpy, tmpx);
@@ -340,18 +343,17 @@ int ai(void) {
 }
 
 int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
+    ++visited_nodes;
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    
     if(transpose_table.find(b) != transpose_table.end()) {
         return transpose_table[b];
     }
-	
 	uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
 	if(!legalboard) {
 		if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
-		else return -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
+		else return -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
 	}
 	uint64_t rev = 0;
 	int var, max_score = MIN_INF;
@@ -360,7 +362,7 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
 			revbit(&moveorder_bit[i], playerboard, opponentboard, &rev);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*opponentboard ^= rev;
-			var = -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
+			var = -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
 			*playerboard ^= (moveorder_bit[i] | rev);
 			*opponentboard ^= rev;
 			if(depth == DEPTH) {
@@ -408,6 +410,7 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
 }
 
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
+    ++visited_nodes;
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
