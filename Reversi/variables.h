@@ -8,6 +8,8 @@
 #ifndef variables_h
 #define variables_h
 
+#include "reversi.h"
+
 int DEPTH;
 int Level;
 int px, py;
@@ -23,10 +25,12 @@ int nowTurn;
 int nowIndex;
 int firstDEPTH;
 int afterIndex;
-uint64_t playerboard;
-uint64_t oppenentboard;
+//uint64_t playerboard;
+//uint64_t oppenentboard;
 uint64_t legalboard;
 uint64_t rev;
+
+board b;
 
 char moveorder[64][2] = {
     {0,0}, {0,7}, {7,0}, {7,7}, {0,2}, {0,5}, {2,0}, {2,2}, {2,5}, {2,7}, {5,0}, {5,2}, {5,5}, {5,7}, {7,2}, {7,5}, {0,3}, {0,4}, {2,3}, {2,4}, {3,0}, {3,2}, {3,3}, {3,4}, {3,5}, {3,7}, {4,0}, {4,2}, {4,3}, {4,4}, {4,5}, {4,7}, {5,3}, {5,4}, {7,3}, {7,4}, {1,2}, {1,3}, {1,4}, {1,5}, {2,1}, {2,6}, {3,1}, {3,6}, {4,1}, {4,6}, {5,1}, {5,6}, {6,2}, {6,3}, {6,4}, {6,5}, {0,1}, {0,6}, {1,0}, {1,7}, {6,0}, {6,7}, {7,1}, {7,6}, {1,1}, {1,6}, {6,1}, {6,6}
@@ -66,5 +70,7 @@ constexpr uint64_t cell_weight_mask[10] = {
     0x0000182424180000ULL,
     0x0000001818000000ULL
 };
+
+std::unordered_map<board, int, board::hash> transpose_table;
 
 #endif /* variables_h */

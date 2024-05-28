@@ -5,7 +5,6 @@
 //  Created by sasa on 2023/09/30.
 //
 
-#include "reversi.h"
 #include "variables.h"
 #include "Wrapper.h"
 
@@ -17,8 +16,8 @@ void reset(void) {
     nowIndex = 1;
     DEPTH = firstDEPTH;
     afterIndex = nowIndex+DEPTH;
-    playerboard = 0x0000000810000000ULL;
-    oppenentboard = 0x0000001008000000ULL;
+    b.playerboard = 0x0000000810000000ULL;
+    b.oppenentboard = 0x0000001008000000ULL;
 	printf("DEPTH=%d\n", DEPTH);
 	printf("Player: %d\n", botplayer);
 	printf("CPU Core count: %d\n", cpu_core);
@@ -29,7 +28,7 @@ int putstone(char y, char x) {
 	tmpy = y;
 	tmpx = x;
 	uint64_t put = cordinate_to_bit(&x, &y);
-	legalboard = makelegalBoard(&playerboard, &oppenentboard);
+	legalboard = makelegalBoard(&b.playerboard, &b.oppenentboard);
 	if(canput(&put, &legalboard)) {
 		reversebit(put);
 		nowIndex++;
@@ -137,15 +136,15 @@ void reversebit(uint64_t put) {
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(&put, &i);
-		while ((mask != 0) && ((mask & oppenentboard) != 0)) {
+		while ((mask != 0) && ((mask & b.oppenentboard) != 0)) {
 			rev_ |= mask;
 			mask = transfer(&mask, &i);
 		}
-		if((mask & playerboard) != 0) rev |= rev_;
+		if((mask & b.playerboard) != 0) rev |= rev_;
 	}
 	//反転
-	playerboard ^= (put | rev);
-	oppenentboard ^= rev;
+	b.playerboard ^= (put | rev);
+	b.oppenentboard ^= rev;
 }
 
 
@@ -197,17 +196,17 @@ uint64_t transfer(uint64_t *put, char *i) {
 }
 
 bool isPass(void) {
-	return (makelegalBoard(&playerboard, &oppenentboard) == 0 && makelegalBoard(&oppenentboard, &playerboard) != 0);
+	return (makelegalBoard(&b.playerboard, &b.oppenentboard) == 0 && makelegalBoard(&b.oppenentboard, &b.playerboard) != 0);
 }
 
 bool isFinished(void) {
-	return (makelegalBoard(&playerboard, &oppenentboard) == 0 && makelegalBoard(&oppenentboard, &playerboard) == 0);
+	return (makelegalBoard(&b.playerboard, &b.oppenentboard) == 0 && makelegalBoard(&b.oppenentboard, &b.playerboard) == 0);
 }
 
 void swapboard(void) {
-	uint64_t tmp = playerboard;
-	playerboard = oppenentboard;
-	oppenentboard = tmp;
+	uint64_t tmp = b.playerboard;
+	b.playerboard = b.oppenentboard;
+	b.oppenentboard = tmp;
 	nowTurn = -nowTurn;
 }
 
@@ -263,10 +262,11 @@ int ai(void) {
 	tmpbit = 0;
 	think_percent = 0;
     update_think_percent();
-	legalboard = makelegalBoard(&playerboard, &oppenentboard);
+	legalboard = makelegalBoard(&b.playerboard, &b.oppenentboard);
 	int putable_count = popcount(legalboard);
 	think_count = 100/putable_count;
-	nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &playerboard, &oppenentboard);
+    transpose_table.clear();
+	nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.oppenentboard);
 	if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
 	think_percent = 100;
@@ -276,10 +276,16 @@ int ai(void) {
 }
 
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *oppenentboard) {
-	if(!(depth)) return countscore(playerboard, oppenentboard, &afterIndex);
+    if(!depth) {
+        return countscore(playerboard, oppenentboard, &afterIndex);
+    }
+    
+    if(transpose_table.find(b) != transpose_table.end()) {
+        return transpose_table[b];
+    }
 	
 	uint64_t legalboard = makelegalBoard(playerboard, oppenentboard);
-	if(!(legalboard)) {
+	if(!legalboard) {
 		if(!(makelegalBoard(oppenentboard, playerboard))) return countscore(playerboard, oppenentboard, &afterIndex);
 		else return -nega_alpha(depth-1, -beta, -alpha, oppenentboard, playerboard);
 	}
@@ -310,6 +316,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
             max_score = max(max_score, alpha);
 		}
 	}
+    transpose_table[b] = max_score;
 	return max_score;
 }
 
@@ -328,11 +335,11 @@ int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard
 
 int winner(void) {
 	if(nowTurn == BLACK_TURN) {
-		blackc = popcount(playerboard);
-		whitec = popcount(oppenentboard);
+		blackc = popcount(b.playerboard);
+		whitec = popcount(b.oppenentboard);
 	} else {
-		whitec = popcount(playerboard);
-		blackc = popcount(oppenentboard);
+		whitec = popcount(b.playerboard);
+		blackc = popcount(b.oppenentboard);
 	}
 	if (blackc > whitec) {
 		return 1;

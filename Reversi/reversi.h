@@ -22,6 +22,8 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
+#include <unordered_map>
+#include <string>
 
 extern int DEPTH;
 extern int Level;
@@ -38,10 +40,40 @@ extern int nowTurn;
 extern int nowIndex;
 extern int firstDEPTH;
 extern int afterIndex;
-extern uint64_t playerboard;
-extern uint64_t oppenentboard;
+//extern uint64_t playerboard;
+//extern uint64_t oppenentboard;
 extern uint64_t legalboard;
 extern uint64_t rev;
+
+class board{
+public:
+    uint64_t playerboard;
+    uint64_t oppenentboard;
+    
+public:
+    board(uint64_t player, uint64_t opponent) : playerboard(player), oppenentboard(opponent) {}
+
+    board() : playerboard(0), oppenentboard(0) {}
+    // Convert the playerboard and opponentboard to string and concatenate them
+    std::string to_string() const {
+        return std::to_string(playerboard) + std::to_string(oppenentboard);
+    }
+
+    // Override hash function to be used in unordered_map
+    struct hash {
+        size_t operator()(const board& b) const {
+            // Hash the concatenated string representation of playerboard and opponentboard
+            return std::hash<std::string>{}(b.to_string());
+        }
+    };
+
+    // Override equality operator to be used in unordered_map
+    bool operator==(const board& other) const {
+        return playerboard == other.playerboard && oppenentboard == other.oppenentboard;
+    }
+};
+
+extern board b;
 
 
 //main functions
