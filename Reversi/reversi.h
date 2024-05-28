@@ -58,7 +58,6 @@ public:
 
     struct hash {
         size_t operator()(const board& b) const {
-            // Hash the concatenated string representation of playerboard and opponentboard
             return std::hash<std::string>{}(b.to_string());
         }
     };
