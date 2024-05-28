@@ -385,14 +385,20 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
     //hashtableに登録
     transpose_table[b] = max_score;
     //回転&フリップして登録
-    flipHorizontal(playerboard);
-    flipHorizontal(opponentboard);
-    transpose_table[b] = max_score;
-    flipHorizontal(playerboard);
-    flipHorizontal(opponentboard);
     flipVertical(playerboard);
     flipVertical(opponentboard);
     transpose_table[b] = max_score;
+    rotateClockwise90(playerboard);
+    rotateClockwise90(opponentboard);
+    transpose_table[b] = max_score;
+    rotateClockwise90(playerboard);
+    rotateClockwise90(opponentboard);
+    transpose_table[b] = max_score;
+    rotateClockwise90(playerboard);
+    rotateClockwise90(opponentboard);
+    transpose_table[b] = max_score;
+    rotateClockwise90(playerboard);
+    rotateClockwise90(opponentboard);
     flipVertical(playerboard);
     flipVertical(opponentboard);
     rotateClockwise90(playerboard);
