@@ -8,8 +8,13 @@
 #import <Cocoa/Cocoa.h>
 #import <objc/runtime.h>
 #import "reversi.h"
+#import <map>
 
 @interface ViewController : NSViewController
+{
+    std::map<NSButton*, char> coordinate_x;
+    std::map<NSButton*, char> coordinate_y;
+};
 
 @property (nonatomic) IBOutlet NSButton *aa;
 @property (nonatomic) IBOutlet NSButton *ab;
@@ -91,7 +96,6 @@
 -(void)botput;
 -(void)results;
 -(void)reloadview;
-
 
 @end
 
