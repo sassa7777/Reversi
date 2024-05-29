@@ -47,19 +47,34 @@ class board{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
-    
+    int score;
 public:
     struct hash {
-        size_t operator()(const board& a) const {
-            return std::hash<std::string>{}(std::to_string(a.playerboard)+std::to_string(a.opponentboard));
+        size_t operator()(const board& b) const {
+            return std::hash<std::string>{}(std::to_string(b.playerboard)+"&"+std::to_string(b.opponentboard));
         }
     };
+    bool operator<(const board& b) const {
+        return score > b.score;
+    }
     bool operator==(const board& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
 };
 
+class board_put{
+public:
+    int score;
+    uint64_t rev;
+    uint64_t put;
+public:
+    bool operator<(const board_put& b) const {
+        return score > b.score;
+    }
+};
+
 extern board b;
+extern board_put p;
 
 
 //main functions
@@ -80,6 +95,7 @@ void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint6
 void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put);
 
 //flip boards
@@ -93,6 +109,7 @@ void rotate180(uint64_t *x);
 
 //evaluation
 int score_stone(uint64_t *playerboard, uint64_t *opponentboard);
+int score_stone2(uint64_t *playerboard, uint64_t *opponentboard);
 int score_putable(uint64_t *playerboard, uint64_t *opponentboard);
 int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard);
 int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex);

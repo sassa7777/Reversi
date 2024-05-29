@@ -325,21 +325,211 @@ int ai(void) {
 	legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
 	int putable_count = popcount(legalboard);
 	think_count = 100/putable_count;
-    transpose_table.clear();
+    transpose_table_low.clear();
+    transpose_table_up.clear();
     visited_nodes = 0;
     if(afterIndex >= 60) {
         nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
     } else {
-        nega_alpha_transpose_table(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
+       nega_alpha_transpose_table(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
+        //nega_scout(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
     }
     //nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
-	if(tmpx == -1 || tmpy == -1) exit(1);
+	//if(tmpx == -1 || tmpy == -1) exit(1);
 	printf("(%d, %d)\n", tmpx, tmpy);
     cout << "Visited nodes:" << visited_nodes << endl;
 	think_percent = 100;
     update_think_percent();
-	putstone(tmpy, tmpx);
+    legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
+    if(canput(&tmpbit, &legalboard)) {
+        reversebit(tmpbit);
+        nowIndex++;
+        afterIndex++;
+        return 1;
+    } else {
+        return 0;
+    }
+	//putstone(tmpy, tmpx);
 	return 1;
+}
+
+int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
+    ++visited_nodes;
+    if(!depth) {
+        return countscore(playerboard, opponentboard, &afterIndex);
+    }
+    int var, max_score = MIN_INF, low = MIN_INF, up = MAX_INF;
+    if(transpose_table_up.find(b) != transpose_table_up.end()) {
+        up = transpose_table_up[b];
+    }
+    if(transpose_table_low.find(b) != transpose_table_low.end()) {
+        low = transpose_table_low[b];
+    }
+    if(up == low) {
+        return up;
+    }
+    alpha = max(alpha, low);
+    beta = min(beta, up);
+    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    if(!legalboard) {
+        if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
+        else return -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
+    }
+    vector<board_put> child_node;
+    int canput_count = 0;
+    //cout << "move_order" << endl;
+    for (p.put = 0x8000000000000000ULL; p.put > 0 ; p.put>>=1) {
+        if(canput(&p.put, &legalboard)) {
+            revbit(&p.put, playerboard, opponentboard, &p.rev);
+            *playerboard ^= (p.put | p.rev);
+            *opponentboard ^= p.rev;
+            child_node.push_back(p);
+            child_node[canput_count].score = score_stone(playerboard, opponentboard);
+            *playerboard ^= (p.put | p.rev);
+            *opponentboard ^= p.rev;
+            ++canput_count;
+        }
+    }
+    //cout << "sort" << endl;
+    if(canput_count >= 2) {
+        sort(child_node.rbegin(), child_node.rend());
+    }
+    *playerboard ^= (child_node[0].put | child_node[0].rev);
+    *opponentboard ^= child_node[0].rev;
+    var = -nega_scout(depth-1, -beta, -alpha, opponentboard, playerboard);
+    *playerboard ^= (child_node[0].put | child_node[0].rev);
+    *opponentboard ^= child_node[0].rev;
+    if(depth == DEPTH) {
+        think_percent += think_count;
+        update_think_percent();
+    }
+    if (var >= beta) {
+        if(var > low) {
+            transpose_table_low[b] = var;
+        }
+        return var;
+    }
+    if(var > alpha) {
+        alpha = var;
+        if(depth == DEPTH) {
+            tmpbit = child_node[0].put;
+        }
+    }
+    max_score = max(max_score, alpha);
+    for (int i = 1; i < canput_count; ++i) {
+        *playerboard ^= (child_node[i].put | child_node[i].rev);
+        *opponentboard ^= child_node[i].rev;
+        var = -nega_alpha_transpose_table(depth-1, -alpha-1, -alpha, opponentboard, playerboard);
+        *playerboard ^= (child_node[i].put | child_node[i].rev);
+        *opponentboard ^= child_node[i].rev;
+        if(depth == DEPTH) {
+            think_percent += think_count;
+            update_think_percent();
+        }
+        if (var >= beta) {
+            if(var > low) {
+                transpose_table_low[b] = var;
+            }
+            return var;
+        }
+        if(var > alpha) {
+            alpha = var;
+            *playerboard ^= (child_node[i].put | child_node[i].rev);
+            *opponentboard ^= child_node[i].rev;
+            var = -nega_scout(depth-1, -beta, -alpha, opponentboard, playerboard);
+            *playerboard ^= (child_node[i].put | child_node[i].rev);
+            *opponentboard ^= child_node[i].rev;
+            if (var >= beta) {
+                if(var > low) {
+                    transpose_table_low[b] = var;
+                }
+                return var;
+            }
+            if(depth == DEPTH) {
+                //                    tmpx = moveorder[i][1];
+                //                    tmpy = moveorder[i][0];
+                tmpbit = child_node[i].put;
+            }
+        }
+        max_score = max(max_score, alpha);
+    }
+    //hashtableに登録
+    if(max_score < alpha) {
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+    } else {
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+    }
+    return max_score;
 }
 
 int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
@@ -347,71 +537,180 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    if(transpose_table.find(b) != transpose_table.end()) {
-        return transpose_table[b];
+    int var, max_score = MIN_INF, low = MIN_INF, up = MAX_INF;
+    if(transpose_table_up.find(b) != transpose_table_up.end()) {
+        up = transpose_table_up[b];
     }
+    if(transpose_table_low.find(b) != transpose_table_low.end()) {
+        low = transpose_table_low[b];
+    }
+    if(up == low) {
+        return up;
+    }
+    alpha = max(alpha, low);
+    beta = min(beta, up);
 	uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
 	if(!legalboard) {
 		if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
 		else return -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
 	}
-	uint64_t rev = 0;
-	int var, max_score = MIN_INF;
-	for (char i = 0; i<64; ++i) {
-		if(canput(&moveorder_bit[i], &legalboard)) {
-			revbit(&moveorder_bit[i], playerboard, opponentboard, &rev);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*opponentboard ^= rev;
-			var = -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
-			*playerboard ^= (moveorder_bit[i] | rev);
-			*opponentboard ^= rev;
-			if(depth == DEPTH) {
-				think_percent += think_count;
-                update_think_percent();
-			}
-			if (var >= beta) {
-				return var;
-			}
-			if(var > alpha) {
-				alpha = var;
-				if(depth == DEPTH) {
-					tmpx = moveorder[i][1];
-					tmpy = moveorder[i][0];
-				}
-			}
-            max_score = max(max_score, alpha);
-		}
-	}
+    vector<board_put> child_node;
+    int canput_count = 0;
+    //cout << "move_order" << endl;
+    for (p.put = 0x8000000000000000ULL; p.put > 0 ; p.put>>=1) {
+        if(canput(&p.put, &legalboard)) {
+            revbit(&p.put, playerboard, opponentboard, &p.rev);
+            *playerboard ^= (p.put | p.rev);
+            *opponentboard ^= p.rev;
+            child_node.push_back(p);
+            child_node[canput_count].score = score_stone2(playerboard, opponentboard);
+            *playerboard ^= (p.put | p.rev);
+            *opponentboard ^= p.rev;
+            ++canput_count;
+        }
+    }
+    //cout << "sort" << endl;
+    if(canput_count >= 2) {
+        sort(child_node.rbegin(), child_node.rend());
+    }
+    for (board_put &p: child_node) {
+        *playerboard ^= (p.put | p.rev);
+        *opponentboard ^= p.rev;
+        if(depth <= 5) {
+            var = -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
+        } else {
+            var = -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
+        }
+        *playerboard ^= (p.put | p.rev);
+        *opponentboard ^= p.rev;
+        if(depth == DEPTH) {
+            think_percent += think_count;
+            update_think_percent();
+        }
+        if (var >= beta) {
+            if(var > low) {
+                transpose_table_low[b] = var;
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                rotateClockwise90(playerboard);
+                rotateClockwise90(opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                rotateClockwise90(playerboard);
+                rotateClockwise90(opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                rotateClockwise90(playerboard);
+                rotateClockwise90(opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                transpose_table_low[b] = var;
+                *playerboard = __builtin_bswap64(*playerboard);
+                *opponentboard = __builtin_bswap64(*opponentboard);
+                rotateClockwise90(playerboard);
+                rotateClockwise90(opponentboard);
+            }
+            return var;
+        }
+        if(var > alpha) {
+            alpha = var;
+            if(depth == DEPTH) {
+                //					tmpx = moveorder[i][1];
+                //					tmpy = moveorder[i][0];
+                tmpbit = p.put;
+            }
+        }
+        max_score = max(max_score, alpha);
+    }
     //hashtableに登録
-    transpose_table[b] = max_score;
-    //回転&フリップして登録
-    flipVertical(playerboard);
-    flipVertical(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    flipVertical(playerboard);
-    flipVertical(opponentboard);
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
-    transpose_table[b] = max_score;
-    rotateClockwise90(playerboard);
-    rotateClockwise90(opponentboard);
+    if(max_score < alpha) {
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+    } else {
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        transpose_table_up[b] = max_score;
+        transpose_table_low[b] = max_score;
+        *playerboard = __builtin_bswap64(*playerboard);
+        *opponentboard = __builtin_bswap64(*opponentboard);
+        rotateClockwise90(playerboard);
+        rotateClockwise90(opponentboard);
+    }
 	return max_score;
 }
 
