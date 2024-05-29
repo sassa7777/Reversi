@@ -62,19 +62,7 @@ public:
     }
 };
 
-class board_put{
-public:
-    int score;
-    uint64_t rev;
-    uint64_t put;
-public:
-    bool operator<(const board_put& b) const {
-        return score > b.score;
-    }
-};
-
 extern board b;
-extern board_put p;
 
 
 //main functions
