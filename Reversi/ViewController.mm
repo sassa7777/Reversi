@@ -97,13 +97,13 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     for (char i = 0; i < 8; ++i) {
         for (char j = 0; j < 8; ++j) {
             if(nowTurn == BLACK_TURN) {
-                if((b.playerboard & mask) != 0) {
+                if(b.playerboard & mask) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:black_stone2];
                     } else {
                         [buttons[i][j] setImage:black_stone];
                     }
-                } else if(((b.opponentboard & mask) != 0)) {
+                } else if(b.opponentboard & mask) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:white_stone2];
                     } else {
@@ -115,13 +115,13 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
                     [buttons[i][j] setImage:null_icon];
                 }
             } else {
-                if((b.opponentboard & mask) != 0) {
+                if(b.opponentboard & mask) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:black_stone2];
                     } else {
                         [buttons[i][j] setImage:black_stone];
                     }
-                } else if(((b.playerboard & mask) != 0)) {
+                } else if(b.playerboard & mask) {
                     if(tmpx == j && tmpy == i) {
                         [buttons[i][j] setImage:white_stone2];
                     } else {
