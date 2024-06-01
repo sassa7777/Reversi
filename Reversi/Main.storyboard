@@ -29,7 +29,7 @@
                 </windowController>
                 <customObject id="zVF-eE-esG" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-93" y="-302"/>
+            <point key="canvasLocation" x="-168" y="-169"/>
         </scene>
         <!--ハコくんオセロ-->
         <scene sceneID="bTf-os-Oon">
@@ -66,7 +66,7 @@
                                 </textFieldCell>
                             </textField>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oku-2Y-iID">
-                                <rect key="frame" x="265" y="72" width="161" height="24"/>
+                                <rect key="frame" x="249" y="72" width="193" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="ZuD-dh-H1k">
                                     <font key="font" metaFont="system"/>
@@ -76,6 +76,7 @@
                                         <segment label="⭐︎3" tag="3"/>
                                         <segment label="⭐︎4" tag="4"/>
                                         <segment label="⭐︎5" tag="5"/>
+                                        <segment label="⭐︎6" tag="6"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -110,7 +111,7 @@
                 </viewController>
                 <customObject id="Zqd-zw-mJR" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="450" y="-52"/>
+            <point key="canvasLocation" x="453" y="30"/>
         </scene>
         <!--結果-->
         <scene sceneID="Of1-5o-bav">

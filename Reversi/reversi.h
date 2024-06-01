@@ -47,6 +47,7 @@ class board{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
+    uint64_t put;
     int score;
 public:
     struct hash {
@@ -59,18 +60,6 @@ public:
     }
     bool operator==(const board& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
-    }
-};
-
-class move_order{
-public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
-    uint64_t put;
-    int score;
-public:
-    bool operator<(const move_order& m) const {
-        return score > m.score;
     }
 };
 
@@ -98,7 +87,6 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
 int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 void search(uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put);
 
 //flip boards
 void flipHorizontal(uint64_t *x);

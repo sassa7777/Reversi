@@ -52,19 +52,25 @@
         case 2:
             NSLog(@"L3");
             Level = 3;
-            firstDEPTH = 4;
+            firstDEPTH = 5;
             _strength_txt.stringValue = @"ある程度できる人向け";
             break;
         case 3:
             NSLog(@"L4");
             Level = 4;
-            firstDEPTH = 7;
+            firstDEPTH = 8;
             _strength_txt.stringValue = @"少し自信がある人向け";
             break;
         case 4:
             NSLog(@"L5");
             Level = 5;
             firstDEPTH = 10;
+            _strength_txt.stringValue = @"自信がある人向け";
+            break;
+        case 5:
+            NSLog(@"L6");
+            Level = 6;
+            firstDEPTH = 12;
             _strength_txt.stringValue = @"自信がある人向け";
             break;
         default:
