@@ -571,19 +571,20 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
     }
     int var, max_score = MIN_INF;
     uint64_t rev;
-    board m;
     vector<board> moveorder;
-    m.put = 1;
+    b.put = 1;
     for (int i = 0; i < 64; ++i) {
-        if(legalboard & m.put) {
-            revbit(&m.put, playerboard, opponentboard, &rev);
-            m.playerboard = *playerboard ^ (m.put | rev);
-            m.opponentboard = *opponentboard ^ rev;
-            m.score = move_ordering_value(&m);
-            moveorder.emplace_back(m);
+        if(legalboard & b.put) {
+            revbit(&b.put, playerboard, opponentboard, &rev);
+            b.playerboard = *playerboard ^ (b.put | rev);
+            b.opponentboard = *opponentboard ^ rev;
+            b.score = move_ordering_value(&b);
+            moveorder.emplace_back(b);
         }
-        m.put <<= 1;
+        b.put <<= 1;
     }
+    b.playerboard = *playerboard;
+    b.opponentboard = *opponentboard;
     if(moveorder.size() > 1) sort(moveorder.begin(), moveorder.end());
     for (int i = 0; i < moveorder.size(); ++i) {
         var = -nega_alpha_moveorder(depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
