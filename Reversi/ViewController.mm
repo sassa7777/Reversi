@@ -137,11 +137,11 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         }
     }
     if(nowTurn == BLACK_TURN) {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(b.playerboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(b.opponentboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(b.playerboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(b.opponentboard)];
     } else {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", bitcount(b.opponentboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", bitcount(b.playerboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(b.opponentboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(b.playerboard)];
     }
     NSLog(@"完了");
     if(isFinished()) {

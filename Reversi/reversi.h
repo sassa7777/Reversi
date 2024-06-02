@@ -24,6 +24,8 @@
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <string>
+#include <numeric>
+#include <functional>
 
 extern int DEPTH;
 extern int Level;
@@ -79,22 +81,13 @@ uint64_t transfer(uint64_t *put, char *i);
 bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
-int bitcount(uint64_t bits);
 void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
 void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-void search(uint64_t *playerboard, uint64_t *opponentboard);
-
-//flip boards
-void flipHorizontal(uint64_t *x);
-void flipVertical(uint64_t *x);
-void flipDiagonalA8H1(uint64_t *x);
-void flipDiagonalA1H8(uint64_t *x);
-void rotateClockwise90(uint64_t *x);
-void rotateCounterclockwise90(uint64_t *x);
+int search(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
 int score_stone(uint64_t *playerboard, uint64_t *opponentboard);

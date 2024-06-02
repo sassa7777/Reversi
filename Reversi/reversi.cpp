@@ -209,71 +209,6 @@ void swapboard(void) {
 	nowTurn = -nowTurn;
 }
 
-int bitcount(uint64_t bits) {
-	return popcount(bits);
-}
-
-uint64_t delta_swap(uint64_t *x, uint64_t mask, int delta) {
-    uint64_t t = (*x ^ (*x >> delta)) & mask;
-    return *x ^ t ^ (t << delta);
-}
-
-// 左循環ビットシフト
-uint64_t rotateLeft(uint64_t *x, int n) {
-    return (*x << n) | (*x >> (64 - n));
-}
-
-// 右循環ビットシフト
-uint64_t rotateRight(uint64_t *x, int n) {
-    return (*x >> n) | (*x << (64 - n));
-}
-
-// 水平反転
-void flipHorizontal(uint64_t *x) {
-    *x = delta_swap(x, 0x5555555555555555, 1);
-    *x = delta_swap(x, 0x3333333333333333, 2);
-    *x = delta_swap(x, 0x0F0F0F0F0F0F0F0F, 4);
-}
-
-// 垂直反転
-void flipVertical(uint64_t *x) {
-    *x = delta_swap(x, 0x00FF00FF00FF00FF, 8);
-    *x = delta_swap(x, 0x0000FFFF0000FFFF, 16);
-    *x = delta_swap(x, 0x00000000FFFFFFFF, 32);
-}
-
-// 00-77反転
-void flipDiagonalA8H1(uint64_t *x) {
-    *x = delta_swap(x, 0x0055005500550055, 9);
-    *x = delta_swap(x, 0x0000333300003333, 18);
-    *x = delta_swap(x, 0x000000000F0F0F0F, 36);
-}
-
-// A1-H8反転
-void flipDiagonalA1H8(uint64_t *x) {
-    *x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
-    *x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
-    *x = delta_swap(x, 0x00000000F0F0F0F0, 28);
-}
-
-// 時計回りに90度回転
-void rotateClockwise90(uint64_t *x) {
-    flipDiagonalA1H8(x);
-    flipHorizontal(x);
-}
-
-// 反時計回りに90度の回転
-void rotateCounterclockwise90(uint64_t *x) {
-    flipDiagonalA1H8(x);
-    flipVertical(x);
-}
-
-// 180度回転
-void rotate180(uint64_t *x) {
-    flipHorizontal(x);
-    flipVertical(x);
-}
-
 int move_ordering_value_scout(board *b) {
     if (former_transpose_table_up.find(*b) != former_transpose_table_up.end()) {
         return 1000+former_transpose_table_up[*b];
@@ -287,9 +222,9 @@ int move_ordering_value_scout(board *b) {
 
 int move_ordering_value(board *b) {
     if (former_transpose_table.find(*b) != former_transpose_table.end()) {
-        return former_transpose_table[*b];
+        return 500+former_transpose_table[*b];
     } else {
-        return countscore(&b->playerboard, &b->opponentboard, &afterIndex)-1000;
+        return countscore(&b->playerboard, &b->opponentboard, &nowIndex);
     }
 }
 
@@ -313,15 +248,11 @@ int ai(void) {
     visited_nodes = 0;
     transpose_table.clear();
     former_transpose_table.clear();
-    if(afterIndex >= 60) {
-        nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
-    } else {
-        search(&b.playerboard, &b.opponentboard);
-        //nega_alpha_moveorder(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
-    }
-    //nega_alpha(DEPTH, MIN_INF-1, MAX_INF+1, &b.playerboard, &b.opponentboard);
+    int score = search(&b.playerboard, &b.opponentboard);
 	//if(tmpx == -1 || tmpy == -1) exit(1);
-	printf("(%d, %d)\n", tmpx, tmpy);
+    cout << "put on: (" << tmpx << ", " << tmpy << ")" << endl;
+    if(afterIndex >= 60) cout << "Final Score" << endl;
+    cout << "score: " << score << endl;
 	think_percent = 100;
     update_think_percent();
     if(tmpbit == 0) putstone(tmpy, tmpx);
@@ -338,7 +269,7 @@ int ai(void) {
     return 1;
 }
 
-void search(uint64_t *playerboard, uint64_t *opponentboard) {
+int search(uint64_t *playerboard, uint64_t *opponentboard) {
     transpose_table.clear();
     former_transpose_table.clear();
     transpose_table_up.clear();
@@ -346,7 +277,7 @@ void search(uint64_t *playerboard, uint64_t *opponentboard) {
     former_transpose_table_up.clear();
     former_transpose_table_low.clear();
     uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
-    int var, search_depth;
+    int var = 0, search_depth;
     uint64_t rev;
     board m;
     vector<board> moveorder;
@@ -414,6 +345,7 @@ void search(uint64_t *playerboard, uint64_t *opponentboard) {
         transpose_table.swap(former_transpose_table);
         transpose_table.clear();
     }
+    return var;
 }
 
 int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
@@ -572,29 +504,26 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
     }
     int var, max_score = MIN_INF;
     uint64_t rev;
-    vector<board> moveorder;
-    b.put = 1;
-    for (int i = 0; i < 64; ++i) {
+    vector<board> moveorder(popcount(legalboard));
+    var = 0;
+    for (b.put = 0x8000000000000000; b.put >= 1; b.put >>= 1) {
         if(legalboard & b.put) {
             revbit(&b.put, playerboard, opponentboard, &rev);
-            b.playerboard = *playerboard ^ (b.put | rev);
-            b.opponentboard = *opponentboard ^ rev;
-            b.score = move_ordering_value(&b);
-            moveorder.emplace_back(b);
+            moveorder[var].playerboard = *playerboard ^ (b.put | rev);
+            moveorder[var].opponentboard = *opponentboard ^ rev;
+            moveorder[var].score = move_ordering_value(&moveorder[var]);
+            ++var;
         }
-        b.put <<= 1;
     }
-    b.playerboard = *playerboard;
-    b.opponentboard = *opponentboard;
     if(moveorder.size() >= 2) sort(moveorder.begin(), moveorder.end());
     for (board& m: moveorder) {
-        var = -nega_alpha_moveorder(depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
+        if(depth <= 3) {
+            var = -nega_alpha(depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
+        } else {
+            var = -nega_alpha_moveorder(depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
+        }
         if (var >= beta) {
             return var;
-        }
-        if(depth == DEPTH) {
-            think_percent += think_count;
-            update_think_percent();
         }
         if(var > alpha) {
             alpha = var;
@@ -615,7 +544,12 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    
+    board b;
+    b.playerboard = *playerboard;
+    b.opponentboard = *opponentboard;
+    if(transpose_table.find(b) != transpose_table.end()) {
+        return transpose_table[b];
+    }
     uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
     if(!legalboard) {
         if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
@@ -648,6 +582,7 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
             max_score = max(max_score, alpha);
         }
     }
+    transpose_table[b] = max_score;
     return max_score;
 }
 
@@ -686,11 +621,12 @@ int winner(void) {
 int score_stone(uint64_t *playerboard, uint64_t *opponentboard) {
 	int score = 0;
 	
-	for (char i = 0; i < 5; ++i) {
-		score += scoreboard_score[i] * popcount(*playerboard & scoreboard_weight[i]);
-		score -= scoreboard_score[i] * popcount(*opponentboard & scoreboard_weight[i]);
-	}
-	
+    score += scoreboard_score[0] * (popcount(*playerboard & scoreboard_weight[0])-popcount(*opponentboard & scoreboard_weight[0]));
+    score += scoreboard_score[1] * (popcount(*playerboard & scoreboard_weight[1])-popcount(*opponentboard & scoreboard_weight[1]));
+    score += scoreboard_score[2] * (popcount(*playerboard & scoreboard_weight[2])-popcount(*opponentboard & scoreboard_weight[2]));
+    score += scoreboard_score[3] * (popcount(*playerboard & scoreboard_weight[3])-popcount(*opponentboard & scoreboard_weight[3]));
+    score += scoreboard_score[4] * (popcount(*playerboard & scoreboard_weight[4])-popcount(*opponentboard & scoreboard_weight[4]));
+    
 	//左
     {
         switch (*playerboard & LEFT_BOARD) {
