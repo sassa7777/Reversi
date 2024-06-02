@@ -4,9 +4,9 @@
 //
 //  Created by sasa on 2023/09/30.
 //
-
 #include "variables.h"
 #include "Wrapper.h"
+
 
 using namespace std;
 
@@ -250,7 +250,9 @@ int ai(void) {
     former_transpose_table.clear();
     int score = 0;
     if(afterIndex >= 60) {
+        visited_nodes = 0;
         score = nega_alpha(DEPTH, MIN_INF, MAX_INF, &b.playerboard, &b.opponentboard);
+        cout << "depth: " << DEPTH << " Visited nodes: " << visited_nodes << endl;
     } else  {
         score = search(&b.playerboard, &b.opponentboard);
     }
@@ -298,24 +300,24 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
     }
     for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
         afterIndex = nowIndex+search_depth;
-        for (int i = 0; i < moveorder.size(); ++i) {
-            moveorder[i].score = move_ordering_value(&moveorder[i]);
+        for (board m: moveorder) {
+            m.score = move_ordering_value(&m);
         }
         sort(moveorder.begin(), moveorder.end());
         int alpha = MIN_INF, beta = MAX_INF;
-        for (int i = 0; i < moveorder.size(); ++i) {
-            var = -nega_alpha_moveorder(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+        for (board m: moveorder) {
+            var = -nega_alpha_moveorder(search_depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
             think_percent += think_count;
             update_think_percent();
             if(var > alpha) {
                 alpha = var;
                 if(search_depth == DEPTH) {
-                    tmpbit = moveorder[i].put;
+                    tmpbit = m.put;
                 }
             }
             alpha = max(var, alpha);
         }
-        cout << "Visited nodes:" << visited_nodes << endl;
+        cout << "depth: " << search_depth << " Visited nodes: " << visited_nodes << endl;
         transpose_table.swap(former_transpose_table);
         transpose_table.clear();
     }
@@ -499,12 +501,6 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
         if (var >= beta) {
             return var;
         }
-        if(var > alpha) {
-            alpha = var;
-            if(depth == DEPTH) {
-                tmpbit = m.put;
-            }
-        }
         alpha = max(alpha, var);
         max_score = max(max_score, alpha);
     }
@@ -558,19 +554,6 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
     }
     transpose_table[b] = max_score;
     return max_score;
-}
-
-int nega_alpha_move_order(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *put) {
-	if(depth == 0) return countscore(playerboard, opponentboard, &afterIndex);
-	uint64_t rev = 0;
-	int var;
-    revbit(put, playerboard, opponentboard, &rev);
-	*playerboard ^= (*put | rev);
-	*opponentboard ^= rev;
-	var = countscore(playerboard, opponentboard, &afterIndex);
-	*playerboard ^= (*put | rev);
-	*opponentboard ^= rev;
-	return var;
 }
 
 int winner(void) {
