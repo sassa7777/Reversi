@@ -12,7 +12,7 @@ void update_think_percent() {
       NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
       if (keyWindow && [[keyWindow contentViewController] isKindOfClass:[ViewController class]]) {
         ViewController *viewController = (ViewController *)[keyWindow contentViewController];
-          viewController.hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)\n(時間がかかることがあります)", think_percent];
+          viewController.hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)", think_percent];
       }
     });
 }

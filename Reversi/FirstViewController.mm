@@ -70,7 +70,7 @@
         case 5:
             NSLog(@"L6");
             Level = 6;
-            firstDEPTH = 12;
+            firstDEPTH = 11;
             _strength_txt.stringValue = @"自信がある人向け";
             break;
         default:

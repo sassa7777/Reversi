@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
-#include <unordered_map>
+#include <ankerl/unordered_dense.h>
 #include <string>
 
 extern int DEPTH;

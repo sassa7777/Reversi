@@ -73,11 +73,12 @@ constexpr uint64_t cell_weight_mask[10] = {
     0x0000001818000000ULL
 };
 
-std::unordered_map<board, int, board::hash> transpose_table;
-std::unordered_map<board, int, board::hash> former_transpose_table;
-std::unordered_map<board, int, board::hash> transpose_table_up;
-std::unordered_map<board, int, board::hash> transpose_table_low;
-std::unordered_map<board, int, board::hash> former_transpose_table_up;
-std::unordered_map<board, int, board::hash> former_transpose_table_low;
+ankerl::unordered_dense::map<board, int, board::hash> transpose_table;
+ankerl::unordered_dense::map<board, int, board::hash> former_transpose_table;
+ankerl::unordered_dense::map<board, int, board::hash> transpose_table_up;
+ankerl::unordered_dense::map<board, int, board::hash> transpose_table_low;
+ankerl::unordered_dense::map<board, int, board::hash> former_transpose_table_up;
+ankerl::unordered_dense::map<board, int, board::hash> former_transpose_table_low;
+
 
 #endif /* variables_h */

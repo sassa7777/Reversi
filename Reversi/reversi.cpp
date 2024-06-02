@@ -411,7 +411,6 @@ void search(uint64_t *playerboard, uint64_t *opponentboard) {
             alpha = max(var, alpha);
         }
         cout << "Visited nodes:" << visited_nodes << endl;
-        visited_nodes = 0;
         transpose_table.swap(former_transpose_table);
         transpose_table.clear();
     }
@@ -442,19 +441,20 @@ int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
     }
     int var, max_score = MIN_INF;
     uint64_t rev;
-    board m;
     vector<board> moveorder;
-    m.put = 1;
+    b.put = 1;
     for (int i = 0; i < 64; ++i) {
-        if(legalboard & m.put) {
-            revbit(&m.put, playerboard, opponentboard, &rev);
-            m.playerboard = *playerboard ^ (m.put | rev);
-            m.opponentboard = *opponentboard ^ rev;
-            m.score = move_ordering_value_scout(&m);
-            moveorder.emplace_back(m);
+        if(legalboard & b.put) {
+            revbit(&b.put, playerboard, opponentboard, &rev);
+            b.playerboard = *playerboard ^ (b.put | rev);
+            b.opponentboard = *opponentboard ^ rev;
+            b.score = move_ordering_value_scout(&b);
+            moveorder.emplace_back(b);
         }
-        m.put <<= 1;
+        b.put <<= 1;
     }
+    b.playerboard = *playerboard;
+    b.opponentboard = *opponentboard;
     sort(moveorder.begin(), moveorder.end());
     var = -nega_scout(depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
     if (var >= beta) {
@@ -484,7 +484,7 @@ int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
             }
         }
         alpha = max(alpha, var);
-        max_score = max(max_score, alpha);
+        max_score = max(max_score, var);
     }
     if (max_score < alpha) {
         transpose_table_up[b] = max_score;
@@ -520,19 +520,20 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
     }
     int var, max_score = MIN_INF;
     uint64_t rev;
-    board m;
     vector<board> moveorder;
-    m.put = 1;
+    b.put = 1;
     for (int i = 0; i < 64; ++i) {
-        if(legalboard & m.put) {
-            revbit(&m.put, playerboard, opponentboard, &rev);
-            m.playerboard = *playerboard ^ (m.put | rev);
-            m.opponentboard = *opponentboard ^ rev;
-            m.score = move_ordering_value_scout(&m);
-            moveorder.emplace_back(m);
+        if(legalboard & b.put) {
+            revbit(&b.put, playerboard, opponentboard, &rev);
+            b.playerboard = *playerboard ^ (b.put | rev);
+            b.opponentboard = *opponentboard ^ rev;
+            b.score = move_ordering_value_scout(&b);
+            moveorder.emplace_back(b);
         }
-        m.put <<= 1;
+        b.put <<= 1;
     }
+    b.playerboard = *playerboard;
+    b.opponentboard = *opponentboard;
     if(moveorder.size() > 1) sort(moveorder.begin(), moveorder.end());
     for (int i = 0; i < moveorder.size(); ++i) {
         var = -nega_alpha_transpose_table(depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
@@ -541,7 +542,7 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
             return var;
         }
         alpha = max(alpha, var);
-        max_score = max(max_score, alpha);
+        max_score = max(max_score, var);
     }
     //hashtableに登録
     if (max_score < alpha) {
@@ -585,9 +586,9 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
     }
     b.playerboard = *playerboard;
     b.opponentboard = *opponentboard;
-    if(moveorder.size() > 1) sort(moveorder.begin(), moveorder.end());
-    for (int i = 0; i < moveorder.size(); ++i) {
-        var = -nega_alpha_moveorder(depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+    if(moveorder.size() >= 2) sort(moveorder.begin(), moveorder.end());
+    for (board& m: moveorder) {
+        var = -nega_alpha_moveorder(depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
         if (var >= beta) {
             return var;
         }
@@ -598,7 +599,7 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
         if(var > alpha) {
             alpha = var;
             if(depth == DEPTH) {
-                tmpbit = moveorder[i].put;
+                tmpbit = m.put;
             }
         }
         alpha = max(alpha, var);
@@ -606,37 +607,6 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
     }
     //hashtableに登録
     transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    rotateClockwise90(&b.playerboard);
-    rotateClockwise90(&b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    rotateClockwise90(&b.playerboard);
-    rotateClockwise90(&b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    rotateClockwise90(&b.playerboard);
-    rotateClockwise90(&b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    transpose_table[b] = max_score;
-    b.playerboard = __builtin_bswap64(b.playerboard);
-    b.opponentboard = __builtin_bswap64(b.opponentboard);
-    rotateClockwise90(&b.playerboard);
-    rotateClockwise90(&b.opponentboard);
     return max_score;
 }
 
