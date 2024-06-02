@@ -296,36 +296,6 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         }
         m.put <<= 1;
     }
-//    for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
-//        for (int i = 0; i < moveorder.size(); ++i) {
-//            moveorder[i].score = move_ordering_value_scout(&moveorder[i]);
-//        }
-//        sort(moveorder.begin(), moveorder.end());
-//        int alpha = MIN_INF, beta = MAX_INF;
-//        alpha = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
-//        if(search_depth == DEPTH) {
-//            tmpbit = moveorder[0].put;
-//        }
-//        for (int i = 1; i < moveorder.size(); ++i) {
-//            var = -nega_alpha_transpose_table(search_depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
-//            think_percent += think_count;
-//            update_think_percent();
-//            if(var > alpha) {
-//                alpha = var;
-//                var = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
-//                if(search_depth == DEPTH) {
-//                    tmpbit = moveorder[i].put;
-//                }
-//            }
-//            alpha = max(var, alpha);
-//        }
-//        cout << "Visited nodes:" << visited_nodes << endl;
-//        transpose_table_up.swap(former_transpose_table_up);
-//        transpose_table_up.clear();
-//        transpose_table_low.swap(former_transpose_table_low);
-//        transpose_table_low.clear();
-//    }
-    
     for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
         afterIndex = nowIndex+search_depth;
         for (int i = 0; i < moveorder.size(); ++i) {
