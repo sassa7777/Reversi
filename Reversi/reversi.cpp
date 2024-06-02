@@ -224,7 +224,7 @@ int move_ordering_value(board *b) {
     if (former_transpose_table.find(*b) != former_transpose_table.end()) {
         return 500+former_transpose_table[*b];
     } else {
-        return countscore(&b->playerboard, &b->opponentboard, &nowIndex);
+        return countscore(&b->playerboard, &b->opponentboard, &afterIndex);
     }
 }
 
@@ -244,18 +244,20 @@ int ai(void) {
     update_think_percent();
 	legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
 	int putable_count = popcount(legalboard);
-	think_count = 100/putable_count;
+	think_count = 100/(putable_count*(DEPTH+1-max(DEPTH-3, 1)));
     visited_nodes = 0;
     transpose_table.clear();
     former_transpose_table.clear();
-    int score = search(&b.playerboard, &b.opponentboard);
+    int score = 0;
+    if(afterIndex >= 60) {
+        score = nega_alpha(DEPTH, MIN_INF, MAX_INF, &b.playerboard, &b.opponentboard);
+    } else  {
+        score = search(&b.playerboard, &b.opponentboard);
+    }
 	//if(tmpx == -1 || tmpy == -1) exit(1);
-    cout << "put on: (" << tmpx << ", " << tmpy << ")" << endl;
-    if(afterIndex >= 60) cout << "Final Score" << endl;
-    cout << "score: " << score << endl;
 	think_percent = 100;
     update_think_percent();
-    if(tmpbit == 0) putstone(tmpy, tmpx);
+    if(afterIndex >= 60) putstone(tmpy, tmpx);
     else {
         int count = 0;
         while (tmpbit != 0x8000000000000000) {
@@ -266,6 +268,9 @@ int ai(void) {
         tmpx = count%8;
         putstone(tmpy, tmpx);
     }
+    cout << "put on: (" << tmpx << ", " << tmpy << ")" << endl;
+    if(afterIndex >= 60) cout << "Final Score" << endl;
+    cout << "score: " << score << endl;
     return 1;
 }
 
@@ -322,6 +327,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
 //    }
     
     for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
+        afterIndex = nowIndex+search_depth;
         for (int i = 0; i < moveorder.size(); ++i) {
             moveorder[i].score = move_ordering_value(&moveorder[i]);
         }
@@ -329,10 +335,8 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         int alpha = MIN_INF, beta = MAX_INF;
         for (int i = 0; i < moveorder.size(); ++i) {
             var = -nega_alpha_moveorder(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
-            if(search_depth == DEPTH) {
-                think_percent += think_count;
-                update_think_percent();
-            }
+            think_percent += think_count;
+            update_think_percent();
             if(var > alpha) {
                 alpha = var;
                 if(search_depth == DEPTH) {
