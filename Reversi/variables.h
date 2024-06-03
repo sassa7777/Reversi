@@ -26,8 +26,6 @@ int nowIndex;
 int firstDEPTH;
 int afterIndex;
 int visited_nodes;
-//uint64_t playerboard;
-//uint64_t opponentboard;
 uint64_t legalboard;
 uint64_t rev;
 

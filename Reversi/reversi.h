@@ -24,8 +24,6 @@
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <string>
-#include <numeric>
-#include <functional>
 
 extern int DEPTH;
 extern int Level;
@@ -45,7 +43,7 @@ extern int afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
 
-class board{
+struct board{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
