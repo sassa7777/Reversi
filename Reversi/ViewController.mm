@@ -26,12 +26,12 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    _hakotext.stringValue = @"準備中";
-    if(fixed_stone_table.size() < 1) fixed_stone_init();
     [self.hakoface setImage:hako_default];
     self.close.hidden = YES;
     self.restart.hidden = YES;
     reset();
+    fixed_stone_table.clear();
+    fixed_stone_init();
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {
@@ -59,7 +59,6 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         }
     }
 }
-
 
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];

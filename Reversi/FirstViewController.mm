@@ -19,7 +19,6 @@
     fixed_stone_table.clear();
 }
 
-
 - (void)select_player:(NSSegmentedControl *)sender __attribute__((ibaction)) {
     switch (sender.selectedSegment) {
         case 0:
