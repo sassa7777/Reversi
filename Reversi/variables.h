@@ -78,5 +78,6 @@ ankerl::unordered_dense::map<board, int, board::hash> transpose_table_low;
 ankerl::unordered_dense::map<board, int, board::hash> former_transpose_table_up;
 ankerl::unordered_dense::map<board, int, board::hash> former_transpose_table_low;
 
+ankerl::unordered_dense::map<board, int, board::hash> fixed_stone_table;
 
 #endif /* variables_h */

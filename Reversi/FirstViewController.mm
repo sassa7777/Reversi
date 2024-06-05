@@ -16,6 +16,7 @@
     botplayer = WHITE_TURN;
     firstDEPTH = 2;
     Level = 2;
+    fixed_stone_table.clear();
 }
 
 

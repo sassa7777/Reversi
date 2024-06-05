@@ -26,6 +26,8 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    _hakotext.stringValue = @"準備中";
+    if(fixed_stone_table.size() < 1) fixed_stone_init();
     [self.hakoface setImage:hako_default];
     self.close.hidden = YES;
     self.restart.hidden = YES;

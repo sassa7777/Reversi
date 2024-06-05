@@ -65,6 +65,9 @@ public:
 
 extern board b;
 
+extern ankerl::unordered_dense::map<board, int, board::hash> fixed_stone_table;
+
+
 
 //main functions
 void reset(void);
@@ -93,5 +96,7 @@ int score_stone2(uint64_t *playerboard, uint64_t *opponentboard);
 int score_putable(uint64_t *playerboard, uint64_t *opponentboard);
 int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard);
 int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex);
+
+void fixed_stone_init(void);
 
 #endif /* othello_h */
