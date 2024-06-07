@@ -16,7 +16,6 @@
     botplayer = WHITE_TURN;
     firstDEPTH = 2;
     Level = 2;
-    fixed_stone_table.clear();
 }
 
 - (void)select_player:(NSSegmentedControl *)sender __attribute__((ibaction)) {
