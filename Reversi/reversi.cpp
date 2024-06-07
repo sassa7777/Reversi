@@ -845,20 +845,425 @@ int score_putable(uint64_t *playerboard, uint64_t *opponentboard) {
 
 int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard) {
 	int fixedstone = 0;
-    board f;
-    f.playerboard = *playerboard & UP_BOARD;
-    f.opponentboard = *opponentboard & UP_BOARD;
-    fixedstone += fixed_stone_table[f];
-    f.playerboard = *playerboard & DOWN_BOARD;
-    f.opponentboard = *opponentboard & DOWN_BOARD;
-    fixedstone += fixed_stone_table[f];
-    f.playerboard = *playerboard & RIGHT_BOARD;
-    f.opponentboard = *opponentboard & RIGHT_BOARD;
-    fixedstone += fixed_stone_table[f];
-    f.playerboard = *playerboard & LEFT_BOARD;
-    f.opponentboard = *opponentboard & LEFT_BOARD;
-    fixedstone += fixed_stone_table[f];
-    
+	//上
+	if((*playerboard | *opponentboard) == UP_BOARD) {
+		fixedstone += popcount(*playerboard & UP_BOARD);
+		fixedstone -= popcount(*opponentboard & UP_BOARD);
+	} else {
+		//左上左方向
+        switch (*playerboard & 0xfe00000000000000ULL) {
+            case 0xfe00000000000000ULL:
+                fixedstone += 7;
+                break;
+            case 0xfc00000000000000ULL:
+                fixedstone += 6;
+                break;
+            case 0xf800000000000000ULL:
+                fixedstone += 5;
+                break;
+            case 0xf000000000000000ULL:
+                fixedstone += 4;
+                break;
+            case 0xe000000000000000ULL:
+                fixedstone += 3;
+                break;
+            case 0xc000000000000000ULL:
+                fixedstone += 2;
+                break;
+            case 0x8000000000000000ULL:
+                fixedstone += 1;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0xfe00000000000000ULL) {
+            case 0xfe00000000000000ULL:
+                fixedstone -= 7;
+                break;
+            case 0xfc00000000000000ULL:
+                fixedstone -= 6;
+                break;
+            case 0xf800000000000000ULL:
+                fixedstone -= 5;
+                break;
+            case 0xf000000000000000ULL:
+                fixedstone -= 4;
+                break;
+            case 0xe000000000000000ULL:
+                fixedstone -= 3;
+                break;
+            case 0xc000000000000000ULL:
+                fixedstone -= 2;
+                break;
+            case 0x8000000000000000ULL:
+                fixedstone -= 1;
+                break;
+            default:
+                break;
+        }
+		//右上左方向
+        switch (*playerboard & 0x7f00000000000000ULL) {
+            case 0x7f00000000000000ULL:
+                fixedstone += 7;
+                break;
+            case 0x3f00000000000000ULL:
+                fixedstone += 6;
+                break;
+            case 0x1f00000000000000ULL:
+                fixedstone += 5;
+                break;
+            case 0x0f00000000000000ULL:
+                fixedstone += 4;
+                break;
+            case 0x0700000000000000ULL:
+                fixedstone += 3;
+                break;
+            case 0x0300000000000000ULL:
+                fixedstone += 2;
+                break;
+            case 0x0100000000000000ULL:
+                fixedstone += 1;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0x7f00000000000000ULL) {
+            case 0x7f00000000000000ULL:
+                fixedstone -= 7;
+                break;
+            case 0x3f00000000000000ULL:
+                fixedstone -= 6;
+                break;
+            case 0x1f00000000000000ULL:
+                fixedstone -= 5;
+                break;
+            case 0x0f00000000000000ULL:
+                fixedstone -= 4;
+                break;
+            case 0x0700000000000000ULL:
+                fixedstone -= 3;
+                break;
+            case 0x0300000000000000ULL:
+                fixedstone -= 2;
+                break;
+            case 0x0100000000000000ULL:
+                fixedstone -= 1;
+                break;
+            default:
+                break;
+        }
+	}
+	//左
+	if((*playerboard | *opponentboard) == LEFT_BOARD) {
+		fixedstone += popcount(*playerboard & LEFT_BOARD);
+		fixedstone -= popcount(*opponentboard & LEFT_BOARD);
+	} else {
+		//左上下方向
+        switch (*playerboard & 0x8080808080808000ULL) {
+            case 0x8080808080808000ULL:
+                fixedstone += 7;
+                break;
+            case 0x8080808080800000ULL:
+                fixedstone += 6;
+                break;
+            case 0x8080808080000000ULL:
+                fixedstone += 5;
+                break;
+            case 0x8080808000000000ULL:
+                fixedstone += 4;
+                break;
+            case 0x8080800000000000ULL:
+                fixedstone += 3;
+                break;
+            case 0x8080008000000000ULL:
+                fixedstone += 2;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0x8080808080808000ULL) {
+            case 0x8080808080808000ULL:
+                fixedstone -= 7;
+                break;
+            case 0x8080808080800000ULL:
+                fixedstone -= 6;
+                break;
+            case 0x8080808080000000ULL:
+                fixedstone -= 5;
+                break;
+            case 0x8080808000000000ULL:
+                fixedstone -= 4;
+                break;
+            case 0x8080800000000000ULL:
+                fixedstone -= 3;
+                break;
+            case 0x8080008000000000ULL:
+                fixedstone -= 2;
+                break;
+            default:
+                break;
+        }
+		
+		//左下上方向
+        switch (*playerboard & 0x0080808080808080ULL) {
+            case 0x0080808080808080ULL:
+                fixedstone += 7;
+                break;
+            case 0x0000808080808080ULL:
+                fixedstone += 6;
+                break;
+            case 0x0000008080808080ULL:
+                fixedstone += 5;
+                break;
+            case 0x0000000080808080ULL:
+                fixedstone += 4;
+                break;
+            case 0x0000008000808080ULL:
+                fixedstone += 3;
+                break;
+            case 0x0000008000008080ULL:
+                fixedstone += 2;
+                break;
+            case 0x0000008000000080ULL:
+                fixedstone += 1;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0x0080808080808080ULL) {
+            case 0x0080808080808080ULL:
+                fixedstone -= 7;
+                break;
+            case 0x0000808080808080ULL:
+                fixedstone -= 6;
+                break;
+            case 0x0000008080808080ULL:
+                fixedstone -= 5;
+                break;
+            case 0x0000000080808080ULL:
+                fixedstone -= 4;
+                break;
+            case 0x0000008000808080ULL:
+                fixedstone -= 3;
+                break;
+            case 0x0000008000008080ULL:
+                fixedstone -= 2;
+                break;
+            case 0x0000008000000080ULL:
+                fixedstone -= 1;
+                break;
+            default:
+                break;
+        }
+	}
+	//右
+	if((*playerboard | *opponentboard) == RIGHT_BOARD) {
+		fixedstone += popcount(*playerboard & RIGHT_BOARD);
+		fixedstone -= popcount(*opponentboard & RIGHT_BOARD);
+	} else {
+		//右上下方向
+        switch (*playerboard & 0x0101010101010100ULL) {
+            case 0x0101010101010100ULL:
+                fixedstone += 7;
+                break;
+            case 0x0101010101010000ULL:
+                fixedstone += 6;
+                break;
+            case 0x0101010101000000ULL:
+                fixedstone += 5;
+                break;
+            case 0x0101010100000000ULL:
+                fixedstone += 4;
+                break;
+            case 0x0101010000000000ULL:
+                fixedstone += 3;
+                break;
+            case 0x0101000000000000ULL:
+                fixedstone += 2;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0x0101010101010100ULL) {
+            case 0x0101010101010100ULL:
+                fixedstone -= 7;
+                break;
+            case 0x0101010101010000ULL:
+                fixedstone -= 6;
+                break;
+            case 0x0101010101000000ULL:
+                fixedstone -= 5;
+                break;
+            case 0x0101010100000000ULL:
+                fixedstone -= 4;
+                break;
+            case 0x0101010000000000ULL:
+                fixedstone -= 3;
+                break;
+            case 0x0101000000000000ULL:
+                fixedstone -= 2;
+                break;
+            default:
+                break;
+        }
+		//右下上方向
+        switch (*playerboard & 0x001010101010101ULL) {
+            case 0x001010101010101ULL:
+                fixedstone += 7;
+                break;
+            case 0x000010101010101ULL:
+                fixedstone += 6;
+                break;
+            case 0x000000101010101ULL:
+                fixedstone += 5;
+                break;
+            case 0x000000001010101ULL:
+                fixedstone += 4;
+                break;
+            case 0x000000000010101ULL:
+                fixedstone += 3;
+                break;
+            case 0x000000000000101ULL:
+                fixedstone += 2;
+                break;
+            case 0x000000000000001ULL:
+                fixedstone += 1;
+                break;
+            default:
+                break;
+        }
+		
+        switch (*opponentboard & 0x001010101010101ULL) {
+            case 0x001010101010101ULL:
+                fixedstone -= 7;
+                break;
+            case 0x000010101010101ULL:
+                fixedstone -= 6;
+                break;
+            case 0x000000101010101ULL:
+                fixedstone -= 5;
+                break;
+            case 0x000000001010101ULL:
+                fixedstone -= 4;
+                break;
+            case 0x000000000010101ULL:
+                fixedstone -= 3;
+                break;
+            case 0x000000000000101ULL:
+                fixedstone -= 2;
+                break;
+            case 0x000000000000001ULL:
+                fixedstone -= 1;
+                break;
+            default:
+                break;
+        }
+	}
+	//下
+	if((*playerboard | *opponentboard) == DOWN_BOARD) {
+		fixedstone += popcount(*playerboard & DOWN_BOARD);
+		fixedstone -= popcount(*opponentboard & DOWN_BOARD);
+	} else {
+		//左下右方向
+        switch (*playerboard & 0x00000000000000feULL) {
+            case 0x00000000000000feULL:
+                fixedstone += 7;
+                break;
+            case 0x00000000000000fcULL:
+                fixedstone += 6;
+                break;
+            case 0x00000000000000f8ULL:
+                fixedstone += 5;
+                break;
+            case 0x00000000000000f0ULL:
+                fixedstone += 4;
+                break;
+            case 0x00000000000000e0ULL:
+                fixedstone += 3;
+                break;
+            case 0x00000000000000c0ULL:
+                fixedstone += 2;
+                break;
+            default:
+                break;
+        }
+        
+        switch (*opponentboard & 0x00000000000000feULL) {
+            case 0x00000000000000feULL:
+                fixedstone -= 7;
+                break;
+            case 0x00000000000000fcULL:
+                fixedstone -= 6;
+                break;
+            case 0x00000000000000f8ULL:
+                fixedstone -= 5;
+                break;
+            case 0x00000000000000f0ULL:
+                fixedstone -= 4;
+                break;
+            case 0x00000000000000e0ULL:
+                fixedstone -= 3;
+                break;
+            case 0x00000000000000c0ULL:
+                fixedstone -= 2;
+                break;
+            default:
+                break;
+        }
+		
+		//右下左方向
+        switch (*playerboard & 0x00000000000000feULL) {
+            case 0x00000000000000feULL:
+                fixedstone += 7;
+                break;
+            case 0x00000000000000fcULL:
+                fixedstone += 6;
+                break;
+            case 0x00000000000000f8ULL:
+                fixedstone += 5;
+                break;
+            case 0x00000000000000f0ULL:
+                fixedstone += 4;
+                break;
+            case 0x00000000000000e0ULL:
+                fixedstone += 3;
+                break;
+            case 0x00000000000000c0ULL:
+                fixedstone += 2;
+                break;
+            default:
+                break;
+        }
+        
+        switch (*opponentboard & 0x00000000000000feULL) {
+            case 0x00000000000000feULL:
+                fixedstone -= 7;
+                break;
+            case 0x00000000000000fcULL:
+                fixedstone -= 6;
+                break;
+            case 0x00000000000000f8ULL:
+                fixedstone -= 5;
+                break;
+            case 0x00000000000000f0ULL:
+                fixedstone -= 4;
+                break;
+            case 0x00000000000000e0ULL:
+                fixedstone -= 3;
+                break;
+            case 0x00000000000000c0ULL:
+                fixedstone -= 2;
+                break;
+            default:
+                break;
+        }
+		
+	}
 	return fixedstone;
 }
 
@@ -868,449 +1273,4 @@ int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex) 
 	if(!(*opponentboard)) return MAX_INF;
 	if(*afterIndex >= 40) return ((score_stone(playerboard, opponentboard))+(score_fixedstone(playerboard, opponentboard)*55));
 	return ((score_stone(playerboard, opponentboard)*3)+(score_fixedstone(playerboard, opponentboard)*55)+(score_putable(playerboard, opponentboard)));
-}
-
-int fixedstone_counter(uint64_t *playerboard, uint64_t *opponentboard) {
-    int fixedstone = 0;
-        //上
-        if((*playerboard | *opponentboard) == UP_BOARD) {
-            fixedstone += popcount(*playerboard & UP_BOARD);
-            fixedstone -= popcount(*opponentboard & UP_BOARD);
-        } else {
-            //左上左方向
-            switch (*playerboard & 0xfe00000000000000ULL) {
-                case 0xfe00000000000000ULL:
-                    fixedstone += 7;
-                    break;
-                case 0xfc00000000000000ULL:
-                    fixedstone += 6;
-                    break;
-                case 0xf800000000000000ULL:
-                    fixedstone += 5;
-                    break;
-                case 0xf000000000000000ULL:
-                    fixedstone += 4;
-                    break;
-                case 0xe000000000000000ULL:
-                    fixedstone += 3;
-                    break;
-                case 0xc000000000000000ULL:
-                    fixedstone += 2;
-                    break;
-                case 0x8000000000000000ULL:
-                    fixedstone += 1;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0xfe00000000000000ULL) {
-                case 0xfe00000000000000ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0xfc00000000000000ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0xf800000000000000ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0xf000000000000000ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0xe000000000000000ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0xc000000000000000ULL:
-                    fixedstone -= 2;
-                    break;
-                case 0x8000000000000000ULL:
-                    fixedstone -= 1;
-                    break;
-                default:
-                    break;
-            }
-            //右上左方向
-            switch (*playerboard & 0x7f00000000000000ULL) {
-                case 0x7f00000000000000ULL:
-                    fixedstone += 7;
-                    break;
-                case 0x3f00000000000000ULL:
-                    fixedstone += 6;
-                    break;
-                case 0x1f00000000000000ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x0f00000000000000ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x0700000000000000ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x0300000000000000ULL:
-                    fixedstone += 2;
-                    break;
-                case 0x0100000000000000ULL:
-                    fixedstone += 1;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x7f00000000000000ULL) {
-                case 0x7f00000000000000ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x3f00000000000000ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x1f00000000000000ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x0f00000000000000ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x0700000000000000ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x0300000000000000ULL:
-                    fixedstone -= 2;
-                    break;
-                case 0x0100000000000000ULL:
-                    fixedstone -= 1;
-                    break;
-                default:
-                    break;
-            }
-        }
-        //左
-        if((*playerboard | *opponentboard) == LEFT_BOARD) {
-            fixedstone += popcount(*playerboard & LEFT_BOARD);
-            fixedstone -= popcount(*opponentboard & LEFT_BOARD);
-        } else {
-            //左上下方向
-            switch (*playerboard & 0x8080808080808000ULL) {
-                case 0x8080808080808000ULL:
-                    fixedstone += 7;
-                    break;
-                case 0x8080808080800000ULL:
-                    fixedstone += 6;
-                    break;
-                case 0x8080808080000000ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x8080808000000000ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x8080800000000000ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x8080008000000000ULL:
-                    fixedstone += 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x8080808080808000ULL) {
-                case 0x8080808080808000ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x8080808080800000ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x8080808080000000ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x8080808000000000ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x8080800000000000ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x8080008000000000ULL:
-                    fixedstone -= 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            //左下上方向
-            switch (*playerboard & 0x0080808080808080ULL) {
-                case 0x0080808080808080ULL:
-                    fixedstone += 7;
-                    break;
-                case 0x0000808080808080ULL:
-                    fixedstone += 6;
-                    break;
-                case 0x0000008080808080ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x0000000080808080ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x0000008000808080ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x0000008000008080ULL:
-                    fixedstone += 2;
-                    break;
-                case 0x0000008000000080ULL:
-                    fixedstone += 1;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x0080808080808080ULL) {
-                case 0x0080808080808080ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x0000808080808080ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x0000008080808080ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x0000000080808080ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x0000008000808080ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x0000008000008080ULL:
-                    fixedstone -= 2;
-                    break;
-                case 0x0000008000000080ULL:
-                    fixedstone -= 1;
-                    break;
-                default:
-                    break;
-            }
-        }
-        //右
-        if((*playerboard | *opponentboard) == RIGHT_BOARD) {
-            fixedstone += popcount(*playerboard & RIGHT_BOARD);
-            fixedstone -= popcount(*opponentboard & RIGHT_BOARD);
-        } else {
-            //右上下方向
-            switch (*playerboard & 0x0101010101010100ULL) {
-                case 0x0101010101010100ULL:
-                    fixedstone += 7;
-                    break;
-                case 0x0101010101010000ULL:
-                    fixedstone += 6;
-                    break;
-                case 0x0101010101000000ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x0101010100000000ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x0101010000000000ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x0101000000000000ULL:
-                    fixedstone += 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x0101010101010100ULL) {
-                case 0x0101010101010100ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x0101010101010000ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x0101010101000000ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x0101010100000000ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x0101010000000000ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x0101000000000000ULL:
-                    fixedstone -= 2;
-                    break;
-                default:
-                    break;
-            }
-            //右下上方向
-            switch (*playerboard & 0x001010101010101ULL) {
-                case 0x001010101010101ULL:
-                    fixedstone += 7;
-                    break;
-                case 0x000010101010101ULL:
-                    fixedstone += 6;
-                    break;
-                case 0x000000101010101ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x000000001010101ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x000000000010101ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x000000000000101ULL:
-                    fixedstone += 2;
-                    break;
-                case 0x000000000000001ULL:
-                    fixedstone += 1;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x001010101010101ULL) {
-                case 0x001010101010101ULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x000010101010101ULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x000000101010101ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x000000001010101ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x000000000010101ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x000000000000101ULL:
-                    fixedstone -= 2;
-                    break;
-                case 0x000000000000001ULL:
-                    fixedstone -= 1;
-                    break;
-                default:
-                    break;
-            }
-        }
-        //下
-        if((*playerboard | *opponentboard) == DOWN_BOARD) {
-            fixedstone += popcount(*playerboard & DOWN_BOARD);
-            fixedstone -= popcount(*opponentboard & DOWN_BOARD);
-        } else {
-            //左下右方向
-            switch (*playerboard & 0x00000000000000feULL) {
-                case 0x00000000000000feULL:
-                    fixedstone += 7;
-                    break;
-                case 0x00000000000000fcULL:
-                    fixedstone += 6;
-                    break;
-                case 0x00000000000000f8ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x00000000000000f0ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x00000000000000e0ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x00000000000000c0ULL:
-                    fixedstone += 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x00000000000000feULL) {
-                case 0x00000000000000feULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x00000000000000fcULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x00000000000000f8ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x00000000000000f0ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x00000000000000e0ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x00000000000000c0ULL:
-                    fixedstone -= 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            //右下左方向
-            switch (*playerboard & 0x00000000000000feULL) {
-                case 0x00000000000000feULL:
-                    fixedstone += 7;
-                    break;
-                case 0x00000000000000fcULL:
-                    fixedstone += 6;
-                    break;
-                case 0x00000000000000f8ULL:
-                    fixedstone += 5;
-                    break;
-                case 0x00000000000000f0ULL:
-                    fixedstone += 4;
-                    break;
-                case 0x00000000000000e0ULL:
-                    fixedstone += 3;
-                    break;
-                case 0x00000000000000c0ULL:
-                    fixedstone += 2;
-                    break;
-                default:
-                    break;
-            }
-    
-            switch (*opponentboard & 0x00000000000000feULL) {
-                case 0x00000000000000feULL:
-                    fixedstone -= 7;
-                    break;
-                case 0x00000000000000fcULL:
-                    fixedstone -= 6;
-                    break;
-                case 0x00000000000000f8ULL:
-                    fixedstone -= 5;
-                    break;
-                case 0x00000000000000f0ULL:
-                    fixedstone -= 4;
-                    break;
-                case 0x00000000000000e0ULL:
-                    fixedstone -= 3;
-                    break;
-                case 0x00000000000000c0ULL:
-                    fixedstone -= 2;
-                    break;
-                default:
-                    break;
-            }
-    
-        }
-        return fixedstone;
-}
-
-void fixed_stone_init(void) {
-    board f;
-    for (f.playerboard = 0; f.playerboard <= 0xFF; ++f.playerboard) {
-        for (f.opponentboard = 0; f.opponentboard <= 0xFF; ++f.opponentboard) {
-            if(f.playerboard & f.opponentboard) continue;
-            fixed_stone_table[f] = fixedstone_counter(&b.playerboard, &b.opponentboard);
-            rotateClockwise90(&f.playerboard);
-            rotateClockwise90(&f.opponentboard);
-            fixed_stone_table[f] = fixedstone_counter(&b.playerboard, &b.opponentboard);
-            rotateClockwise90(&f.playerboard);
-            rotateClockwise90(&f.opponentboard);
-            fixed_stone_table[f] = fixedstone_counter(&b.playerboard, &b.opponentboard);
-            rotateClockwise90(&f.playerboard);
-            rotateClockwise90(&f.opponentboard);
-            fixed_stone_table[f] = fixedstone_counter(&b.playerboard, &b.opponentboard);
-            rotateClockwise90(&f.playerboard);
-            rotateClockwise90(&f.opponentboard);
-        }
-    }
 }

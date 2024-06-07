@@ -30,8 +30,6 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     self.close.hidden = YES;
     self.restart.hidden = YES;
     reset();
-    fixed_stone_table.clear();
-    fixed_stone_init();
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {
