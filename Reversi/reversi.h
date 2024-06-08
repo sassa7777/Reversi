@@ -74,7 +74,7 @@ int ai(void);
 int putstone(char y, char x);
 uint64_t cordinate_to_bit(char *x, char *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
-uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *opponentboard);
+uint64_t makelegalboard(uint64_t *p, uint64_t *o);
 void reversebit(uint64_t put);
 uint64_t transfer(uint64_t *put, char *i);
 bool isPass(void);

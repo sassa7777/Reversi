@@ -27,7 +27,7 @@ int putstone(char y, char x) {
 	tmpy = y;
 	tmpx = x;
 	uint64_t put = cordinate_to_bit(&x, &y);
-	legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
+	legalboard = makelegalboard(&b.playerboard, &b.opponentboard);
 	if(canput(&put, &legalboard)) {
 		reversebit(put);
 		nowIndex++;
@@ -46,88 +46,24 @@ bool canput(uint64_t *put, uint64_t *legalboard) {
 	return ((*put & *legalboard) == *put);
 }
 
-uint64_t makelegalBoard(uint64_t *playerboard, uint64_t *opponentboard) {
-	uint64_t horizontalboard = (*opponentboard & 0x7e7e7e7e7e7e7e7e);
-	uint64_t verticalboard = (*opponentboard & 0x00FFFFFFFFFFFF00);
-	uint64_t allsideboard = (*opponentboard & 0x007e7e7e7e7e7e00);
-	uint64_t blankboard = ~(*playerboard | *opponentboard);
-	
-	uint64_t tmp;
-	uint64_t legalboard;
-	
-	//左
-	tmp = horizontalboard & (*playerboard << 1);
-	tmp |= horizontalboard & (tmp << 1);
-	tmp |= horizontalboard & (tmp << 1);
-	tmp |= horizontalboard & (tmp << 1);
-	tmp |= horizontalboard & (tmp << 1);
-	tmp |= horizontalboard & (tmp << 1);
-	legalboard = blankboard & (tmp << 1);
-	
-	//右
-	tmp = horizontalboard & (*playerboard >> 1);
-	tmp |= horizontalboard & (tmp >> 1);
-	tmp |= horizontalboard & (tmp >> 1);
-	tmp |= horizontalboard & (tmp >> 1);
-	tmp |= horizontalboard & (tmp >> 1);
-	tmp |= horizontalboard & (tmp >> 1);
-	legalboard |= blankboard & (tmp >> 1);
-
-	//上
-	tmp = verticalboard & (*playerboard << 8);
-	tmp |= verticalboard & (tmp << 8);
-	tmp |= verticalboard & (tmp << 8);
-	tmp |= verticalboard & (tmp << 8);
-	tmp |= verticalboard & (tmp << 8);
-	tmp |= verticalboard & (tmp << 8);
-	legalboard |= blankboard & (tmp << 8);
-	
-	//下
-	tmp = verticalboard & (*playerboard >> 8);
-	tmp |= verticalboard & (tmp >> 8);
-	tmp |= verticalboard & (tmp >> 8);
-	tmp |= verticalboard & (tmp >> 8);
-	tmp |= verticalboard & (tmp >> 8);
-	tmp |= verticalboard & (tmp >> 8);
-	legalboard |= blankboard & (tmp >> 8);
-	
-	//右斜め上
-	tmp = allsideboard & (*playerboard << 7);
-	tmp |= allsideboard & (tmp << 7);
-	tmp |= allsideboard & (tmp << 7);
-	tmp |= allsideboard & (tmp << 7);
-	tmp |= allsideboard & (tmp << 7);
-	tmp |= allsideboard & (tmp << 7);
-	legalboard |= blankboard & (tmp << 7);
-	
-	//左斜め上
-	tmp = allsideboard & (*playerboard << 9);
-	tmp |= allsideboard & (tmp << 9);
-	tmp |= allsideboard & (tmp << 9);
-	tmp |= allsideboard & (tmp << 9);
-	tmp |= allsideboard & (tmp << 9);
-	tmp |= allsideboard & (tmp << 9);
-	legalboard |= blankboard & (tmp << 9);
-	
-	//右斜め下
-	tmp = allsideboard & (*playerboard >> 9);
-	tmp |= allsideboard & (tmp >> 9);
-	tmp |= allsideboard & (tmp >> 9);
-	tmp |= allsideboard & (tmp >> 9);
-	tmp |= allsideboard & (tmp >> 9);
-	tmp |= allsideboard & (tmp >> 9);
-	legalboard |= blankboard & (tmp >> 9);
-	
-	//左斜め下
-	tmp = allsideboard & (*playerboard >> 7);
-	tmp |= allsideboard & (tmp >> 7);
-	tmp |= allsideboard & (tmp >> 7);
-	tmp |= allsideboard & (tmp >> 7);
-	tmp |= allsideboard & (tmp >> 7);
-	tmp |= allsideboard & (tmp >> 7);
-	legalboard |= blankboard & (tmp >> 7);
-	
-	return legalboard;
+uint64_t makelegalboard(uint64_t *p, uint64_t *o) {
+    uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
+    
+    hb = *o & 0x7e7e7e7e7e7e7e7eULL;
+    flip1  = hb & (*p << 1);    flip7  = hb & (*p << 7);        flip9  = hb & (*p << 9);        flip8  = *o & (*p << 8);
+    flip1 |= hb & (flip1 << 1);    flip7 |= hb & (flip7 << 7);    flip9 |= hb & (flip9 << 9);    flip8 |= *o & (flip8 << 8);
+    pre1 = hb & (hb << 1);         pre7 = hb & (hb << 7);        pre9 = hb & (hb << 9);        pre8 = *o & (*o << 8);
+    flip1 |= pre1 & (flip1 << 2);    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
+    flip1 |= pre1 & (flip1 << 2);    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
+    moves = flip1 << 1;        moves |= flip7 << 7;        moves |= flip9 << 9;        moves |= flip8 << 8;
+    flip1  = hb & (*p >> 1);        flip7  = hb & (*p >> 7);        flip9  = hb & (*p >> 9);        flip8  = *o & (*p >> 8);
+    flip1 |= hb & (flip1 >> 1);    flip7 |= hb & (flip7 >> 7);    flip9 |= hb & (flip9 >> 9);    flip8 |= *o & (flip8 >> 8);
+    pre1 >>= 1;            pre7 >>= 7;            pre9 >>= 9;            pre8 >>= 8;
+    flip1 |= pre1 & (flip1 >> 2);    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);
+    flip1 |= pre1 & (flip1 >> 2);    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);
+    moves |= flip1 >> 1;        moves |= flip7 >> 7;        moves |= flip9 >> 9;        moves |= flip8 >> 8;
+    
+    return moves & ~(*p|*o);
 }
 
 void reversebit(uint64_t put) {
@@ -152,13 +88,14 @@ void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint6
 	for (char i = 0; i<8; ++i) {
 		uint64_t rev_ = 0;
 		uint64_t mask = transfer(put, &i);
-		while ((mask != 0) && ((mask & *opponentboard) != 0)) {
+		while (mask && (mask & *opponentboard)) {
 			rev_ |= mask;
 			mask = transfer(&mask, &i);
 		}
-		if((mask & *playerboard) != 0) *rev |= rev_;
+		if(mask & *playerboard) *rev |= rev_;
 	}
 }
+
 
 uint64_t transfer(uint64_t *put, char *i) {
 	switch (*i) {
@@ -194,11 +131,11 @@ uint64_t transfer(uint64_t *put, char *i) {
 }
 
 bool isPass(void) {
-	return (makelegalBoard(&b.playerboard, &b.opponentboard) == 0 && makelegalBoard(&b.opponentboard, &b.playerboard) != 0);
+	return (makelegalboard(&b.playerboard, &b.opponentboard) == 0 && makelegalboard(&b.opponentboard, &b.playerboard) != 0);
 }
 
 bool isFinished(void) {
-	return (makelegalBoard(&b.playerboard, &b.opponentboard) == 0 && makelegalBoard(&b.opponentboard, &b.playerboard) == 0);
+	return (makelegalboard(&b.playerboard, &b.opponentboard) == 0 && makelegalboard(&b.opponentboard, &b.playerboard) == 0);
 }
 
 void swapboard(void) {
@@ -292,7 +229,7 @@ int ai(void) {
     update_think_percent();
     transpose_table.clear();
     former_transpose_table.clear();
-	legalboard = makelegalBoard(&b.playerboard, &b.opponentboard);
+	legalboard = makelegalboard(&b.playerboard, &b.opponentboard);
 	int putable_count = popcount(legalboard);
     visited_nodes = 0;
     int score = 0;
@@ -325,7 +262,7 @@ int ai(void) {
 }
 
 int search(uint64_t *playerboard, uint64_t *opponentboard) {
-    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     int var = 0, search_depth;
     uint64_t rev;
     board m;
@@ -410,9 +347,9 @@ int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
     if(u == l) return u;
     alpha = max(alpha, l);
     beta = min(beta, u);
-    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
-        if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
+        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
         else return -nega_scout(depth-1, -beta, -alpha, opponentboard, playerboard);
     }
     int var, max_score = MIN_INF;
@@ -489,9 +426,9 @@ int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *player
     if(u == l) return u;
     alpha = max(u, alpha);
     beta = min(l, beta);
-    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
-        if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
+        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
         else return -nega_alpha_transpose_table(depth-1, -beta, -alpha, opponentboard, playerboard);
     }
     int var, max_score = MIN_INF;
@@ -538,9 +475,9 @@ int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard,
     if(transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
         return transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)];
     }
-    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
-        if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
+        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
         else return -nega_alpha_moveorder(depth-1, -beta, -alpha, opponentboard, playerboard);
     }
     int var, max_score = MIN_INF;
@@ -582,9 +519,9 @@ int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t 
     if(transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
         return transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)];
     }
-    uint64_t legalboard = makelegalBoard(playerboard, opponentboard);
+    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
-        if(!(makelegalBoard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
+        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
         else return -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
     }
     uint64_t rev = 0;
@@ -833,7 +770,7 @@ int score_stone2(uint64_t *playerboard, uint64_t *opponentboard) {
 }
 
 int score_putable(uint64_t *playerboard, uint64_t *opponentboard) {
-	return ((popcount(makelegalBoard(playerboard, opponentboard)))-(popcount(makelegalBoard(opponentboard, playerboard))));
+	return ((popcount(makelegalboard(playerboard, opponentboard)))-(popcount(makelegalboard(opponentboard, playerboard))));
 }
 
 int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard) {
