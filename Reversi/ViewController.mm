@@ -40,7 +40,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         [self botput];
     }
     [self reloadview];
-    NSArray<NSArray<NSButton *> *> *buttons = @[
+    NSArray<NSArray<NSButton *>*> *buttons = @[
         @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
         @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
         @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
@@ -136,11 +136,11 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         }
     }
     if(nowTurn == BLACK_TURN) {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(b.playerboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(b.opponentboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.playerboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.opponentboard)];
     } else {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", popcount(b.opponentboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", popcount(b.playerboard)];
+        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.opponentboard)];
+        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.playerboard)];
     }
     NSLog(@"完了");
     if(isFinished()) {

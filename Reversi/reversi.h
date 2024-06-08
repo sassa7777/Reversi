@@ -71,21 +71,18 @@ extern board b;
 void reset(void);
 int winner(void);
 int ai(void);
-int putstone(char y, char x);
-uint64_t cordinate_to_bit(char *x, char *y);
+int putstone(int_fast8_t y, int_fast8_t x);
+uint64_t cordinate_to_bit(int_fast8_t *x, int_fast8_t *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
 uint64_t makelegalboard(uint64_t *p, uint64_t *o);
 void reversebit(uint64_t put);
-uint64_t transfer(uint64_t *put, char *i);
+uint64_t transfer(uint64_t *put, int_fast8_t *i);
 bool isPass(void);
 bool isFinished(void);
 void swapboard(void);
 void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
-void moveordering(uint64_t moveorder[64], uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha_transpose_table(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha_moveorder(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_scout(char depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int search(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation

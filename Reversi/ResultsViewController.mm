@@ -25,9 +25,9 @@ using namespace std;
             break;
     }
     if(nowTurn == BLACK_TURN) {
-        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", popcount(b.playerboard), popcount(b.opponentboard)];
+        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", __builtin_popcountll(b.playerboard), __builtin_popcountll(b.opponentboard)];
     } else {
-        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", popcount(b.opponentboard), popcount(b.playerboard)];
+        self.results.stringValue = [NSString stringWithFormat:@"黒: %d 白: %d", __builtin_popcountll(b.opponentboard), __builtin_popcountll(b.playerboard)];
     }
 }
 
