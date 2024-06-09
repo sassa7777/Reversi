@@ -1044,9 +1044,9 @@ int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard) {
 }
 
 int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex) {
-    if(*afterIndex >= 60) return (__builtin_popcountll(*playerboard)-__builtin_popcountll(*opponentboard));
-	if(!(*playerboard)) return MIN_INF;
-	if(!(*opponentboard)) return MAX_INF;
-	if(*afterIndex >= 44) return ((score_stone(playerboard, opponentboard)*3)+(score_fixedstone(playerboard, opponentboard)*55));
-	return ((score_stone(playerboard, opponentboard)*3)+(score_fixedstone(playerboard, opponentboard)*55)+(score_putable(playerboard, opponentboard)));
+    return (*afterIndex >= 60) ? (__builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard)) :
+           (!*playerboard) ? MIN_INF :
+           (!*opponentboard) ? MAX_INF :
+           (*afterIndex >= 44) ? (score_stone(playerboard, opponentboard) * 3 + score_fixedstone(playerboard, opponentboard) * 55) :
+           (score_stone(playerboard, opponentboard) * 3 + score_fixedstone(playerboard, opponentboard) * 55 + score_putable(playerboard, opponentboard));
 }
