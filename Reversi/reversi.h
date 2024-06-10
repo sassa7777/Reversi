@@ -83,7 +83,11 @@ void swapboard(void);
 void revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *rev);
 int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_alpha_moveorder_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int search(uint64_t *playerboard, uint64_t *opponentboard);
+int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
 int score_stone(uint64_t *playerboard, uint64_t *opponentboard);
