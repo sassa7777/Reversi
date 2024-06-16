@@ -142,6 +142,90 @@ uint64_t revbit(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard) {
     return rev;
 }
 
+uint64_t Flip(uint64_t *X, uint64_t *P, uint64_t *O) {
+    uint64_t flip = 0, mO, pre, outflank, f;
+    // 左方向
+    mO = *O & 0x7e7e7e7e7e7e7e7e;
+    f = (*X << 1) & mO;
+    f |= (f << 1) & mO;
+    pre = mO & (mO << 1);
+    f |= (f << 2) & pre;
+    f |= (f << 2) & pre;
+    outflank = *P & (f << 1);
+    flip |= outflank ? f : 0;
+
+    // 右方向
+    mO = *O & 0x7e7e7e7e7e7e7e7e;
+    f = (*X >> 1) & mO;
+    f |= (f >> 1) & mO;
+    pre = mO & (mO >> 1);
+    f |= (f >> 2) & pre;
+    f |= (f >> 2) & pre;
+    outflank = *P & (f >> 1);
+    flip |= outflank ? f : 0;
+
+    // 上方向
+    mO = *O & 0x00ffffffffffff00;
+    f = (*X << 8) & mO;
+    f |= (f << 8) & mO;
+    pre = mO & (mO << 8);
+    f |= (f << 16) & pre;
+    f |= (f << 16) & pre;
+    outflank = *P & (f << 8);
+    flip |= outflank ? f : 0;
+
+    // 下方向
+    mO = *O & 0x00ffffffffffff00;
+    f = (*X >> 8) & mO;
+    f |= (f >> 8) & mO;
+    pre = mO & (mO >> 8);
+    f |= (f >> 16) & pre;
+    f |= (f >> 16) & pre;
+    outflank = *P & (f >> 8);
+    flip |= outflank ? f : 0;
+
+    // 斜め左上方向
+    mO = *O & 0x007e7e7e7e7e7e00;
+    f = (*X << 9) & mO;
+    f |= (f << 9) & mO;
+    pre = mO & (mO << 9);
+    f |= (f << 18) & pre;
+    f |= (f << 18) & pre;
+    outflank = *P & (f << 9);
+    flip |= outflank ? f : 0;
+
+    // 斜め右下方向
+    mO = *O & 0x007e7e7e7e7e7e00;
+    f = (*X >> 9) & mO;
+    f |= (f >> 9) & mO;
+    pre = mO & (mO >> 9);
+    f |= (f >> 18) & pre;
+    f |= (f >> 18) & pre;
+    outflank = *P & (f >> 9);
+    flip |= outflank ? f : 0;
+    // 斜め右上方向
+    mO = *O & 0x007e7e7e7e7e7e00;
+    f = (*X << 7) & mO;
+    f |= (f << 7) & mO;
+    pre = mO & (mO << 7);
+    f |= (f << 14) & pre;
+    f |= (f << 14) & pre;
+    outflank = *P & (f << 7);
+    flip |= outflank ? f : 0;
+
+    // 斜め左下方向
+    mO = *O & 0x007e7e7e7e7e7e00;
+    f = (*X >> 7) & mO;
+    f |= (f >> 7) & mO;
+    pre = mO & (mO >> 7);
+    f |= (f >> 14) & pre;
+    f |= (f >> 14) & pre;
+    outflank = *P & (f >> 7);
+    flip |= outflank ? f : 0;
+
+    return flip;
+}
+
 uint64_t transfer(uint64_t *put, int_fast8_t *i) {
 	switch (*i) {
 		case 0:
@@ -203,7 +287,7 @@ int ai(void) {
 	printf("[*]Botが考え中..\n");
     if(DEPTH >= 10 && nowIndex >= 43) {
         DEPTH = 20;
-        afterIndex+=10;
+        afterIndex=nowIndex+DEPTH;
     }
 	tmpx = -1;
 	tmpy = -1;
@@ -219,6 +303,7 @@ int ai(void) {
     if(afterIndex >= 60) {
         think_count = 100/putable_count;
         score = nega_alpha(DEPTH, MIN_INF, MAX_INF, &b.playerboard, &b.opponentboard);
+//        score = search_finish(&b.playerboard, &b.opponentboard);
         cout << "depth: " << DEPTH << " Visited nodes: " << visited_nodes << endl;
     } else  {
         think_count = 100/(putable_count*(DEPTH+1-max(DEPTH-3, 1)));
@@ -244,9 +329,9 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
     board m;
     vector<board> moveorder;
     m.put = 1;
-    for (int i = 0; i < 64; ++i) {
+    for (auto i = 0; i < 64; ++i) {
         if(legalboard & m.put) {
-            rev = revbit(&m.put, playerboard, opponentboard);
+            rev = Flip(&m.put, playerboard, opponentboard);
             m.playerboard = *playerboard ^ (m.put | rev);
             m.opponentboard = *opponentboard ^ rev;
             moveorder.emplace_back(m);
@@ -254,7 +339,8 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         m.put <<= 1;
     }
     if(Level == 6) {
-        for (search_depth = max(1, DEPTH-6); search_depth <= DEPTH; search_depth+=2) {
+        think_count = 100/(__builtin_popcountll(legalboard)*5);
+        for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (board& m: moveorder) {
                 m.score = move_ordering_value(&m.playerboard, &m.opponentboard);
@@ -322,7 +408,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playe
     var = 0;
     for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
         if(legalboard & put) {
-            rev = revbit(&put, playerboard, opponentboard);
+            rev = Flip(&put, playerboard, opponentboard);
             moveorder[var].playerboard = *playerboard ^ (put | rev);
             moveorder[var].opponentboard = *opponentboard ^ rev;
             moveorder[var].score = move_ordering_value(&moveorder[var].playerboard, &moveorder[var].opponentboard);
@@ -348,7 +434,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    if(DEPTH != 20 && transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
+    if(DEPTH <= 20 && transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
         return transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)];
     }
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
@@ -360,7 +446,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     int var, max_score = MIN_INF;
     for (uint64_t& i: moveorder_bit) {
         if(canput(&i, &legalboard)) {
-            rev = revbit(&i, playerboard, opponentboard);
+            rev = Flip(&i, playerboard, opponentboard);
             *playerboard ^= (i | rev);
             *opponentboard ^= rev;
             var = -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
@@ -382,9 +468,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
             max_score = max(max_score, alpha);
         }
     }
-    if(DEPTH != 20) {
-        transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
-    }
+    if(DEPTH < 20) transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
     return max_score;
 }
 
@@ -399,9 +483,9 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
     board m;
     vector<board> moveorder;
     m.put = 1;
-    for (int i = 0; i < 64; ++i) {
+    for (auto i = 0; i < 64; ++i) {
         if(legalboard & m.put) {
-            rev = revbit(&m.put, playerboard, opponentboard);
+            rev = Flip(&m.put, playerboard, opponentboard);
             m.playerboard = *playerboard ^ (m.put | rev);
             m.opponentboard = *opponentboard ^ rev;
             moveorder.emplace_back(m);
@@ -451,7 +535,7 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
             if(search_depth == DEPTH) {
                 tmpbit = moveorder[0].put;
             }
-            for (int i = 1; i < moveorder.size(); ++i) {
+            for (uint_fast8_t i = 1; i < moveorder.size(); ++i) {
                 var = -nega_alpha_moveorder_scout(search_depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
                 think_percent += think_count;
                 update_think_percent();
@@ -500,7 +584,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     board moveorder[__builtin_popcountll(legalboard)];
     for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
         if(legalboard & put) {
-            rev = revbit(&put, playerboard, opponentboard);
+            rev = Flip(&put, playerboard, opponentboard);
             moveorder[canput].playerboard = *playerboard ^ (put | rev);
             moveorder[canput].opponentboard = *opponentboard ^ rev;
             moveorder[canput].score = move_ordering_value_scout(&moveorder[canput].playerboard, &moveorder[canput].opponentboard);
@@ -518,7 +602,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     alpha = max(alpha, var);
     max_score = max(max_score, var);
     
-    for (int i = 1; i < canput; ++i) {
+    for (uint_fast8_t i = 1; i < canput; ++i) {
         var = -nega_alpha_moveorder_scout(depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
         if (var >= beta) {
             if(var > l) {
@@ -577,7 +661,7 @@ int nega_alpha_moveorder_scout(int_fast8_t depth, int alpha, int beta, uint64_t 
     var = 0;
     for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
         if(legalboard & put) {
-            rev = revbit(&put, playerboard, opponentboard);
+            rev = Flip(&put, playerboard, opponentboard);
             moveorder[var].playerboard = *playerboard ^ (put | rev);
             moveorder[var].opponentboard = *opponentboard ^ rev;
             moveorder[var].score = move_ordering_value(&moveorder[var].playerboard, &moveorder[var].opponentboard);
@@ -631,7 +715,7 @@ int nega_alpha_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboa
     int var, max_score = MIN_INF;
     for (uint64_t& i: moveorder_bit) {
         if(canput(&i, &legalboard)) {
-            rev = revbit(&i, playerboard, opponentboard);
+            rev = Flip(&i, playerboard, opponentboard);
             *playerboard ^= (i | rev);
             *opponentboard ^= rev;
             var = -nega_alpha_scout(depth-1, -beta, -alpha, opponentboard, playerboard);
@@ -1039,6 +1123,16 @@ int score_stone2(uint64_t *playerboard, uint64_t *opponentboard) {
         if((*opponentboard & 0x247E) == 0x243C) score += -5;
     }
     
+    return score;
+}
+
+int score_stone3(uint64_t *playerboard, uint64_t *opponentboard) {
+    int score = 0;
+    
+    for (int_fast8_t i = 0; i < 10; ++i) {
+        score += cell_weight_score[i] * __builtin_popcountll(*playerboard & cell_weight_mask[i]);
+        score -= cell_weight_score[i] * __builtin_popcountll(*opponentboard & cell_weight_mask[i]);
+    }
     return score;
 }
 
@@ -1474,6 +1568,7 @@ int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex) 
     return (*afterIndex >= 60) ? (__builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard)) :
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :
-           (*afterIndex >= 45) ? (score_stone(playerboard, opponentboard)*2 + score_fixedstone(playerboard, opponentboard) * 55):
+           (*afterIndex >= 49) ? (score_stone3(playerboard, opponentboard) + score_fixedstone(playerboard, opponentboard) * 500):
+           (*afterIndex >= 45) ? (score_stone(playerboard, opponentboard) + score_fixedstone(playerboard, opponentboard) * 55):
            (score_stone(playerboard, opponentboard) * 6 + score_fixedstone(playerboard, opponentboard) * 55 + score_putable(playerboard, opponentboard)*11);
 }
