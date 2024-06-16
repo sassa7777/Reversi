@@ -44,6 +44,10 @@ constexpr int scoreboard_score[5] = {
     30, -1, -3, -12, -15
 };
 
+constexpr int scoreboard_score2[4] = {
+    30, -1, -12, -15
+};
+
 constexpr uint64_t scoreboard_weight[5] = {
     0x8100000000000081ULL,
     0x180018BDBD180018ULL,
@@ -52,23 +56,11 @@ constexpr uint64_t scoreboard_weight[5] = {
     0x0042000000004200ULL,
 };
 
-constexpr int cell_weight_score[10] = {
-    2714,  147,   69,  -18,
-          -577, -186, -153,
-                -379, -122,
-                      -169
-};
-constexpr uint64_t cell_weight_mask[10] = {
+constexpr uint64_t scoreboard_weight2[4] = {
     0x8100000000000081ULL,
+    0x003C424242423C00ULL,
     0x4281000000008142ULL,
-    0x2400810000810024ULL,
-    0x1800008181000018ULL,
     0x0042000000004200ULL,
-    0x0024420000422400ULL,
-    0x0018004242001800ULL,
-    0x0000240000240000ULL,
-    0x0000182424180000ULL,
-    0x0000001818000000ULL
 };
 
 ankerl::unordered_dense::map<std::string, int> transpose_table;
