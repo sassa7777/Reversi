@@ -71,7 +71,7 @@ int ai(void);
 int putstone(int_fast8_t y, int_fast8_t x);
 uint64_t cordinate_to_bit(int_fast8_t *x, int_fast8_t *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
-uint64_t makelegalboard(uint64_t *p, uint64_t *o);
+uint64_t makelegalboard(const uint64_t *p, const uint64_t *o);
 void reversebit(uint64_t put);
 uint64_t transfer(uint64_t *put, int_fast8_t *i);
 bool isPass(void);
@@ -89,10 +89,10 @@ int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
 int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
-int score_stone(uint64_t *playerboard, uint64_t *opponentboard);
-int score_stone2(uint64_t *playerboard, uint64_t *opponentboard);
-int score_putable(uint64_t *playerboard, uint64_t *opponentboard);
-int score_fixedstone(uint64_t *playerboard, uint64_t *opponentboard);
-int countscore(uint64_t *playerboard, uint64_t *opponentboard, int *afterIndex);
+int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
+int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard);
+int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
+int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
+int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex);
 
 #endif /* othello_h */
