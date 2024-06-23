@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <string>
+#include <thread>
 
 extern int DEPTH;
 extern int Level;

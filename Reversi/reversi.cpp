@@ -334,9 +334,6 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playe
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    if(transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
-        return transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)];
-    }
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
         if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
@@ -374,9 +371,6 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     if(!depth) {
         return countscore(playerboard, opponentboard, &afterIndex);
     }
-    if(DEPTH <= 20 && transpose_table.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table.end()) {
-        return transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)];
-    }
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
         if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
@@ -408,7 +402,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
             max_score = max(max_score, alpha);
         }
     }
-    if(DEPTH < 20) transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
+    transpose_table[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
     return max_score;
 }
 
@@ -701,8 +695,7 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
     int score = 0;
 	
     score += 30 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
-    score += -1 * (__builtin_popcountll(*playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(*opponentboard & 0x180018BDBD180018ULL));
-    score += -3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
+    score += -2 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
     score += -12 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL));
     score += -15 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
     
@@ -712,15 +705,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x0000808080800000ULL:
                 score += 2;
                 break;
-            case 0x0000800000800000ULL:
-                if((*opponentboard & LEFT_BOARD) == 0x0000008080000000ULL) score -= 4;
-                break;
-            case 0x0000800080800000ULL:
-                score -= 2;
-                break;
-            case 0x0000808000800000ULL:
-                score -= 2;
-                break;
+//            case 0x0000800000800000ULL:
+//                if((*opponentboard & LEFT_BOARD) == 0x0000008080000000ULL) score -= 4;
+//                break;
+//            case 0x0000800080800000ULL:
+//                score -= 2;
+//                break;
+//            case 0x0000808000800000ULL:
+//                score -= 2;
+//                break;
             case 0x0080808080808000ULL:
                 score += 25;
                 break;
@@ -731,15 +724,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x0000808080800000ULL:
                 score -= 2;
                 break;
-            case 0x0000800000800000ULL:
-                if((*playerboard & LEFT_BOARD) == 0x0000008080000000ULL) score += 4;
-                break;
-            case 0x0000800080800000ULL:
-                score += 2;
-                break;
-            case 0x0000808000800000ULL:
-                score += 2;
-                break;
+//            case 0x0000800000800000ULL:
+//                if((*playerboard & LEFT_BOARD) == 0x0000008080000000ULL) score += 4;
+//                break;
+//            case 0x0000800080800000ULL:
+//                score += 2;
+//                break;
+//            case 0x0000808000800000ULL:
+//                score += 2;
+//                break;
             case 0x0080808080808000ULL:
                 score -= 25;
                 break;
@@ -755,15 +748,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x0000010101010000ULL:
                 score += 2;
                 break;
-            case 0x0000010000010000ULL:
-                if((*opponentboard & RIGHT_BOARD) == 0x0000000101000000ULL) score -= 4;
-                break;
-            case 0x0000010001010000ULL:
-                score -= 2;
-                break;
-            case 0x0000010100010000ULL:
-                score -= 2;
-                break;
+//            case 0x0000010000010000ULL:
+//                if((*opponentboard & RIGHT_BOARD) == 0x0000000101000000ULL) score -= 4;
+//                break;
+//            case 0x0000010001010000ULL:
+//                score -= 2;
+//                break;
+//            case 0x0000010100010000ULL:
+//                score -= 2;
+//                break;
             case 0x0001010101010100ULL:
                 score += 25;
                 break;
@@ -774,15 +767,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x0000010101010000ULL:
                 score -= 2;
                 break;
-            case 0x0000010000010000ULL:
-                if((*playerboard & RIGHT_BOARD) == 0x0000000101000000ULL) score += 4;
-                break;
-            case 0x0000010001010000ULL:
-                score += 2;
-                break;
-            case 0x0000010100010000ULL:
-                score += 2;
-                break;
+//            case 0x0000010000010000ULL:
+//                if((*playerboard & RIGHT_BOARD) == 0x0000000101000000ULL) score += 4;
+//                break;
+//            case 0x0000010001010000ULL:
+//                score += 2;
+//                break;
+//            case 0x0000010100010000ULL:
+//                score += 2;
+//                break;
             case 0x0001010101010100ULL:
                 score -= 25;
                 break;
@@ -798,15 +791,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x3c00000000000000ULL:
                 score += 2;
                 break;
-            case 0x2400000000000000ULL:
-                if((*opponentboard & UP_BOARD) == 0x1800000000000000ULL) score -= 4;
-                break;
-            case 0x2c00000000000000ULL:
-                score -= 2;
-                break;
-            case 0x1c00000000000000ULL:
-                score -= 2;
-                break;
+//            case 0x2400000000000000ULL:
+//                if((*opponentboard & UP_BOARD) == 0x1800000000000000ULL) score -= 4;
+//                break;
+//            case 0x2c00000000000000ULL:
+//                score -= 2;
+//                break;
+//            case 0x1c00000000000000ULL:
+//                score -= 2;
+//                break;
             case 0x7e00000000000000ULL:
                 score += 25;
                 break;
@@ -817,15 +810,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x3c00000000000000ULL:
                 score -= 2;
                 break;
-            case 0x2400000000000000ULL:
-                if((*playerboard & UP_BOARD) == 0x1800000000000000ULL) score += 4;
-                break;
-            case 0x2c00000000000000ULL:
-                score += 2;
-                break;
-            case 0x1c00000000000000ULL:
-                score += 2;
-                break;
+//            case 0x2400000000000000ULL:
+//                if((*playerboard & UP_BOARD) == 0x1800000000000000ULL) score += 4;
+//                break;
+//            case 0x2c00000000000000ULL:
+//                score += 2;
+//                break;
+//            case 0x1c00000000000000ULL:
+//                score += 2;
+//                break;
             case 0x7e00000000000000ULL:
                 score -= 25;
                 break;
@@ -841,15 +834,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x000000000000003cULL:
                 score += 2;
                 break;
-            case 0x0000000000000024ULL:
-                if((*opponentboard & DOWN_BOARD) == 0x0000000000000018ULL) score += 4;
-                break;
-            case 0x000000000000002cULL:
-                score -= 2;
-                break;
-            case 0x000000000000001cULL:
-                score -= 2;
-                break;
+//            case 0x0000000000000024ULL:
+//                if((*opponentboard & DOWN_BOARD) == 0x0000000000000018ULL) score += 4;
+//                break;
+//            case 0x000000000000002cULL:
+//                score -= 2;
+//                break;
+//            case 0x000000000000001cULL:
+//                score -= 2;
+//                break;
             case 0x000000000000007eULL:
                 score += 25;
                 break;
@@ -860,15 +853,15 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
             case 0x000000000000003cULL:
                 score -= 2;
                 break;
-            case 0x0000000000000024ULL:
-                if((*playerboard & DOWN_BOARD) == 0x0000000000000018ULL) score -= 4;
-                break;
-            case 0x000000000000002cULL:
-                score += 2;
-                break;
-            case 0x000000000000001cULL:
-                score += 2;
-                break;
+//            case 0x0000000000000024ULL:
+//                if((*playerboard & DOWN_BOARD) == 0x0000000000000018ULL) score -= 4;
+//                break;
+//            case 0x000000000000002cULL:
+//                score += 2;
+//                break;
+//            case 0x000000000000001cULL:
+//                score += 2;
+//                break;
             case 0x000000000000007eULL:
                 score -= 25;
                 break;
@@ -883,13 +876,7 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
 }
 
 int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard) {
-    int score = 0;
-    
-    for (int_fast8_t i = 0; i < 10; ++i) {
-        score += cell_weight_score[i] * __builtin_popcountll(*playerboard & cell_weight_mask[i]);
-        score -= cell_weight_score[i] * __builtin_popcountll(*opponentboard & cell_weight_mask[i]);
-    }
-    return score;
+    return 30 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL)) + -3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL)) + -12 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL)) + -15 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
 }
 
 int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard) {
@@ -1071,6 +1058,6 @@ int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const
     return (*afterIndex >= 60) ? __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard) :
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :
-           (*afterIndex >= 45) ? score_stone(playerboard, opponentboard) * 6 + score_fixedstone(playerboard, opponentboard) * 55:
-           score_stone(playerboard, opponentboard) * 6 + score_fixedstone(playerboard, opponentboard) * 55 + score_putable(playerboard, opponentboard)*11;
+           (*afterIndex >= 45) ? score_stone2(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 100:
+           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*100 + score_putable(playerboard, opponentboard)*10;
 }
