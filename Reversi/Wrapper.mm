@@ -11,6 +11,6 @@ void update_think_percent() {
     dispatch_async(dispatch_get_main_queue(), ^{
       NSWindow *keyWindow = [[NSApplication sharedApplication] keyWindow];
         ViewController *viewController = (ViewController *)[keyWindow contentViewController];
-        viewController.hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)", think_percent];
+        viewController.hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)\n(時間がかかることがあります)", think_percent];
     });
 }
