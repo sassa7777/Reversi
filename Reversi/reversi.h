@@ -25,7 +25,6 @@
 #include <ankerl/unordered_dense.h>
 #include <string>
 #include <thread>
-#include "openmp.xcframework/macos-arm64_arm64e_x86_64/Headers/omp.h"
 
 extern int DEPTH;
 extern int Level;
@@ -61,6 +60,9 @@ public:
     bool operator==(const board& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
+    bool operator!=(const board& other) const {
+        return this->playerboard != other.playerboard || this->opponentboard != other.opponentboard;
+    }
 };
 
 struct board_finish{
@@ -84,6 +86,12 @@ public:
 };
 extern board b;
 
+extern ankerl::unordered_dense::map<std::string, int> transpose_table;
+extern ankerl::unordered_dense::map<std::string, int> former_transpose_table;
+extern ankerl::unordered_dense::map<std::string, int> transpose_table_up;
+extern ankerl::unordered_dense::map<std::string, int> transpose_table_low;
+extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_up;
+extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_low;
 
 
 //main functions
@@ -102,10 +110,14 @@ void swapboard(void);
 uint64_t Flip(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
+int nega_scout_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *legalboard);
 int nega_alpha_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *legalboard);
 int search(uint64_t *playerboard, uint64_t *opponentboard);
+int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
+int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);

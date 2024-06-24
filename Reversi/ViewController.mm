@@ -30,6 +30,10 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     self.close.hidden = YES;
     self.restart.hidden = YES;
     reset();
+    transpose_table_up.clear();
+    transpose_table_low.clear();
+    former_transpose_table_up.clear();
+    former_transpose_table_low.clear();
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {
