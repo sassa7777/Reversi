@@ -34,6 +34,8 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     transpose_table_low.clear();
     former_transpose_table_up.clear();
     former_transpose_table_low.clear();
+    cell_eval.clear();
+    score_init();
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     if(botplayer == BLACK_TURN) {

@@ -88,4 +88,6 @@ ankerl::unordered_dense::map<std::string, int> transpose_table_low;
 ankerl::unordered_dense::map<std::string, int> former_transpose_table_up;
 ankerl::unordered_dense::map<std::string, int> former_transpose_table_low;
 
+ankerl::unordered_dense::map<uint64_t, int> cell_eval;
+
 #endif /* variables_h */
