@@ -188,10 +188,10 @@ int ai(void) {
 		return 0;
 	}
 	printf("[*]Botが考え中..\n");
-    if(DEPTH >= 12 && nowIndex >= 37) {
+    if(DEPTH == 12 && nowIndex >= 37) {
 //        DEPTH = 20;
 //        afterIndex=60;
-        DEPTH = 10;
+        DEPTH = 14;
         afterIndex=nowIndex+DEPTH;
     }
     if(DEPTH >= 10 && nowIndex >= 39) {
@@ -231,6 +231,13 @@ int ai(void) {
     cout << "put on: (" << tmpx << ", " << tmpy << ")" << endl;
     if(afterIndex >= 60) cout << "Final Score" << endl;
     cout << "score: " << score << endl;
+    mach_task_basic_info info;
+    mach_msg_type_number_t memcount = MACH_TASK_BASIC_INFO_COUNT;
+    kern_return_t result = task_info(mach_task_self(), MACH_TASK_BASIC_INFO, (task_info_t)&info, &memcount);
+    if (result == KERN_SUCCESS) {
+        std::cout << "Resident Size: " << info.resident_size << " bytes" << std::endl;
+        std::cout << "Virtual Size: " << info.virtual_size << " bytes" << std::endl;
+    }
     return 1;
 }
 
@@ -303,6 +310,11 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
             transpose_table_up.clear();
         }
     }
+    former_transpose_table.clear();
+    transpose_table_up.clear();
+    transpose_table_low.clear();
+    former_transpose_table_up.clear();
+    former_transpose_table_low.clear();
     return var;
 }
 
@@ -406,15 +418,15 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     int u = MAX_INF, l = MIN_INF;
     if(transpose_table_up.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_up.end()) {
         u = transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(u <= alpha) return u;
+        beta = min(u, beta);
     }
     if(transpose_table_low.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_low.end()) {
         l = transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(l >= beta) return l;
+        alpha = max(l, alpha);
     }
-    if(u <= alpha) return u;
-    if(l >= beta) return l;
     if(u == l) return u;
-    alpha = max(l, alpha);
-    beta = min(u, beta);
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
@@ -424,31 +436,28 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     int var, max_score = MIN_INF, canput = 0, a = alpha;
     uint64_t rev;
     board moveorder[__builtin_popcountll(legalboard)];
-    for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
-        if(legalboard & put) {
-            rev = Flip(&put, playerboard, opponentboard);
-            moveorder[canput].playerboard = *playerboard ^ (put | rev);
-            moveorder[canput].opponentboard = *opponentboard ^ rev;
-            moveorder[canput].score = move_ordering_value(&moveorder[canput].playerboard, &moveorder[canput].opponentboard);
-            ++canput;
-        }
+    uint64_t put;
+    while(legalboard) {
+        put = legalboard & -legalboard;
+        legalboard ^= put;
+        rev = Flip(&put, playerboard, opponentboard);
+        moveorder[canput].playerboard = *playerboard ^ (put | rev);
+        moveorder[canput].opponentboard = *opponentboard ^ rev;
+        moveorder[canput].score = move_ordering_value(&moveorder[canput].playerboard, &moveorder[canput].opponentboard);
+        ++canput;
     }
     if(canput >= 2) sort(moveorder, moveorder+canput);
     if(depth > 3) {
         var = -nega_scout(depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
-    } else {
-        var = -nega_alpha(depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
-    }
-    if (var >= beta) {
-        if (var > l) {
-            transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
+        if (var >= beta) {
+            if (var > l) {
+                transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
+            }
+            return var;
         }
-        return var;
-    }
-    alpha = max(alpha, var);
-    max_score = max(max_score, var);
-    
-    if(depth > 3) {
+        alpha = max(alpha, var);
+        max_score = max(max_score, var);
+        
         for (uint_fast8_t i = 1; i < canput; ++i) {
             var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
             if (var >= beta) {
@@ -468,40 +477,28 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
                 }
             }
             alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            max_score = max(var, max_score);
         }
     } else {
-        for (uint_fast8_t i = 1; i < canput; ++i) {
-            var = -nega_alpha(depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+        for (board& m: moveorder) {
+            var = -nega_alpha(depth-1, -beta, -alpha, &m.opponentboard, &m.playerboard);
             if (var >= beta) {
-                if(var > l) {
+                if (var > l) {
                     transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
                 }
                 return var;
-            }
-            if(var > alpha) {
-                alpha = var;
-                var = -nega_alpha(depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
-                if (var >= beta) {
-                    if (var > l) {
-                        transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
-                    }
-                    return var;
-                }
             }
             alpha = max(alpha, var);
             max_score = max(max_score, var);
         }
     }
-    
     //hashtableに登録
-    if(max_score < a) {
-        transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
-    } else {
+    if(max_score > a) {
         transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
         transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
+    } else {
+        transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
     }
-    
     return max_score;
 }
 
@@ -514,15 +511,15 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playe
     int u = MAX_INF, l = MIN_INF;
     if(transpose_table_up.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_up.end()) {
         u = transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(u <= alpha) return u;
+        beta = min(u, beta);
     }
     if(transpose_table_low.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_low.end()) {
         l = transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(l >= beta) return l;
+        alpha = max(l, alpha);
     }
-    if(u <= alpha) return u;
-    if(l >= beta) return l;
     if(u == l) return u;
-    alpha = max(l, alpha);
-    beta = min(u, beta);
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
         if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
@@ -532,14 +529,15 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playe
     uint64_t rev;
     board moveorder[__builtin_popcountll(legalboard)];
     var = 0;
-    for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
-        if(legalboard & put) {
-            rev = Flip(&put, playerboard, opponentboard);
-            moveorder[var].playerboard = *playerboard ^ (put | rev);
-            moveorder[var].opponentboard = *opponentboard ^ rev;
-            moveorder[var].score = move_ordering_value(&moveorder[var].playerboard, &moveorder[var].opponentboard);
-            ++var;
-        }
+    uint64_t put;
+    while(legalboard) {
+        put = legalboard & -legalboard;
+        legalboard ^= put;
+        rev = Flip(&put, playerboard, opponentboard);
+        moveorder[var].playerboard = *playerboard ^ (put | rev);
+        moveorder[var].opponentboard = *opponentboard ^ rev;
+        moveorder[var].score = move_ordering_value(&moveorder[var].playerboard, &moveorder[var].opponentboard);
+        ++var;
     }
     if(var >= 2) sort(moveorder, moveorder+var);
     for (board& m: moveorder) {
@@ -571,15 +569,15 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
     int u = MAX_INF, l = MIN_INF;
     if(transpose_table_up.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_up.end()) {
         u = transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(u <= alpha) return u;
+        beta = min(u, beta);
     }
     if(transpose_table_low.find(to_string(*playerboard)+"&"+to_string(*opponentboard)) != transpose_table_low.end()) {
         l = transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)];
+        if(l >= beta) return l;
+        alpha = max(l, alpha);
     }
-    if(u <= alpha) return u;
-    if(l >= beta) return l;
     if(u == l) return u;
-    alpha = max(l, alpha);
-    beta = min(u, beta);
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
         if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, &afterIndex);
@@ -673,17 +671,10 @@ int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard) {
     think_count = 100/var;
     sort(moveorder, moveorder+var);
     int alpha = MIN_INF, beta = MAX_INF;
-    for (board_finish& m: moveorder) {
-        var = -nega_alpha_moveorder_finish(-beta, -alpha, &m.opponentboard, &m.playerboard, &m.legalboard);
-        think_percent += think_count;
-        update_think_percent();
-        if(var > alpha) {
-            alpha = var;
-            tmpbit = m.put;
-        }
-    }
     alpha = -nega_scout_finish(-beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard, &moveorder[0].legalboard);
     tmpbit = moveorder[0].put;
+    think_percent += think_count;
+    update_think_percent();
     for (int i = 1; i < var; ++i) {
         score = -nega_alpha_moveorder_finish(-alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard, &moveorder[i].legalboard);
         think_percent += think_count;
@@ -718,79 +709,89 @@ int nega_scout_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *oppo
     beta = min(u, beta);
     
     if(!*legalboard) {
-        if(!makelegalboard(opponentboard, playerboard)) return __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
+        uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
+        if(!legalboard2) return __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
         else {
-            uint64_t legalboard = makelegalboard(opponentboard, playerboard);
-            return -nega_scout_finish(-beta, -alpha, opponentboard, playerboard, &legalboard);
+            return -nega_scout_finish(-beta, -alpha, opponentboard, playerboard, &legalboard2);
         }
     }
     int var, max_score = MIN_INF, canput = 0, a = alpha;
     uint64_t rev;
     board_finish moveorder[__builtin_popcountll(*legalboard)];
     var = 0;
-    for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
-        if(*legalboard & put) {
-            rev = Flip(&put, playerboard, opponentboard);
-            moveorder[var].playerboard = *playerboard ^ (put | rev);
-            moveorder[var].opponentboard = *opponentboard ^ rev;
-            moveorder[var].legalboard = makelegalboard(&moveorder[var].opponentboard, &moveorder[var].playerboard);
-            moveorder[var].score = __builtin_popcountll(moveorder[var].legalboard);
-            ++var;
-        }
+    uint64_t put;
+    while(*legalboard) {
+        put = *legalboard & -*legalboard;
+        *legalboard ^= put;
+        rev = Flip(&put, playerboard, opponentboard);
+        moveorder[var].playerboard = *playerboard ^ (put | rev);
+        moveorder[var].opponentboard = *opponentboard ^ rev;
+        moveorder[var].legalboard = makelegalboard(&moveorder[var].opponentboard, &moveorder[var].playerboard);
+        moveorder[var].score = __builtin_popcountll(moveorder[var].legalboard);
+        ++canput;
     }
     if(canput >= 2) sort(moveorder, moveorder+canput);
-    if(__builtin_popcountll(*playerboard | *opponentboard) >= 58) {
+    if(__builtin_popcountll(*playerboard | *opponentboard) < 56) {
         var = -nega_scout_finish(-beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard, &moveorder[0].legalboard);
-    } else {
-        var = -nega_alpha_finish(-beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
-    }
-    if (var >= beta) {
-        if (var > l) {
-            transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
-        }
-        return var;
-    }
-    alpha = max(alpha, var);
-    max_score = max(max_score, var);
-    
-    for (uint_fast8_t i = 1; i < canput; ++i) {
-        var = -nega_alpha_moveorder_finish(-alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard, &moveorder[i].legalboard);
         if (var >= beta) {
-            if(var > l) {
+            if (var > l) {
                 transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
             }
             return var;
         }
-        if(var > alpha) {
-            alpha = var;
-            var = -nega_scout_finish(-beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard, &moveorder[i].legalboard);
+        alpha = max(alpha, var);
+        max_score = max(max_score, var);
+        
+        for (int i = 1; i < canput; ++i) {
+            var = -nega_alpha_moveorder_finish(-alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard, &moveorder[i].legalboard);
+            if (var >= beta) {
+                if(var > l) {
+                    transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
+                }
+                return var;
+            }
+            if(var > alpha) {
+                alpha = var;
+                var = -nega_scout_finish(-beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard, &moveorder[i].legalboard);
+                if (var >= beta) {
+                    if (var > l) {
+                        transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
+                    }
+                    return var;
+                }
+            }
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
+        }
+    } else {
+        for (board_finish& m: moveorder) {
+            var = -nega_alpha_finish(-beta, -alpha, &m.opponentboard, &m.playerboard);
             if (var >= beta) {
                 if (var > l) {
                     transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
                 }
                 return var;
             }
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
-        alpha = max(alpha, var);
-        max_score = max(max_score, var);
     }
     //hashtableに登録
-    if(max_score < a) {
-        transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
-    } else {
+    if(max_score > a) {
         transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
         transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
+    } else {
+        transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
     }
-    
     return max_score;
 }
 
 int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *legalboard) {
     if(!*legalboard) {
-        uint64_t legalboard = makelegalboard(opponentboard, playerboard);
-        if(!legalboard) return __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
+        uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
+        if(!legalboard2) return (__builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard));
         else {
-            return -nega_alpha_moveorder_finish(-beta, -alpha, opponentboard, playerboard, &legalboard);
+            return -nega_alpha_moveorder_finish(-beta, -alpha, opponentboard, playerboard, &legalboard2);
         }
     }
     int u = MAX_INF, l = MIN_INF;
@@ -820,19 +821,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint
         }
     }
     if(var >= 2) sort(moveorder, moveorder+var);
-    if(__builtin_popcountll(*playerboard | *opponentboard) >= 56) {
-        for (board_finish& m: moveorder) {
-            var = -nega_alpha_finish(-beta, -alpha, &m.opponentboard, &m.playerboard);
-            if (var >= beta) {
-                if (var > l) {
-                    transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
-                }
-                return var;
-            }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
-        }
-    } else {
+    if(__builtin_popcountll(*playerboard | *opponentboard) < 56) {
         for (board_finish& m: moveorder) {
             var = -nega_alpha_moveorder_finish(-beta, -alpha, &m.opponentboard, &m.playerboard, &m.legalboard);
             if (var >= beta) {
@@ -844,8 +833,19 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint
             alpha = max(alpha, var);
             max_score = max(max_score, var);
         }
+    } else {
+        for (board_finish& m: moveorder) {
+            var = -nega_alpha_finish(-beta, -alpha, &m.opponentboard, &m.playerboard);
+            if (var >= beta) {
+                if (var > l) {
+                    transpose_table_low[to_string(*playerboard)+"&"+to_string(*opponentboard)] = var;
+                }
+                return var;
+            }
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
+        }
     }
-    
     //hashtableに登録
     if(max_score > a) {
         transpose_table_up[to_string(*playerboard)+"&"+to_string(*opponentboard)] = max_score;
@@ -859,7 +859,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint
 int nega_alpha_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard) {
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if(!legalboard) {
-        if(!(makelegalboard(opponentboard, playerboard))) return __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
+        if(!(makelegalboard(opponentboard, playerboard))) return (__builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard));
         else {
             return -nega_alpha_finish(-beta, -alpha, opponentboard, playerboard);
         }
@@ -871,30 +871,7 @@ int nega_alpha_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *oppo
             rev = Flip(&i, playerboard, opponentboard);
             *playerboard ^= (i | rev);
             *opponentboard ^= rev;
-            if(__builtin_popcountll(*playerboard | *opponentboard) == 63) {
-                uint64_t put = ~(*playerboard | *opponentboard), rev;
-                rev = Flip(&put, opponentboard, playerboard);
-                if(!rev) {
-                    rev = Flip(&put, playerboard, opponentboard);
-                    if(!rev) {
-                        var = __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
-                    } else {
-                        *playerboard ^= (put | rev);
-                        *opponentboard ^= rev;
-                        var = __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
-                        *playerboard ^= (put | rev);
-                        *opponentboard ^= rev;
-                    }
-                } else {
-                    *opponentboard ^= (put | rev);
-                    *playerboard ^= rev;
-                    var = __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard);
-                    *opponentboard ^= (put | rev);
-                    *playerboard ^= rev;
-                }
-            } else {
-                var = -nega_alpha_finish(-beta, -alpha, opponentboard, playerboard);
-            }
+            var = -nega_alpha_finish(-beta, -alpha, opponentboard, playerboard);
             *playerboard ^= (i | rev);
             *opponentboard ^= rev;
             if (var >= beta) {
@@ -919,27 +896,6 @@ int winner(void) {
 }
 
 //evaluation
-
-void score_init() {
-    for (uint64_t mask = 0; mask <= 0xFFULL; ++mask) {
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask <<= 8;
-        cell_eval[mask] = 30 * __builtin_popcountll(mask & 0x8100000000000081ULL) + -3 * __builtin_popcountll(mask & 0x003C424242423C00ULL) + -12 * __builtin_popcountll(mask & 0x4281000000008142ULL) + -15 * __builtin_popcountll(mask & 0x0042000000004200ULL);
-        mask >>= 56;
-    }
-}
 
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
     int score = 0;
@@ -1046,11 +1002,108 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
 }
 
 int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard) {
-    return cell_eval[*playerboard & 0xFFULL]+cell_eval[*playerboard & 0xFF00ULL]+cell_eval[*playerboard & 0xFF0000ULL]+cell_eval[*playerboard & 0xFF000000ULL]+cell_eval[*playerboard & 0xFF00000000ULL]+cell_eval[*playerboard & 0xFF0000000000ULL]+cell_eval[*playerboard & 0xFF000000000000ULL]+cell_eval[*playerboard & 0xFF00000000000000ULL]-(cell_eval[*opponentboard & 0xFFULL]+cell_eval[*opponentboard & 0xFF00ULL]+cell_eval[*opponentboard & 0xFF0000ULL]+cell_eval[*opponentboard & 0xFF000000ULL]+cell_eval[*opponentboard & 0xFF00000000ULL]+cell_eval[*opponentboard & 0xFF0000000000ULL]+cell_eval[*opponentboard & 0xFF000000000000ULL]+cell_eval[*opponentboard & 0xFF00000000000000ULL]);
-}
+    int score = 0;
+    
+    score += 30 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
+    score += -3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
+    score += -12 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL));
+    score += -15 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
+    
+    //左
+    {
+        switch (*playerboard & LEFT_BOARD) {
+            case 0x0000808080800000ULL:
+                score += 2;
+                break;
+            case 0x0080808080808000ULL:
+                score += 25;
+                break;
+            default:
+                break;
+        }
+        switch (*opponentboard & LEFT_BOARD) {
+            case 0x0000808080800000ULL:
+                score -= 2;
+                break;
+            case 0x0080808080808000ULL:
+                score -= 25;
+                break;
+            default:
+                break;
+        }
+    }
+    //右
+    {
+        switch (*playerboard & RIGHT_BOARD) {
+            case 0x0000010101010000ULL:
+                score += 2;
+                break;
+            case 0x0001010101010100ULL:
+                score += 25;
+                break;
+            default:
+                break;
+        }
+        switch (*opponentboard & RIGHT_BOARD) {
+            case 0x0000010101010000ULL:
+                score -= 2;
+                break;
+            case 0x0001010101010100ULL:
+                score -= 25;
+                break;
+            default:
+                break;
+        }
+    }
+    //上
+    {
+        switch (*playerboard & UP_BOARD) {
+            case 0x3c00000000000000ULL:
+                score += 2;
+                break;
+            case 0x7e00000000000000ULL:
+                score += 25;
+                break;
+            default:
+                break;
+        }
+        switch (*opponentboard & UP_BOARD) {
+            case 0x3c00000000000000ULL:
+                score -= 2;
+                break;
+            case 0x7e00000000000000ULL:
+                score -= 25;
+                break;
+            default:
+                break;
+        }
+    }
+    //下
+    {
+        switch (*playerboard & DOWN_BOARD) {
+            case 0x000000000000003cULL:
+                score += 2;
+                break;
+            case 0x000000000000007eULL:
+                score += 25;
+                break;
+            default:
+                break;
+        }
+        switch (*opponentboard & DOWN_BOARD) {
+            case 0x000000000000003cULL:
+                score -= 2;
+                break;
+            case 0x000000000000007eULL:
+                score -= 25;
+                break;
+            default:
+                break;
+        }
+    }
+    
+    return score;
 
-int score_stone3(const uint64_t *playerboard, const uint64_t *opponentboard) {
-    return 30 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL)) + -3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL)) + -12 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL)) + -15 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
 }
 
 int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard) {
@@ -1224,7 +1277,7 @@ int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard)
     if(*opponentboard & 0x0100000000000000ULL) fixedstone++;
     if(*opponentboard & 0x0000000000000080ULL) fixedstone++;
     if(*opponentboard & 0x0000000000000001ULL) fixedstone++;
-    
+        
 	return fixedstone;
 }
 
@@ -1232,6 +1285,6 @@ int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const
     return (*afterIndex >= 60) ? __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard) :
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :
-           (*afterIndex >= 45) ? score_stone2(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 100:
-           score_stone2(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*55 + score_putable(playerboard, opponentboard)*11;
+           (*afterIndex >= 45) ? score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 55:
+           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*55 + score_putable(playerboard, opponentboard)*11;
 }

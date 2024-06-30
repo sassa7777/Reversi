@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <string>
+#include <mach/mach.h>
 
 extern int DEPTH;
 extern int Level;
@@ -91,8 +92,6 @@ extern ankerl::unordered_dense::map<std::string, int> transpose_table_low;
 extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_up;
 extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_low;
 
-extern ankerl::unordered_dense::map<uint64_t, int> cell_eval;
-
 //main functions
 void reset(void);
 int winner(void);
@@ -119,7 +118,6 @@ int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
-void score_init();
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
 int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard);
 int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
