@@ -56,7 +56,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     ];
     for (char i = 0; i < 8; ++i) {
         for (char j = 0; j < 8; ++j) {
-            coordinate[buttons[i][j]] = make_pair(i, j);
+            coordinate_y_x[buttons[i][j]] = make_pair(i, j);
         }
     }
 }
@@ -72,7 +72,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
 
 - (void)put:(NSButton *)sender __attribute__((ibaction)) {
     int results;
-    results = putstone(coordinate[sender].first, coordinate[sender].second);
+    results = putstone(coordinate_y_x[sender].first, coordinate_y_x[sender].second);
     if(!results) return;
     swapboard();
     if(isPass()) {

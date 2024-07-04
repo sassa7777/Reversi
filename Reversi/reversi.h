@@ -42,17 +42,31 @@ extern int firstDEPTH;
 extern int afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
-struct board{
+
+struct board_root{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
     uint64_t put;
     int score;
-    struct hash {
-        size_t operator()(const board& b) const {
-            return std::hash<std::string>{}(std::to_string(b.playerboard)+"&"+std::to_string(b.opponentboard));
-        }
-    };
+
+    bool operator<(const board_root& b) const {
+        return score < b.score;
+    }
+    bool operator==(const board_root& other) const {
+        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
+    }
+    bool operator!=(const board_root& other) const {
+        return this->playerboard != other.playerboard || this->opponentboard != other.opponentboard;
+    }
+};
+
+struct board{
+public:
+    uint64_t playerboard;
+    uint64_t opponentboard;
+    int score;
+
     bool operator<(const board& b) const {
         return score < b.score;
     }
@@ -68,21 +82,33 @@ struct board_finish{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
-    uint64_t put;
     uint64_t legalboard;
     int score;
-    struct hash {
-        size_t operator()(const board_finish& b) const {
-            return std::hash<std::string>{}(std::to_string(b.playerboard)+"&"+std::to_string(b.opponentboard));
-        }
-    };
+
     bool operator<(const board_finish& b) const {
         return score < b.score;
     }
-    bool operator==(const board& other) const {
+    bool operator==(const board_finish& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
 };
+
+struct board_finish_root{
+public:
+    uint64_t playerboard;
+    uint64_t opponentboard;
+    uint64_t put;
+    uint64_t legalboard;
+    int score;
+
+    bool operator<(const board_finish_root& b) const {
+        return score < b.score;
+    }
+    bool operator==(const board_finish_root& other) const {
+        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
+    }
+};
+
 extern board b;
 
 extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table;
@@ -116,10 +142,6 @@ int search(uint64_t *playerboard, uint64_t *opponentboard);
 int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
-
-int search_MTD_f(int_fast8_t depth, int mini_max, uint64_t *playerboard, uint64_t *opponentboard);
-int MTD_f(int_fast8_t depth, int mini_max, uint64_t *playerboard, uint64_t *opponentboard);
-
 
 //evaluation
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
