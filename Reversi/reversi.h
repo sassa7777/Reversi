@@ -85,12 +85,12 @@ public:
 };
 extern board b;
 
-extern ankerl::unordered_dense::map<std::string, int> transpose_table;
-extern ankerl::unordered_dense::map<std::string, int> former_transpose_table;
-extern ankerl::unordered_dense::map<std::string, int> transpose_table_up;
-extern ankerl::unordered_dense::map<std::string, int> transpose_table_low;
-extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_up;
-extern ankerl::unordered_dense::map<std::string, int> former_transpose_table_low;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_up;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_low;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_up;
+extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_low;
 
 //main functions
 void reset(void);
@@ -116,6 +116,10 @@ int search(uint64_t *playerboard, uint64_t *opponentboard);
 int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
+
+int search_MTD_f(int_fast8_t depth, int mini_max, uint64_t *playerboard, uint64_t *opponentboard);
+int MTD_f(int_fast8_t depth, int mini_max, uint64_t *playerboard, uint64_t *opponentboard);
+
 
 //evaluation
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
