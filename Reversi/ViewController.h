@@ -12,8 +12,7 @@
 
 @interface ViewController : NSViewController
 {
-    std::map<NSButton*, char> coordinate_x;
-    std::map<NSButton*, char> coordinate_y;
+    ankerl::unordered_dense::map<NSButton*, std::pair<char, char>> coordinate;
 };
 
 @property (nonatomic) IBOutlet NSButton *aa;
