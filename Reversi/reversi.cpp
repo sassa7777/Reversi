@@ -204,7 +204,7 @@ int ai(void) {
         DEPTH = 14;
         afterIndex=nowIndex+DEPTH;
     }
-    if(DEPTH >= 10 && nowIndex >= 39) {
+    if(DEPTH >= 10 && nowIndex >= 40) {
         DEPTH = 20;
         afterIndex=60;
     }
@@ -346,7 +346,7 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
         m.put <<= 1;
     }
     int alpha = MIN_INF, beta = MAX_INF;
-    if(Level == 6 && DEPTH >= 12) {
+    if(Level == 6) {
         think_count = 100/(__builtin_popcountll(legalboard)*5);
         for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
