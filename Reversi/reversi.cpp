@@ -175,19 +175,9 @@ void swapboard(void) {
 
 int move_ordering_value(uint64_t *playerboard, uint64_t *opponentboard) {
     if(former_transpose_table_up.find(*playerboard) != former_transpose_table_up.end() && former_transpose_table_up[*playerboard].find(*opponentboard) != former_transpose_table_up[*playerboard].end()) {
-        return -(1000+former_transpose_table_up[*playerboard][*opponentboard]);
+        return (1000-former_transpose_table_up[*playerboard][*opponentboard]);
     } else if(former_transpose_table_low.find(*playerboard) != former_transpose_table_low.end() && former_transpose_table_low[*playerboard].find(*opponentboard) != former_transpose_table_low[*playerboard].end()) {
-            return -(1000+former_transpose_table_low[*playerboard][*opponentboard]);
-    } else {
-        return -countscore(playerboard, opponentboard, &afterIndex);
-    }
-}
-
-int move_ordering_value_mtd(uint64_t *playerboard, uint64_t *opponentboard) {
-    if(former_transpose_table_up.find(*playerboard) != former_transpose_table_up.end() && former_transpose_table_up[*playerboard].find(*opponentboard) != former_transpose_table_up[*playerboard].end()) {
-        return -(former_transpose_table_up[*playerboard][*opponentboard]);
-    } else if(former_transpose_table_low.find(*playerboard) != former_transpose_table_low.end() && former_transpose_table_low[*playerboard].find(*opponentboard) != former_transpose_table_low[*playerboard].end()) {
-            return -(former_transpose_table_low[*playerboard][*opponentboard]);
+            return (1000-former_transpose_table_low[*playerboard][*opponentboard]);
     } else {
         return -countscore(playerboard, opponentboard, &afterIndex);
     }
@@ -267,7 +257,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (board_root& m: moveorder) {
-                m.score = move_ordering_value(&m.playerboard, &m.opponentboard);
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
@@ -293,7 +283,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (board_root& m: moveorder) {
-                m.score = move_ordering_value(&m.playerboard, &m.opponentboard);
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
@@ -351,7 +341,7 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
         for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (board_root& m: moveorder) {
-                m.score = move_ordering_value(&m.playerboard, &m.opponentboard);
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
@@ -383,7 +373,7 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
         for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (board_root& m: moveorder) {
-                m.score = move_ordering_value(&m.playerboard, &m.opponentboard);
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
@@ -452,7 +442,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, ui
         rev = Flip(&put, playerboard, opponentboard);
         moveorder[canput].playerboard = *playerboard ^ (put | rev);
         moveorder[canput].opponentboard = *opponentboard ^ rev;
-        moveorder[canput].score = move_ordering_value(&moveorder[canput].playerboard, &moveorder[canput].opponentboard);
+        moveorder[canput].score = move_ordering_value(&moveorder[canput].opponentboard, &moveorder[canput].playerboard);
         ++canput;
     }
     if(canput >= 2) sort(moveorder, moveorder+canput);
@@ -546,7 +536,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playe
         rev = Flip(&put, playerboard, opponentboard);
         moveorder[var].playerboard = *playerboard ^ (put | rev);
         moveorder[var].opponentboard = *opponentboard ^ rev;
-        moveorder[var].score = move_ordering_value(&moveorder[var].playerboard, &moveorder[var].opponentboard);
+        moveorder[var].score = move_ordering_value(&moveorder[var].opponentboard, &moveorder[var].playerboard);
         ++var;
     }
     if(var >= 2) sort(moveorder, moveorder+var);
@@ -1044,160 +1034,6 @@ int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
 	return score;
 }
 
-int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard) {
-    int score = 0;
-    
-    score += 30 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
-    score += -3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
-    score += -12 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL));
-    score += -15 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
-    
-    //左
-    {
-        switch (*playerboard & LEFT_BOARD) {
-            case 0x0000808080800000ULL:
-                score += 2;
-                break;
-            case 0x0080808080808000ULL:
-                score += 25;
-                break;
-            case 0x0000808080808000ULL:
-                score += 12;
-                break;
-            case 0x0080808080800000ULL:
-                score += 12;
-                break;
-            default:
-                break;
-        }
-        switch (*opponentboard & LEFT_BOARD) {
-            case 0x0000808080800000ULL:
-                score -= 2;
-                break;
-            case 0x0080808080808000ULL:
-                score -= 25;
-                break;
-            case 0x0000808080808000ULL:
-                score -= 12;
-                break;
-            case 0x0080808080800000ULL:
-                score -= 12;
-                break;
-            default:
-                break;
-        }
-    }
-    //右
-    {
-        switch (*playerboard & RIGHT_BOARD) {
-            case 0x0000010101010000ULL:
-                score += 2;
-                break;
-            case 0x0001010101010100ULL:
-                score += 25;
-                break;
-            case 0x0000101010101000ULL:
-                score += 12;
-                break;
-            case 0x0010101010100000ULL:
-                score += 12;
-                break;
-            default:
-                break;
-        }
-        switch (*opponentboard & RIGHT_BOARD) {
-            case 0x0000010101010000ULL:
-                score -= 2;
-                break;
-            case 0x0001010101010100ULL:
-                score -= 25;
-                break;
-            case 0x0000101010101000ULL:
-                score -= 12;
-                break;
-            case 0x0010101010100000ULL:
-                score -= 12;
-                break;
-            default:
-                break;
-        }
-    }
-    //上
-    {
-        switch (*playerboard & UP_BOARD) {
-            case 0x3c00000000000000ULL:
-                score += 2;
-                break;
-            case 0x7e00000000000000ULL:
-                score += 25;
-                break;
-            case 0x3E00000000000000ULL:
-                score += 12;
-                break;
-            case 0x7C00000000000000ULL:
-                score += 12;
-                break;
-            default:
-                break;
-        }
-        switch (*opponentboard & UP_BOARD) {
-            case 0x3c00000000000000ULL:
-                score -= 2;
-                break;
-            case 0x7e00000000000000ULL:
-                score -= 25;
-                break;
-            case 0x3E00000000000000ULL:
-                score -= 12;
-                break;
-            case 0x7C00000000000000ULL:
-                score -= 12;
-                break;
-            default:
-                break;
-        }
-    }
-    //下
-    {
-        switch (*playerboard & DOWN_BOARD) {
-            case 0x000000000000003cULL:
-                score += 2;
-                break;
-            case 0x000000000000007eULL:
-                score += 25;
-                break;
-            case 0x000000000000003EULL:
-                score += 12;
-                break;
-            case 0x000000000000007CULL:
-                score += 12;
-                break;
-            default:
-                break;
-        }
-        switch (*opponentboard & DOWN_BOARD) {
-            case 0x000000000000003cULL:
-                score -= 2;
-                break;
-            case 0x000000000000007eULL:
-                score -= 25;
-                break;
-            case 0x000000000000003EULL:
-                score += 12;
-                break;
-            case 0x000000000000007CULL:
-                score += 12;
-                break;
-            default:
-                break;
-        }
-    }
-
-    
-    return score;
-
-}
-
 int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard) {
 	return (__builtin_popcountll(makelegalboard(playerboard, opponentboard))-__builtin_popcountll(makelegalboard(opponentboard, playerboard)));
 }
@@ -1378,5 +1214,5 @@ int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :
            (*afterIndex >= 45) ? score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard) * 55:
-           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*55 + score_putable(playerboard, opponentboard)*10;
+           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*55 + score_putable(playerboard, opponentboard)*11;
 }

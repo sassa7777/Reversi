@@ -51,7 +51,7 @@ public:
     int score;
 
     bool operator<(const board_root& b) const {
-        return score < b.score;
+        return score > b.score;
     }
     bool operator==(const board_root& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -68,7 +68,7 @@ public:
     int score;
 
     bool operator<(const board& b) const {
-        return score < b.score;
+        return score > b.score;
     }
     bool operator==(const board& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -145,7 +145,6 @@ int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
 int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
-int score_stone2(const uint64_t *playerboard, const uint64_t *opponentboard);
 int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
 int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
 int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex);
