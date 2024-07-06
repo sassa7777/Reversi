@@ -111,8 +111,6 @@ public:
 
 extern board b;
 
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table;
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table;
 extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_up;
 extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_low;
 extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_up;
