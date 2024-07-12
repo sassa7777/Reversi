@@ -26,6 +26,7 @@
 #include <mach/mach.h>
 
 extern int DEPTH;
+extern int search_depth;
 extern int Level;
 extern int px, py;
 extern int whitec;

@@ -11,6 +11,7 @@
 #include "reversi.h"
 
 int DEPTH;
+int search_depth;
 int Level;
 int px, py;
 int whitec;
