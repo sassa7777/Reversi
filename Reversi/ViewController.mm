@@ -223,9 +223,8 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
     uint64_t mask = 0x8000000000000000;
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            if((legalboard & mask) != 0) {
-                if(s == YES) buttons[i][j].enabled = YES;
-                else buttons[i][j].enabled = NO;
+            if((legalboard & mask)  && s == YES) {
+                buttons[i][j].enabled = YES;
             } else {
                 buttons[i][j].enabled = NO;
             }

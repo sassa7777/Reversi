@@ -63,9 +63,9 @@ constexpr uint64_t scoreboard_weight2[4] = {
     0x0042000000004200ULL,
 };
 
-ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_up;
-ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_low;
-ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_up;
-ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_low;
+ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
+ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
+ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
+ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
 
 #endif /* variables_h */

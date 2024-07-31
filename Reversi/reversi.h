@@ -21,9 +21,8 @@
 #include <cstdint>
 #include <vector>
 #include <algorithm>
+#include <bit>
 #include <ankerl/unordered_dense.h>
-#include <string>
-#include <mach/mach.h>
 
 extern int DEPTH;
 extern int search_depth;
@@ -112,25 +111,24 @@ public:
 
 extern board b;
 
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_up;
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> transpose_table_low;
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_up;
-extern ankerl::unordered_dense::map<uint64_t, ankerl::unordered_dense::map<uint64_t, int>> former_transpose_table_low;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
 
 //main functions
-void reset(void);
-int winner(void);
-int ai(void);
+void reset();
+int winner();
+int ai();
 int putstone(int_fast8_t y, int_fast8_t x);
 uint64_t cordinate_to_bit(int_fast8_t *x, int_fast8_t *y);
 bool canput(uint64_t *put, uint64_t *legalboard);
-uint64_t makelegalboard(const uint64_t *p, const uint64_t *o);
+inline uint64_t makelegalboard(const uint64_t *p, const uint64_t *o);
 void reversebit(uint64_t put);
-uint64_t transfer(uint64_t *put, int_fast8_t *i);
-bool isPass(void);
-bool isFinished(void);
-void swapboard(void);
-uint64_t Flip(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard);
+bool isPass();
+bool isFinished();
+void swapboard();
+inline uint64_t Flip(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
 int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
@@ -143,9 +141,9 @@ int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
 int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
 
 //evaluation
-int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
-int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
-int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
-int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex);
+inline int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
+inline int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
+inline int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
+inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex);
 
 #endif /* othello_h */
