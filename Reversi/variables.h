@@ -10,22 +10,21 @@
 
 #include "reversi.h"
 
-int DEPTH;
-int search_depth;
-int Level;
-int px, py;
-int whitec;
-int blackc;
-int tmpx, tmpy;
+char DEPTH;
+char search_depth;
+char Level;
+char px, py;
+char whitec;
+char blackc;
+char tmpx, tmpy;
 uint64_t tmpbit;
-int think_percent;
-int think_count;
-int botplayer;
-int cpu_core;
-int nowTurn;
-int nowIndex;
-int firstDEPTH;
-int afterIndex;
+char think_percent;
+char think_count;
+char botplayer;
+char nowTurn;
+char nowIndex;
+char firstDEPTH;
+char afterIndex;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;

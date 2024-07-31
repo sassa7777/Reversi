@@ -17,8 +17,8 @@ void reset() {
     afterIndex = nowIndex+DEPTH;
     b.playerboard = 0x0000000810000000ULL;
     b.opponentboard = 0x0000001008000000ULL;
-    cout << "DEPTH=" << DEPTH << endl;
-    cout << "Player: " << botplayer << endl;
+    printf("DEPTH: %d\n", DEPTH);
+    printf("Player: %d\n", botplayer);
 	return;
 }
 
@@ -202,14 +202,14 @@ int ai() {
     tmpy = count / 8;
     tmpx = count % 8;
     putstone(tmpy, tmpx);
-    cout << "put on: (" << tmpx << ", " << tmpy << ")" << endl;
-    if(afterIndex >= 60) cout << "Final Score" << endl;
-    cout << "score: " << score << endl;
+    printf("put : (%d, %d)\n", tmpx, tmpy);
+    if(afterIndex >= 60) printf("Final Score\n");
+    printf("Score : %d\n", score);
     return 1;
 }
 
 int search(uint64_t *playerboard, uint64_t *opponentboard) {
-    cout << "algorithm: NegaAlpha" << endl;
+    printf("algorithm: NegaAlpha\n");
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     int var = 0;
     uint64_t rev;
@@ -247,7 +247,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
                     }
                 }
             }
-            cout << "depth: " << search_depth << " Visited nodes: " << visited_nodes << endl;
+            printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
             transpose_table_low.swap(former_transpose_table_low);
             transpose_table_up.swap(former_transpose_table_up);
             transpose_table_low.clear();
@@ -273,7 +273,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
                     }
                 }
             }
-            cout << "depth: " << search_depth << " Visited nodes: " << visited_nodes << endl;
+            printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
             transpose_table_low.swap(former_transpose_table_low);
             transpose_table_up.swap(former_transpose_table_up);
             transpose_table_low.clear();
@@ -288,7 +288,7 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
 }
 
 int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
-    cout << "algorithm: NegaScout" << endl;
+    printf("algorithm: NegaScout\n");
     transpose_table_up.clear();
     transpose_table_low.clear();
     former_transpose_table_up.clear();
@@ -337,7 +337,7 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
             }
             alpha = max(var, alpha);
         }
-        cout << "depth: " << search_depth << " Visited nodes: " << visited_nodes << endl;
+        printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
         transpose_table_up.swap(former_transpose_table_up);
         transpose_table_up.clear();
         transpose_table_low.swap(former_transpose_table_low);
@@ -848,8 +848,11 @@ inline int score_stone(const uint64_t *playerboard, const uint64_t *opponentboar
     int score = 0;
 	
     score += 5 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
-    score -= (__builtin_popcountll(*playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(*opponentboard & 0x180018BDBD180018ULL));
-    score -= 3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
+//    score -= (__builtin_popcountll(*playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(*opponentboard & 0x180018BDBD180018ULL));
+    score -= (__builtin_popcountll(*playerboard & 0x182424180000ULL)-__builtin_popcountll(*opponentboard & 0x182424180000ULL));
+//    score -= 3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
+    score -= 3 * (__builtin_popcountll(*playerboard & 0x24420000422400ULL)-__builtin_popcountll(*opponentboard & 0x24420000422400ULL));
+    score -= 2 * (__builtin_popcountll(*playerboard & 0x18004242001800ULL)-__builtin_popcountll(*opponentboard & 0x18004242001800ULL));
     score -= 6 * (__builtin_popcountll(*playerboard & 0x4281000000008142ULL)-__builtin_popcountll(*opponentboard & 0x4281000000008142ULL));
     score -= 7 * (__builtin_popcountll(*playerboard & 0x0042000000004200ULL)-__builtin_popcountll(*opponentboard & 0x0042000000004200ULL));
     
@@ -1191,7 +1194,7 @@ int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard)
 	return fixedstone;
 }
 
-inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex) {
+inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const char *afterIndex) {
     return (*afterIndex >= 60) ? __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard) :
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :

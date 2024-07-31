@@ -24,22 +24,21 @@
 #include <bit>
 #include <ankerl/unordered_dense.h>
 
-extern int DEPTH;
-extern int search_depth;
-extern int Level;
-extern int px, py;
-extern int whitec;
-extern int blackc;
-extern int tmpx, tmpy;
+extern char DEPTH;
+extern char search_depth;
+extern char Level;
+extern char px, py;
+extern char whitec;
+extern char blackc;
+extern char tmpx, tmpy;
 extern uint64_t tmpbit;
-extern int think_percent;
-extern int think_count;
-extern int botplayer;
-extern int cpu_core;
-extern int nowTurn;
-extern int nowIndex;
-extern int firstDEPTH;
-extern int afterIndex;
+extern char think_percent;
+extern char think_count;
+extern char botplayer;
+extern char nowTurn;
+extern char nowIndex;
+extern char firstDEPTH;
+extern char afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
 
@@ -144,6 +143,6 @@ int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
 inline int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
 inline int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
 inline int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
-inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const int *afterIndex);
+inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const char *afterIndex);
 
 #endif /* othello_h */
