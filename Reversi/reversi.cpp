@@ -152,12 +152,13 @@ void swapboard() {
 }
 
 inline int move_ordering_value(uint64_t *playerboard, uint64_t *opponentboard) {
-    if(former_transpose_table_up.count(make_pair(*playerboard, *opponentboard))) {
-        return (1000-former_transpose_table_up[make_pair(*playerboard, *opponentboard)]);
-    } else if(former_transpose_table_low.count(make_pair(*playerboard, *opponentboard))) {
-        return (1000-former_transpose_table_low[make_pair(*playerboard, *opponentboard)]);
+    auto tmp = make_pair(*playerboard, *opponentboard);
+    if(former_transpose_table_up.count(tmp)) {
+        return (1000-former_transpose_table_up[tmp]);
+    } else if(former_transpose_table_low.count(tmp)) {
+        return (1000-former_transpose_table_low[tmp]);
     } else {
-        return (score_stone(opponentboard, playerboard)*6 + score_fixedstone(opponentboard, playerboard)*55);
+        return (score_stone(opponentboard, playerboard)*6 + score_fixedstone(opponentboard, playerboard)*20);
     }
 }
 
@@ -226,9 +227,9 @@ int search(uint64_t *playerboard, uint64_t *opponentboard) {
         m.put <<= 1;
     }
     int alpha = MIN_INF, beta = MAX_INF;
-    if(Level == 6) {
-        think_count = 100/(__builtin_popcountll(legalboard)*5);
-        for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
+    if(Level == 7) {
+        think_count = 100/(__builtin_popcountll(legalboard)*4);
+        for (search_depth = DEPTH-4; search_depth <= DEPTH; search_depth+=2) {
             afterIndex = nowIndex+search_depth;
             for (board_root& m: moveorder) {
                 m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
@@ -308,40 +309,76 @@ int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard) {
         }
         m.put <<= 1;
     }
-    think_count = 100/(__builtin_popcountll(legalboard)*5);
+    think_count = 100/(__builtin_popcountll(legalboard)*3);
     int alpha = MIN_INF, beta = MAX_INF;
-    for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
-        afterIndex = nowIndex+search_depth;
-        for (board_root& m: moveorder) {
-            m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
-        }
-        sort(moveorder.begin(), moveorder.end());
-        alpha = MIN_INF;
-        beta = MAX_INF;
-        alpha = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
-        if(search_depth == DEPTH) {
-            tmpbit = moveorder[0].put;
-        }
-        think_percent += think_count;
-        update_think_percent();
-        for (uint_fast8_t i = 1; i < moveorder.size(); ++i) {
-            var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+    if(Level == 7) {
+        for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; search_depth+=2) {
+            afterIndex = nowIndex+search_depth;
+            for (board_root& m: moveorder) {
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
+            }
+            sort(moveorder.begin(), moveorder.end());
+            alpha = MIN_INF;
+            beta = MAX_INF;
+            alpha = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
+            if(search_depth == DEPTH) {
+                tmpbit = moveorder[0].put;
+            }
             think_percent += think_count;
             update_think_percent();
-            if(var > alpha) {
-                alpha = var;
-                var = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
-                if(search_depth == DEPTH) {
-                    tmpbit = moveorder[i].put;
+            for (uint_fast8_t i = 1; i < moveorder.size(); ++i) {
+                var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+                think_percent += think_count;
+                update_think_percent();
+                if(var > alpha) {
+                    alpha = var;
+                    var = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+                    if(search_depth == DEPTH) {
+                        tmpbit = moveorder[i].put;
+                    }
                 }
+                alpha = max(var, alpha);
             }
-            alpha = max(var, alpha);
+            printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
+            transpose_table_up.swap(former_transpose_table_up);
+            transpose_table_up.clear();
+            transpose_table_low.swap(former_transpose_table_low);
+            transpose_table_low.clear();
         }
-        printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
-        transpose_table_up.swap(former_transpose_table_up);
-        transpose_table_up.clear();
-        transpose_table_low.swap(former_transpose_table_low);
-        transpose_table_low.clear();
+    } else {
+        for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
+            afterIndex = nowIndex+search_depth;
+            for (board_root& m: moveorder) {
+                m.score = move_ordering_value(&m.opponentboard, &m.playerboard);
+            }
+            sort(moveorder.begin(), moveorder.end());
+            alpha = MIN_INF;
+            beta = MAX_INF;
+            alpha = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[0].opponentboard, &moveorder[0].playerboard);
+            if(search_depth == DEPTH) {
+                tmpbit = moveorder[0].put;
+            }
+            think_percent += think_count;
+            update_think_percent();
+            for (uint_fast8_t i = 1; i < moveorder.size(); ++i) {
+                var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+                think_percent += think_count;
+                update_think_percent();
+                if(var > alpha) {
+                    alpha = var;
+                    var = -nega_scout(search_depth-1, -beta, -alpha, &moveorder[i].opponentboard, &moveorder[i].playerboard);
+                    if(search_depth == DEPTH) {
+                        tmpbit = moveorder[i].put;
+                    }
+                }
+                alpha = max(var, alpha);
+            }
+            printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
+            transpose_table_up.swap(former_transpose_table_up);
+            transpose_table_up.clear();
+            transpose_table_low.swap(former_transpose_table_low);
+            transpose_table_low.clear();
+        }
     }
     transpose_table_up.clear();
     transpose_table_low.clear();
@@ -847,7 +884,7 @@ int winner() {
 inline int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard) {
     int score = 0;
 	
-    score += 5 * (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
+//    score += (__builtin_popcountll(*playerboard & 0x8100000000000081ULL)-__builtin_popcountll(*opponentboard & 0x8100000000000081ULL));
 //    score -= (__builtin_popcountll(*playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(*opponentboard & 0x180018BDBD180018ULL));
     score -= (__builtin_popcountll(*playerboard & 0x182424180000ULL)-__builtin_popcountll(*opponentboard & 0x182424180000ULL));
 //    score -= 3 * (__builtin_popcountll(*playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(*opponentboard & 0x003C424242423C00ULL));
@@ -1198,6 +1235,6 @@ inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard
     return (*afterIndex >= 60) ? __builtin_popcountll(*playerboard) - __builtin_popcountll(*opponentboard) :
            (!*playerboard) ? MIN_INF :
            (!*opponentboard) ? MAX_INF :
-           (*afterIndex >= 45) ? score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard) * 30:
-           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*55 + score_putable(playerboard, opponentboard)*11;
+           (*afterIndex >= 45) ? score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard) * 20:
+           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard)*6;
 }
