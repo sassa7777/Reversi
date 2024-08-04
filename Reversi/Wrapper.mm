@@ -1,5 +1,5 @@
 //
-//  Wrapper.m
+//  Wrapper.mm
 //  Reversi
 //
 //  Created by sasa on 2024/05/18.

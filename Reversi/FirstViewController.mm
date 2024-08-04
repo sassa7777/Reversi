@@ -1,5 +1,5 @@
 //
-//  FirstViewController.m
+//  FirstViewController.mm
 //  Reversi
 //
 //  Created by sasa on 2024/05/17.

@@ -120,29 +120,29 @@ void reset();
 int winner();
 int ai();
 int putstone(int_fast8_t y, int_fast8_t x);
-uint64_t cordinate_to_bit(int_fast8_t *x, int_fast8_t *y);
-bool canput(uint64_t *put, uint64_t *legalboard);
-inline uint64_t makelegalboard(const uint64_t *p, const uint64_t *o);
+inline uint64_t cordinate_to_bit(int_fast8_t x, int_fast8_t y);
+inline bool canput(uint64_t &put, uint64_t &legalboard);
+inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o);
 void reversebit(uint64_t put);
 bool isPass();
 bool isFinished();
 void swapboard();
-inline uint64_t Flip(uint64_t *put, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_scout_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *legalboard);
-int nega_alpha_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard);
-int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t *playerboard, uint64_t *opponentboard, uint64_t *legalboard);
-int search(uint64_t *playerboard, uint64_t *opponentboard);
-int search_nega_scout(uint64_t *playerboard, uint64_t *opponentboard);
-int search_finish(uint64_t *playerboard, uint64_t *opponentboard);
-int search_finish_scout(uint64_t *playerboard, uint64_t *opponentboard);
+inline uint64_t Flip(uint64_t &put, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t &legalboard);
+int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t &legalboard);
+int search(uint64_t &playerboard, uint64_t &opponentboard);
+int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
+int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
+int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
 //evaluation
-inline int score_stone(const uint64_t *playerboard, const uint64_t *opponentboard);
-inline int score_putable(const uint64_t *playerboard, const uint64_t *opponentboard);
-inline int score_fixedstone(const uint64_t *playerboard, const uint64_t *opponentboard);
-inline int countscore(const uint64_t *playerboard, const uint64_t *opponentboard, const char *afterIndex);
+inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex);
 
 #endif /* othello_h */

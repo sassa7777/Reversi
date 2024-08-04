@@ -1,5 +1,5 @@
 //
-//  ViewController.m
+//  ViewController.mm
 //  Reversi
 //
 //  Created by sasa on 2024/05/17.
@@ -95,7 +95,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
         @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
     ];
     
-    uint64_t legalboard = makelegalboard(&b.playerboard, &b.opponentboard);
+    uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
     uint64_t mask = 0x8000000000000000;
     for (char i = 0; i < 8; ++i) {
         for (char j = 0; j < 8; ++j) {
@@ -219,7 +219,7 @@ NSImage *white_stone2 = [NSImage imageNamed:@"whiteb"];
             }
         }
     }
-    uint64_t legalboard = makelegalboard(&b.playerboard, &b.opponentboard);
+    uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
     uint64_t mask = 0x8000000000000000;
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {

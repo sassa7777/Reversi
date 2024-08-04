@@ -7,7 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 #import "reversi.h"
-#import <map>
 
 @interface ViewController : NSViewController
 {
