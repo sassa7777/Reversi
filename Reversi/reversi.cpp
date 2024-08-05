@@ -162,6 +162,196 @@ inline int move_ordering_value(uint64_t &playerboard, uint64_t &opponentboard) {
     }
 }
 
+uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
+    uint64_t t = (x ^ (x >> delta)) & mask;
+    return x ^ t ^ (t << delta);
+}
+
+// 水平反転
+uint64_t flipHorizontal(uint64_t x) {
+    x = delta_swap(x, 0x5555555555555555, 1);
+    x = delta_swap(x, 0x3333333333333333, 2);
+    return delta_swap(x, 0x0F0F0F0F0F0F0F0F, 4);
+}
+
+// 垂直反転
+uint64_t flipVertical(uint64_t x) {
+    x = delta_swap(x, 0x00FF00FF00FF00FF, 8);
+    x = delta_swap(x, 0x0000FFFF0000FFFF, 16);
+    return delta_swap(x, 0x00000000FFFFFFFF, 32);
+}
+
+// A1-H8反転
+uint64_t flipDiagonalA1H8(uint64_t x) {
+    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
+    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
+    return delta_swap(x, 0x00000000F0F0F0F0, 28);
+}
+
+// A8-H1反転
+uint64_t flipDiagonalA8H1(uint64_t x) {
+    x = delta_swap(x, 0x0055005500550055, 9);
+    x = delta_swap(x, 0x0000333300003333, 18);
+    return delta_swap(x, 0x000000000F0F0F0F, 36);
+}
+
+// 時計回りに90度回転
+uint64_t rotateClockwise90(uint64_t x) {
+    return flipHorizontal(flipDiagonalA1H8(x));
+}
+
+uint64_t book_finder(pair<uint64_t, uint64_t> &board) {
+    if(book_usi.count(board))  {
+        return book_usi.at(board);
+    }
+    if(book_tiger.count(board)) {
+        return book_tiger.at(board);
+    }
+    if(book_conpos.count(board)) {
+        return book_conpos.at(board);
+    }
+    if(book_sennsya.count(board)) {
+        return book_sennsya.at(board);
+    }
+    if(book_stevenson.count(board)) {
+        return book_stevenson.at(board);
+    }
+    if(book_FATDraw.count(board)) {
+        return book_FATDraw.at(board);
+    }
+    if(book_no_kan.count(board)) {
+        return book_no_kan.at(board);
+    }
+    if(book_ura_yotto.count(board)) {
+        return book_ura_yotto.at(board);
+    }
+    if(book_ura_koumori.count(board)) {
+        return book_ura_koumori.at(board);
+    }
+    if(book_kaisoku_senn.count(board)) {
+        return book_kaisoku_senn.at(board);
+    }
+    return 0;
+}
+
+void book(uint64_t &playerboard, uint64_t &opponentboard) {
+    pair<uint64_t, uint64_t> board = make_pair(playerboard, opponentboard);
+    uint64_t put = 0;
+    put = book_finder(board);
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(book_finder(board));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(book_finder(board)));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    board.first = flipDiagonalA1H8(board.first);
+    board.second = flipDiagonalA1H8(board.second);
+    put = flipDiagonalA1H8(book_finder(board));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(flipDiagonalA1H8(book_finder(board)));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = rotateClockwise90(board.first);
+    board.second = rotateClockwise90(board.second);
+    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    board.first = flipHorizontal(board.first);
+    board.second = flipHorizontal(board.second);
+    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))))));
+    if(put) {
+        tmpbit = put;
+        return;
+    }
+    return;
+}
+
 int ai() {
 	if (nowTurn == -botplayer) {
 		return 0;
@@ -188,14 +378,17 @@ int ai() {
 	int putable_count = __builtin_popcountll(legalboard);
     visited_nodes = 0;
     int score = 0;
-    if(afterIndex >= 60) {
-        think_count = 100/putable_count;
-        score = search_finish(b.playerboard, b.opponentboard);
-//        score = search_finish_scout(b.playerboard, b.opponentboard);
-    } else  {
-        think_count = 100/(putable_count*(DEPTH+1-max(DEPTH-3, 1)));
-//        score = search(&b.playerboard, &b.opponentboard);
-        score = search_nega_scout(b.playerboard, b.opponentboard);
+    book(b.playerboard, b.opponentboard);
+    if(!tmpbit) {
+        if(afterIndex >= 60) {
+            think_count = 100/putable_count;
+            score = search_finish(b.playerboard, b.opponentboard);
+    //        score = search_finish_scout(b.playerboard, b.opponentboard);
+        } else  {
+            think_count = 100/(putable_count*(DEPTH+1-max(DEPTH-3, 1)));
+    //        score = search(&b.playerboard, &b.opponentboard);
+            score = search_nega_scout(b.playerboard, b.opponentboard);
+        }
     }
 	think_percent = 100;
     update_think_percent();
