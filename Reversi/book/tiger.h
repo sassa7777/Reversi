@@ -38,7 +38,7 @@ const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book
     {std::make_pair(0x2010320400, 0x301E0E0D0800), 0x4},
     {std::make_pair(0x301E0E0D0000, 0x2010320C04), 0x10},
     {std::make_pair(0x2010320404, 0x301E0E0D0810), 0x1000},
-    {std::make_pair(0x301E070D0010, 0x2010321C04), 0x20},
+    {std::make_pair(0x301E0E0D0010, 0x2010321C04), 0x20},
     {std::make_pair(0x2010320C04, 0x301E0E0D1030), 0x8},
     {std::make_pair(0x301E0E0D0030, 0x2010321C0C), 0x2}
 };

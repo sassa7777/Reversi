@@ -12,16 +12,17 @@
 #include <cstdint>
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_usi = {
+    {std::make_pair(0x810000000, 0x1008000000), 0x80000},
     {std::make_pair(0x1000000000, 0x818080000), 0x40000},
     {std::make_pair(0x810080000, 0x1008040000), 0x4000000},
     {std::make_pair(0x1000040000, 0x81C080000), 0x100000},
-    {std::make_pair(0x80C000000, 0x1011C00000), 0x20000000}
+    {std::make_pair(0x80C000000, 0x10101C0000), 0x20000000}
 };
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_kaisoku_senn = {
     {std::make_pair(0x10001C0000, 0x83C000000), 0x80000000000},
     {std::make_pair(0x34000000, 0x81881C00000), 0x100000000000},
-    {std::make_pair(0x34000000, 0x81881C00000), 0x100000000000},
+    {std::make_pair(0x34000000, 0x818081C0000), 0x100000000000},
 };
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_sennsya = {

@@ -202,33 +202,43 @@ uint64_t rotateClockwise90(uint64_t x) {
 
 uint64_t book_finder(pair<uint64_t, uint64_t> &board) {
     if(book_usi.count(board))  {
+        printf("定石: 牛\n");
         return book_usi.at(board);
     }
     if(book_tiger.count(board)) {
+        printf("定石: 虎\n");
         return book_tiger.at(board);
     }
     if(book_conpos.count(board)) {
+        printf("定石: コンポス\n");
         return book_conpos.at(board);
     }
     if(book_sennsya.count(board)) {
+        printf("定石: 戦車\n");
         return book_sennsya.at(board);
     }
     if(book_stevenson.count(board)) {
+        printf("定石: スティーブンソン\n");
         return book_stevenson.at(board);
     }
     if(book_FATDraw.count(board)) {
+        printf("定石: FATDraw\n");
         return book_FATDraw.at(board);
     }
     if(book_no_kan.count(board)) {
+        printf("定石: ノーカン\n");
         return book_no_kan.at(board);
     }
     if(book_ura_yotto.count(board)) {
+        printf("定石: 裏ヨット\n");
         return book_ura_yotto.at(board);
     }
     if(book_ura_koumori.count(board)) {
+        printf("定石: 裏コウモリ\n");
         return book_ura_koumori.at(board);
     }
     if(book_kaisoku_senn.count(board)) {
+        printf("定石: 快速船\n");
         return book_kaisoku_senn.at(board);
     }
     return 0;
