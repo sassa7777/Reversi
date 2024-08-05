@@ -191,7 +191,7 @@ int ai() {
     if(afterIndex >= 60) {
         think_count = 100/putable_count;
         score = search_finish(b.playerboard, b.opponentboard);
-//        score = search_finish_scout(&b.playerboard, &b.opponentboard);
+//        score = search_finish_scout(b.playerboard, b.opponentboard);
     } else  {
         think_count = 100/(putable_count*(DEPTH+1-max(DEPTH-3, 1)));
 //        score = search(&b.playerboard, &b.opponentboard);
@@ -597,7 +597,7 @@ int search_finish(uint64_t &playerboard, uint64_t &opponentboard) {
     return var;
 }
 
-int search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
+int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard) {
     cout << "algorithm: NegaScout" << endl;
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     int var = 0, score = 0;
@@ -618,17 +618,17 @@ int search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
     think_count = 100/var;
     sort(moveorder, moveorder+var);
     int alpha = MIN_INF, beta = MAX_INF;
-    alpha = -nega_scout_finish(-beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard, moveorder[0].legalboard);
+    alpha = -nega_scout(30, -beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard);
     tmpbit = moveorder[0].put;
     think_percent += think_count;
     update_think_percent();
     for (int i = 1; i < var; ++i) {
-        score = -nega_alpha_moveorder_finish(-alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard, moveorder[i].legalboard);
+        score = -nega_alpha_moveorder(30, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
         think_percent += think_count;
         update_think_percent();
         if(score > alpha) {
             alpha = var;
-            score = -nega_scout_finish(-beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard, moveorder[i].legalboard);
+            score = -nega_scout(30, -beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             tmpbit = moveorder[i].put;
         }
         alpha = max(score, alpha);

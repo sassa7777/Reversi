@@ -9,6 +9,8 @@
 #define variables_h
 
 #include "reversi.h"
+#include "book/cow.h"
+#include "book/tiger.h"
 
 char DEPTH;
 char search_depth;

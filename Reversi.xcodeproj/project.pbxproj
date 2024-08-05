@@ -37,6 +37,8 @@
 		5A4903E32C0C25970048A1A3 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5A4903E42C0C25970048A1A3 /* variables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variables.h; sourceTree = "<group>"; };
 		5A4903E52C0C25970048A1A3 /* ViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ViewController.mm; sourceTree = "<group>"; };
+		5A5C1CF92C60869C003336D6 /* cow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cow.h; sourceTree = "<group>"; };
+		5A5C1CFA2C60945A003336D6 /* tiger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tiger.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,8 +88,18 @@
 				5A4903DE2C0C25970048A1A3 /* reversi.cpp */,
 				5A4903DB2C0C25970048A1A3 /* reversi.h */,
 				5A4903E42C0C25970048A1A3 /* variables.h */,
+				5A5C1CF52C608634003336D6 /* book */,
 			);
 			path = Reversi;
+			sourceTree = "<group>";
+		};
+		5A5C1CF52C608634003336D6 /* book */ = {
+			isa = PBXGroup;
+			children = (
+				5A5C1CF92C60869C003336D6 /* cow.h */,
+				5A5C1CFA2C60945A003336D6 /* tiger.h */,
+			);
+			path = book;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -121,6 +133,7 @@
 				TargetAttributes = {
 					5A4903C02C0C25730048A1A3 = {
 						CreatedOnToolsVersion = 15.4;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -308,6 +321,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Reversi/Reversi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -355,6 +369,7 @@
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};
@@ -366,6 +381,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Reversi/Reversi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -410,6 +426,7 @@
 				SUPPORTED_PLATFORMS = macosx;
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
 		};
