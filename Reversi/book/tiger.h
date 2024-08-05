@@ -37,6 +37,15 @@ const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book
     {std::make_pair(0x301E06010000, 0x20183E0400), 0x800},
     {std::make_pair(0x2010320400, 0x301E0E0D0800), 0x4},
     {std::make_pair(0x301E0E0D0000, 0x2010320C04), 0x10},
+    {std::make_pair(0x2010320404, 0x301E0E0D0810), 0x1000},
+    {std::make_pair(0x301E070D0010, 0x2010321C04), 0x20},
+    {std::make_pair(0x2010320C04, 0x301E0E0D1030), 0x8},
+    {std::make_pair(0x301E0E0D0030, 0x2010321C0C), 0x2}
+};
+
+const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_no_kan = {
+    {std::make_pair(0x2C00100000, 0x3010180C0000), 0x800},
+    {std::make_pair(0x301010040000, 0x2C08180800), 0x4000000}
 };
 
 #endif /* tiger_h */
