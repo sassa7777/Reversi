@@ -1449,8 +1449,7 @@ inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponen
 }
 
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex) {
-    return (afterIndex >= 60) ? __builtin_popcountll(playerboard) - __builtin_popcountll(opponentboard) :
-           (!playerboard) ? MIN_INF :
+    return (!playerboard) ? MIN_INF :
            (!opponentboard) ? MAX_INF :
            (afterIndex >= 41) ? score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 20:
            score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard);

@@ -40,7 +40,6 @@ const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_ura_yotto = {
     {std::make_pair(0x800080800, 0x101E140000), 0x20000},
-    {std::make_pair(0x101A100000, 0x8040E0800), 0x8}
 };
 
 
