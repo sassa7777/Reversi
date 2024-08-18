@@ -22,11 +22,10 @@ const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_kaisoku_senn = {
     {std::make_pair(0x10001C0000, 0x83C000000), 0x80000000000},
     {std::make_pair(0x34000000, 0x81881C00000), 0x100000000000},
-    {std::make_pair(0x34000000, 0x818081C0000), 0x100000000000},
 };
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_sennsya = {
-    {std::make_pair(0x34000000, 0x81881C00000), 0x40000000000},
+    {std::make_pair(0x34000000, 0x818081C0000), 0x40000000000},
     {std::make_pair(0x810081C0000, 0x40834000000), 0x400000000},
     {std::make_pair(0x30000000, 0x1C0C1C0000), 0x40000000000},
     {std::make_pair(0x140C1C0000, 0x40830000000), 0x80000000000},
@@ -41,7 +40,7 @@ const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book
 
 const ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, uint64_t> book_ura_yotto = {
     {std::make_pair(0x800080800, 0x101E140000), 0x20000},
-    {std::make_pair(0x101A100000, 0x8040E0800), 0x400000000}
+    {std::make_pair(0x101A100000, 0x8040E0800), 0x8}
 };
 
 

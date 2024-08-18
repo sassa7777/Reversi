@@ -41,7 +41,7 @@ inline uint64_t cordinate_to_bit(int_fast8_t put, int_fast8_t y) {
 	return 0x8000000000000000ULL >> ((y<<3)+put);
 }
 
-inline bool canput(uint64_t &put, uint64_t &legalboard) {
+inline bool canput(const uint64_t &put, const uint64_t &legalboard) {
 	return ((put & legalboard) == put);
 }
 
@@ -100,7 +100,7 @@ void reversebit(uint64_t put) {
     b.opponentboard ^= flipped;
 }
 
-inline uint64_t Flip(uint64_t &put, uint64_t &playerboard, uint64_t &opponentboard) {
+inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard) {
     uint64_t flipped, OM, outflank[4], mask[4];
     int pos = __builtin_clzll(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
@@ -502,6 +502,7 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
     uint64_t rev;
     board_root m;
     vector<board_root> moveorder;
+    moveorder.reserve(__builtin_popcountll(legalboard));
     m.put = 1;
     for (auto i = 0; i < 64; ++i) {
         if(legalboard & m.put) {
@@ -514,7 +515,10 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
     }
     int alpha = MIN_INF, beta = MAX_INF;
     think_count = 100/(__builtin_popcountll(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
+    int wave = 0;
     for (search_depth = max(1, DEPTH-4); search_depth <= DEPTH; ++search_depth) {
+        think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
+        ++wave;
         afterIndex = nowIndex+search_depth;
         for (board_root& m: moveorder) {
             m.score = move_ordering_value(m.opponentboard, m.playerboard);
@@ -592,7 +596,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
         ++canput;
     }
     if(canput >= 2) sort(moveorder, moveorder+canput);
-    if(depth > 2) {
+    if(depth > 3) {
         var = -nega_scout(depth-1, -beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard);
         if (var >= beta) {
             if (var > l) {
@@ -734,7 +738,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
     }
     uint64_t rev = 0;
     int var, max_score = MIN_INF, a = alpha;
-    for (uint64_t& i: moveorder_bit) {
+    for (const uint64_t& i: moveorder_bit) {
         if(canput(i, legalboard)) {
             rev = Flip(i, playerboard, opponentboard);
             playerboard ^= (i | rev);
@@ -1019,7 +1023,7 @@ int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
     }
     uint64_t rev = 0;
     int var = 0, max_score = MIN_INF;
-    for (uint64_t& i: moveorder_bit) {
+    for (const uint64_t& i: moveorder_bit) {
         if(canput(i, legalboard)) {
             rev = Flip(i, playerboard, opponentboard);
             playerboard ^= (i | rev);
@@ -1055,10 +1059,10 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
 	
 //    score += (__builtin_popcountll(playerboard & 0x8100000000000081ULL)-__builtin_popcountll(opponentboard & 0x8100000000000081ULL));
 //    score -= (__builtin_popcountll(playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(opponentboard & 0x180018BDBD180018ULL));
-//    score -= (__builtin_popcountll(playerboard & 0x182424180000ULL)-__builtin_popcountll(opponentboard & 0x182424180000ULL));
-    score -= 3 * (__builtin_popcountll(playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(opponentboard & 0x003C424242423C00ULL));
-//    score -= 3 * (__builtin_popcountll(playerboard & 0x24420000422400ULL)-__builtin_popcountll(opponentboard & 0x24420000422400ULL));
-//    score -= 2 * (__builtin_popcountll(playerboard & 0x18004242001800ULL)-__builtin_popcountll(opponentboard & 0x18004242001800ULL));
+    score -= (__builtin_popcountll(playerboard & 0x182424180000ULL)-__builtin_popcountll(opponentboard & 0x182424180000ULL));
+//    score -= 3 * (__builtin_popcountll(playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(opponentboard & 0x003C424242423C00ULL));
+    score -= 3 * (__builtin_popcountll(playerboard & 0x24420000422400ULL)-__builtin_popcountll(opponentboard & 0x24420000422400ULL));
+    score -= 2 * (__builtin_popcountll(playerboard & 0x18004242001800ULL)-__builtin_popcountll(opponentboard & 0x18004242001800ULL));
     score -= 6 * (__builtin_popcountll(playerboard & 0x4281000000008142ULL)-__builtin_popcountll(opponentboard & 0x4281000000008142ULL));
     score -= 7 * (__builtin_popcountll(playerboard & 0x0042000000004200ULL)-__builtin_popcountll(opponentboard & 0x0042000000004200ULL));
     
@@ -1453,5 +1457,5 @@ inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard
            (!playerboard) ? MIN_INF :
            (!opponentboard) ? MAX_INF :
            (afterIndex >= 41) ? score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 20:
-           score_stone(playerboard, opponentboard)*6 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard)*11;
+           score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard)*2;
 }
