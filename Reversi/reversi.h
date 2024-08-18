@@ -22,6 +22,7 @@
 #include <vector>
 #include <algorithm>
 #include <bit>
+#include <execution>
 #include <ankerl/unordered_dense.h>
 
 extern char DEPTH;

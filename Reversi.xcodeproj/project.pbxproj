@@ -331,14 +331,15 @@
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_ARCHS = "";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/opt/homebrew/opt/libomp/include,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -391,14 +392,15 @@
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
 				ENABLE_HARDENED_RUNTIME = YES;
 				EXCLUDED_ARCHS = "";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_FAST_MATH = YES;
+				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
+				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/local/include,
-					/opt/homebrew/opt/libomp/include,
-				);
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

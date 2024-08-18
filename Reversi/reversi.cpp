@@ -578,8 +578,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
     if(u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
-    if(!legalboard) {
-        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, afterIndex);
+    if(!legalboard) [[unlikely]] {
+        if(!(makelegalboard(opponentboard, playerboard))) [[unlikely]] return countscore(playerboard, opponentboard, afterIndex);
         else return -nega_scout(depth, -beta, -alpha, opponentboard, playerboard);
     }
     int var, max_score = MIN_INF, canput = 0, a = alpha;
@@ -595,7 +595,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
         moveorder[canput].score = move_ordering_value(moveorder[canput].opponentboard, moveorder[canput].playerboard);
         ++canput;
     }
-    if(canput >= 2) sort(moveorder, moveorder+canput);
+    sort(moveorder, moveorder+canput);
     if(depth > 3) {
         var = -nega_scout(depth-1, -beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard);
         if (var >= beta) {
@@ -671,8 +671,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
     if(u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
-    if(!legalboard) {
-        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, afterIndex);
+    if(!legalboard) [[unlikely]] {
+        if(!(makelegalboard(opponentboard, playerboard))) [[unlikely]] return countscore(playerboard, opponentboard, afterIndex);
         else return -nega_alpha_moveorder(depth, -beta, -alpha, opponentboard, playerboard);
     }
     int var, max_score = MIN_INF, a = alpha;
@@ -689,7 +689,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
         moveorder[var].score = move_ordering_value(moveorder[var].opponentboard, moveorder[var].playerboard);
         ++var;
     }
-    if(var >= 2) sort(moveorder, moveorder+var);
+    sort(moveorder, moveorder+var);
     for (board& m: moveorder) {
         var = (depth <= 3) ? -nega_alpha(depth-1, -beta, -alpha, m.opponentboard, m.playerboard) :
         -nega_alpha_moveorder(depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
@@ -732,8 +732,8 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
     if(u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
-    if(!legalboard) {
-        if(!(makelegalboard(opponentboard, playerboard))) return countscore(playerboard, opponentboard, afterIndex);
+    if(!legalboard) [[unlikely]] {
+        if(!(makelegalboard(opponentboard, playerboard))) [[unlikely]] return countscore(playerboard, opponentboard, afterIndex);
         else return -nega_alpha(depth, -beta, -alpha, opponentboard, playerboard);
     }
     uint64_t rev = 0;
@@ -746,10 +746,6 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
             var = -nega_alpha(depth-1, -beta, -alpha, opponentboard, playerboard);
             playerboard ^= (i | rev);
             opponentboard ^= rev;
-            if(depth == DEPTH) {
-                think_percent += think_count;
-                update_think_percent();
-            }
             if (var >= beta) {
                 if (var > l) {
                     transpose_table_low[board_state] = var;
@@ -885,7 +881,7 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
         moveorder[canput].score = __builtin_popcountll(moveorder[canput].legalboard);
         ++canput;
     }
-    if(canput >= 2) sort(moveorder, moveorder+canput);
+    sort(moveorder, moveorder+canput);
     if(__builtin_popcountll(playerboard | opponentboard) < 56) {
         var = -nega_scout_finish(-beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard, moveorder[0].legalboard);
         if (var >= beta) {
@@ -977,7 +973,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
         moveorder[var].score = __builtin_popcountll(moveorder[var].legalboard);
         ++var;
     }
-    if(var >= 2) sort(moveorder, moveorder+var);
+    sort(moveorder, moveorder+var);
     if(__builtin_popcountll(playerboard | opponentboard) < 56) {
         for (board_finish& m: moveorder) {
             var = -nega_alpha_moveorder_finish(-beta, -alpha, m.opponentboard, m.playerboard, m.legalboard);
@@ -1278,7 +1274,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
 }
 
 inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentboard) {
-	return (__builtin_popcountll(makelegalboard(playerboard, opponentboard))-__builtin_popcountll(makelegalboard(opponentboard, playerboard)));
+    return __builtin_popcountll(makelegalboard(playerboard, opponentboard));
 }
 
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard) {
@@ -1457,5 +1453,5 @@ inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard
            (!playerboard) ? MIN_INF :
            (!opponentboard) ? MAX_INF :
            (afterIndex >= 41) ? score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 20:
-           score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard)*2;
+           score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard);
 }
