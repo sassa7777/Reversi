@@ -162,7 +162,7 @@ inline int move_ordering_value(uint64_t &playerboard, uint64_t &opponentboard) {
     }
 }
 
-uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
+uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
     return x ^ t ^ (t << delta);
 }
@@ -367,6 +367,9 @@ int ai() {
 		return 0;
 	}
 	printf("[*]Botが考え中..\n");
+    if(Level == 5 && nowIndex >= 29) {
+        DEPTH = 13;
+    }
     if(Level >= 6 && nowIndex >= 33) {
         DEPTH += 1;
         afterIndex=nowIndex+DEPTH;
@@ -440,7 +443,7 @@ int search(uint64_t &playerboard, uint64_t &opponentboard) {
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
             beta = MAX_INF;
-            for (board_root& m: moveorder) {
+            for (auto& m: moveorder) {
                 var = -nega_alpha_moveorder(search_depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
                 think_percent += think_count;
                 update_think_percent();
@@ -460,7 +463,7 @@ int search(uint64_t &playerboard, uint64_t &opponentboard) {
     } else {
         for (search_depth = max(1, DEPTH-3); search_depth <= DEPTH; ++search_depth) {
             afterIndex = nowIndex+search_depth;
-            for (board_root& m: moveorder) {
+            for (auto& m: moveorder) {
                 m.score = move_ordering_value(m.opponentboard, m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
@@ -520,7 +523,7 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
         think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
         ++wave;
         afterIndex = nowIndex+search_depth;
-        for (board_root& m: moveorder) {
+        for (auto& m: moveorder) {
             m.score = move_ordering_value(m.opponentboard, m.playerboard);
         }
         sort(moveorder.begin(), moveorder.end());
@@ -532,7 +535,7 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
         }
         think_percent += think_count;
         update_think_percent();
-        for (uint_fast8_t i = 1; i < moveorder.size(); ++i) {
+        for (auto i = 1; i < moveorder.size(); ++i) {
             var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             think_percent += think_count;
             update_think_percent();
@@ -606,7 +609,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
         }
         alpha = max(alpha, var);
         max_score = max(max_score, var);
-        for (uint_fast8_t i = 1; i < canput; ++i) {
+        for (auto i = 1; i < canput; ++i) {
             var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
                 if(var > l) {
@@ -628,7 +631,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
             max_score = max(var, max_score);
         }
     } else {
-        for (board& m: moveorder) {
+        for (auto& m: moveorder) {
             var = -nega_alpha(depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
             if (var >= beta) {
                 if (var > l) {
@@ -690,7 +693,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
         ++var;
     }
     sort(moveorder, moveorder+var);
-    for (board& m: moveorder) {
+    for (auto& m: moveorder) {
         var = (depth <= 3) ? -nega_alpha(depth-1, -beta, -alpha, m.opponentboard, m.playerboard) :
         -nega_alpha_moveorder(depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
         if (var >= beta) {
@@ -738,7 +741,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
     }
     uint64_t rev = 0;
     int var, max_score = MIN_INF, a = alpha;
-    for (const uint64_t& i: moveorder_bit) {
+    for (const auto& i: moveorder_bit) {
         if(canput(i, legalboard)) {
             rev = Flip(i, playerboard, opponentboard);
             playerboard ^= (i | rev);
@@ -915,7 +918,7 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
             max_score = max(max_score, var);
         }
     } else {
-        for (board_finish& m: moveorder) {
+        for (auto& m: moveorder) {
             var = -nega_alpha_finish(-beta, -alpha, m.opponentboard, m.playerboard);
             if (var >= beta) {
                 if (var > l) {
@@ -975,7 +978,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
     }
     sort(moveorder, moveorder+var);
     if(__builtin_popcountll(playerboard | opponentboard) < 56) {
-        for (board_finish& m: moveorder) {
+        for (auto& m: moveorder) {
             var = -nega_alpha_moveorder_finish(-beta, -alpha, m.opponentboard, m.playerboard, m.legalboard);
             if (var >= beta) {
                 if (var > l) {
@@ -1449,8 +1452,8 @@ inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponen
 }
 
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex) {
-    return (!playerboard) ? MIN_INF :
-           (!opponentboard) ? MAX_INF :
-           (afterIndex >= 41) ? score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard) * 20:
-           score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20 + score_putable(playerboard, opponentboard);
+    if(!playerboard) [[unlikely]] return MIN_INF;
+    if(!opponentboard) [[unlikely]] return MAX_INF;
+    if(afterIndex >= 36) return score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20;
+    return score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*22 + score_putable(playerboard, opponentboard)*2;
 }

@@ -37,8 +37,8 @@ using namespace std;
         @[self.ga, self.gb, self.gc, self.gd, self.ge, self.gf, self.gg, self.gh],
         @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
     ];
-    for (char i = 0; i < 8; ++i) {
-        for (char j = 0; j < 8; ++j) {
+    for (auto i = 0; i < 8; ++i) {
+        for (auto j = 0; j < 8; ++j) {
             coordinate_y_x[buttons[i][j]] = make_pair(i, j);
         }
     }
@@ -79,8 +79,8 @@ using namespace std;
     
     uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
     uint64_t mask = 0x8000000000000000;
-    for (char i = 0; i < 8; ++i) {
-        for (char j = 0; j < 8; ++j) {
+    for (auto i = 0; i < 8; ++i) {
+        for (auto j = 0; j < 8; ++j) {
             if(nowTurn == BLACK_TURN) {
                 if(b.playerboard & mask) {
                     if(tmpx == j && tmpy == i) {

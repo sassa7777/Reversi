@@ -335,7 +335,7 @@
 				GCC_FAST_MATH = YES;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -357,10 +357,9 @@
 					"-flto",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
-					"-march=native",
-					"-mtune=native",
+					"-march=armv8.4-a+simd",
+					"-mtune=apple-m1",
 					"-flto",
-					"-march=armv8.3-a+simd",
 				);
 				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";
@@ -396,7 +395,7 @@
 				GCC_FAST_MATH = YES;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -417,8 +416,9 @@
 					"-flto",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
-					"-march=native",
-					"-mtune=native",
+					"-march=armv8.4-a+simd",
+					"-mtune=apple-m1",
+					"-flto",
 				);
 				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = "";

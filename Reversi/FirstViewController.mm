@@ -14,8 +14,8 @@
     _strength_txt.stringValue = @"初心者よりはできる人向け向け";
     NSLog(@"start");
     botplayer = WHITE_TURN;
-    firstDEPTH = 2;
-    Level = 2;
+    firstDEPTH = 10;
+    Level = 5;
 }
 
 - (void)select_player:(NSSegmentedControl *)sender __attribute__((ibaction)) {
