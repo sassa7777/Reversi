@@ -787,7 +787,7 @@
                                 </connections>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u3D-70-u3m">
-                                <rect key="frame" x="234" y="72" width="224" height="24"/>
+                                <rect key="frame" x="250" y="72" width="193" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="NE2-Wx-P84">
                                     <font key="font" metaFont="system"/>
@@ -798,7 +798,6 @@
                                         <segment label="⭐︎4" tag="4"/>
                                         <segment label="⭐︎5" selected="YES" tag="5"/>
                                         <segment label="⭐︎6" tag="6"/>
-                                        <segment label="⭐︎7" tag="6"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
