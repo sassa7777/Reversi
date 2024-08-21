@@ -40,7 +40,7 @@ const map<std::pair<uint64_t, uint64_t>, uint64_t> book_ura_koumori = {
     {std::make_pair(0x1010140000, 0x80C080800), 0x2000000},
     {std::make_pair(0x800080800, 0x101E140000), 0x20000000},
     {std::make_pair(0x101E040000, 0x820180800), 0x200000},
-    {std::make_pair(0x1E3C0000, 0x81820000800), 0x100000000000},
+//    {std::make_pair(0x1E3C0000, 0x81820000800), 0x100000000000},
 };
 
 const map<std::pair<uint64_t, uint64_t>, uint64_t> book_ura_yotto = {

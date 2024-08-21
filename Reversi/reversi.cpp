@@ -412,6 +412,7 @@ int ai() {
     printf("put : (%d, %d)\n", tmpx, tmpy);
     if(afterIndex >= 60) printf("Final Score\n");
     printf("Score : %d\n", score);
+    printf("現在の評価値: %d %d %d\n", score_stone(b.playerboard, b.opponentboard), score_putable(b.playerboard, b.opponentboard), score_fixedstone(b.playerboard, b.opponentboard));
     return 1;
 }
 
@@ -422,6 +423,7 @@ int search(uint64_t &playerboard, uint64_t &opponentboard) {
     uint64_t rev;
     board_root m;
     vector<board_root> moveorder;
+    moveorder.reserve(__builtin_popcountll(legalboard));
     m.put = 1;
     for (auto i = 0; i < 64; ++i) {
         if(legalboard & m.put) {
@@ -437,7 +439,7 @@ int search(uint64_t &playerboard, uint64_t &opponentboard) {
         think_count = 100/(__builtin_popcountll(legalboard)*4);
         for (search_depth = DEPTH-4; search_depth <= DEPTH; search_depth+=2) {
             afterIndex = nowIndex+search_depth;
-            for (board_root& m: moveorder) {
+            for (auto& m: moveorder) {
                 m.score = move_ordering_value(m.opponentboard, m.playerboard);
             }
             sort(moveorder.begin(), moveorder.end());
@@ -469,7 +471,7 @@ int search(uint64_t &playerboard, uint64_t &opponentboard) {
             sort(moveorder.begin(), moveorder.end());
             alpha = MIN_INF;
             beta = MAX_INF;
-            for (board_root& m: moveorder) {
+            for (auto& m: moveorder) {
                 var = -nega_alpha_moveorder(search_depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
                 think_percent += think_count;
                 update_think_percent();
@@ -990,7 +992,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
             max_score = max(max_score, var);
         }
     } else {
-        for (board_finish& m: moveorder) {
+        for (auto& m: moveorder) {
             var = -nega_alpha_finish(-beta, -alpha, m.opponentboard, m.playerboard);
             if (var >= beta) {
                 if (var > l) {
@@ -1058,7 +1060,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
 	
 //    score += (__builtin_popcountll(playerboard & 0x8100000000000081ULL)-__builtin_popcountll(opponentboard & 0x8100000000000081ULL));
 //    score -= (__builtin_popcountll(playerboard & 0x180018BDBD180018ULL)-__builtin_popcountll(opponentboard & 0x180018BDBD180018ULL));
-    score -= (__builtin_popcountll(playerboard & 0x182424180000ULL)-__builtin_popcountll(opponentboard & 0x182424180000ULL));
+    score -= 1 * (__builtin_popcountll(playerboard & 0x182424180000ULL)-__builtin_popcountll(opponentboard & 0x182424180000ULL));
 //    score -= 3 * (__builtin_popcountll(playerboard & 0x003C424242423C00ULL)-__builtin_popcountll(opponentboard & 0x003C424242423C00ULL));
     score -= 3 * (__builtin_popcountll(playerboard & 0x24420000422400ULL)-__builtin_popcountll(opponentboard & 0x24420000422400ULL));
     score -= 2 * (__builtin_popcountll(playerboard & 0x18004242001800ULL)-__builtin_popcountll(opponentboard & 0x18004242001800ULL));
@@ -1454,6 +1456,6 @@ inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponen
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex) {
     if(!playerboard) [[unlikely]] return MIN_INF;
     if(!opponentboard) [[unlikely]] return MAX_INF;
-    if(afterIndex >= 36) return score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*20;
-    return score_stone(playerboard, opponentboard)*3 + score_fixedstone(playerboard, opponentboard)*22 + score_putable(playerboard, opponentboard)*2;
+    if(afterIndex >= 41) return (int)(score_stone(playerboard, opponentboard)*3.5 + score_fixedstone(playerboard, opponentboard)*20);
+    return (int)(score_stone(playerboard, opponentboard)*7.6 + score_fixedstone(playerboard, opponentboard)*25 + score_putable(playerboard, opponentboard)*2.5);
 }

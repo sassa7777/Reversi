@@ -225,7 +225,7 @@ using namespace std;
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
             int results = ai();
             if(results == 1) {
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.4f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                     swapboard();
                     if(isPass()) {
                         swapboard();
@@ -243,7 +243,5 @@ using namespace std;
         });
     }
 }
-
-
 
 @end
