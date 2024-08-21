@@ -116,6 +116,8 @@ extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpos
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
 
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
+
 //main functions
 void reset();
 int winner();
@@ -140,10 +142,15 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
+uint64_t rotateClockwise90(uint64_t x);
+
+void fixedstone_table_init();
+
 //evaluation
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex);
+inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard);
 
 #endif /* othello_h */

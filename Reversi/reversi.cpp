@@ -22,6 +22,31 @@ void reset() {
 	return;
 }
 
+void fixedstone_table_init() {
+    fixedstone_table.clear();
+    int i;
+    pair<uint64_t, uint64_t> tmp;
+    for (tmp.first = 0; tmp.first <= 0xFF; ++tmp.first) {
+        for (tmp.second = 0; tmp.second <= 0xFF; ++tmp.second) {
+            if(tmp.first & tmp.second) continue;
+            i = score_fixedstone(tmp.first, tmp.second);
+            fixedstone_table[tmp] = i;
+            tmp.first = rotateClockwise90(tmp.first);
+            tmp.second = rotateClockwise90(tmp.second);
+            fixedstone_table[tmp] = i;
+            tmp.first = rotateClockwise90(tmp.first);
+            tmp.second = rotateClockwise90(tmp.second);
+            fixedstone_table[tmp] = i;
+            tmp.first = rotateClockwise90(tmp.first);
+            tmp.second = rotateClockwise90(tmp.second);
+            fixedstone_table[tmp] = i;
+            tmp.first = rotateClockwise90(tmp.first);
+            tmp.second = rotateClockwise90(tmp.second);
+        }
+    }
+    printf("initzailing..\n");
+}
+
 int putstone(int_fast8_t y, int_fast8_t x) {
 	tmpy = y;
 	tmpx = x;
@@ -412,7 +437,7 @@ int ai() {
     printf("put : (%d, %d)\n", tmpx, tmpy);
     if(afterIndex >= 60) printf("Final Score\n");
     printf("Score : %d\n", score);
-    printf("現在の評価値: %d %d %d\n", score_stone(b.playerboard, b.opponentboard), score_putable(b.playerboard, b.opponentboard), score_fixedstone(b.playerboard, b.opponentboard));
+    printf("現在の評価値: %d %d %d\n", score_stone(b.playerboard, b.opponentboard), score_putable(b.playerboard, b.opponentboard), score_fixedstone_table(b.playerboard, b.opponentboard));
     return 1;
 }
 
@@ -1284,178 +1309,152 @@ inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentbo
 
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard) {
     int fixedstone = 0;
-	//上
-    if(((playerboard | opponentboard) & UP_BOARD) == UP_BOARD) {
-		fixedstone += __builtin_popcountll(playerboard & UP_BOARD);
-		fixedstone -= __builtin_popcountll(opponentboard & UP_BOARD);
-	} else {
-		//左上左方向
-        if((playerboard & 0xfe00000000000000ULL) == 0xfe00000000000000ULL) fixedstone+=7;
-        else if((playerboard & 0xfc00000000000000ULL) == 0xfc00000000000000ULL) fixedstone+=6;
-        else if((playerboard & 0xf800000000000000ULL) == 0xf800000000000000ULL) fixedstone+=5;
-        else if((playerboard & 0xf000000000000000ULL) == 0xf000000000000000ULL) fixedstone+=4;
-        else if((playerboard & 0xe000000000000000ULL) == 0xe000000000000000ULL) fixedstone+=3;
-        else if((playerboard & 0xc000000000000000ULL) == 0xc000000000000000ULL) fixedstone+=2;
-        else if((playerboard & 0x8000000000000000ULL) == 0x8000000000000000ULL) fixedstone+=1;
-		
-        if((opponentboard & 0xfe00000000000000ULL) == 0xfe00000000000000ULL) fixedstone-=7;
-        else if((opponentboard & 0xfc00000000000000ULL) == 0xfc00000000000000ULL) fixedstone-=6;
-        else if((opponentboard & 0xf800000000000000ULL) == 0xf800000000000000ULL) fixedstone-=5;
-        else if((opponentboard & 0xf000000000000000ULL) == 0xf000000000000000ULL) fixedstone-=4;
-        else if((opponentboard & 0xe000000000000000ULL) == 0xe000000000000000ULL) fixedstone-=3;
-        else if((opponentboard & 0xc000000000000000ULL) == 0xc000000000000000ULL) fixedstone-=2;
-        else if((opponentboard & 0x8000000000000000ULL) == 0x8000000000000000ULL) fixedstone-=1;
-		//右上左方向
-        if((playerboard & 0x7f00000000000000ULL) == 0x7f00000000000000ULL) fixedstone+=7;
-        else if((playerboard & 0x3f00000000000000ULL) == 0x3f00000000000000ULL) fixedstone+=6;
-        else if((playerboard & 0x1f00000000000000ULL) == 0x1f00000000000000ULL) fixedstone+=5;
-        else if((playerboard & 0x0f00000000000000ULL) == 0x0f00000000000000ULL) fixedstone+=4;
-        else if((playerboard & 0x0700000000000000ULL) == 0x0700000000000000ULL) fixedstone+=3;
-        else if((playerboard & 0x0300000000000000ULL) == 0x0300000000000000ULL) fixedstone+=2;
-        else if((playerboard & 0x0100000000000000ULL) == 0x0100000000000000ULL) fixedstone+=1;
-		
-        if((opponentboard & 0x7f00000000000000ULL) == 0x7f00000000000000ULL) fixedstone-=7;
-        else if((opponentboard & 0x3f00000000000000ULL) == 0x3f00000000000000ULL) fixedstone-=6;
-        else if((opponentboard & 0x1f00000000000000ULL) == 0x1f00000000000000ULL) fixedstone-=5;
-        else if((opponentboard & 0x0f00000000000000ULL) == 0x0f00000000000000ULL) fixedstone-=4;
-        else if((opponentboard & 0x0700000000000000ULL) == 0x0700000000000000ULL) fixedstone-=3;
-        else if((opponentboard & 0x0300000000000000ULL) == 0x0300000000000000ULL) fixedstone-=2;
-        else if((opponentboard & 0x0100000000000000ULL) == 0x0100000000000000ULL) fixedstone-=1;
-	}
-	//左
-    if(((playerboard | opponentboard) & LEFT_BOARD) == LEFT_BOARD) {
-		fixedstone += __builtin_popcountll(playerboard & LEFT_BOARD);
-		fixedstone -= __builtin_popcountll(opponentboard & LEFT_BOARD);
-	} else {
-		//左上下方向
-        if((playerboard & 0x8080808080808000ULL) == 0x8080808080808000ULL) fixedstone+=7;
-        else if((playerboard & 0x8080808080800000ULL) == 0x8080808080800000ULL) fixedstone+=6;
-        else if((playerboard & 0x8080808080000000ULL) == 0x8080808080000000ULL) fixedstone+=5;
-        else if((playerboard & 0x8080808000000000ULL) == 0x8080808000000000ULL) fixedstone+=4;
-        else if((playerboard & 0x8080800000000000ULL) == 0x8080800000000000ULL) fixedstone+=3;
-        else if((playerboard & 0x8080008000000000ULL) == 0x8080008000000000ULL) fixedstone+=2;
-        else if((playerboard & 0x8080008000000000ULL) == 0x8000008000000000ULL) fixedstone+=1;
-		
-        if((opponentboard & 0x8080808080808000ULL) == 0x8080808080808000ULL) fixedstone-=7;
-        else if((opponentboard & 0x8080808080800000ULL) == 0x8080808080800000ULL) fixedstone-=6;
-        else if((opponentboard & 0x8080808080000000ULL) == 0x8080808080000000ULL) fixedstone-=5;
-        else if((opponentboard & 0x8080808000000000ULL) == 0x8080808000000000ULL) fixedstone-=4;
-        else if((opponentboard & 0x8080800000000000ULL) == 0x8080800000000000ULL) fixedstone-=3;
-        else if((opponentboard & 0x8080008000000000ULL) == 0x8080008000000000ULL) fixedstone-=2;
-        else if((opponentboard & 0x8080008000000000ULL) == 0x8000008000000000ULL) fixedstone-=1;
-        
-		//左下上方向
-        if((playerboard & 0x0080808080808080ULL) == 0x0080808080808080ULL) fixedstone+=7;
-        else if((playerboard & 0x0000808080808080ULL) == 0x0000808080808080ULL) fixedstone+=6;
-        else if((playerboard & 0x0000008080808080ULL) == 0x0000008080808080ULL) fixedstone+=5;
-        else if((playerboard & 0x0000000080808080ULL) == 0x0000000080808080ULL) fixedstone+=4;
-        else if((playerboard & 0x0000008000808080ULL) == 0x0000008000808080ULL) fixedstone+=3;
-        else if((playerboard & 0x0000008000008080ULL) == 0x0000008000008080ULL) fixedstone+=2;
-        else if((playerboard & 0x0000008000000080ULL) == 0x0000008000000080ULL) fixedstone+=1;
-		
-        if((opponentboard & 0x0080808080808080ULL) == 0x0080808080808080ULL) fixedstone-=7;
-        else if((opponentboard & 0x0000808080808080ULL) == 0x0000808080808080ULL) fixedstone-=6;
-        else if((opponentboard & 0x0000008080808080ULL) == 0x0000008080808080ULL) fixedstone-=5;
-        else if((opponentboard & 0x0000000080808080ULL) == 0x0000000080808080ULL) fixedstone-=4;
-        else if((opponentboard & 0x0000008000808080ULL) == 0x0000008000808080ULL) fixedstone-=3;
-        else if((opponentboard & 0x0000008000008080ULL) == 0x0000008000008080ULL) fixedstone-=2;
-        else if((opponentboard & 0x0000008000000080ULL) == 0x0000008000000080ULL) fixedstone-=1;
-	}
-	//右
-    if(((playerboard | opponentboard) & RIGHT_BOARD) == RIGHT_BOARD) {
-		fixedstone += __builtin_popcountll(playerboard & RIGHT_BOARD);
-		fixedstone -= __builtin_popcountll(opponentboard & RIGHT_BOARD);
-	} else {
-		//右上下方向
-        if((playerboard & 0x0101010101010100ULL) == 0x0101010101010100ULL) fixedstone+=7;
-        else if((playerboard & 0x0101010101010000ULL) == 0x0101010101010000ULL) fixedstone+=6;
-        else if((playerboard & 0x0101010101000000ULL) == 0x0101010101000000ULL) fixedstone+=5;
-        else if((playerboard & 0x0101010100000000ULL) == 0x0101010100000000ULL) fixedstone+=4;
-        else if((playerboard & 0x0101010000000000ULL) == 0x0101010000000000ULL) fixedstone+=3;
-        else if((playerboard & 0x0101000000000000ULL) == 0x0101000000000000ULL) fixedstone+=2;
-        else if((playerboard & 0x0100000000000000ULL) == 0x0100000000000000ULL) fixedstone+=1;
-		
-        if((opponentboard & 0x0101010101010100ULL) == 0x0101010101010100ULL) fixedstone-=7;
-        else if((opponentboard & 0x0101010101010000ULL) == 0x0101010101010000ULL) fixedstone-=6;
-        else if((opponentboard & 0x0101010101000000ULL) == 0x0101010101000000ULL) fixedstone-=5;
-        else if((opponentboard & 0x0101010100000000ULL) == 0x0101010100000000ULL) fixedstone-=4;
-        else if((opponentboard & 0x0101010000000000ULL) == 0x0101010000000000ULL) fixedstone-=3;
-        else if((opponentboard & 0x0101000000000000ULL) == 0x0101000000000000ULL) fixedstone-=2;
-        else if((opponentboard & 0x0100000000000000ULL) == 0x0100000000000000ULL) fixedstone-=1;
-        
-		//右下上方向
-        if((playerboard & 0x001010101010101ULL) == 0x001010101010101ULL) fixedstone+=7;
-        else if((playerboard & 0x000010101010101ULL) == 0x000010101010101ULL) fixedstone+=6;
-        else if((playerboard & 0x000000101010101ULL) == 0x000000101010101ULL) fixedstone+=5;
-        else if((playerboard & 0x000000001010101ULL) == 0x000000001010101ULL) fixedstone+=4;
-        else if((playerboard & 0x000000000010101ULL) == 0x000000000010101ULL) fixedstone+=3;
-        else if((playerboard & 0x000000000000101ULL) == 0x000000000000101ULL) fixedstone+=2;
-        else if((playerboard & 0x000000000000001ULL) == 0x000000000000001ULL) fixedstone+=1;
-		
-        if((opponentboard & 0x001010101010101ULL) == 0x001010101010101ULL) fixedstone-=7;
-        else if((opponentboard & 0x000010101010101ULL) == 0x000010101010101ULL) fixedstone-=6;
-        else if((opponentboard & 0x000000101010101ULL) == 0x000000101010101ULL) fixedstone-=5;
-        else if((opponentboard & 0x000000001010101ULL) == 0x000000001010101ULL) fixedstone-=4;
-        else if((opponentboard & 0x000000000010101ULL) == 0x000000000010101ULL) fixedstone-=3;
-        else if((opponentboard & 0x000000000000101ULL) == 0x000000000000101ULL) fixedstone-=2;
-        else if((opponentboard & 0x000000000000001ULL) == 0x000000000000001ULL) fixedstone-=1;
-	}
-	//下
+    uint64_t mask = 0x80;
     if(((playerboard | opponentboard) & DOWN_BOARD) == DOWN_BOARD) {
-		fixedstone += __builtin_popcountll(playerboard & DOWN_BOARD);
-		fixedstone -= __builtin_popcountll(opponentboard & DOWN_BOARD);
-	} else {
-		//左下右方向
-        if((playerboard & 0x00000000000000feULL) == 0x00000000000000feULL) fixedstone+=7;
-        else if((playerboard & 0x00000000000000fcULL) == 0x00000000000000fcULL) fixedstone+=6;
-        else if((playerboard & 0x00000000000000f8ULL) == 0x00000000000000f8ULL) fixedstone+=5;
-        else if((playerboard & 0x00000000000000f0ULL) == 0x00000000000000f0ULL) fixedstone+=4;
-        else if((playerboard & 0x00000000000000e0ULL) == 0x00000000000000e0ULL) fixedstone+=3;
-        else if((playerboard & 0x00000000000000c0ULL) == 0x00000000000000c0ULL) fixedstone+=2;
-        else if((playerboard & 0x0000000000000080ULL) == 0x0000000000000080ULL) fixedstone+=1;
-        
-        if((opponentboard & 0x00000000000000feULL) == 0x00000000000000feULL) fixedstone-=7;
-        else if((opponentboard & 0x00000000000000fcULL) == 0x00000000000000fcULL) fixedstone-=6;
-        else if((opponentboard & 0x00000000000000f8ULL) == 0x00000000000000f8ULL) fixedstone-=5;
-        else if((opponentboard & 0x00000000000000f0ULL) == 0x00000000000000f0ULL) fixedstone-=4;
-        else if((opponentboard & 0x00000000000000e0ULL) == 0x00000000000000e0ULL) fixedstone-=3;
-        else if((opponentboard & 0x00000000000000c0ULL) == 0x00000000000000c0ULL) fixedstone-=2;
-        else if((opponentboard & 0x0000000000000080ULL) == 0x0000000000000080ULL) fixedstone-=1;
-		
-		//右下左方向
-        if((playerboard & 0x000000000000007fULL) == 0x000000000000007fULL) fixedstone+=7;
-        else if((playerboard & 0x000000000000003fULL) == 0x000000000000003fULL) fixedstone+=6;
-        else if((playerboard & 0x000000000000001fULL) == 0x000000000000001fULL) fixedstone+=5;
-        else if((playerboard & 0x000000000000000fULL) == 0x000000000000000fULL) fixedstone+=4;
-        else if((playerboard & 0x0000000000000007ULL) == 0x0000000000000007ULL) fixedstone+=3;
-        else if((playerboard & 0x0000000000000003ULL) == 0x0000000000000003ULL) fixedstone+=2;
-        else if((playerboard & 0x0000000000000001ULL) == 0x0000000000000001ULL) fixedstone+=1;
-        
-        if((opponentboard & 0x000000000000007fULL) == 0x000000000000007fULL) fixedstone-=7;
-        else if((opponentboard & 0x000000000000003fULL) == 0x000000000000003fULL) fixedstone-=6;
-        else if((opponentboard & 0x000000000000001fULL) == 0x000000000000001fULL) fixedstone-=5;
-        else if((opponentboard & 0x000000000000000fULL) == 0x000000000000000fULL) fixedstone-=4;
-        else if((opponentboard & 0x0000000000000007ULL) == 0x0000000000000007ULL) fixedstone-=3;
-        else if((opponentboard & 0x0000000000000003ULL) == 0x0000000000000003ULL) fixedstone-=2;
-        else if((opponentboard & 0x0000000000000001ULL) == 0x0000000000000001ULL) fixedstone-=1;
-		
-	}
-    if(playerboard & 0x8000000000000000ULL) fixedstone--;
-    if(playerboard & 0x0100000000000000ULL) fixedstone--;
-    if(playerboard & 0x0000000000000080ULL) fixedstone--;
-    if(playerboard & 0x0000000000000001ULL) fixedstone--;
-    
-    if(opponentboard & 0x8000000000000000ULL) fixedstone++;
-    if(opponentboard & 0x0100000000000000ULL) fixedstone++;
-    if(opponentboard & 0x0000000000000080ULL) fixedstone++;
-    if(opponentboard & 0x0000000000000001ULL) fixedstone++;
-    
-	return fixedstone;
+        fixedstone += __builtin_popcountll(playerboard & DOWN_BOARD);
+        fixedstone -= __builtin_popcountll(opponentboard & DOWN_BOARD);
+    } else {
+        if(mask & playerboard) {
+            fixedstone++;
+            mask>>=1;
+            if(mask & playerboard) {
+                fixedstone++;
+                mask>>=1;
+                if(mask & playerboard) {
+                    fixedstone++;
+                    mask>>=1;
+                    if(mask & playerboard) {
+                        fixedstone++;
+                        mask>>=1;
+                        if(mask & playerboard) {
+                            fixedstone++;
+                            mask>>=1;
+                            if(mask & playerboard) {
+                                fixedstone++;
+                                mask>>=1;
+                                if(mask & playerboard) {
+                                    fixedstone++;
+                                    mask>>=1;
+                                    if(mask & playerboard) {
+                                        fixedstone++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mask = 0x80;
+        if(mask & opponentboard) {
+            fixedstone--;
+            mask>>=1;
+            if(mask & opponentboard) {
+                fixedstone--;
+                mask>>=1;
+                if(mask & opponentboard) {
+                    fixedstone--;
+                    mask>>=1;
+                    if(mask & opponentboard) {
+                        fixedstone--;
+                        mask>>=1;
+                        if(mask & opponentboard) {
+                            fixedstone--;
+                            mask>>=1;
+                            if(mask & opponentboard) {
+                                fixedstone--;
+                                mask>>=1;
+                                if(mask & opponentboard) {
+                                    fixedstone--;
+                                    mask>>=1;
+                                    if(mask & opponentboard) {
+                                        fixedstone--;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mask = 0x1;
+        if(mask & playerboard) {
+            fixedstone++;
+            mask<<=1;
+            if(mask & playerboard) {
+                fixedstone++;
+                mask<<=1;
+                if(mask & playerboard) {
+                    fixedstone++;
+                    mask<<=1;
+                    if(mask & playerboard) {
+                        fixedstone++;
+                        mask<<=1;
+                        if(mask & playerboard) {
+                            fixedstone++;
+                            mask<<=1;
+                            if(mask & playerboard) {
+                                fixedstone++;
+                                mask<<=1;
+                                if(mask & playerboard) {
+                                    fixedstone++;
+                                    mask<<=1;
+                                    if(mask & playerboard) {
+                                        fixedstone++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mask = 0x1;
+        if(mask & opponentboard) {
+            fixedstone--;
+            mask<<=1;
+            if(mask & opponentboard) {
+                fixedstone--;
+                mask<<=1;
+                if(mask & opponentboard) {
+                    fixedstone--;
+                    mask<<=1;
+                    if(mask & opponentboard) {
+                        fixedstone--;
+                        mask<<=1;
+                        if(mask & opponentboard) {
+                            fixedstone--;
+                            mask<<=1;
+                            if(mask & opponentboard) {
+                                fixedstone--;
+                                mask<<=1;
+                                if(mask & opponentboard) {
+                                    fixedstone--;
+                                    mask<<=1;
+                                    if(mask & opponentboard) {
+                                        fixedstone--;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    return fixedstone;
+}
+
+inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard) {
+    return fixedstone_table.at(make_pair(playerboard & UP_BOARD, opponentboard & UP_BOARD)) + fixedstone_table.at(make_pair(playerboard & RIGHT_BOARD, opponentboard & RIGHT_BOARD)) + fixedstone_table.at(make_pair(playerboard & DOWN_BOARD, opponentboard & DOWN_BOARD)) + fixedstone_table.at(make_pair(playerboard & LEFT_BOARD, opponentboard & LEFT_BOARD));
 }
 
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex) {
     if(!playerboard) [[unlikely]] return MIN_INF;
     if(!opponentboard) [[unlikely]] return MAX_INF;
-    if(afterIndex >= 41) return (int)(score_stone(playerboard, opponentboard)*3.5 + score_fixedstone(playerboard, opponentboard)*20);
-    return (int)(score_stone(playerboard, opponentboard)*7.6 + score_fixedstone(playerboard, opponentboard)*25 + score_putable(playerboard, opponentboard)*2.5);
+    if(afterIndex >= 41) return (int)(score_stone(playerboard, opponentboard)*3.5+score_fixedstone_table(playerboard, opponentboard)*7);
+    return (int)(score_stone(playerboard, opponentboard)*7.6 + score_fixedstone_table(playerboard, opponentboard)*10 + score_putable(playerboard, opponentboard)*2.5);
 }
+
+

@@ -23,6 +23,7 @@ using namespace std;
     former_transpose_table_up.clear();
     former_transpose_table_low.clear();
     coordinate_y_x.clear();
+    fixedstone_table_init();
     [self reloadview];
     _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
     [self botput];

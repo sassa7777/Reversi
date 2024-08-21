@@ -69,4 +69,6 @@ ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table
 ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
 ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
 
+ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
+
 #endif /* variables_h */
