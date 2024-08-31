@@ -1670,7 +1670,7 @@
     </scenes>
     <resources>
         <image name="hako" width="128" height="128"/>
-        <image name="null" width="110" height="110"/>
+        <image name="null" width="432" height="432"/>
         <image name="title" width="16000" height="9000"/>
     </resources>
 </document>

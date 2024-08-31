@@ -96,7 +96,7 @@ using namespace std;
                         [buttons[i][j] setImage:[NSImage imageNamed:@"white"]];
                     }
                 } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"null2"]];
+                    [buttons[i][j] setImage:[NSImage imageNamed:@"nullb"]];
                 } else {
                     [buttons[i][j] setImage:[NSImage imageNamed:@"null"]];
                 }
@@ -114,7 +114,7 @@ using namespace std;
                         [buttons[i][j] setImage:[NSImage imageNamed:@"white"]];
                     }
                 } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"null2"]];
+                    [buttons[i][j] setImage:[NSImage imageNamed:@"nullb"]];
                 } else {
                     [buttons[i][j] setImage:[NSImage imageNamed:@"null"]];
                 }

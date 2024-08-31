@@ -24,6 +24,8 @@
 #include <bit>
 #include <execution>
 #include <ankerl/unordered_dense.h>
+#include <numeric>
+#include <cmath>
 
 extern char DEPTH;
 extern char search_depth;
@@ -152,5 +154,6 @@ inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentbo
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex);
 inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard);
+
 
 #endif /* othello_h */

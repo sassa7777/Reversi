@@ -14,7 +14,7 @@
     _strength_txt.stringValue = @"初心者よりはできる人向け向け";
     NSLog(@"start");
     botplayer = WHITE_TURN;
-    firstDEPTH = 10;
+    firstDEPTH = 11;
     Level = 5;
     
 }
@@ -64,19 +64,13 @@
         case 4:
             NSLog(@"L5");
             Level = 5;
-            firstDEPTH = 10;
+            firstDEPTH = 11;
             _strength_txt.stringValue = @"それなりに自信がある人向け";
             break;
         case 5:
             NSLog(@"L6");
             Level = 6;
             firstDEPTH = 12;
-            _strength_txt.stringValue = @"自信がある人向け";
-            break;
-        case 6:
-            NSLog(@"L7");
-            Level = 7;
-            firstDEPTH = 13;
             _strength_txt.stringValue = @"自信がある人向け";
             break;
         default:
