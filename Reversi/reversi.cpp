@@ -20,7 +20,6 @@ void reset() {
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
 	return;
-    
 }
 
 void fixedstone_table_init() {
@@ -100,10 +99,10 @@ void reversebit(uint64_t put) {
     mask[1] = 0x7f00000000000000ULL >> (63 - pos);
     mask[2] = 0x0102040810204000ULL >> (63 - pos);
     mask[3] = 0x0040201008040201ULL >> (63 - pos);
-    outflank[0] = (0x8000000000000000ULL >> __builtin_clzll(~b.opponentboard & (mask[0]))) & b.playerboard;
-    outflank[1] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[1]))) & b.playerboard;
-    outflank[2] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[2]))) & b.playerboard;
-    outflank[3] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[3]))) & b.playerboard;
+    outflank[0] = (0x8000000000000000ULL >> __builtin_clzll(((b.opponentboard) & (((mask[0]) & ((mask[0]) - 1)))) ^ (mask[0]))) & b.playerboard;
+    outflank[1] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[1]) & ((mask[1]) - 1)))) ^ (mask[1]))) & b.playerboard;
+    outflank[2] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[2]) & ((mask[2]) - 1)))) ^ (mask[2]))) & b.playerboard;
+    outflank[3] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[3]) & ((mask[3]) - 1)))) ^ (mask[3]))) & b.playerboard;
     flipped  = (-outflank[0] << 1) & mask[0];
     flipped |= (-outflank[1] << 1) & mask[1];
     flipped |= (-outflank[2] << 1) & mask[2];
@@ -135,10 +134,10 @@ inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uin
     mask[1] = 0x7f00000000000000ULL >> (pos);
     mask[2] = 0x0102040810204000ULL >> (pos);
     mask[3] = 0x0040201008040201ULL >> (pos);
-    outflank[0] = (0x8000000000000000ULL >> __builtin_clzll(~opponentboard & (mask[0]))) & playerboard;
-    outflank[1] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[1]))) & playerboard;
-    outflank[2] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[2]))) & playerboard;
-    outflank[3] = (0x8000000000000000ULL >> __builtin_clzll(~OM & (mask[3]))) & playerboard;
+    outflank[0] = (0x8000000000000000ULL >> __builtin_clzll(((opponentboard) & (((mask[0]) & ((mask[0]) - 1)))) ^ (mask[0]))) & playerboard;
+    outflank[1] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[1]) & ((mask[1]) - 1)))) ^ (mask[1]))) & playerboard;
+    outflank[2] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[2]) & ((mask[2]) - 1)))) ^ (mask[2]))) & playerboard;
+    outflank[3] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[3]) & ((mask[3]) - 1)))) ^ (mask[3]))) & playerboard;
     flipped  = (-outflank[0] << 1) & mask[0];
     flipped |= (-outflank[1] << 1) & mask[1];
     flipped |= (-outflank[2] << 1) & mask[2];
