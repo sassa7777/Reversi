@@ -16,7 +16,6 @@
     botplayer = WHITE_TURN;
     firstDEPTH = 11;
     Level = 5;
-    
 }
 
 - (void)select_player:(NSSegmentedControl *)sender __attribute__((ibaction)) {
