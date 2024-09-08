@@ -5,18 +5,17 @@
 //  Created by sasa on 2024/05/17.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 #import "reversi.h"
 
 
-@interface FirstViewController : NSViewController
+@interface FirstViewController : UIViewController
 
-@property (nonatomic, weak) IBOutlet NSSegmentedControl *strength_select;
-@property (nonatomic, weak) IBOutlet NSTextField *strength_txt;
-@property (nonatomic, weak) IBOutlet NSSegmentedControl *selectplayer;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *strength_select;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *selectplayer;
 
--(IBAction)select_strength:(NSSegmentedControl*)sender;
--(IBAction)select_player:(NSSegmentedControl*)sender;
+-(IBAction)select_strength:(UISegmentedControl*)sender;
+-(IBAction)select_player:(UISegmentedControl*)sender;
 -(IBAction)tapstart:(id)sender;
 
 @end

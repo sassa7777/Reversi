@@ -1,15 +1,18 @@
 //
 //  main.m
-//  Reversi
+//  reversi
 //
-//  Created by sasa on 2024/05/17.
+//  Created by sasa on 2024/09/04.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
 
-int main(int argc, const char * argv[]) {
+int main(int argc, char * argv[]) {
+    NSString * appDelegateClassName;
     @autoreleasepool {
         // Setup code that might create autoreleased objects goes here.
+        appDelegateClassName = NSStringFromClass([AppDelegate class]);
     }
-    return NSApplicationMain(argc, argv);
+    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }

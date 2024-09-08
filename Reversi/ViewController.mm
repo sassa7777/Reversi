@@ -14,8 +14,8 @@ using namespace std;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    [self.hakoface setImage:[NSImage imageNamed:@"hako"]];
-    self.close.hidden = YES;
+    [self.hakoface setImage:[UIImage imageNamed:@"hako"]];
+    self.close.hidden = NO;
     self.restart.hidden = YES;
     reset();
     transpose_table_up.clear();
@@ -25,10 +25,10 @@ using namespace std;
     coordinate_y_x.clear();
     fixedstone_table_init();
     [self reloadview];
-    _lev_txt.stringValue = [NSString stringWithFormat:@"Level: %d", Level];
+    _lev_txt.text = [NSString stringWithFormat:@"Level: %d", Level];
     [self botput];
     [self reloadview];
-    NSArray<NSArray<NSButton *>*> *buttons = @[
+    NSArray<NSArray<UIButton *>*> *buttons = @[
         @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
         @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
         @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
@@ -45,16 +45,12 @@ using namespace std;
     }
 }
 
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-    // Update the view, if already loaded.
-}
-
 - (void)close:(id)sender __attribute__((ibaction)) {
-    [[self.view window] close];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void)put:(NSButton *)sender __attribute__((ibaction)) {
+- (IBAction)put:(UIButton *)sender {
+    NSLog(@"tapped (%d, %d)", coordinate_y_x[sender].first, coordinate_y_x[sender].second);
     int results;
     results = putstone(coordinate_y_x[sender].first, coordinate_y_x[sender].second);
     if(!results) return;
@@ -67,7 +63,7 @@ using namespace std;
 }
 
 - (void)reloadview {
-    NSArray<NSArray<NSButton *> *> *buttons = @[
+    NSArray<NSArray<UIButton *> *> *buttons = @[
         @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
         @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
         @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
@@ -85,54 +81,54 @@ using namespace std;
             if(nowTurn == BLACK_TURN) {
                 if(b.playerboard & mask) {
                     if(tmpx == j && tmpy == i) {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"blackb"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"blackb"] forState:UIControlStateNormal];
                     } else {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"black"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"black"] forState:UIControlStateNormal];
                     }
                 } else if(b.opponentboard & mask) {
                     if(tmpx == j && tmpy == i) {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"whiteb"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"whiteb"] forState:UIControlStateNormal];
                     } else {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"white"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"white"] forState:UIControlStateNormal];
                     }
                 } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"nullb"]];
+                    [buttons[i][j] setImage:[UIImage imageNamed:@"nullb"] forState:UIControlStateNormal];
                 } else {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"null"]];
+                    [buttons[i][j] setImage:[UIImage imageNamed:@"null"] forState:UIControlStateNormal];
                 }
             } else {
                 if(b.opponentboard & mask) {
                     if(tmpx == j && tmpy == i) {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"blackb"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"blackb"] forState:UIControlStateNormal];
                     } else {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"black"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"black"] forState:UIControlStateNormal];
                     }
                 } else if(b.playerboard & mask) {
                     if(tmpx == j && tmpy == i) {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"whiteb"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"whiteb"] forState:UIControlStateNormal];
                     } else {
-                        [buttons[i][j] setImage:[NSImage imageNamed:@"white"]];
+                        [buttons[i][j] setImage:[UIImage imageNamed:@"white"] forState:UIControlStateNormal];
                     }
                 } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"nullb"]];
+                    [buttons[i][j] setImage:[UIImage imageNamed:@"nullb"] forState:UIControlStateNormal];
                 } else {
-                    [buttons[i][j] setImage:[NSImage imageNamed:@"null"]];
+                    [buttons[i][j] setImage:[UIImage imageNamed:@"null"] forState:UIControlStateNormal];
                 }
             }
             mask >>=1;
         }
     }
     if(nowTurn == BLACK_TURN) {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.playerboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.opponentboard)];
+        _black_cnt.text = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.playerboard)];
+        _white_cnt.text = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.opponentboard)];
     } else {
-        _black_cnt.stringValue = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.opponentboard)];
-        _white_cnt.stringValue = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.playerboard)];
+        _black_cnt.text = [NSString stringWithFormat:@"黒: %d", __builtin_popcountll(b.opponentboard)];
+        _white_cnt.text = [NSString stringWithFormat:@"白: %d", __builtin_popcountll(b.playerboard)];
     }
     NSLog(@"完了");
     if(isFinished()) {
         [self results];
-        [self performSegueWithIdentifier:@"results" sender:nil];
+//        [self performSegueWithIdentifier:@"results" sender:nil];
         self.close.hidden = NO;
         self.restart.hidden = NO;
     }
@@ -147,43 +143,43 @@ using namespace std;
         switch (winner()) {
             case 1:
                 NSLog(@"黒の勝ち！");
-                [self.hakoface setImage:[NSImage imageNamed:@"win"]];
-                _hakotext.stringValue = @"君の勝ち！";
+                [self.hakoface setImage:[UIImage imageNamed:@"win"]];
+                _hakotext.text = @"君の勝ち！";
                 break;
             case 2:
                 NSLog(@"白の勝ち！");
-                [self.hakoface setImage:[NSImage imageNamed:@"lose"]];
-                _hakotext.stringValue = @"僕の勝ち！";
+                [self.hakoface setImage:[UIImage imageNamed:@"lose"]];
+                _hakotext.text = @"僕の勝ち！";
                 break;
             default:
                 NSLog(@"引き分け");
-                [self.hakoface setImage:[NSImage imageNamed:@"draw"]];
-                _hakotext.stringValue = @"引き分け！";
+                [self.hakoface setImage:[UIImage imageNamed:@"draw"]];
+                _hakotext.text = @"引き分け！";
                 break;
         }
     } else {
         switch (winner()) {
             case 1:
                 NSLog(@"黒の勝ち！");
-                [self.hakoface setImage:[NSImage imageNamed:@"lose"]];
-                _hakotext.stringValue = @"僕の勝ち！";
+                [self.hakoface setImage:[UIImage imageNamed:@"lose"]];
+                _hakotext.text = @"僕の勝ち！";
                 break;
             case 2:
                 NSLog(@"白の勝ち！");
-                [self.hakoface setImage:[NSImage imageNamed:@"win"]];
-                _hakotext.stringValue = @"君の勝ち！";
+                [self.hakoface setImage:[UIImage imageNamed:@"win"]];
+                _hakotext.text = @"君の勝ち！";
                 break;
             default:
                 NSLog(@"引き分け");
-                [self.hakoface setImage:[NSImage imageNamed:@"draw"]];
-                _hakotext.stringValue = @"引き分け！";
+                [self.hakoface setImage:[UIImage imageNamed:@"draw"]];
+                _hakotext.text = @"引き分け！";
                 break;
         }
     }
 }
 
 - (void)switchbuttons:(BOOL)s {
-    NSArray<NSArray<NSButton *> *> *buttons = @[
+    NSArray<NSArray<UIButton *> *> *buttons = @[
         @[self.aa, self.ab, self.ac, self.ad, self.ae, self.af, self.ag, self.ah],
         @[self.ba, self.bb, self.bc, self.bd, self.be, self.bf, self.bg, self.bh],
         @[self.ca, self.cb, self.cc, self.cd, self.ce, self.cf, self.cg, self.ch],
@@ -194,12 +190,9 @@ using namespace std;
         @[self.ha, self.hb, self.hc, self.hd, self.he, self.hf, self.hg, self.hh]
     ];
     
-    for (NSArray<NSButton *> *buttonArray in buttons) {
-        for (NSButton *swiftButton in buttonArray) {
-            NSButtonCell *buttonCell = [swiftButton cell];
-            if ([buttonCell isKindOfClass:[NSButtonCell class]]) {
-                [(NSButtonCell *)buttonCell setImageDimsWhenDisabled:NO];
-            }
+    for (NSArray<UIButton *> *buttonArray in buttons) {
+        for (UIButton *swiftButton in buttonArray) {
+            [swiftButton setAdjustsImageWhenDisabled:NO];
         }
     }
     uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
@@ -221,8 +214,8 @@ using namespace std;
     if(isFinished() == false) {
         [self switchbuttons:NO];
         think_percent = 0;
-        _hakotext.stringValue = [NSString stringWithFormat:@"考え中...(%d%%)\n(時間がかかることがあります)", think_percent];
-        [self.hakoface setImage:[NSImage imageNamed:@"thinking"]];
+        _hakotext.text = [NSString stringWithFormat:@"考え中...(%d%%)\n(時間がかかることがあります)", think_percent];
+        [self.hakoface setImage:[UIImage imageNamed:@"thinking"]];
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
             int results = ai();
             if(results == 1) {
@@ -237,8 +230,8 @@ using namespace std;
             } else {
                 dispatch_async(dispatch_get_main_queue(), ^(void) {
                     [self switchbuttons:YES];
-                    self->_hakotext.stringValue = @"君の番だよ！\n置く場所を選んでね！";
-                    [self.hakoface setImage:[NSImage imageNamed:@"hako"]];
+                    self->_hakotext.text = @"君の番だよ！\n置く場所を選んでね！";
+                    [self.hakoface setImage:[UIImage imageNamed:@"hako"]];
                 });
             }
         });

@@ -1,13 +1,13 @@
 //
 //  AppDelegate.h
-//  Reversi
+//  reversi
 //
-//  Created by sasa on 2024/05/17.
+//  Created by sasa on 2024/09/04.
 //
 
-#import <Cocoa/Cocoa.h>
+#import <UIKit/UIKit.h>
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 
 @end

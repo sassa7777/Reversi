@@ -10,7 +10,7 @@
 using namespace std;
 
 void reset() {
-	printf("[*]初期化中...\n");
+    printf("[*]初期化中...\n");
     nowTurn = BLACK_TURN;
     nowIndex = 1;
     DEPTH = firstDEPTH;
@@ -19,7 +19,7 @@ void reset() {
     b.opponentboard = 0x0000001008000000ULL;
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
-	return;
+    return;
 }
 
 void fixedstone_table_init() {
@@ -48,26 +48,26 @@ void fixedstone_table_init() {
 }
 
 int putstone(int_fast8_t y, int_fast8_t x) {
-	tmpy = y;
-	tmpx = x;
-	uint64_t put = cordinate_to_bit(x, y);
-	legalboard = makelegalboard(b.playerboard, b.opponentboard);
-	if(canput(put, legalboard)) {
-		reversebit(put);
-		nowIndex++;
-		afterIndex++;
-		return 1;
-	} else {
-		return 0;
-	}
+    tmpy = y;
+    tmpx = x;
+    uint64_t put = cordinate_to_bit(x, y);
+    legalboard = makelegalboard(b.playerboard, b.opponentboard);
+    if(canput(put, legalboard)) {
+        reversebit(put);
+        nowIndex++;
+        afterIndex++;
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 inline uint64_t cordinate_to_bit(int_fast8_t put, int_fast8_t y) {
-	return 0x8000000000000000ULL >> ((y<<3)+put);
+    return 0x8000000000000000ULL >> ((y<<3)+put);
 }
 
 inline bool canput(const uint64_t &put, const uint64_t &legalboard) {
-	return ((put & legalboard) == put);
+    return ((put & legalboard) == put);
 }
 
 inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) {
@@ -120,7 +120,7 @@ void reversebit(uint64_t put) {
     flipped |= (outflank[1] - (uint32_t)(outflank[1] != 0)) & mask[1];
     flipped |= (outflank[2] - (uint32_t)(outflank[2] != 0)) & mask[2];
     flipped |= (outflank[3] - (uint32_t)(outflank[3] != 0)) & mask[3];
-	//反転
+    //反転
     b.playerboard ^= (put | flipped);
     b.opponentboard ^= flipped;
 }
@@ -162,11 +162,11 @@ inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uin
 }
 
 bool isPass() {
-	return (makelegalboard(b.playerboard, b.opponentboard) == 0 && makelegalboard(b.opponentboard, b.playerboard) != 0);
+    return (makelegalboard(b.playerboard, b.opponentboard) == 0 && makelegalboard(b.opponentboard, b.playerboard) != 0);
 }
 
 bool isFinished() {
-	return (makelegalboard(b.playerboard, b.opponentboard) == 0 && makelegalboard(b.opponentboard, b.playerboard) == 0);
+    return (makelegalboard(b.playerboard, b.opponentboard) == 0 && makelegalboard(b.opponentboard, b.playerboard) == 0);
 }
 
 void swapboard() {
@@ -174,7 +174,7 @@ void swapboard() {
     b.playerboard = b.playerboard ^ b.opponentboard;
     b.opponentboard = b.opponentboard ^ b.playerboard;
     b.playerboard = b.playerboard ^ b.opponentboard;
-	nowTurn = -nowTurn;
+    nowTurn = -nowTurn;
 }
 
 inline int move_ordering_value(uint64_t &playerboard, uint64_t &opponentboard) {
@@ -449,10 +449,10 @@ int search_nega_scout_beta(uint64_t &playerboard, uint64_t &opponentboard) {
 }
 
 int ai() {
-	if (nowTurn == -botplayer) {
-		return 0;
-	}
-	printf("[*]Botが考え中..\n");
+    if (nowTurn == -botplayer) {
+        return 0;
+    }
+    printf("[*]Botが考え中..\n");
     if(Level == 5 && nowIndex >= 29) {
         DEPTH = 12;
     }
@@ -464,17 +464,17 @@ int ai() {
         DEPTH = 20;
         afterIndex=60;
     }
-	tmpx = -1;
-	tmpy = -1;
-	tmpbit = 0;
-	think_percent = 0;
+    tmpx = -1;
+    tmpy = -1;
+    tmpbit = 0;
+    think_percent = 0;
     update_think_percent();
     transpose_table_up.clear();
     transpose_table_low.clear();
     former_transpose_table_up.clear();
     former_transpose_table_low.clear();
-	legalboard = makelegalboard(b.playerboard, b.opponentboard);
-	int putable_count = __builtin_popcountll(legalboard);
+    legalboard = makelegalboard(b.playerboard, b.opponentboard);
+    int putable_count = __builtin_popcountll(legalboard);
     visited_nodes = 0;
     int score = 0;
     if(Level >= 4) book(b.playerboard, b.opponentboard);
@@ -490,7 +490,7 @@ int ai() {
             score = search_nega_scout(b.playerboard, b.opponentboard);
         }
     }
-	think_percent = 100;
+    think_percent = 100;
     update_think_percent();
     int count = __builtin_clzll(tmpbit);
     tmpy = count / 8;
@@ -1127,13 +1127,13 @@ int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
 }
 
 int winner() {
-	if(nowTurn == BLACK_TURN) {
-		blackc = __builtin_popcountll(b.playerboard);
-		whitec = __builtin_popcountll(b.opponentboard);
-	} else {
-		whitec = __builtin_popcountll(b.playerboard);
-		blackc = __builtin_popcountll(b.opponentboard);
-	}
+    if(nowTurn == BLACK_TURN) {
+        blackc = __builtin_popcountll(b.playerboard);
+        whitec = __builtin_popcountll(b.opponentboard);
+    } else {
+        whitec = __builtin_popcountll(b.playerboard);
+        blackc = __builtin_popcountll(b.opponentboard);
+    }
     return (blackc > whitec) ? 1 : (blackc < whitec) ? 2 : 0;
 }
 
@@ -1141,7 +1141,7 @@ int winner() {
 
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard) {
     int score = 0;
-	
+    
 //    score += (__builtin_popcountll(playerboard & 0x8100000000000081ULL)-__builtin_popcountll(opponentboard & 0x8100000000000081ULL));
 //    score -= (__builtin_popcountll(playerboard & 0x183C3C180000ULL)-__builtin_popcountll(opponentboard & 0x183C3C180000ULL));
     score -= (__builtin_popcountll(playerboard & 0x182424180000ULL)-__builtin_popcountll(opponentboard & 0x182424180000ULL));
@@ -1153,7 +1153,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
     
 //    for (int i = 0; i < 10; ++i) score += cell_weight_score[i] * (__builtin_popcountll(playerboard & cell_weight_mask[i])-__builtin_popcountll(opponentboard & cell_weight_mask[i]));
     
-	//左
+    //左
     {
         switch (playerboard & LEFT_BOARD) {
             case 0x0000808080800000ULL:
@@ -1188,7 +1188,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
                 break;
         }
     }
-	//右
+    //右
     {
         switch (playerboard & RIGHT_BOARD) {
             case 0x0000010101010000ULL:
@@ -1223,7 +1223,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
                 break;
         }
     }
-	//上
+    //上
     {
         switch (playerboard & UP_BOARD) {
             case 0x3c00000000000000ULL:
@@ -1258,7 +1258,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
                 break;
         }
     }
-	//下
+    //下
     {
         switch (playerboard & DOWN_BOARD) {
             case 0x000000000000003cULL:
@@ -1361,7 +1361,7 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
     if((playerboard & 0x40810200000ULL) == 0x40810200000ULL) score += 2;
     if((opponentboard & 0x40810200000ULL) == 0x40810200000ULL) score -= 2;
     
-	return score;
+    return score;
 }
 
 inline int score_stone2(const uint64_t &playerboard, const uint64_t &opponentboard) {

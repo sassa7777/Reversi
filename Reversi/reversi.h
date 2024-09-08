@@ -53,7 +53,7 @@ public:
     int score;
 
     bool operator<(const board_root& b) const {
-        return this->score > b.score;
+        return score > b.score;
     }
     bool operator==(const board_root& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -70,7 +70,7 @@ public:
     int score;
 
     bool operator<(const board& b) const {
-        return this->score > b.score;
+        return score > b.score;
     }
     bool operator==(const board& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -88,7 +88,7 @@ public:
     int score;
 
     bool operator<(const board_finish& b) const {
-        return this->score < b.score;
+        return score < b.score;
     }
     bool operator==(const board_finish& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -104,7 +104,7 @@ public:
     int score;
 
     bool operator<(const board_finish_root& b) const {
-        return this->score < b.score;
+        return score < b.score;
     }
     bool operator==(const board_finish_root& other) const {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
@@ -113,12 +113,12 @@ public:
 
 extern board b;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
+extern ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
+extern ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
+extern ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
+extern ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
+extern ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
 
 //main functions
 void reset();
@@ -136,9 +136,9 @@ inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uin
 int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
 int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
 int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
-int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t &legalboard);
 int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
-int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t &legalboard);
 int search(uint64_t &playerboard, uint64_t &opponentboard);
 int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
