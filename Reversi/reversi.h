@@ -22,7 +22,6 @@
 #include <vector>
 #include <algorithm>
 #include <bit>
-#include <execution>
 #include <ankerl/unordered_dense.h>
 #include <numeric>
 #include <cmath>
@@ -113,10 +112,8 @@ public:
 
 extern board b;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
 
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
 
@@ -144,6 +141,11 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
+uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta);
+uint64_t flipHorizontal(uint64_t x);
+uint64_t flipVertical(uint64_t x);
+uint64_t flipDiagonalA1H8(uint64_t x);
+uint64_t flipDiagonalA8H1(uint64_t x);
 uint64_t rotateClockwise90(uint64_t x);
 
 void fixedstone_table_init();
