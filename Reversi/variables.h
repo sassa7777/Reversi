@@ -47,10 +47,8 @@ constexpr uint64_t moveorder_bit[64] = {
 };
 
 
-ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> transpose_table_up;
-ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> transpose_table_low;
-ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_up;
-ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> former_transpose_table_low;
+ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
+ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
 
 ankerl::unordered_dense::segmented_map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
 

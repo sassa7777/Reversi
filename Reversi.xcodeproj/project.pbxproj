@@ -304,7 +304,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
+				GCC_FAST_MATH = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_UNROLL_LOOPS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = reversi/Info.plist;
@@ -318,6 +320,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.0;
 				OTHER_CPLUSPLUSFLAGS = "-flto";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.reversi.mobile;
@@ -337,7 +340,9 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
+				GCC_FAST_MATH = YES;
 				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_UNROLL_LOOPS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				INFOPLIST_FILE = reversi/Info.plist;
@@ -351,6 +356,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LLVM_LTO = YES;
 				MARKETING_VERSION = 1.0;
 				OTHER_CPLUSPLUSFLAGS = "-flto";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.reversi.mobile;
