@@ -641,8 +641,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
         l = it->second.second;
         if(u <= alpha) return u;
         if(l >= beta) return l;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+        alpha = (l > alpha) ? l : alpha;
+        beta = (u < beta) ? u : beta;
     }
     if(u == l) return u;
     
@@ -677,8 +677,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
             }
             return var;
         }
-        alpha = max(alpha, var);
-        max_score = max(max_score, var);
+        alpha = (var > alpha) ? var : alpha;
+        max_score = (var > max_score) ? var : max_score;
         for (auto i = 1; i < count; ++i) {
             var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
@@ -697,8 +697,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                     return var;
                 }
             }
-            alpha = max(alpha, var);
-            max_score = max(var, max_score);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     } else {
         for (auto& m: moveorder) {
@@ -709,15 +709,11 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
-    if(max_score > alpha) {
-        transpose_table[board_state] = {max_score, max_score};
-    } else {
-        transpose_table[board_state] = {max_score, l};
-    }
+    transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
 }
 
@@ -735,8 +731,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
         l = it->second.second;
         if(u <= alpha) return u;
         if(l >= beta) return l;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+        alpha = (l > alpha) ? l : alpha;
+        beta = (u < beta) ? u : beta;
     }
     if(u == l) return u;
     
@@ -770,8 +766,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     } else {
         for (auto& m: moveorder) {
@@ -782,15 +778,11 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
-    if(max_score > alpha) {
-        transpose_table[board_state] = {max_score, max_score};
-    } else {
-        transpose_table[board_state] = {max_score, l};
-    }
+    transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
 }
 
@@ -807,8 +799,8 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
         l = it->second.second;
         if(u <= alpha) return u;
         if(l >= beta) return l;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+        alpha = (l > alpha) ? l : alpha;
+        beta = (u < beta) ? u : beta;
     }
     if(u == l) return u;
     
@@ -833,15 +825,11 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                 }
                 return var;
             }
-            alpha = max(var, alpha);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
-    if(max_score > alpha) {
-        transpose_table[board_state] = {max_score, max_score};
-    } else {
-        transpose_table[board_state] = {max_score, l};
-    }
+    transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
 }
 
@@ -932,8 +920,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
         l = it->second.second;
         if(u <= alpha) return u;
         if(l >= beta) return l;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+        alpha = (l > alpha) ? l : alpha;
+        beta = (u < beta) ? u : beta;
     }
     if(u == l) return u;
     
@@ -955,7 +943,7 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
         ++count;
     }
     
-    sort(moveorder, moveorder+count, [](const auto &a, const auto &b) {
+    sort(std::execution::unseq, moveorder, moveorder+count, [](const auto &a, const auto &b) {
         return a.score < b.score;
     });
     
@@ -967,8 +955,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
             }
             return var;
         }
-        alpha = max(alpha, var);
-        max_score = max(max_score, var);
+        alpha = (var > alpha) ? var : alpha;
+        max_score = (var > max_score) ? var : max_score;
         for (auto i = 1; i < count; ++i) {
             var = -nega_alpha_moveorder_finish(-alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
@@ -987,8 +975,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
                     return var;
                 }
             }
-            alpha = max(alpha, var);
-            max_score = max(var, max_score);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     } else {
         for (auto &m : moveorder) {
@@ -999,15 +987,11 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
-    if(max_score > alpha) {
-        transpose_table[board_state] = {max_score, max_score};
-    } else {
-        transpose_table[board_state] = {max_score, l};
-    }
+    transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
 }
 
@@ -1022,8 +1006,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
         l = it->second.second;
         if(u <= alpha) return u;
         if(l >= beta) return l;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+        alpha = (l > alpha) ? l : alpha;
+        beta = (u < beta) ? u : beta;
     }
     if(u == l) return u;
     
@@ -1045,7 +1029,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
         moveorder[count].score = __builtin_popcountll(moveorder[count].legalboard);
         ++count;
     }
-    sort(moveorder, moveorder+count, [](const auto &a, const auto &b) {
+    sort(std::execution::unseq, moveorder, moveorder+count, [](const auto &a, const auto &b) {
         return a.score < b.score;
     });
     
@@ -1058,8 +1042,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     } else {
         for (auto &m : moveorder) {
@@ -1070,15 +1054,11 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
                 }
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
-    if(max_score > alpha) {
-        transpose_table[board_state] = {max_score, max_score};
-    } else {
-        transpose_table[board_state] = {max_score, l};
-    }
+    transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
 }
 
@@ -1103,8 +1083,8 @@ int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
             if (var >= beta) {
                 return var;
             }
-            alpha = max(alpha, var);
-            max_score = max(max_score, var);
+            alpha = (var > alpha) ? var : alpha;
+            max_score = (var > max_score) ? var : max_score;
         }
     }
     return max_score;
@@ -1717,7 +1697,8 @@ inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponen
 }
 
 inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard) {
-    return fixedstone_table[make_pair(playerboard & UP_BOARD, opponentboard & UP_BOARD)] + fixedstone_table[make_pair(playerboard & RIGHT_BOARD, opponentboard & RIGHT_BOARD)] + fixedstone_table[make_pair(playerboard & DOWN_BOARD, opponentboard & DOWN_BOARD)] + fixedstone_table[make_pair(playerboard & LEFT_BOARD, opponentboard & LEFT_BOARD)] - __builtin_popcountll(playerboard & 0x8100000000000081ULL) + __builtin_popcountll(opponentboard & 0x8100000000000081ULL);
+    return (!(0x8100000000000081ULL & (playerboard | opponentboard))) ? 0 :
+    (fixedstone_table[make_pair(playerboard & UP_BOARD, opponentboard & UP_BOARD)] + fixedstone_table[make_pair(playerboard & RIGHT_BOARD, opponentboard & RIGHT_BOARD)] + fixedstone_table[make_pair(playerboard & DOWN_BOARD, opponentboard & DOWN_BOARD)] + fixedstone_table[make_pair(playerboard & LEFT_BOARD, opponentboard & LEFT_BOARD)] - __builtin_popcountll(playerboard & 0x8100000000000081ULL) + __builtin_popcountll(opponentboard & 0x8100000000000081ULL));
 }
 
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex) {

@@ -25,6 +25,7 @@
 #include <ankerl/unordered_dense.h>
 #include <numeric>
 #include <cmath>
+#include <execution>
 
 extern char DEPTH;
 extern char search_depth;

@@ -366,7 +366,16 @@
 					"-mtune=apple-m1",
 					"-flto",
 				);
-				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-fexperimental-library",
+				);
+				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-fexperimental-library",
+				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -430,7 +439,16 @@
 					"-mtune=apple-m1",
 					"-flto",
 				);
-				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = "$(OTHER_CFLAGS)";
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-fexperimental-library",
+				);
+				"OTHER_CPLUSPLUSFLAGS[arch=arm64]" = (
+					"$(OTHER_CFLAGS)",
+					"-stdlib=libc++",
+					"-fexperimental-library",
+				);
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
