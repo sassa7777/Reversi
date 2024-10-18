@@ -133,7 +133,7 @@ constexpr uint64_t opponent_checks[] = {
     0x0000000000000001ULL, 0x0000000000000001ULL, 0x0000000000000001ULL
 };
 
-constexpr int mask_scores[] = {2, 13, 4, 4};
+constexpr int mask_scores[] = {1, 13, 4, 4};
 constexpr uint64_t left_cases[] = {0x0000808080800000ULL, 0x0080808080808000ULL, 0x0000808080808000ULL, 0x0080808080800000ULL};
 constexpr uint64_t right_cases[] = {0x0000010101010000ULL, 0x0001010101010100ULL, 0x0000010101010100ULL, 0x0001010101010000ULL};
 constexpr uint64_t up_cases[] = {0x3c00000000000000ULL, 0x7e00000000000000ULL, 0x3E00000000000000ULL, 0x7C00000000000000ULL};
@@ -153,7 +153,6 @@ int putstone(int_fast8_t y, int_fast8_t x);
 inline uint64_t cordinate_to_bit(int_fast8_t x, int_fast8_t y);
 inline bool canput(const uint64_t &put, const uint64_t &legalboard);
 inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o);
-void reversebit(uint64_t put);
 bool isPass();
 bool isFinished();
 void swapboard();
@@ -184,6 +183,7 @@ inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentbo
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard, const char &afterIndex);
 inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponentboard);
 
 
 #endif /* othello_h */
