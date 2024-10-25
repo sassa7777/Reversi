@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 73;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -145,7 +145,7 @@
 				Base,
 			);
 			mainGroup = 5A4903B82C0C25730048A1A3;
-			preferredProjectObjectVersion = 73;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 5A4903C22C0C25730048A1A3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -336,7 +336,7 @@
 				GCC_FAST_MATH = YES;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -429,7 +429,7 @@
 				GCC_FAST_MATH = YES;
 				GCC_GENERATE_TEST_COVERAGE_FILES = YES;
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
 				GCC_VERSION = "";
 				GENERATE_INFOPLIST_FILE = YES;

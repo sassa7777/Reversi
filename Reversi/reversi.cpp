@@ -1125,11 +1125,11 @@ inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponen
     constexpr uint64_t RIGHT_MASK = 0xFEFEFEFEFEFEFEFEULL;
     uint64_t free_mask = 0;
     free_mask |= (free_board & LEFT_MASK) << 1;
-    free_mask |= (free_board & RIGHT_MASK) << 9;
+    free_mask |= (free_board & LEFT_MASK) << 9;
     free_mask |= (free_board & RIGHT_MASK) << 7;
     free_mask |= free_board << 8;
     free_mask |= (free_board & RIGHT_MASK) >> 1;
-    free_mask |= (free_board & LEFT_MASK) >> 9;
+    free_mask |= (free_board & RIGHT_MASK) >> 9;
     free_mask |= (free_board & LEFT_MASK) >> 7;
     free_mask |= free_board >> 8;
     
@@ -1140,7 +1140,7 @@ inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard
     if(!playerboard) [[unlikely]] return MIN_INF;
     if(!opponentboard) [[unlikely]] return MAX_INF;
     if(afterIndex >= 64) return (__builtin_popcountll(playerboard)-__builtin_popcountll(opponentboard));
-    if(afterIndex >= 45) return (score_stone(playerboard, opponentboard)*3+score_fixedstone_table(playerboard, opponentboard)*12);
-    if(afterIndex >= 41) return (score_stone(playerboard, opponentboard)*3+score_fixedstone_table(playerboard, opponentboard)*12 + /*score_putable(playerboard, opponentboard)*/ score_null_place(playerboard, opponentboard));
-    return (score_stone(playerboard, opponentboard)*6 + score_fixedstone_table(playerboard, opponentboard)*24 + /*score_putable(playerboard, opponentboard)*4*/ + score_null_place(playerboard, opponentboard)*2);
+    if(afterIndex >= 45) return (score_stone(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*4);
+    if(afterIndex >= 41) return (score_stone(playerboard, opponentboard)*3+score_fixedstone_table(playerboard, opponentboard)*12 + score_putable(playerboard, opponentboard) /*score_null_place(playerboard, opponentboard)*/);
+    else return (score_stone(playerboard, opponentboard)*4 + score_fixedstone_table(playerboard, opponentboard)*16 + score_putable(playerboard, opponentboard) + score_null_place(playerboard, opponentboard));
 }
