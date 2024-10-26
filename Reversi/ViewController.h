@@ -84,6 +84,7 @@
 @property (nonatomic, weak) IBOutlet NSTextField *white_cnt;
 @property (nonatomic, weak) IBOutlet NSTextField *black_cnt;
 @property (nonatomic, weak) IBOutlet NSTextField *lev_txt;
+@property (nonatomic, weak) IBOutlet NSSwitch *search_mode;
 
 -(IBAction)put:(NSButton*)sender;
 -(IBAction)close:(id)sender;

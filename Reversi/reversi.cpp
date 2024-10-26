@@ -367,6 +367,7 @@ int ai() {
         DEPTH = 20;
         afterIndex=60;
     }
+    memset(box, 0, sizeof(box));
 	tmpx = -1;
 	tmpy = -1;
 	tmpbit = 0;
@@ -526,6 +527,8 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
                     tmpbit = moveorder[i].put;
                 }
             }
+            int pos = __builtin_clzll(moveorder[i].put);
+            box[pos / 8][pos % 8] = var;
             alpha = max(var, alpha);
         }
         printf("depth: %d Visited nodes %d\n", search_depth, visited_nodes);
@@ -1014,6 +1017,31 @@ int winner() {
 //evaluation
 
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard) {
+    constexpr uint64_t corner_masks[] = {
+        0x4000000000000000ULL, 0x0080000000000000ULL, 0x0040000000000000ULL,
+        0x0200000000000000ULL, 0x0001000000000000ULL, 0x0002000000000000ULL,
+        0x0000000000000040ULL, 0x0000000000008000ULL, 0x0000000000004000ULL,
+        0x0000000000000002ULL, 0x0000000000000100ULL, 0x0000000000000200ULL
+    };
+    constexpr int corner_scores[] = {6, 6, 7, 6, 6, 7, 6, 6, 7, 6, 6, 7};
+    constexpr uint64_t opponent_checks[] = {
+        0x8000000000000000ULL, 0x8000000000000000ULL, 0x8000000000000000ULL,
+        0x0100000000000000ULL, 0x0100000000000000ULL, 0x0100000000000000ULL,
+        0x0000000000000080ULL, 0x0000000000000080ULL, 0x0000000000000080ULL,
+        0x0000000000000001ULL, 0x0000000000000001ULL, 0x0000000000000001ULL
+    };
+
+    constexpr int mask_scores[] = {1, 13, 4, 4};
+    constexpr uint64_t left_cases[] = {0x0000808080800000ULL, 0x0080808080808000ULL, 0x0000808080808000ULL, 0x0080808080800000ULL};
+    constexpr uint64_t right_cases[] = {0x0000010101010000ULL, 0x0001010101010100ULL, 0x0000010101010100ULL, 0x0001010101010000ULL};
+    constexpr uint64_t up_cases[] = {0x3c00000000000000ULL, 0x7e00000000000000ULL, 0x3E00000000000000ULL, 0x7C00000000000000ULL};
+    constexpr uint64_t down_cases[] = {0x000000000000003cULL, 0x000000000000007eULL, 0x000000000000003eULL, 0x000000000000007cULL};
+
+    constexpr uint64_t patterns[] = {
+        0x182424180000ULL, 0x003C424242423C00ULL, 0x4281000000008142ULL, 0x0042000000004200ULL
+    };
+    constexpr int multipliers[] = {1, 3, 6, 7};
+
     int score = 0;
 #pragma clang loop vectorize(enable)
     for (int i = 0; i < 4; ++i) {

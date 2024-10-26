@@ -44,6 +44,8 @@ extern char firstDEPTH;
 extern char afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
+extern bool search_mode_enabled;
+extern int box[8][8];
 
 struct board_root{
 public:
@@ -117,33 +119,6 @@ extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
 
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
-
-
-constexpr uint64_t corner_masks[] = {
-    0x4000000000000000ULL, 0x0080000000000000ULL, 0x0040000000000000ULL,
-    0x0200000000000000ULL, 0x0001000000000000ULL, 0x0002000000000000ULL,
-    0x0000000000000040ULL, 0x0000000000008000ULL, 0x0000000000004000ULL,
-    0x0000000000000002ULL, 0x0000000000000100ULL, 0x0000000000000200ULL
-};
-constexpr int corner_scores[] = {6, 6, 7, 6, 6, 7, 6, 6, 7, 6, 6, 7};
-constexpr uint64_t opponent_checks[] = {
-    0x8000000000000000ULL, 0x8000000000000000ULL, 0x8000000000000000ULL,
-    0x0100000000000000ULL, 0x0100000000000000ULL, 0x0100000000000000ULL,
-    0x0000000000000080ULL, 0x0000000000000080ULL, 0x0000000000000080ULL,
-    0x0000000000000001ULL, 0x0000000000000001ULL, 0x0000000000000001ULL
-};
-
-constexpr int mask_scores[] = {1, 13, 4, 4};
-constexpr uint64_t left_cases[] = {0x0000808080800000ULL, 0x0080808080808000ULL, 0x0000808080808000ULL, 0x0080808080800000ULL};
-constexpr uint64_t right_cases[] = {0x0000010101010000ULL, 0x0001010101010100ULL, 0x0000010101010100ULL, 0x0001010101010000ULL};
-constexpr uint64_t up_cases[] = {0x3c00000000000000ULL, 0x7e00000000000000ULL, 0x3E00000000000000ULL, 0x7C00000000000000ULL};
-constexpr uint64_t down_cases[] = {0x000000000000003cULL, 0x000000000000007eULL, 0x000000000000003eULL, 0x000000000000007cULL};
-
-constexpr uint64_t patterns[] = {
-    0x182424180000ULL, 0x003C424242423C00ULL, 0x4281000000008142ULL, 0x0042000000004200ULL
-};
-constexpr int multipliers[] = {1, 3, 6, 7};
-
 
 //main functions
 void reset();
