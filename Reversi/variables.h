@@ -30,6 +30,7 @@ char afterIndex;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;
+int box[8][8];
 
 board b;
 
