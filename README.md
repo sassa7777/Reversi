@@ -5,6 +5,7 @@ C++/Objective-Cで書かれていて、NegaScout法/ビットボードを使用�
 
 依存関係: 
 [unordered_dense](https://github.com/martinus/unordered_dense)
+[llvm](https://formulae.brew.sh/formula/llvm)
 
 参考にしたサイト:
 [オセロAIの教科書](https://note.com/nyanyan_cubetech/m/m54104c8d2f12)
