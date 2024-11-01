@@ -320,13 +320,15 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = Reversi/Reversi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				CXX = "/opt/homebrew/opt/llvm/bin/clang++";
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -338,7 +340,7 @@
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = /opt/homebrew/opt/llvm/bin/clang;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
@@ -347,11 +349,13 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD = /opt/homebrew/opt/llvm/bin/clang;
+				LDPLUSPLUS = "/opt/homebrew/opt/llvm/bin/clang++";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = /opt/homebrew/opt/libomp/lib;
+				LIBRARY_SEARCH_PATHS = "";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.0;
@@ -360,11 +364,51 @@
 					"-flto",
 					"-march=x86-64-v3",
 					"-ffp-contract=fast",
+					"-mllvm",
+					"-polly",
+					"-mllvm",
+					"-extra-vectorizer-passes",
+					"-mllvm",
+					"-enable-cond-stores-vec",
+					"-mllvm",
+					"-slp-vectorize-hor-store",
+					"-mllvm",
+					"-enable-loopinterchange",
+					"-mllvm",
+					"-enable-loop-distribute",
+					"-mllvm",
+					"-enable-unroll-and-jam",
+					"-mllvm",
+					"-enable-loop-flatten",
+					"-mllvm",
+					"-aggressive-ext-opt",
+					"-mllvm",
+					"-unroll-runtime-multi-exit",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-march=armv8.4-a+simd",
 					"-mtune=apple-m1",
 					"-flto",
+					"-mllvm",
+					"-polly",
+					"-mllvm",
+					"-extra-vectorizer-passes",
+					"-mllvm",
+					"-enable-cond-stores-vec",
+					"-mllvm",
+					"-slp-vectorize-hor-store",
+					"-mllvm",
+					"-enable-loopinterchange",
+					"-mllvm",
+					"-enable-loop-distribute",
+					"-mllvm",
+					"-enable-unroll-and-jam",
+					"-mllvm",
+					"-enable-loop-flatten",
+					"-mllvm",
+					"-aggressive-ext-opt",
+					"-mllvm",
+					"-unroll-runtime-multi-exit",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -377,24 +421,8 @@
 					"-fexperimental-library",
 				);
 				OTHER_LDFLAGS = (
-					"-Wl,-O3",
-					"-Wl,-mllvm,-march=x86-64-v3",
-					"-Wl,-mllvm,-fp-contract=fast",
-					"-Wl,-mllvm,-import-instr-limit=30",
-				);
-				"OTHER_LDFLAGS[arch=arm64]" = (
-					"-Ofast",
-					"-march=armv8.3-a+simd",
-					"-mllvm",
-					"-polly",
-					"-mllvm",
-					"-polly-detect-profitability-min-per-loop-insts=40",
-					"-mllvm",
-					"-polly-invariant-load-hoisting",
-					"-mllvm",
-					"-polly-run-dce",
-					"-mllvm",
-					"-polly-vectorizer=stripmine",
+					"-framework",
+					AppKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -413,13 +441,15 @@
 				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CC = /opt/homebrew/opt/llvm/bin/clang;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
-				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_MODULES = NO;
 				CODE_SIGN_ENTITLEMENTS = Reversi/Reversi.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				CXX = "/opt/homebrew/opt/llvm/bin/clang++";
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = FK8QHR7LYX;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -431,7 +461,7 @@
 				GCC_INSTRUMENT_PROGRAM_FLOW_ARCS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = /opt/homebrew/opt/llvm/bin/clang;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/local/include,
@@ -440,11 +470,13 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD = /opt/homebrew/opt/llvm/bin/clang;
+				LDPLUSPLUS = "/opt/homebrew/opt/llvm/bin/clang++";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				LIBRARY_SEARCH_PATHS = /opt/homebrew/opt/libomp/lib;
+				LIBRARY_SEARCH_PATHS = "";
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MARKETING_VERSION = 1.0;
@@ -452,11 +484,51 @@
 					"-flto",
 					"-march=x86-64-v3",
 					"-ffp-contract=fast",
+					"-mllvm",
+					"-polly",
+					"-mllvm",
+					"-extra-vectorizer-passes",
+					"-mllvm",
+					"-enable-cond-stores-vec",
+					"-mllvm",
+					"-slp-vectorize-hor-store",
+					"-mllvm",
+					"-enable-loopinterchange",
+					"-mllvm",
+					"-enable-loop-distribute",
+					"-mllvm",
+					"-enable-unroll-and-jam",
+					"-mllvm",
+					"-enable-loop-flatten",
+					"-mllvm",
+					"-aggressive-ext-opt",
+					"-mllvm",
+					"-unroll-runtime-multi-exit",
 				);
 				"OTHER_CFLAGS[arch=arm64]" = (
 					"-march=armv8.4-a+simd",
 					"-mtune=apple-m1",
 					"-flto",
+					"-mllvm",
+					"-polly",
+					"-mllvm",
+					"-extra-vectorizer-passes",
+					"-mllvm",
+					"-enable-cond-stores-vec",
+					"-mllvm",
+					"-slp-vectorize-hor-store",
+					"-mllvm",
+					"-enable-loopinterchange",
+					"-mllvm",
+					"-enable-loop-distribute",
+					"-mllvm",
+					"-enable-unroll-and-jam",
+					"-mllvm",
+					"-enable-loop-flatten",
+					"-mllvm",
+					"-aggressive-ext-opt",
+					"-mllvm",
+					"-unroll-runtime-multi-exit",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -469,24 +541,8 @@
 					"-fexperimental-library",
 				);
 				OTHER_LDFLAGS = (
-					"-Wl,-O3",
-					"-Wl,-mllvm,-march=x86-64-v3",
-					"-Wl,-mllvm,-fp-contract=fast",
-					"-Wl,-mllvm,-import-instr-limit=30",
-				);
-				"OTHER_LDFLAGS[arch=arm64]" = (
-					"-Ofast",
-					"-march=armv8.3-a+simd",
-					"-mllvm",
-					"-polly",
-					"-mllvm",
-					"-polly-detect-profitability-min-per-loop-insts=40",
-					"-mllvm",
-					"-polly-invariant-load-hoisting",
-					"-mllvm",
-					"-polly-run-dce",
-					"-mllvm",
-					"-polly-vectorizer=stripmine",
+					"-framework",
+					AppKit,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";

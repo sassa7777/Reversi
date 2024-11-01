@@ -98,7 +98,7 @@ inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uin
     uint64_t flipped, OM, outflank[4], mask[4];
     int pos = __builtin_clzll(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
-
+    
     mask[0] = 0x0080808080808080ULL >> (pos);
     mask[1] = 0x7f00000000000000ULL >> (pos);
     mask[2] = 0x0102040810204000ULL >> (pos);
@@ -592,8 +592,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
             }
             return var;
         }
-        alpha = (var > alpha) ? var : alpha;
-        max_score = (var > max_score) ? var : max_score;
+        alpha = max(alpha, var);
+        max_score = max(max_score, var);
         for (auto i = 1; i < count; ++i) {
             var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
@@ -612,8 +612,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                     return var;
                 }
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     } else {
         for (auto& m: moveorder) {
@@ -624,8 +624,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     }
     transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
@@ -681,8 +681,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     } else {
         for (auto& m: moveorder) {
@@ -693,8 +693,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     }
     transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
@@ -740,8 +740,8 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     }
     transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
@@ -838,9 +838,9 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
             }
             return var;
         }
-        alpha = (var > alpha) ? var : alpha;
-        max_score = (var > max_score) ? var : max_score;
-        for (auto i = 1; i < count; ++i) {
+        alpha = max(alpha, var);
+        max_score = max(max_score, var);
+        for (int i = 1; i < count; ++i) {
             var = -nega_alpha_moveorder_finish(-alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard, moveorder[i].legalboard);
             if (var >= beta) {
                 if(var > l) {
@@ -858,8 +858,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
                     return var;
                 }
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     } else {
         for (auto &m : moveorder) {
@@ -870,8 +870,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     }
     transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
@@ -926,8 +926,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     } else {
         for (auto &m : moveorder) {
@@ -938,8 +938,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
                 }
                 return var;
             }
-            alpha = (var > alpha) ? var : alpha;
-            max_score = (var > max_score) ? var : max_score;
+            alpha = max(alpha, var);
+            max_score = max(max_score, var);
         }
     }
     transpose_table[board_state] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
@@ -1142,4 +1142,5 @@ inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard
     if(afterIndex >= 45) return (score_stone(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*4);
     if(afterIndex >= 41) return (score_stone(playerboard, opponentboard)*4+score_fixedstone_table(playerboard, opponentboard)*16 + score_putable(playerboard, opponentboard));
     else return (score_stone(playerboard, opponentboard)*6 + score_fixedstone_table(playerboard, opponentboard)*24 + score_putable(playerboard, opponentboard)*2 + score_null_place(playerboard, opponentboard)/2);
+    
 }
