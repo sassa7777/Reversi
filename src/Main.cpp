@@ -132,7 +132,9 @@ void Main()
                     }
                 }
             }
-            if (isPass()) swapboard();
+            if (isPass()) {
+                swapboard();
+            }
             if (SimpleGUI::Button(U"リセット", Vec2{350, 550}, 100)) {
                 reset();
             }
