@@ -49,11 +49,11 @@ void fixedstone_table_init() {
 }
 
 int putstone(int_fast8_t y, int_fast8_t x) {
-    tmpy = y;
-    tmpx = x;
     uint64_t put = cordinate_to_bit(x, y);
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     if(canput(put, legalboard)) {
+        tmpy = y;
+        tmpx = x;
         uint64_t rev = Flip(put, b.playerboard, b.opponentboard);
         b.playerboard ^= (rev | put);
         b.opponentboard ^= rev;
@@ -369,8 +369,8 @@ int ai() {
         afterIndex=60;
     }
     memset(box, 0, sizeof(box));
-    tmpx = -1;
-    tmpy = -1;
+//    tmpx = -1;
+//    tmpy = -1;
     tmpbit = 0;
     think_percent = 0;
 //    update_think_percent();
@@ -393,6 +393,10 @@ int ai() {
     }
     think_percent = 100;
 //    update_think_percent();
+    if (tmpbit == 0) {
+        cout << "error" << endl;
+        return 0;
+    }
     int count = __builtin_clzll(tmpbit);
     tmpy = count / 8;
     tmpx = count % 8;
