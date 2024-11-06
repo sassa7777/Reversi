@@ -113,9 +113,7 @@ void Main()
                 reset();
             }
         } else if (game_status == 1) {
-            if (isFinished()) {
-                game_status = 3;
-            }
+            if (isFinished()) game_status = 3;
             if (nowTurn == botplayer) {
                 if (!result.isValid()) {
                     System::Sleep(200);
