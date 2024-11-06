@@ -3,6 +3,8 @@ C++で書かれていて、NegaScout法/ビットボードを使用していま�
 
 レベル5以上は残り25手で完全読みを行います。
 
+**Siv3d版はまだ未完成です。**
+
 依存関係: 
 [unordered_dense](https://github.com/martinus/unordered_dense),
 [Siv3d](https://siv3d.github.io/)
