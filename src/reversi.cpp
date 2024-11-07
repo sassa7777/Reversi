@@ -379,6 +379,9 @@ int ai() {
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
 //    afterIndex = 60;
     int putable_count = __builtin_popcountll(legalboard);
+    if (putable_count == 0) {
+        swapboard();
+    }
     visited_nodes = 0;
     int score = 0;
     book(b.playerboard, b.opponentboard);

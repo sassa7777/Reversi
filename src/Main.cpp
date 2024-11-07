@@ -1,6 +1,5 @@
 #include <Siv3D.hpp> // Siv3D v0.6.15
 #include "reversi.h"
-#include <array>
 
 using namespace std;
 using App = SceneManager<String>;
@@ -62,6 +61,7 @@ void Main()
     fixedstone_table_init();
     //テキストのフォント
     Font font{FontMethod::MSDF, 48};
+    Font result_font{FontMethod::MSDF, 20};
     //画像読み込み
     const Texture null(U"../assets/null.png");
     const Texture nullb(U"../assets/nullb.png");
@@ -136,12 +136,21 @@ void Main()
                 swapboard();
             }
             if (SimpleGUI::Button(U"リセット", Vec2{350, 550}, 100)) {
-                reset();
+                if (!result.isValid()) {
+                    reset();
+                }
+            }
+            if (SimpleGUI::Button(U"閉じる", Vec2{350, 600}, 100)) {
+                if (!result.isValid()) {
+                    game_status = 0;
+                }
             }
             DrawBoard(null, nullb, black, blackb, white, whiteb, stone_size, stone_edge);
         } else {
             if (nowTurn == BLACK_TURN) {
-                font(U"黒: {}, 白: {}"_fmt(__builtin_popcountll(b.playerboard),__builtin_popcountll(b.opponentboard))).draw(300, 550);
+                result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(__builtin_popcountll(b.playerboard),__builtin_popcountll(b.opponentboard))).drawAt(400, 550);
+            } else {
+                result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(__builtin_popcountll(b.opponentboard),__builtin_popcountll(b.playerboard))).drawAt(400, 550);
             }
             DrawBoard(null, nullb, black, blackb, white, whiteb, stone_size, stone_edge);
         }
