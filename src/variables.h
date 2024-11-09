@@ -12,21 +12,21 @@
 #include "../book/cow.h"
 #include "../book/tiger.h"
 
-char DEPTH;
-char search_depth;
-char Level;
-char px, py;
-char whitec;
-char blackc;
-char tmpx, tmpy;
+int DEPTH;
+int search_depth;
+int Level;
+int px, py;
+int whitec;
+int blackc;
+int tmpx, tmpy;
 uint64_t tmpbit;
 int think_percent;
-char think_count;
-char botplayer;
-char nowTurn;
-char nowIndex;
-char firstDEPTH;
-char afterIndex;
+int think_count;
+int botplayer;
+int nowTurn;
+int nowIndex;
+int firstDEPTH;
+int afterIndex;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;
@@ -34,12 +34,12 @@ int box[8][8];
 
 board b;
 
-constexpr char mpc_depth[14] {
+constexpr int mpc_depth[14] {
     0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
 };
 
 
-constexpr char moveorder[64][2] = {
+constexpr int moveorder[64][2] = {
     {0,0}, {0,7}, {7,0}, {7,7}, {0,2}, {0,5}, {2,0}, {2,2}, {2,5}, {2,7}, {5,0}, {5,2}, {5,5}, {5,7}, {7,2}, {7,5}, {0,3}, {0,4}, {2,3}, {2,4}, {3,0}, {3,2}, {3,3}, {3,4}, {3,5}, {3,7}, {4,0}, {4,2}, {4,3}, {4,4}, {4,5}, {4,7}, {5,3}, {5,4}, {7,3}, {7,4}, {1,2}, {1,3}, {1,4}, {1,5}, {2,1}, {2,6}, {3,1}, {3,6}, {4,1}, {4,6}, {5,1}, {5,6}, {6,2}, {6,3}, {6,4}, {6,5}, {0,1}, {0,6}, {1,0}, {1,7}, {6,0}, {6,7}, {7,1}, {7,6}, {1,1}, {1,6}, {6,1}, {6,6}
 };
 

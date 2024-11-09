@@ -27,21 +27,21 @@
 #include <cmath>
 #include <execution>
 
-extern char DEPTH;
-extern char search_depth;
-extern char Level;
-extern char px, py;
-extern char whitec;
-extern char blackc;
-extern char tmpx, tmpy;
+extern int DEPTH;
+extern int search_depth;
+extern int Level;
+extern int px, py;
+extern int whitec;
+extern int blackc;
+extern int tmpx, tmpy;
 extern uint64_t tmpbit;
 extern int think_percent;
-extern char think_count;
-extern char botplayer;
-extern char nowTurn;
-extern char nowIndex;
-extern char firstDEPTH;
-extern char afterIndex;
+extern int think_count;
+extern int botplayer;
+extern int nowTurn;
+extern int nowIndex;
+extern int firstDEPTH;
+extern int afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
