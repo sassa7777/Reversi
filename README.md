@@ -15,3 +15,4 @@ C++で書かれていて、NegaScout法/ビットボードを使用していま�
 
 参考にしたサイト:
 [オセロAIの教科書](https://note.com/nyanyan_cubetech/m/m54104c8d2f12)
+[bitboard tricks](http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm)
