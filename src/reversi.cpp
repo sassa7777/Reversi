@@ -21,6 +21,7 @@ void reset() {
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
+    cout << "Level: " << Level << endl;
     return;
 }
 
@@ -1024,11 +1025,9 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
     constexpr int multipliers[] = {1, 3, 6, 7};
 
     int score = 0;
-#pragma clang loop vectorize(enable)
     for (int i = 0; i < 4; ++i) {
         score -= multipliers[i] * (__builtin_popcountll(playerboard & patterns[i])-__builtin_popcountll(opponentboard & patterns[i]));
     }
-#pragma clang loop vectorize(enable)
     for (int i = 0; i < 4; ++i) {
         if ((playerboard & LEFT_BOARD) == left_cases[i]) score += mask_scores[i];
         if ((opponentboard & LEFT_BOARD) == left_cases[i]) score -= mask_scores[i];
@@ -1042,7 +1041,6 @@ inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboar
         if ((playerboard & DOWN_BOARD) == down_cases[i]) score += mask_scores[i];
         if ((opponentboard & DOWN_BOARD) == down_cases[i]) score -= mask_scores[i];
     }
-#pragma clang loop vectorize(enable)
     for (int i = 0; i < 12; ++i) {
         if ((playerboard & corner_masks[i]) && ((playerboard | opponentboard) & opponent_checks[i])) {
             score += corner_scores[i];

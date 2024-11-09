@@ -30,7 +30,7 @@
 
 extern int DEPTH;
 extern int search_depth;
-extern int Level;
+extern size_t Level;
 extern int px, py;
 extern int whitec;
 extern int blackc;
@@ -38,7 +38,7 @@ extern int tmpx, tmpy;
 extern uint64_t tmpbit;
 extern int think_percent;
 extern int think_count;
-extern int botplayer;
+extern size_t botplayer;
 extern int nowTurn;
 extern int nowIndex;
 extern int firstDEPTH;

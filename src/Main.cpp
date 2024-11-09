@@ -79,7 +79,7 @@ void Main()
     //サイズ取得 & 計算
     stone_edge = (800-(TextureAsset(U"null").width()*8))/2;
     stone_size = TextureAsset(U"null").width();
-    const auto title_size = TextureAsset(U"title").width();
+//    const auto title_size = TextureAsset(U"title").width();
     const auto title_edge = (800-TextureAsset(U"title").width())/2;
     Window::Resize(800, 700);
     Window::SetTitle(U"オセロ");
@@ -93,6 +93,7 @@ void Main()
     }
     //AIのレベル
     size_t level_index = 4;
+    Level = level_index+1;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
     constexpr array<int, 6> level_to_depth = {1, 3, 5, 7, 10, 12};
     //白黒

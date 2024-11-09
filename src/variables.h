@@ -14,7 +14,7 @@
 
 int DEPTH;
 int search_depth;
-int Level;
+size_t Level;
 int px, py;
 int whitec;
 int blackc;
@@ -22,7 +22,7 @@ int tmpx, tmpy;
 uint64_t tmpbit;
 int think_percent;
 int think_count;
-int botplayer;
+size_t botplayer;
 int nowTurn;
 int nowIndex;
 int firstDEPTH;
