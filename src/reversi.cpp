@@ -387,6 +387,7 @@ int ai() {
     }
     visited_nodes = 0;
     int score = 0;
+    this_thread::sleep_for(chrono::milliseconds(20));
     book(b.playerboard, b.opponentboard);
     if(!tmpbit) {
         if(afterIndex >= 60) {

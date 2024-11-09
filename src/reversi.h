@@ -26,6 +26,7 @@
 #include <numeric>
 #include <cmath>
 #include <execution>
+#include <thread>
 
 extern int DEPTH;
 extern int search_depth;

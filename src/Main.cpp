@@ -152,7 +152,6 @@ void Main()
                 TextureAsset(U"hako_thinking").draw(200, 475);
                 result_font(U"考え中...({:0>2}%)\n※時間がかかる場合があります"_fmt(think_percent)).draw(hako_text_box, Palette::White);
                 if (!result.isValid()) {
-                    System::Sleep(200);
                     result = Async(ai);
                 }
                 if (result.isReady()) {
