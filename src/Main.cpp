@@ -4,46 +4,48 @@
 using namespace std;
 using App = SceneManager<String>;
 
-void DrawBoard(const Texture &null, const Texture &nullb, const Texture &black, const Texture &blackb, const Texture &white, const Texture &whiteb, const auto &stone_size, const auto &stone_edge) {
+int stone_edge, stone_size;
+
+void DrawBoard() {
     uint64_t mask = 0x8000000000000000ULL;
-    uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
+//    uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
             if(nowTurn == BLACK_TURN) {
                 if(b.playerboard & mask) {
                     if(tmpy == y && tmpx == x) {
-                        blackb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"blackb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     } else {
-                        black.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"black").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if(b.opponentboard & mask) {
                     if(tmpy == y && tmpx == x) {
-                        whiteb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"whiteb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     } else {
-                        white.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
-                    nullb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
-                    null.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 }
             } else {
                 if(b.opponentboard & mask) {
                     if(tmpy == y && tmpx == x) {
-                        blackb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"blackb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     } else {
-                        black.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"black").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if(b.playerboard & mask) {
                     if(tmpy == y && tmpx == x) {
-                        whiteb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"whiteb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     } else {
-                        white.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                        TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
-                    nullb.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
-                    null.draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 }
             }
             mask >>=1;
@@ -63,19 +65,24 @@ void Main()
     Font font{FontMethod::MSDF, 48};
     Font result_font{FontMethod::MSDF, 20};
     //画像読み込み
-    const Texture null(U"../assets/null.png");
-    const Texture nullb(U"../assets/nullb.png");
-    const Texture white(U"../assets/white.png");
-    const Texture whiteb(U"../assets/whiteb.png");
-    const Texture black(U"../assets/black.png");
-    const Texture blackb(U"../assets/blackb.png");
-    const Texture title(U"../assets/title.png");
+    TextureAsset::Register(U"null", U"../assets/null.png");
+    TextureAsset::Register(U"nullb", U"../assets/nullb.png");
+    TextureAsset::Register(U"white", U"../assets/white.png");
+    TextureAsset::Register(U"whiteb", U"../assets/whiteb.png");
+    TextureAsset::Register(U"black", U"../assets/black.png");
+    TextureAsset::Register(U"blackb", U"../assets/blackb.png");
+    TextureAsset::Register(U"title", U"../assets/title.png");
+    TextureAsset::Register(U"hako_default", U"../assets/hako.png");
+    TextureAsset::Register(U"hako_thinking", U"../assets/thinking.png");
+    TextureAsset::Register(U"hako_lose", U"../assets/lose.png");
+    TextureAsset::Register(U"hako_win", U"../assets/win.png");
     //サイズ取得 & 計算
-    const auto stone_edge = (800-(null.width()*8))/2;
-    const auto stone_size = null.width();
-    const auto title_size = title.width();
-    const auto title_edge = (800-title.width())/2;
+    stone_edge = (800-(TextureAsset(U"null").width()*8))/2;
+    stone_size = TextureAsset(U"null").width();
+    const auto title_size = TextureAsset(U"title").width();
+    const auto title_edge = (800-TextureAsset(U"title").width())/2;
     Window::Resize(800, 700);
+    Window::SetTitle(U"オセロ");
     //石の座標の配列
     Array<Rect> button_array(0);
     button_array.reserve(64);
@@ -93,12 +100,23 @@ void Main()
     const Array<String> player_turn = {U"白", U"黒"};
     //ゲームが開始しているか
     int game_status = 0;
+    int winner = 0;
     //AIの実行結果
     AsyncTask<int> result;
+    //ハコくんのテキストBox
+    constexpr Rect hako_text_box(260, 475, 400, 100);
+    //ハコくんのテキスト
+    const String hako_text_default = U"君の番だよ！\n置く場所を選んでね！";
+    const String hako_text_win = U"君の勝ち！";
+    const String hako_text_lose = U"僕の勝ち！";
+    const String hako_text_draw = U"引き分け！";
+    
+    int black_stone_count = 0, white_stone_count = 0;
+    
     
     while (System::Update()) {
         if (game_status == 0) {
-            title.draw(title_edge, 0);
+            TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
             if (SimpleGUI::RadioButtons(level_index, AI_level, Vec2(100, 455))) {
@@ -113,8 +131,26 @@ void Main()
                 reset();
             }
         } else if (game_status == 1) {
-            if (isFinished()) game_status = 3;
+            if (isFinished()) {
+                game_status = 3;
+                if (nowTurn == BLACK_TURN) {
+                    black_stone_count = __builtin_popcountll(b.playerboard);
+                    white_stone_count = __builtin_popcountll(b.opponentboard);
+                } else {
+                    white_stone_count = __builtin_popcountll(b.playerboard);
+                    black_stone_count = __builtin_popcountll(b.opponentboard);
+                }
+                if ((botplayer == 0 && black_stone_count > white_stone_count) || (botplayer == 1 && white_stone_count > black_stone_count)) {
+                    winner = 0;
+                } else if ((botplayer == 1 && black_stone_count > white_stone_count) || (botplayer == 0 && white_stone_count > black_stone_count)) {
+                        winner = 1;
+                } else {
+                    winner = 2;
+                }
+            }
             if (nowTurn == botplayer) {
+                TextureAsset(U"hako_thinking").draw(200, 475);
+                result_font(U"考え中...({:0>2}%)\n※時間がかかる場合があります"_fmt(think_percent)).draw(hako_text_box, Palette::White);
                 if (!result.isValid()) {
                     System::Sleep(200);
                     result = Async(ai);
@@ -124,6 +160,10 @@ void Main()
                         swapboard();
                     }
                 }
+            } else {
+                TextureAsset(U"hako_default").draw(200, 475);
+                result_font(hako_text_default).draw(hako_text_box, Palette::White);
+                
             }
             for (int i = 0; i < 64; ++i) {
                 if (button_array[i].leftClicked() && button_array[i].mouseOver()) {
@@ -145,14 +185,28 @@ void Main()
                     game_status = 0;
                 }
             }
-            DrawBoard(null, nullb, black, blackb, white, whiteb, stone_size, stone_edge);
+            DrawBoard();
         } else {
-            if (nowTurn == BLACK_TURN) {
-                result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(__builtin_popcountll(b.playerboard),__builtin_popcountll(b.opponentboard))).drawAt(400, 550);
-            } else {
-                result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(__builtin_popcountll(b.opponentboard),__builtin_popcountll(b.playerboard))).drawAt(400, 550);
+            result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(black_stone_count, white_stone_count)).drawAt(400, 600);
+            result_font(U"勝者: {}"_fmt((black_stone_count > white_stone_count) ? U"黒" : (black_stone_count < white_stone_count) ? U"白" : U"引き分け")).drawAt(400, 625);
+            switch (winner) {
+                case 0:
+                    TextureAsset(U"hako_lose").draw(200, 475);
+                    result_font(hako_text_lose).draw(hako_text_box, Palette::White);
+                    break;
+                case 1:
+                    TextureAsset(U"hako_win").draw(200, 475);
+                    result_font(hako_text_win).draw(hako_text_box, Palette::White);
+                    break;
+                default:
+                    TextureAsset(U"hako_draw").draw(200, 475);
+                    result_font(hako_text_draw).draw(hako_text_box, Palette::White);
+                    break;
             }
-            DrawBoard(null, nullb, black, blackb, white, whiteb, stone_size, stone_edge);
+            if (SimpleGUI::Button(U"閉じる", Vec2{350, 650}, 100)) {
+                game_status = 0;
+            }
+            DrawBoard();
         }
     }
     if (result.isValid()) {

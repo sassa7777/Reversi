@@ -18,6 +18,7 @@ void reset() {
     b.opponentboard = 0x0000001008000000ULL;
 //    b.playerboard = 0x00141eae978bc0fe;
 //    b.opponentboard = 0x2020e05068743e00;
+    legalboard = makelegalboard(b.playerboard, b.opponentboard);
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
     return;
@@ -140,6 +141,7 @@ bool isFinished() {
 void swapboard() {
     swap(b.playerboard, b.opponentboard);
     nowTurn = 1-nowTurn;
+    legalboard = makelegalboard(b.playerboard, b.opponentboard);
 }
 
 inline int move_ordering_value(uint64_t &playerboard, uint64_t &opponentboard) {
@@ -381,6 +383,7 @@ int ai() {
     int putable_count = __builtin_popcountll(legalboard);
     if (putable_count == 0) {
         swapboard();
+        return 0;
     }
     visited_nodes = 0;
     int score = 0;

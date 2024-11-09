@@ -35,7 +35,7 @@ extern char whitec;
 extern char blackc;
 extern char tmpx, tmpy;
 extern uint64_t tmpbit;
-extern char think_percent;
+extern int think_percent;
 extern char think_count;
 extern char botplayer;
 extern char nowTurn;

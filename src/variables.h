@@ -20,7 +20,7 @@ char whitec;
 char blackc;
 char tmpx, tmpy;
 uint64_t tmpbit;
-char think_percent;
+int think_percent;
 char think_count;
 char botplayer;
 char nowTurn;
