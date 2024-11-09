@@ -3,7 +3,11 @@ C++で書かれていて、NegaScout法/ビットボードを使用していま�
 
 レベル5以上は残り25手で完全読みを行います。
 
-**Siv3d版はまだ未完成です。**
+このアプリケーションは署名されていないため、起動する前に
+```
+/usr/bin/xattr -cr /path/to/Reversi.app
+```
+を行う必要があります
 
 依存関係: 
 [unordered_dense](https://github.com/martinus/unordered_dense),
