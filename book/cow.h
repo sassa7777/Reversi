@@ -8,7 +8,12 @@
 #ifndef cow_h
 #define cow_h
 
+#ifndef USE_UNORDERED_DENSE_DIRECTLY
 #include <ankerl/unordered_dense.h>
+#else
+// Use unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0 directly
+#include "unordered_dense.h"
+#endif
 #include <cstdint>
 
 using namespace ankerl::unordered_dense;
