@@ -73,22 +73,17 @@ void Main()
     Font font{FontMethod::MSDF, 48};
     Font result_font{FontMethod::MSDF, 20};
     //画像読み込み
-#ifdef _WIN64
-    const String RESOURCE_PATH = U"./assets/";
-#else
-    const String RESOURCE_PATH = U"";
-#endif
-    TextureAsset::Register(U"null", Resource(RESOURCE_PATH + U"null.png"));
-    TextureAsset::Register(U"nullb", Resource(RESOURCE_PATH + U"nullb.png"));
-    TextureAsset::Register(U"white", Resource(RESOURCE_PATH + U"white.png"));
-    TextureAsset::Register(U"whiteb", Resource(RESOURCE_PATH + U"whiteb.png"));
-    TextureAsset::Register(U"black", Resource(RESOURCE_PATH + U"black.png"));
-    TextureAsset::Register(U"blackb", Resource(RESOURCE_PATH + U"blackb.png"));
-    TextureAsset::Register(U"title", Resource(RESOURCE_PATH + U"title.png"));
-    TextureAsset::Register(U"hako_default", Resource(RESOURCE_PATH + U"hako.png"));
-    TextureAsset::Register(U"hako_thinking", Resource(RESOURCE_PATH + U"thinking.png"));
-    TextureAsset::Register(U"hako_lose", Resource(RESOURCE_PATH + U"lose.png"));
-    TextureAsset::Register(U"hako_win", Resource(RESOURCE_PATH + U"win.png"));
+    TextureAsset::Register(U"null", Resource(U"null.png"));
+    TextureAsset::Register(U"nullb", Resource(U"nullb.png"));
+    TextureAsset::Register(U"white", Resource(U"white.png"));
+    TextureAsset::Register(U"whiteb", Resource(U"whiteb.png"));
+    TextureAsset::Register(U"black", Resource(U"black.png"));
+    TextureAsset::Register(U"blackb", Resource(U"blackb.png"));
+    TextureAsset::Register(U"title", Resource(U"title.png"));
+    TextureAsset::Register(U"hako_default", Resource(U"hako.png"));
+    TextureAsset::Register(U"hako_thinking", Resource(U"thinking.png"));
+    TextureAsset::Register(U"hako_lose", Resource(U"lose.png"));
+    TextureAsset::Register(U"hako_win", Resource(U"win.png"));
     //サイズ取得 & 計算
     stone_edge = (800-(TextureAsset(U"null").width()*8))/2;
     stone_size = TextureAsset(U"null").width();
