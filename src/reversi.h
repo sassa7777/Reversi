@@ -8,6 +8,9 @@
 #ifndef reversi_h
 #define reversi_h
 
+// Use unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0 directly
+#define USE_UNORDERED_DENSE_DIRECTLY
+
 #define BLACK_TURN 0
 #define WHITE_TURN 1
 #define UP_BOARD 0xFF00000000000000ULL
@@ -22,7 +25,11 @@
 #include <vector>
 #include <algorithm>
 #include <bit>
+#ifndef USE_UNORDERED_DENSE_DIRECTLY
 #include <ankerl/unordered_dense.h>
+#else
+#include "unordered_dense.h"
+#endif
 #include <numeric>
 #include <cmath>
 #include <execution>
