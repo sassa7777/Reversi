@@ -589,7 +589,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, ui
     }
     int var, max_score = MIN_INF, count = 0;
     uint64_t rev;
-    board moveorder[popcountll(legalboard)];
+    board moveorder[36];
     uint64_t put;
     while(legalboard) {
         put = legalboard & -legalboard;
@@ -679,7 +679,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playe
     }
     int var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
-    board moveorder[popcountll(legalboard)];
+    board moveorder[36];
     uint64_t put;
     while(legalboard) {
         put = legalboard & -legalboard;
@@ -774,7 +774,7 @@ int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard) {
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     int var = 0, score = 0;
     uint64_t rev;
-    board_finish_root moveorder[popcountll(legalboard)];
+    board_finish_root moveorder[36];
     for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
         if(legalboard & put) {
             rev = Flip(put, playerboard, opponentboard);
@@ -834,7 +834,7 @@ int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &oppo
     }
     int var, max_score = MIN_INF, count = 0;
     uint64_t rev;
-    board_finish moveorder[popcountll(legalboard)];
+    board_finish moveorder[36];
     uint64_t put;
     while(legalboard) {
         put = legalboard & -legalboard;
@@ -922,7 +922,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint
     }
     int var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
-    board_finish moveorder[popcountll(legalboard)];
+    board_finish moveorder[36];
     uint64_t put;
     while(legalboard) {
         put = legalboard & -legalboard;
