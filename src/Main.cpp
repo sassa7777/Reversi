@@ -4,19 +4,13 @@
 using namespace std;
 using App = SceneManager<String>;
 
-#ifdef _WIN64
-#define RESOURCE_PATH U"./assets/"
-#else
-#define RESOURCE_PATH U""
-#endif
-
 // builtin functions
+// if you are using C++20, you can just use std::popcount(x) for popcount
 #ifdef __GNUC__
-    #define	popcountll(x) popcountll(x)
+#define popcountll(x) __builtin_popcountll(x)
 #else
-    #define	popcountll(x) __popcnt64(x)
+#define	popcountll(x) __popcnt64(x)
 #endif
-// if you are using C++20, you can just use std::popcount(x)
 
 int stone_edge, stone_size;
 
@@ -79,6 +73,11 @@ void Main()
     Font font{FontMethod::MSDF, 48};
     Font result_font{FontMethod::MSDF, 20};
     //画像読み込み
+#ifdef _WIN64
+    const String RESOURCE_PATH = U"./assets/";
+#else
+    const String RESOURCE_PATH = U"";
+#endif
     TextureAsset::Register(U"null", Resource(RESOURCE_PATH + U"null.png"));
     TextureAsset::Register(U"nullb", Resource(RESOURCE_PATH + U"nullb.png"));
     TextureAsset::Register(U"white", Resource(RESOURCE_PATH + U"white.png"));

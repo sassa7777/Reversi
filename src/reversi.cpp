@@ -8,6 +8,16 @@
 
 using namespace std;
 
+// builtin functions
+// if you are using C++20, you can just use std::popcount(x) for popcount
+#ifdef __GNUC__
+#define popcountll(x) __builtin_popcountll(x)
+#define clzll(x) __builtin_clzll(x)
+#else
+#define	popcountll(x) __popcnt64(x)
+#define clzll(x) _lzcnt_u64(x)
+#endif
+
 void reset() {
     printf("[*]初期化中...\n");
     nowTurn = BLACK_TURN;
@@ -97,17 +107,17 @@ inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) {
 
 inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard) {
     uint64_t flipped, OM, outflank[4], mask[4];
-    int pos = __builtin_clzll(put);
+    int pos = clzll(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
     
     mask[0] = 0x0080808080808080ULL >> (pos);
     mask[1] = 0x7f00000000000000ULL >> (pos);
     mask[2] = 0x0102040810204000ULL >> (pos);
     mask[3] = 0x0040201008040201ULL >> (pos);
-    outflank[0] = (0x8000000000000000ULL >> __builtin_clzll(((opponentboard) & (((mask[0]) & ((mask[0]) - 1)))) ^ (mask[0]))) & playerboard;
-    outflank[1] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[1]) & ((mask[1]) - 1)))) ^ (mask[1]))) & playerboard;
-    outflank[2] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[2]) & ((mask[2]) - 1)))) ^ (mask[2]))) & playerboard;
-    outflank[3] = (0x8000000000000000ULL >> __builtin_clzll(((OM) & (((mask[3]) & ((mask[3]) - 1)))) ^ (mask[3]))) & playerboard;
+    outflank[0] = (0x8000000000000000ULL >> clzll(((opponentboard) & (((mask[0]) & ((mask[0]) - 1)))) ^ (mask[0]))) & playerboard;
+    outflank[1] = (0x8000000000000000ULL >> clzll(((OM) & (((mask[1]) & ((mask[1]) - 1)))) ^ (mask[1]))) & playerboard;
+    outflank[2] = (0x8000000000000000ULL >> clzll(((OM) & (((mask[2]) & ((mask[2]) - 1)))) ^ (mask[2]))) & playerboard;
+    outflank[3] = (0x8000000000000000ULL >> clzll(((OM) & (((mask[3]) & ((mask[3]) - 1)))) ^ (mask[3]))) & playerboard;
     flipped  = (-outflank[0] << 1) & mask[0];
     flipped |= (-outflank[1] << 1) & mask[1];
     flipped |= (-outflank[2] << 1) & mask[2];
@@ -405,7 +415,7 @@ int ai() {
         cout << "error" << endl;
         return 0;
     }
-    int count = __builtin_clzll(tmpbit);
+    int count = clzll(tmpbit);
     tmpy = count / 8;
     tmpx = count % 8;
     putstone(tmpy, tmpx);
@@ -541,7 +551,7 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard) {
                     tmpbit = moveorder[i].put;
                 }
             }
-            int pos = __builtin_clzll(moveorder[i].put);
+            int pos = clzll(moveorder[i].put);
             box[pos / 8][pos % 8] = var;
             alpha = max(var, alpha);
         }
