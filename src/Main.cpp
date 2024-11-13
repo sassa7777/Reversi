@@ -4,6 +4,14 @@
 using namespace std;
 using App = SceneManager<String>;
 
+// builtin functions
+// if you are using C++20, you can just use std::popcount(x) for popcount
+#ifdef __GNUC__
+#define popcountll(x) __builtin_popcountll(x)
+#else
+#define	popcountll(x) __popcnt64(x)
+#endif
+
 int stone_edge, stone_size;
 
 void DrawBoard() {
@@ -135,11 +143,11 @@ void Main()
             if (isFinished()) {
                 game_status = 3;
                 if (nowTurn == BLACK_TURN) {
-                    black_stone_count = __builtin_popcountll(b.playerboard);
-                    white_stone_count = __builtin_popcountll(b.opponentboard);
+                    black_stone_count = popcountll(b.playerboard);
+                    white_stone_count = popcountll(b.opponentboard);
                 } else {
-                    white_stone_count = __builtin_popcountll(b.playerboard);
-                    black_stone_count = __builtin_popcountll(b.opponentboard);
+                    white_stone_count = popcountll(b.playerboard);
+                    black_stone_count = popcountll(b.opponentboard);
                 }
                 if ((botplayer == 0 && black_stone_count > white_stone_count) || (botplayer == 1 && white_stone_count > black_stone_count)) {
                     winner = 0;
