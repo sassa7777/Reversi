@@ -249,7 +249,7 @@ inline double evaluate(uint64_t playerboard, uint64_t opponentboard) {
     
     a += score_fixedstone_table(playerboard, opponentboard);
     
-    a += (score_putable(playerboard, opponentboard)/2);
+    a += ((double)score_putable(playerboard, opponentboard))/2;
     
     a*= 100;
 //    cout << a << endl;
