@@ -8,13 +8,13 @@
 #ifndef variables_h
 #define variables_h
 
-#include "reversi.h"
-#include "../book/cow.h"
-#include "../book/tiger.h"
+#include "reversi.hpp"
+#include "../book/cow.hpp"
+#include "../book/tiger.hpp"
 
 int DEPTH;
 int search_depth;
-size_t Level;
+int Level;
 int px, py;
 int whitec;
 int blackc;
@@ -22,7 +22,7 @@ int tmpx, tmpy;
 uint64_t tmpbit;
 int think_percent;
 int think_count;
-size_t botplayer;
+int botplayer;
 int nowTurn;
 int nowIndex;
 int firstDEPTH;

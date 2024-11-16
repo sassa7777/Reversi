@@ -22,12 +22,7 @@
 #include <vector>
 #include <algorithm>
 #include <bit>
-#ifndef USE_UNORDERED_DENSE_DIRECTLY
 #include <ankerl/unordered_dense.h>
-#else
-// Use unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0 directly
-#include "unordered_dense.h"
-#endif
 #include <numeric>
 #include <cmath>
 #include <execution>
@@ -35,7 +30,7 @@
 
 extern int DEPTH;
 extern int search_depth;
-extern size_t Level;
+extern int Level;
 extern int px, py;
 extern int whitec;
 extern int blackc;
@@ -43,7 +38,7 @@ extern int tmpx, tmpy;
 extern uint64_t tmpbit;
 extern int think_percent;
 extern int think_count;
-extern size_t botplayer;
+extern int botplayer;
 extern int nowTurn;
 extern int nowIndex;
 extern int firstDEPTH;
@@ -151,12 +146,12 @@ int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
-uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta);
-uint64_t flipHorizontal(uint64_t x);
-uint64_t flipVertical(uint64_t x);
-uint64_t flipDiagonalA1H8(uint64_t x);
-uint64_t flipDiagonalA8H1(uint64_t x);
-uint64_t rotateClockwise90(uint64_t x);
+//uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta);
+//uint64_t flipHorizontal(uint64_t x);
+//uint64_t flipVertical(uint64_t x);
+//uint64_t flipDiagonalA1H8(uint64_t x);
+//uint64_t flipDiagonalA8H1(uint64_t x);
+//uint64_t rotateClockwise90(uint64_t x);
 
 void fixedstone_table_init();
 

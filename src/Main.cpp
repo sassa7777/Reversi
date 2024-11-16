@@ -1,16 +1,8 @@
 #include <Siv3D.hpp> // Siv3D v0.6.15
-#include "reversi.h"
+#include "reversi.hpp"
 
 using namespace std;
 using App = SceneManager<String>;
-
-// builtin functions
-// if you are using C++20, you can just use std::popcount(x) for popcount
-#ifdef __GNUC__
-#define popcountll(x) __builtin_popcountll(x)
-#else
-#define	popcountll(x) __popcnt64(x)
-#endif
 
 int stone_edge, stone_size;
 
@@ -101,9 +93,9 @@ void Main()
     }
     //AIのレベル
     size_t level_index = 4;
-    Level = level_index+1;
+    Level = (int)level_index+1;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
-    constexpr array<int, 6> level_to_depth = {1, 3, 5, 7, 10, 12};
+    constexpr array<int, 6> level_to_depth = {1, 3, 5, 8, 10, 12};
     //白黒
     size_t bot_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};
@@ -124,30 +116,32 @@ void Main()
     
     
     while (System::Update()) {
+        //メインメニュー
         if (game_status == 0) {
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
             if (SimpleGUI::RadioButtons(level_index, AI_level, Vec2(100, 455))) {
                 firstDEPTH = level_to_depth[level_index];
-                Level = level_index+1;
+                Level = (int)level_index+1;
             }
             if (SimpleGUI::RadioButtons(bot_turn, player_turn, Vec2(340, 455))) {
-                botplayer = bot_turn;
+                botplayer = (int)bot_turn;
             }
             if (SimpleGUI::Button(U"スタート", Vec2(350, 600))) {
                 game_status = 1;
                 reset();
             }
+        //ゲーム中
         } else if (game_status == 1) {
             if (isFinished()) {
                 game_status = 3;
                 if (nowTurn == BLACK_TURN) {
-                    black_stone_count = popcountll(b.playerboard);
-                    white_stone_count = popcountll(b.opponentboard);
+                    black_stone_count = __builtin_popcountll(b.playerboard);
+                    white_stone_count = __builtin_popcountll(b.opponentboard);
                 } else {
-                    white_stone_count = popcountll(b.playerboard);
-                    black_stone_count = popcountll(b.opponentboard);
+                    white_stone_count = __builtin_popcountll(b.playerboard);
+                    black_stone_count = __builtin_popcountll(b.opponentboard);
                 }
                 if ((botplayer == 0 && black_stone_count > white_stone_count) || (botplayer == 1 && white_stone_count > black_stone_count)) {
                     winner = 0;
@@ -194,6 +188,7 @@ void Main()
                 }
             }
             DrawBoard();
+        //ゲーム終了
         } else {
             result_font(U"黒: {:0>2}, 白: {:0>2}"_fmt(black_stone_count, white_stone_count)).drawAt(400, 600);
             result_font(U"勝者: {}"_fmt((black_stone_count > white_stone_count) ? U"黒" : (black_stone_count < white_stone_count) ? U"白" : U"引き分け")).drawAt(400, 625);
