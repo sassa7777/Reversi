@@ -243,9 +243,9 @@ inline void evaluate_init2() {
 
 inline double evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) {
     double a = final_dense[0] * (pattern_arr[0].at(make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])) + pattern_arr[0].at(make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)));
-    a += (pattern_arr[1].at(make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)) + pattern_arr[1].at(make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)) + pattern_arr[1].at(make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)) + pattern_arr[1].at(make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)));
+    a += final_dense[1] * (pattern_arr[1].at(make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)) + pattern_arr[1].at(make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)) + pattern_arr[1].at(make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)) + pattern_arr[1].at(make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)));
     
-    a += (pattern_arr[2].at(make_pair(playerboard & 0xF0E0C08000000000, opponentboard & 0xF0E0C08000000000)) + pattern_arr[2].at(make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)) + pattern_arr[2].at(make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)) + pattern_arr[2].at(make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)));
+    a += final_dense[2] * (pattern_arr[2].at(make_pair(playerboard & 0xF0E0C08000000000, opponentboard & 0xF0E0C08000000000)) + pattern_arr[2].at(make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)) + pattern_arr[2].at(make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)) + pattern_arr[2].at(make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)));
     
     a += score_fixedstone_table(playerboard, opponentboard);
     
