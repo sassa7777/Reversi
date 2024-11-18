@@ -1116,8 +1116,7 @@ inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard
 //        else return (score_stone(playerboard, opponentboard)*6 + score_fixedstone_table(playerboard, opponentboard)*24 + score_putable(playerboard, opponentboard)*2 + score_null_place(playerboard, opponentboard)/2);
     if(!playerboard) [[unlikely]] return MIN_INF;
     if(!opponentboard) [[unlikely]] return MAX_INF;
-//    if(afterIndex >= 64) return (__builtin_popcountll(playerboard)-__builtin_popcountll(opponentboard));
-//    if(afterIndex >= 45) return (int)evaluate(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*1;
-//    if(afterIndex >= 41) return (int)evaluate(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*1;
-    return (int)evaluate(playerboard, opponentboard);
+    if(afterIndex >= 64) return (__builtin_popcountll(playerboard)-__builtin_popcountll(opponentboard));
+    if(afterIndex >= 41) return (int)evaluate(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*1000;
+    return (int)evaluate(playerboard, opponentboard)+score_putable(playerboard, opponentboard)+score_fixedstone_table(playerboard, opponentboard)*10;
 }
