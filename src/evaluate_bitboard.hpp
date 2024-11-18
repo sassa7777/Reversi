@@ -9,22 +9,16 @@
 
 using namespace std;
 
-#define n_patterns 3 // 使うパターンの種類
-constexpr int pattern_sizes[n_patterns] = {8, 10, 10}; // パターンごとのマスの数
+#define n_patterns 9 // 使うパターンの種類
+constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 10}; // パターンごとのマスの数
 constexpr int pow3[11] = {3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147}; // 2の累乗
 
-constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x42FF, 0xF0E0C08000000000};
+constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0x42FF, 0xff000000000000, 0xff0000000000, 0xff00000000, 0xF0E0C08000000000};
 // モデルの設計パラメータ
 #define n_dense0 16
 #define n_dense1 16
-#define n_add_input 3
-#define n_add_dense0 8
-#define n_all_input 4
-#define max_mobility 30
-#define max_surround 50
-#define max_evaluate_idx 59049
+#define n_all_input 9
 
-double add_arr[max_mobility * 2 + 1][max_surround + 1][max_surround + 1];
 double final_dense[n_all_input];
 double final_bias;
 
@@ -159,9 +153,9 @@ inline void pre_evaluation_pattern(int pattern_idx, int evaluate_idx, int patter
 }
 
 inline void evaluate_init2() {
-    pattern_arr[0].clear();
-    pattern_arr[1].clear();
-    pattern_arr[2].clear();
+    for (auto &ptar : pattern_arr) {
+        ptar.clear();
+    }
     ifstream ifs("models/model.txt");
     if (ifs.fail()){
         cerr << "evaluation file not exist" << endl;
@@ -177,10 +171,10 @@ inline void evaluate_init2() {
     double bias1[n_dense1];
     double dense2[n_dense1];
     double bias2;
-    double add_dense0[n_add_dense0][n_add_input];
-    double add_bias0[n_add_dense0];
-    double add_dense1[n_add_dense0];
-    double add_bias1;
+//    double add_dense0[n_add_dense0][n_add_input];
+//    double add_bias0[n_add_dense0];
+//    double add_dense1[n_add_dense0];
+//    double add_bias1;
 
     // パターンのパラメータを得て前計算をする
     for (pattern_idx = 0; pattern_idx < n_patterns; ++pattern_idx){
@@ -213,23 +207,23 @@ inline void evaluate_init2() {
         pre_evaluation_pattern(pattern_idx, pattern_idx, pattern_sizes[pattern_idx], dense0, bias0, dense1, bias1, dense2, bias2);
     }
 
-    // 追加入力のパラメータを得て前計算をする
-    for (i = 0; i < n_add_dense0; ++i){
-        for (j = 0; j < n_add_input; ++j){
-            getline(ifs, line);
-            add_dense0[i][j] = stod(line);
-        }
-    }
-    for (i = 0; i < n_add_dense0; ++i){
-        getline(ifs, line);
-        add_bias0[i] = stod(line);
-    }
-    for (i = 0; i < n_add_dense0; ++i){
-        getline(ifs, line);
-        add_dense1[i] = stod(line);
-    }
-    getline(ifs, line);
-    add_bias1 = stod(line);
+//    // 追加入力のパラメータを得て前計算をする
+//    for (i = 0; i < n_add_dense0; ++i){
+//        for (j = 0; j < n_add_input; ++j){
+//            getline(ifs, line);
+//            add_dense0[i][j] = stod(line);
+//        }
+//    }
+//    for (i = 0; i < n_add_dense0; ++i){
+//        getline(ifs, line);
+//        add_bias0[i] = stod(line);
+//    }
+//    for (i = 0; i < n_add_dense0; ++i){
+//        getline(ifs, line);
+//        add_dense1[i] = stod(line);
+//    }
+//    getline(ifs, line);
+//    add_bias1 = stod(line);
 //    pre_evaluation_add(add_dense0, add_bias0, add_dense1, add_bias1);
 
     // 最後の層のパラメータを得る
@@ -237,23 +231,38 @@ inline void evaluate_init2() {
         getline(ifs, line);
         final_dense[i] = stod(line);
     }
-    getline(ifs, line);
-    final_bias = stod(line);
+//    getline(ifs, line);
+//    final_bias = stod(line);
 }
 
 inline double evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) {
     double a = final_dense[0] * (pattern_arr[0].at(make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])) + pattern_arr[0].at(make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)));
-    a += final_dense[1] * (pattern_arr[1].at(make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)) + pattern_arr[1].at(make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)) + pattern_arr[1].at(make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)) + pattern_arr[1].at(make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)));
     
-    a += final_dense[2] * (pattern_arr[2].at(make_pair(playerboard & 0xF0E0C08000000000, opponentboard & 0xF0E0C08000000000)) + pattern_arr[2].at(make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)) + pattern_arr[2].at(make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)) + pattern_arr[2].at(make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)));
+    a += final_dense[1] * (pattern_arr[1].at(make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)) + pattern_arr[1].at(make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)) + pattern_arr[1].at(make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)) + pattern_arr[1].at(make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)));
     
-    a += score_fixedstone_table(playerboard, opponentboard);
+    a += final_dense[2] * (pattern_arr[2].at(make_pair(playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000)) + pattern_arr[2].at(make_pair(playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020)) + pattern_arr[2].at(make_pair(playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804)) + pattern_arr[2].at(make_pair(playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000)));
     
-    a += ((double)score_putable(playerboard, opponentboard))/2;
+    a += final_dense[3] * (pattern_arr[3].at(make_pair(playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000)) + pattern_arr[3].at(make_pair(playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810)) + pattern_arr[3].at(make_pair(playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008)) + pattern_arr[3].at(make_pair(playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000)));
     
-    a*= 100;
+    a += final_dense[4] * (pattern_arr[4].at(make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)) + pattern_arr[4].at(make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)) + pattern_arr[4].at(make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)) + pattern_arr[4].at(make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)));
+    
+    a += final_dense[5] * (pattern_arr[5].at(make_pair(playerboard & 0xff000000000000, opponentboard & 0xff000000000000)) + pattern_arr[5].at(make_pair(playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202)) + pattern_arr[5].at(make_pair(playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00)) + pattern_arr[5].at(make_pair(playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040)));
+    
+    a += final_dense[6] * (pattern_arr[6].at(make_pair(playerboard & 0xff0000000000, opponentboard & 0xff0000000000)) + pattern_arr[6].at(make_pair(playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404)) + pattern_arr[6].at(make_pair(playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000)) + pattern_arr[6].at(make_pair(playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020)));
+    
+    a += final_dense[7] * (pattern_arr[7].at(make_pair(playerboard & 0xff00000000, opponentboard & 0xff00000000)) + pattern_arr[7].at(make_pair(playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808)) + pattern_arr[7].at(make_pair(playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000)) + pattern_arr[7].at(make_pair(playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010)));
+    
+    a += final_dense[8] * (pattern_arr[8].at(make_pair(playerboard & 0xF0E0C08000000000, opponentboard & 0xF0E0C08000000000)) + pattern_arr[8].at(make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)) + pattern_arr[8].at(make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)) + pattern_arr[8].at(make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)));
+    
+//    a *= 100000;
+    if (a > 0) a+=1;
+    else a-=1;
+//    a/=64;
 //    cout << a << endl;
-    return a;
+//    a += score_null_place(playerboard, opponentboard);
+    
+    a += score_putable(playerboard, opponentboard);
+    return min(max((int)a, MIN_INF), MAX_INF);
 }
 
 
