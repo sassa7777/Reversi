@@ -420,6 +420,10 @@ gmon.out
 **/App/example
 **/App/engine
 **/App/dll
+
+
+# Ignore unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0
+src/unordered_dense.h
 **/App
 
 
