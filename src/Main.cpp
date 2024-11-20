@@ -4,6 +4,14 @@
 using namespace std;
 using App = SceneManager<String>;
 
+// builtin functions
+// if you are using C++20, you can just use std::popcount(x) for popcount
+#ifdef __GNUC__
+#define popcountll(x) __builtin_popcountll(x)
+#else
+#define    popcountll(x) __popcnt64(x)
+#endif
+
 int stone_edge, stone_size;
 
 void DrawBoard() {
@@ -56,7 +64,7 @@ void DrawBoard() {
 
 void Main()
 {
-    firstDEPTH = 10;
+    firstDEPTH = 11;
     botplayer = WHITE_TURN;
     //盤面初期化
     reset();
@@ -95,7 +103,7 @@ void Main()
     size_t level_index = 4;
     Level = (int)level_index+1;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
-    constexpr array<int, 6> level_to_depth = {1, 3, 5, 8, 10, 12};
+    constexpr array<int, 6> level_to_depth = {1, 3, 5, 8, 11, 12};
     //白黒
     size_t bot_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};

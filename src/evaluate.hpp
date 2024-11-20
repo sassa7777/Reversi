@@ -3,24 +3,23 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include <bitset>
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <Siv3D.hpp>
 
 using namespace std;
 
-#define n_patterns 11 // 使うパターンの種類
-constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 4, 10, 8, 8, 8, 9, 10}; // パターンごとのマスの数
-constexpr int pow3[11] = {3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147}; // 2の累乗
+#define n_patterns 12 // 使うパターンの種類
+constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 4, 10, 8, 8, 8, 9, 10, 10}; // パターンごとのマスの数
+constexpr int pow3[11] = {3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147}; // 3の累乗
 
-constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0x804020100000000, 0xff42000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000, 0xe0e0e00000000000, 0xf8f8000000000000};
+constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0x804020100000000, 0xff42000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000, 0xe0e0e00000000000, 0xf8c0808080000000, 0xbd3c000000000000};
 
-const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {4, 13, 22, 31}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 2, 8, 9, 10, 16, 17, 18}, {0, 1, 2, 3, 4, 8, 9, 10, 11, 12}};
+const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {4, 13, 22, 31}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}};
 // モデルの設計パラメータ
 #define n_dense0 16
 #define n_dense1 16
-#define n_all_input 11
+#define n_all_input 12
 
 double final_dense[n_all_input];
 double final_bias;
@@ -144,12 +143,6 @@ inline void pre_evaluation_pattern(int pattern_idx, int evaluate_idx, int patter
             pattern_arr[evaluate_idx][make_pair(rotateClockwise90(newpattern1), rotateClockwise90(newpattern2))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
             pattern_arr[evaluate_idx][make_pair(rotateClockwise90(rotateClockwise90(newpattern1)), rotateClockwise90(rotateClockwise90(newpattern2)))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
             pattern_arr[evaluate_idx][make_pair(rotateCounterclockwise90(newpattern1), rotateCounterclockwise90(newpattern2))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
-            if(pattern_idx == 10) {
-                pattern_arr[evaluate_idx][make_pair(flipDiagonalA1H8(newpattern1), flipDiagonalA1H8(newpattern2))] =  pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
-                pattern_arr[evaluate_idx][make_pair(flipDiagonalA8H1(rotateClockwise90(newpattern1)), flipDiagonalA8H1(rotateClockwise90(newpattern2)))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
-                pattern_arr[evaluate_idx][make_pair(flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(newpattern1))), flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(newpattern2))))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
-                pattern_arr[evaluate_idx][make_pair(flipDiagonalA8H1(rotateCounterclockwise90(newpattern1)), flipDiagonalA8H1(rotateCounterclockwise90(newpattern2)))] = pattern_arr[evaluate_idx][make_pair(newpattern1, newpattern2)];
-            }
         }
     }
 }
@@ -211,8 +204,8 @@ inline void evaluate_init2() {
     }
 }
 
-inline double evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) {
-    double a = final_dense[0] * (pattern_arr[0].at(make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])) + pattern_arr[0].at(make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)));
+inline int64_t evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) {
+    double a = 2 * final_dense[0] * (pattern_arr[0].at(make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])) + pattern_arr[0].at(make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)));
     
     a += final_dense[1] * (pattern_arr[1].at(make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)) + pattern_arr[1].at(make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)) + pattern_arr[1].at(make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)) + pattern_arr[1].at(make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)));
     
@@ -230,19 +223,22 @@ inline double evaluate(const uint64_t &playerboard, const uint64_t &opponentboar
     
     a += final_dense[9] * (pattern_arr[9].at(make_pair(playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000)) + pattern_arr[9].at(make_pair(playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000)) + pattern_arr[9].at(make_pair(playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707)) + pattern_arr[9].at(make_pair(playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0)));
     
-    a += final_dense[10] * (pattern_arr[10].at(make_pair(playerboard & 0xf8f8000000000000, opponentboard & 0xf8f8000000000000)) + pattern_arr[10].at(make_pair(playerboard & 0x0303030303000000, opponentboard & 0x0303030303000000)) + pattern_arr[10].at(make_pair(playerboard & 0x0000000000001f1f, opponentboard & 0x0000000000001f1f)) + pattern_arr[10].at(make_pair(playerboard & 0x000000c0c0c0c0c0, opponentboard & 0x000000c0c0c0c0c0)) + pattern_arr[10].at(make_pair(playerboard & 0x1f1f000000000000, opponentboard & 0x1f1f000000000000)) + pattern_arr[10].at(make_pair(playerboard & 0x0000000303030303, opponentboard & 0x0000000303030303)) + pattern_arr[10].at(make_pair(playerboard & 0x000000000000f8f8, opponentboard & 0x000000000000f8f8)) + pattern_arr[10].at(make_pair(playerboard & 0xc0c0c0c0c0000000, opponentboard & 0xc0c0c0c0c0000000)));
+    a += final_dense[10] * (pattern_arr[10].at(make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)) + pattern_arr[10].at(make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)) + pattern_arr[10].at(make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)) + pattern_arr[10].at(make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)));
     
-    if (a > 0) a+=1;
-    else a-=1;
+    a += final_dense[11] * (pattern_arr[11].at(make_pair(playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000)) + pattern_arr[11].at(make_pair(playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001)) + pattern_arr[11].at(make_pair(playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd)) + pattern_arr[11].at(make_pair(playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080)));
+    
+//    if (a > 0) a+=1;
+//    else a-=1;
 //    a += score_fixedstone_table(playerboard, opponentboard)/10;
-    a *= 1000;
     
 //    a/=64;
 //    cout << a << endl;
 //    a += score_null_place(playerboard, opponentboard);
     
-//    a += score_putable(playerboard, opponentboard)*5;
-    return min(max((int)round(a), MIN_INF), MAX_INF);
+    a += (double)score_putable(playerboard, opponentboard) / 100000;
+    constexpr int64_t MIN_INF = -9223372036854775807;
+    constexpr int64_t MAX_INF = 9223372036854775807;
+    return min(max((int64_t)(a*10000000000), MIN_INF), MAX_INF);
 }
 
 

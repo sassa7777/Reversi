@@ -14,19 +14,25 @@
 #define DOWN_BOARD 0x00000000000000FFULL
 #define LEFT_BOARD 0x8080808080808080ULL
 #define RIGHT_BOARD 0x0101010101010101ULL
-#define MIN_INF -2147483646
-#define MAX_INF 2147483646
 
 #include <iostream>
 #include <cstdint>
 #include <vector>
 #include <algorithm>
 #include <bit>
+#ifndef USE_UNORDERED_DENSE_DIRECTLY
 #include <ankerl/unordered_dense.h>
+#else
+// Use unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0 directly
+#include "unordered_dense.h"
+#endif
 #include <numeric>
 #include <cmath>
 #include <execution>
 #include <thread>
+
+constexpr int64_t MIN_INF = -9223372036854775807;
+constexpr int64_t MAX_INF = 9223372036854775807;
 
 extern int DEPTH;
 extern int search_depth;
@@ -53,7 +59,7 @@ public:
     uint64_t playerboard;
     uint64_t opponentboard;
     uint64_t put;
-    int score;
+    int64_t score;
 
     bool operator<(const board_root& b) const {
         return this->score > b.score;
@@ -70,7 +76,7 @@ struct board{
 public:
     uint64_t playerboard;
     uint64_t opponentboard;
-    int score;
+    int64_t score;
 
     bool operator<(const board& b) const {
         return this->score > b.score;
@@ -88,7 +94,7 @@ public:
     uint64_t playerboard;
     uint64_t opponentboard;
     uint64_t legalboard;
-    int score;
+    int64_t score;
 
     bool operator<(const board_finish& b) const {
         return this->score < b.score;
@@ -104,7 +110,7 @@ public:
     uint64_t opponentboard;
     uint64_t put;
     uint64_t legalboard;
-    int score;
+    int64_t score;
 
     bool operator<(const board_finish_root& b) const {
         return this->score < b.score;
@@ -116,8 +122,8 @@ public:
 
 extern board b;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> transpose_table;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> former_transpose_table;
 
 extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
 
@@ -134,17 +140,17 @@ bool isFinished();
 void swapboard();
 inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard);
 
-int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
-int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
-int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
-int nega_scout_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
-int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
-int nega_alpha_finish(int alpha, int beta, uint64_t &playerboard, uint64_t &opponentboard);
+int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
+int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
+int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
+int64_t nega_scout_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
+int64_t nega_alpha_moveorder_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
+int64_t nega_alpha_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
 
-int search(uint64_t &playerboard, uint64_t &opponentboard);
-int search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
+int64_t search(uint64_t &playerboard, uint64_t &opponentboard);
+int64_t search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
-int search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
+int64_t search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
 //uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta);
 //uint64_t flipHorizontal(uint64_t x);
@@ -159,7 +165,7 @@ void fixedstone_table_init();
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
-inline int countscore(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponentboard);
 
