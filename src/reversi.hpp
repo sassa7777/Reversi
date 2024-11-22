@@ -52,8 +52,6 @@ extern int afterIndex;
 extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
-extern int box[8][8];
-
 struct board_root{
 public:
     uint64_t playerboard;
@@ -142,12 +140,12 @@ inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uin
 
 int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
 int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
+int64_t nega_alpha_moveorder_nws(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard = 0xffffffffffffffff);
 int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
 int64_t nega_scout_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
 int64_t nega_alpha_moveorder_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard, uint64_t legalboard);
 int64_t nega_alpha_finish(int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
 
-int64_t search(uint64_t &playerboard, uint64_t &opponentboard);
 int64_t search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
 int64_t search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);

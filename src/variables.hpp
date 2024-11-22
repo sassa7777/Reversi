@@ -30,12 +30,10 @@ int afterIndex;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;
-int box[8][8];
-
 board b;
 
-constexpr int mpc_depth[14] {
-    0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
+constexpr int mpc_depth[] {
+    0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
 };
 
 

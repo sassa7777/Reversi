@@ -9,6 +9,14 @@
 
 using namespace std;
 
+#ifdef __GNUC__
+#define popcountll(x) __builtin_popcountll(x)
+#define clzll(x) __builtin_clzll(x)
+#else
+#define    popcountll(x) __popcnt64(x)
+#define clzll(x) _lzcnt_u64(x)
+#endif
+
 #define n_patterns 13 // 使うパターンの種類
 constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 4, 10, 8, 8, 8, 9, 10, 10, 10}; // パターンごとのマスの数
 constexpr int pow3[11] = {3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147}; // 3の累乗
@@ -19,8 +27,12 @@ const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 1
 // モデルの設計パラメータ
 #define n_dense0 16
 #define n_dense1 16
-#define n_all_input 13
+#define n_add_input 1
+#define n_add_dense0 8
+#define n_all_input 14
+#define max_mobility 30
 
+array<double, max_mobility * 2 + 1> add_arr;
 double final_dense[n_all_input];
 double final_bias;
 
@@ -147,6 +159,32 @@ inline void pre_evaluation_pattern(int pattern_idx, int evaluate_idx, int patter
     }
 }
 
+// 追加パラメータの推論
+inline double predict_add(int mobility, double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense0], double bias1){
+    double hidden0[n_add_dense0], in_arr[n_add_input];
+    int i, j;
+    in_arr[0] = (double)mobility / 30.0;
+    for (i = 0; i < n_add_dense0; ++i){
+        hidden0[i] = bias0[i];
+        for (j = 0; j < n_add_input; ++j)
+            hidden0[i] += in_arr[j] * dense0[i][j];
+        hidden0[i] = leaky_relu(hidden0[i]);
+    }
+    double res = bias1;
+    for (j = 0; j < n_add_dense0; ++j)
+        res += hidden0[j] * dense1[j];
+    res = leaky_relu(res);
+    return res;
+}
+
+// 追加パラメータの前計算
+inline void pre_evaluation_add(double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense0], double bias1){
+    int mobility;
+    for (mobility = -max_mobility; mobility <= max_mobility; ++mobility){
+        add_arr[mobility + max_mobility] = predict_add(mobility, dense0, bias0, dense1, bias1);
+    }
+}
+
 inline void evaluate_init2() {
     for (auto &ptar : pattern_arr) {
         ptar.clear();
@@ -166,6 +204,10 @@ inline void evaluate_init2() {
     double bias1[n_dense1];
     double dense2[n_dense1];
     double bias2;
+    double add_dense0[n_add_dense0][n_add_input];
+    double add_bias0[n_add_dense0];
+    double add_dense1[n_add_dense0];
+    double add_bias1;
 
     // パターンのパラメータを得て前計算をする
     for (pattern_idx = 0; pattern_idx < n_patterns; ++pattern_idx){
@@ -197,21 +239,40 @@ inline void evaluate_init2() {
         bias2 = stod(line);
         pre_evaluation_pattern(pattern_idx, pattern_idx, pattern_sizes[pattern_idx], dense0, bias0, dense1, bias1, dense2, bias2);
     }
+    // 追加入力のパラメータを得て前計算をする
+    for (i = 0; i < n_add_dense0; ++i){
+        for (j = 0; j < n_add_input; ++j){
+            getline(ifs, line);
+            add_dense0[i][j] = stod(line);
+        }
+    }
+    for (i = 0; i < n_add_dense0; ++i){
+        getline(ifs, line);
+        add_bias0[i] = stod(line);
+    }
+    for (i = 0; i < n_add_dense0; ++i){
+        getline(ifs, line);
+        add_dense1[i] = stod(line);
+    }
+    getline(ifs, line);
+    add_bias1 = stod(line);
+    pre_evaluation_add(add_dense0, add_bias0, add_dense1, add_bias1);
     // 最後の層のパラメータを得る
     for (i = 0; i < n_all_input; ++i){
         getline(ifs, line);
         final_dense[i] = stod(line);
+    }
+    for (i = 0; i < n_patterns; ++i){
         for (auto &ptr : pattern_arr[i]) {
             ptr.second *= final_dense[i];
         }
     }
-    
 }
 
 inline int64_t evaluate_moveorder(const uint64_t &playerboard, const uint64_t &opponentboard) {
     double a = (pattern_arr[0][make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])] + pattern_arr[0][make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)]);
     
-//    a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
+    a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
     
 //    a += (pattern_arr[2][make_pair(playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000)] + pattern_arr[2][make_pair(playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020)] + pattern_arr[2][make_pair(playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804)] + pattern_arr[2][make_pair(playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000)]);
     
@@ -229,7 +290,7 @@ inline int64_t evaluate_moveorder(const uint64_t &playerboard, const uint64_t &o
     
 //    a += (pattern_arr[9][make_pair(playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000)] + pattern_arr[9][make_pair(playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000)] + pattern_arr[9][make_pair(playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707)] + pattern_arr[9][make_pair(playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0)]);
     
-    a += (pattern_arr[10][make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)] + pattern_arr[10][make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)] + pattern_arr[10][make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)] + pattern_arr[10][make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)]);
+//    a += (pattern_arr[10][make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)] + pattern_arr[10][make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)] + pattern_arr[10][make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)] + pattern_arr[10][make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)]);
     
 //    a += (pattern_arr[11][make_pair(playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000)] + pattern_arr[11][make_pair(playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001)] + pattern_arr[11][make_pair(playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd)] + pattern_arr[11][make_pair(playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080)]);
     
@@ -238,7 +299,7 @@ inline int64_t evaluate_moveorder(const uint64_t &playerboard, const uint64_t &o
 //    if (a > 0) a+=1;
 //    else a-=1;
 //    a += score_fixedstone_table(playerboard, opponentboard)/10;
-    a *= 1000000;
+    a *= 10000000000;
 //    a/=64;
 //    cout << a << endl;
 //    a += score_null_place(playerboard, opponentboard);
@@ -246,11 +307,15 @@ inline int64_t evaluate_moveorder(const uint64_t &playerboard, const uint64_t &o
 //    a += (double)score_putable(playerboard, opponentboard);
 //    constexpr int64_t MIN_INF = -9223372036854775807;
 //    constexpr int64_t MAX_INF = 9223372036854775807;
-    return (int64_t)(a);
+    return (int64_t)llround(a);
     
 }
 
 inline int64_t evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) {
+    
+    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+//    cout << mobility << endl;
+    
     double a = (pattern_arr[0][make_pair(playerboard & bit_pattern[0], opponentboard & bit_pattern[0])] + pattern_arr[0][make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)]);
     
     a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
@@ -280,16 +345,13 @@ inline int64_t evaluate(const uint64_t &playerboard, const uint64_t &opponentboa
 //    if (a > 0) a+=1;
 //    else a-=1;
 //    a += score_fixedstone_table(playerboard, opponentboard)/10;
-    a *= 1000000;
+//    a *= 10000000000;
 //    a/=64;
 //    cout << a << endl;
 //    a += score_null_place(playerboard, opponentboard);
-    
-    a += (double)score_putable(playerboard, opponentboard);
-//    constexpr int64_t MIN_INF = -9223372036854775807;
-//    constexpr int64_t MAX_INF = 9223372036854775807;
-    return (int64_t)(a);
-    
+    double b = final_bias + a + final_dense[3] * add_arr[mobility];
+
+    return (int64_t)(max(-1.0, min(1.0, b)) * 640000000);
 }
 
 
