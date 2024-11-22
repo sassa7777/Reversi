@@ -329,65 +329,17 @@ void book(uint64_t &playerboard, uint64_t &opponentboard) {
     return;
 }
 
-int64_t search_nega_scout_test(uint64_t &playerboard, uint64_t &opponentboard) {
-    printf("algorithm: NegaScout\n");
-    transpose_table.clear();
-    former_transpose_table.clear();
-    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
-    int64_t var = 0;
-    uint64_t rev;
-    board_root m;
-    vector<board_root> moveorder;
-    moveorder.reserve(popcountll(legalboard));
-    m.put = 1;
-    for (auto i = 0; i < 64; ++i) {
-        if(legalboard & m.put) {
-            rev = Flip(m.put, playerboard, opponentboard);
-            m.playerboard = playerboard ^ (m.put | rev);
-            m.opponentboard = opponentboard ^ rev;
-            moveorder.emplace_back(m);
-        }
-        m.put <<= 1;
-    }
-    int64_t alpha = MIN_INF, beta = MAX_INF;
-    think_count = 100/(popcountll(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
-    int wave = 0;
-    afterIndex = nowIndex+search_depth;
-    for (auto& m: moveorder) {
-        m.score = move_ordering_value(m.opponentboard, m.playerboard);
-    }
-    sort(moveorder.begin(), moveorder.end());
-    alpha = MIN_INF;
-    beta = MAX_INF;
-    alpha = -nega_scout(mpc_depth[DEPTH]-1, -beta, -alpha, moveorder[0].opponentboard, moveorder[0].playerboard);
-    think_percent += think_count;
-    for (size_t i = 1; i < moveorder.size(); ++i) {
-        var = -nega_alpha_moveorder(mpc_depth[DEPTH]-1,
-                                    -alpha-1,
-                                    -alpha,
-                                    moveorder[i].opponentboard,
-                                    moveorder[i].playerboard);
-        think_percent += think_count;
-        if(var > alpha) {
-            alpha = var;
-            var = -nega_scout(mpc_depth[DEPTH]-1, -beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
-        }
-        alpha = max(var, alpha);
-    }
-    return alpha;
-}
-
 int ai() {
     if (nowTurn == 1-botplayer) {
         return 0;
     }
     printf("[*]Botが考え中..\n");
     if(Level == 5 && nowIndex >= 29) {
-        DEPTH = 12;
+        DEPTH = 10;
         afterIndex=nowIndex+DEPTH;
     }
     if(Level >= 6 && nowIndex >= 33) {
-        DEPTH = 13;
+        DEPTH = 12;
         afterIndex=nowIndex+DEPTH;
     }
     if(Level >= 5 && nowIndex >= 41) {
@@ -433,6 +385,7 @@ int ai() {
     printf("put : (%d, %d)\n", tmpx, tmpy);
     if(afterIndex >= 60) printf("Final Score\n");
     printf("Score : %lld\n", score);
+    cout << "Score(stone) : " << score/10000000 << endl;
     return 1;
 }
 

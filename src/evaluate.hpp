@@ -30,7 +30,7 @@ const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 1
 #define n_add_input 1
 #define n_add_dense0 8
 #define n_all_input 14
-#define max_mobility 30
+#define max_mobility 36
 
 array<double, max_mobility * 2 + 1> add_arr;
 double final_dense[n_all_input];
@@ -349,9 +349,9 @@ inline int64_t evaluate(const uint64_t &playerboard, const uint64_t &opponentboa
 //    a/=64;
 //    cout << a << endl;
 //    a += score_null_place(playerboard, opponentboard);
-    double b = final_bias + a + final_dense[3] * add_arr[mobility];
+    double b = final_bias + a + ((afterIndex <= 44) ? final_dense[3] * add_arr[mobility] : 0);
 
-    return (int64_t)(max(-1.0, min(1.0, b)) * 640000000);
+    return llround(max(-1.0, min(1.0, b)) * 640000000);
 }
 
 
