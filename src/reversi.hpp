@@ -150,14 +150,8 @@ int64_t search_nega_scout(uint64_t &playerboard, uint64_t &opponentboard);
 int search_finish(uint64_t &playerboard, uint64_t &opponentboard);
 int64_t search_finish_scout(uint64_t &playerboard, uint64_t &opponentboard);
 
-//uint64_t delta_swap(uint64_t& x, uint64_t mask, int delta);
-//uint64_t flipHorizontal(uint64_t x);
-//uint64_t flipVertical(uint64_t x);
-//uint64_t flipDiagonalA1H8(uint64_t x);
-//uint64_t flipDiagonalA8H1(uint64_t x);
-//uint64_t rotateClockwise90(uint64_t x);
-
 void fixedstone_table_init();
+std::string coordinate_to_x_y(uint64_t put);
 
 //evaluation
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard);

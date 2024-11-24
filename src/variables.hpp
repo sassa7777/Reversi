@@ -9,8 +9,6 @@
 #define variables_h
 
 #include "reversi.hpp"
-#include "../book/cow.hpp"
-#include "../book/tiger.hpp"
 
 int DEPTH;
 int search_depth;
@@ -30,6 +28,7 @@ int afterIndex;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;
+std::string play_record;
 board b;
 
 constexpr int mpc_depth[] {

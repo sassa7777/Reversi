@@ -64,7 +64,7 @@ void DrawBoard() {
 
 void Main()
 {
-    firstDEPTH = 10;
+    firstDEPTH = 8;
     botplayer = WHITE_TURN;
     //盤面初期化
     reset();

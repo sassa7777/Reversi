@@ -6,6 +6,7 @@
 //
 #include "variables.hpp"
 #include "evaluate.hpp"
+#include "book.hpp"
 
 using namespace std;
 
@@ -30,7 +31,9 @@ void reset() {
 //    b.playerboard = 0x00141eae978bc0fe;
 //    b.opponentboard = 0x2020e05068743e00;
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
-    if(pattern_arr[0].size() == 0) evaluate_init2();
+    play_record = "";
+    if (pattern_arr[0].size() == 0) evaluate_init();
+    if (book.size() == 0) book_init();
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
     cout << "Level: " << Level << endl;
@@ -73,10 +76,17 @@ int putstone(int_fast8_t y, int_fast8_t x) {
         b.opponentboard ^= rev;
         nowIndex++;
         afterIndex++;
+        play_record += coordinate_to_x_y(put);
         return 1;
     } else {
         return 0;
     }
+}
+
+string coordinate_to_x_y(uint64_t put) {
+    constexpr string x = "abcdefgh";
+    int pos = clzll(put);
+    return string(1, x[pos%8]) + to_string(pos/8+1);
 }
 
 inline uint64_t cordinate_to_bit(int_fast8_t put, int_fast8_t y) {
@@ -155,6 +165,7 @@ void swapboard() {
     swap(b.playerboard, b.opponentboard);
     nowTurn = 1-nowTurn;
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
+    cout << play_record << endl;
 }
 
 inline int64_t move_ordering_value(uint64_t &playerboard, uint64_t &opponentboard) {
@@ -167,167 +178,167 @@ inline int64_t move_ordering_value(uint64_t &playerboard, uint64_t &opponentboar
     }
 }
 
-uint64_t book_finder(pair<uint64_t, uint64_t> &board) {
-    if(book_tiger.count(board)) {
-        printf("定石: 虎\n");
-        return book_tiger.at(board);
-    }
-    if(book_usi.count(board))  {
-        printf("定石: 牛\n");
-        return book_usi.at(board);
-    }
-    if(book_conpos.count(board)) {
-        printf("定石: コンポス\n");
-        return book_conpos.at(board);
-    }
-    if(book_stevenson.count(board)) {
-        printf("定石: スティーブンソン\n");
-        return book_stevenson.at(board);
-    }
-    if(book_FATDraw.count(board)) {
-        printf("定石: FATDraw\n");
-        return book_FATDraw.at(board);
-    }
-    if(book_no_kan.count(board)) {
-        printf("定石: ノーカン\n");
-        return book_no_kan.at(board);
-    }
-    if(book_ura_yotto.count(board)) {
-        printf("定石: 裏ヨット\n");
-        return book_ura_yotto.at(board);
-    }
-    if(book_ura_koumori.count(board)) {
-        printf("定石: 裏コウモリ\n");
-        return book_ura_koumori.at(board);
-    }
-    if(book_kaisoku_senn.count(board)) {
-        printf("定石: 快速船\n");
-        return book_kaisoku_senn.at(board);
-    }
-    if(book_sennsya.count(board)) {
-        printf("定石: 戦車\n");
-        return book_sennsya.at(board);
-    }
-    return 0;
-}
+//uint64_t book_finder(pair<uint64_t, uint64_t> &board) {
+//    if(book_tiger.count(board)) {
+//        printf("定石: 虎\n");
+//        return book_tiger.at(board);
+//    }
+//    if(book_usi.count(board))  {
+//        printf("定石: 牛\n");
+//        return book_usi.at(board);
+//    }
+//    if(book_conpos.count(board)) {
+//        printf("定石: コンポス\n");
+//        return book_conpos.at(board);
+//    }
+//    if(book_stevenson.count(board)) {
+//        printf("定石: スティーブンソン\n");
+//        return book_stevenson.at(board);
+//    }
+//    if(book_FATDraw.count(board)) {
+//        printf("定石: FATDraw\n");
+//        return book_FATDraw.at(board);
+//    }
+//    if(book_no_kan.count(board)) {
+//        printf("定石: ノーカン\n");
+//        return book_no_kan.at(board);
+//    }
+//    if(book_ura_yotto.count(board)) {
+//        printf("定石: 裏ヨット\n");
+//        return book_ura_yotto.at(board);
+//    }
+//    if(book_ura_koumori.count(board)) {
+//        printf("定石: 裏コウモリ\n");
+//        return book_ura_koumori.at(board);
+//    }
+//    if(book_kaisoku_senn.count(board)) {
+//        printf("定石: 快速船\n");
+//        return book_kaisoku_senn.at(board);
+//    }
+//    if(book_sennsya.count(board)) {
+//        printf("定石: 戦車\n");
+//        return book_sennsya.at(board);
+//    }
+//    return 0;
+//}
 
-void book(uint64_t &playerboard, uint64_t &opponentboard) {
-    pair<uint64_t, uint64_t> board = make_pair(playerboard, opponentboard);
-    uint64_t put = 0;
-    put = book_finder(board);
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(book_finder(board));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(book_finder(board)));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    board.first = flipDiagonalA1H8(board.first);
-    board.second = flipDiagonalA1H8(board.second);
-    put = flipDiagonalA1H8(book_finder(board));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(flipDiagonalA1H8(book_finder(board)));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = rotateClockwise90(board.first);
-    board.second = rotateClockwise90(board.second);
-    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    board.first = flipHorizontal(board.first);
-    board.second = flipHorizontal(board.second);
-    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))))));
-    if(put) {
-        tmpbit = put;
-        return;
-    }
-    return;
-}
+//void book(uint64_t &playerboard, uint64_t &opponentboard) {
+//    pair<uint64_t, uint64_t> board = make_pair(playerboard, opponentboard);
+//    uint64_t put = 0;
+//    put = book_finder(board);
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(book_finder(board));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(book_finder(board)));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board)))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(book_finder(board))))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    board.first = flipDiagonalA1H8(board.first);
+//    board.second = flipDiagonalA1H8(board.second);
+//    put = flipDiagonalA1H8(book_finder(board));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(flipDiagonalA1H8(book_finder(board)));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = rotateClockwise90(board.first);
+//    board.second = rotateClockwise90(board.second);
+//    put = rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board))))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    board.first = flipHorizontal(board.first);
+//    board.second = flipHorizontal(board.second);
+//    put = flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(rotateClockwise90(flipHorizontal(flipDiagonalA1H8(book_finder(board)))))))));
+//    if(put) {
+//        tmpbit = put;
+//        return;
+//    }
+//    return;
+//}
 
 int ai() {
     if (nowTurn == 1-botplayer) {
@@ -362,7 +373,20 @@ int ai() {
     visited_nodes = 0;
     int64_t score = 0;
     this_thread::sleep_for(chrono::milliseconds(20));
-    book(b.playerboard, b.opponentboard);
+//    book(b.playerboard, b.opponentboard);
+    auto book_list = book.equal_range(make_pair(b.playerboard, b.opponentboard));
+    if (book_list.first != book_list.second) {
+        vector<std::multimap<pair<uint64_t, uint64_t>, uint64_t>::const_iterator> iterators;
+            for (auto it = book_list.first; it != book_list.second; ++it) {
+                iterators.push_back(it);
+            }
+            random_device seed_gen;
+            mt19937 engine {seed_gen()};
+            vector<std::multimap<pair<uint64_t, uint64_t>, uint64_t>::const_iterator> book_itr(1);
+            sample(iterators.begin(), iterators.end(), book_itr.begin(), 1, engine);
+        tmpbit = book_itr[0]->second;
+        cout << "book found" << endl;
+    }
     if(!tmpbit) {
         if(afterIndex >= 60) {
             think_count = 100/putable_count;
@@ -385,7 +409,7 @@ int ai() {
     printf("put : (%d, %d)\n", tmpx, tmpy);
     if(afterIndex >= 60) printf("Final Score\n");
     printf("Score : %lld\n", score);
-    cout << "Score(stone) : " << score/10000000 << endl;
+    cout << "Score(stone) : " << score/10000000.0 << endl;
     return 1;
 }
 
@@ -1119,8 +1143,8 @@ inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponen
 }
 
 inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard) {
-    if(!playerboard) [[unlikely]] return MIN_INF;
-    if(!opponentboard) [[unlikely]] return MAX_INF;
-    if(afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard));
+    if(!playerboard) [[unlikely]] return -640000000;
+    if(!opponentboard) [[unlikely]] return 640000000;
+    if(afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*10000000;
     return evaluate(playerboard, opponentboard);
 }
