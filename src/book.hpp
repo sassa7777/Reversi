@@ -62,24 +62,24 @@ void book_init() {
         o = 0x0000001008000000ULL;
         getline(ifs, line);
         if (ifs.eof()) break;
-        while (line.size() > 0) {
-            put = play_record_to_put.at(line.substr(0, 2));
-            book.emplace(make_pair(p, o), put);
-            book.emplace(make_pair(rotateClockwise90(p), rotateClockwise90(o)),
-                         rotateClockwise90(put));
-            book.emplace(make_pair(rotateClockwise90(rotateClockwise90(p)), rotateClockwise90(rotateClockwise90(o))), rotateClockwise90(rotateClockwise90(put)));
-            book.emplace(make_pair(rotateCounterclockwise90(p), rotateCounterclockwise90(o)), rotateCounterclockwise90((put)));
-            book.emplace(make_pair(flipDiagonalA1H8(p), flipDiagonalA1H8(o)), flipDiagonalA1H8(put));
-            book.emplace(make_pair(flipDiagonalA1H8(rotateClockwise90(p)), flipDiagonalA1H8(rotateClockwise90(o))), flipDiagonalA1H8(rotateClockwise90(put)));
-            book.emplace(make_pair(flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(p))), flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(o)))), flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(put))));
-            book.emplace(make_pair(flipDiagonalA1H8(rotateCounterclockwise90(p)), flipDiagonalA1H8(rotateCounterclockwise90(o))), flipDiagonalA1H8(rotateCounterclockwise90(put)));
-            book.emplace(make_pair(flipDiagonalA8H1(p), flipDiagonalA8H1(o)), flipDiagonalA8H1(put));
-            book.emplace(make_pair(flipDiagonalA8H1(rotateClockwise90(p)), flipDiagonalA8H1(rotateClockwise90(o))), flipDiagonalA8H1(rotateClockwise90(put)));
-            book.emplace(make_pair(flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(p))), flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(o)))), flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(put))));
-            book.emplace(make_pair(flipDiagonalA8H1(rotateCounterclockwise90(p)), flipDiagonalA8H1(rotateCounterclockwise90(o))), flipDiagonalA8H1(rotateCounterclockwise90(put)));
+        while (line.size() > 2) {
             put_book_init(play_record_to_put.at(line.substr(0, 2)), p, o);
             line.erase(0, 2);
         }
+        put = play_record_to_put.at(line.substr(0, 2));
+        book.emplace(make_pair(p, o), put);
+        book.emplace(make_pair(rotateClockwise90(p), rotateClockwise90(o)),
+                     rotateClockwise90(put));
+        book.emplace(make_pair(rotateClockwise90(rotateClockwise90(p)), rotateClockwise90(rotateClockwise90(o))), rotateClockwise90(rotateClockwise90(put)));
+        book.emplace(make_pair(rotateCounterclockwise90(p), rotateCounterclockwise90(o)), rotateCounterclockwise90((put)));
+        book.emplace(make_pair(flipDiagonalA1H8(p), flipDiagonalA1H8(o)), flipDiagonalA1H8(put));
+        book.emplace(make_pair(flipDiagonalA1H8(rotateClockwise90(p)), flipDiagonalA1H8(rotateClockwise90(o))), flipDiagonalA1H8(rotateClockwise90(put)));
+        book.emplace(make_pair(flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(p))), flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(o)))), flipDiagonalA1H8(rotateClockwise90(rotateClockwise90(put))));
+        book.emplace(make_pair(flipDiagonalA1H8(rotateCounterclockwise90(p)), flipDiagonalA1H8(rotateCounterclockwise90(o))), flipDiagonalA1H8(rotateCounterclockwise90(put)));
+        book.emplace(make_pair(flipDiagonalA8H1(p), flipDiagonalA8H1(o)), flipDiagonalA8H1(put));
+        book.emplace(make_pair(flipDiagonalA8H1(rotateClockwise90(p)), flipDiagonalA8H1(rotateClockwise90(o))), flipDiagonalA8H1(rotateClockwise90(put)));
+        book.emplace(make_pair(flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(p))), flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(o)))), flipDiagonalA8H1(rotateClockwise90(rotateClockwise90(put))));
+        book.emplace(make_pair(flipDiagonalA8H1(rotateCounterclockwise90(p)), flipDiagonalA8H1(rotateCounterclockwise90(o))), flipDiagonalA8H1(rotateCounterclockwise90(put)));
         ++n;
     }
     cout << "book initialized " << n << endl;
