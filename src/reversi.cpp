@@ -172,7 +172,7 @@ inline int64_t move_ordering_value(uint64_t &playerboard, uint64_t &opponentboar
     if(afterIndex >= 64) return -popcountll(makelegalboard(playerboard, opponentboard));
     auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
     if(it != former_transpose_table.end()) {
-        return (1000000000000-max(it->second.first, it->second.second));
+        return (640000000-max(it->second.first, it->second.second));
     } else {
         return evaluate_moveorder(opponentboard, playerboard);
     }
@@ -224,7 +224,7 @@ int ai() {
         tmpbit = book_itr[0]->second;
         cout << "book found" << endl;
     }
-    if(!tmpbit) {
+    if (!tmpbit) {
         if(afterIndex >= 60) {
             think_count = 100/putable_count;
             score = search_finish_scout(b.playerboard, b.opponentboard);
