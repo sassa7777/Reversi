@@ -64,7 +64,7 @@ void DrawBoard() {
 
 void Main()
 {
-    firstDEPTH = 8;
+    firstDEPTH = 10;
     botplayer = WHITE_TURN;
     //盤面初期化
     reset();
@@ -103,7 +103,7 @@ void Main()
     size_t level_index = 4;
     Level = (int)level_index+1;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
-    constexpr array<int, 6> level_to_depth = {1, 2, 4, 6, 8, 10};
+    constexpr array<int, 6> level_to_depth = {1, 2, 4, 6, 10, 12};
     //白黒
     size_t bot_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};

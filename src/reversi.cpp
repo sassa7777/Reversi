@@ -97,7 +97,7 @@ inline bool canput(const uint64_t &put, const uint64_t &legalboard) {
     return ((put & legalboard) == put);
 }
 
-inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) {
+inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) noexcept {
     uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
     hb = o & 0x7e7e7e7e7e7e7e7eULL;
@@ -117,7 +117,7 @@ inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) {
     return moves & ~(p|o);
 }
 
-inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard) {
+inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard) noexcept {
     uint64_t flipped, OM, outflank[4], mask[4];
     int pos = clzll(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
@@ -979,7 +979,7 @@ inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponen
     return popcountll(opponentboard & free_mask)-popcountll(playerboard & free_mask);
 }
 
-inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard) {
+inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard) noexcept {
     if(!playerboard) [[unlikely]] return -640000000;
     if(!opponentboard) [[unlikely]] return 640000000;
     if(afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*10000000;

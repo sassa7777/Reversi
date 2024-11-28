@@ -2,7 +2,7 @@ from copy import deepcopy
 import tensorflow as tf
 from tensorflow.keras.layers import Add, Dense, Input, LeakyReLU, Concatenate
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
 import numpy as np
 from tqdm import trange, tqdm
 from random import shuffle
@@ -56,7 +56,7 @@ print('n_data', len(data))
 
 # 学習
 test_ratio = 0.001
-n_epochs = 6
+n_epochs = 5
 
 diagonal8_idx = [[0, 9, 18, 27, 36, 45, 54, 63], [7, 14, 21, 28, 35, 42, 49, 56]]
 for pattern in deepcopy(diagonal8_idx):
@@ -220,13 +220,8 @@ lr_callback = tf.keras.callbacks.LearningRateScheduler(lr_schedule, verbose=1)
 
 
 print(model.evaluate(test_data, test_labels))
-checkpoint = ModelCheckpoint(
-    'models/best_model.h5',
-    monitor='val_loss',
-    save_best_only=True
-)
-early_stop = EarlyStopping(monitor='val_loss', patience=1, restore_best_weights=True)
-history = model.fit(train_data, train_labels, epochs=n_epochs, validation_data=(test_data, test_labels), callbacks=[early_stop, checkpoint, tensorboard_callback], batch_size=32)
+early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+history = model.fit(train_data, train_labels, epochs=n_epochs, validation_data=(test_data, test_labels), callbacks=[early_stop, tensorboard_callback], batch_size=32)
 
 now = datetime.datetime.today()
 model.save('models/model.h5')

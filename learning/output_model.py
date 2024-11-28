@@ -13,14 +13,14 @@ def get_layer_index(model, layer_name, not_found=None):
 custom_objects = {'mse': MeanSquaredError()}
 model = load_model('models/' + sys.argv[1], custom_objects=custom_objects)
 
-layer_names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'diagonal4_idx', 'edge_2x_idx', 'h_v_2_idx', 'h_v_3_idx', 'h_v_4_idx', 'corner_3x3', 'corner_2x5']
+layer_names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'diagonal4_idx', 'edge_2x_idx', 'h_v_2_idx', 'h_v_3_idx', 'h_v_4_idx', 'corner_3x3_idx', 'edge_x_side_idx', 'edge_block_idx', 'triangle_idx']
 names = []
 for name in layer_names:
     names.append(name + '_dense0')
     names.append(name + '_dense1')
     names.append(name + '_out')
-#names.append('add_dense0')
-#names.append('add_dense1')
+names.append('add_dense0')
+names.append('add_dense1')
 names.append('all_dense0')
 
 with open('models/' + sys.argv[2], 'w') as f:

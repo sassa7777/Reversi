@@ -132,11 +132,11 @@ int ai();
 int putstone(int_fast8_t y, int_fast8_t x);
 inline uint64_t cordinate_to_bit(int_fast8_t x, int_fast8_t y);
 inline bool canput(const uint64_t &put, const uint64_t &legalboard);
-inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o);
+inline uint64_t makelegalboard(const uint64_t &p, const uint64_t &o) noexcept;
 bool isPass();
 bool isFinished();
 void swapboard();
-inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard);
+inline uint64_t Flip(const uint64_t &put, const uint64_t &playerboard, const uint64_t &opponentboard) noexcept;
 
 int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
 int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t &playerboard, uint64_t &opponentboard);
@@ -157,7 +157,7 @@ std::string coordinate_to_x_y(uint64_t put);
 inline int score_stone(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_putable(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_fixedstone(const uint64_t &playerboard, const uint64_t &opponentboard);
-inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard);
+inline int64_t countscore(const uint64_t &playerboard, const uint64_t &opponentboard) noexcept;
 inline int score_fixedstone_table(const uint64_t &playerboard, const uint64_t &opponentboard);
 inline int score_null_place(const uint64_t &playerboard, const uint64_t &opponentboard);
 
