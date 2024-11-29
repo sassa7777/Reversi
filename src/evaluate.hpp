@@ -36,7 +36,7 @@ array<double, max_mobility * 2 + 1> add_arr;
 double final_dense[n_all_input];
 double final_bias;
 
-vector<ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, double>> pattern_arr(n_patterns);
+vector<ankerl::unordered_dense::map<pair<uint64_t, uint64_t>, double>> pattern_arr(n_patterns);
 
 uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
@@ -267,138 +267,171 @@ inline void evaluate_init() {
             ptr.second *= final_dense[i];
         }
     }
+    for (auto &ptr : add_arr) {
+        ptr *= final_dense[n_all_input - 1];
+    }
 }
 
-inline int64_t evaluate_moveorder(const uint64_t &playerboard, const uint64_t &opponentboard) noexcept {
+inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
     
     int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
     
-    double a = (pattern_arr[0][make_pair(playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201)] + pattern_arr[0][make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)]);
-    
-    a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
-    
-//    a += (pattern_arr[2][make_pair(playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000)] + pattern_arr[2][make_pair(playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020)] + pattern_arr[2][make_pair(playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804)] + pattern_arr[2][make_pair(playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000)]);
-    
-//    a += (pattern_arr[3][make_pair(playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000)] + pattern_arr[3][make_pair(playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810)] + pattern_arr[3][make_pair(playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008)] + pattern_arr[3][make_pair(playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000)]);
-    
-    a += (pattern_arr[5][make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)] +
-          pattern_arr[5][make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)] + pattern_arr[5][make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)] + pattern_arr[5][make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)]);
-    
-//    a += (pattern_arr[6][make_pair(playerboard & 0xff000000000000, opponentboard & 0xff000000000000)] + pattern_arr[6][make_pair(playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202)] + pattern_arr[6][make_pair(playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00)] + pattern_arr[6][make_pair(playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040)]);
-    
-//    a += (pattern_arr[7][make_pair(playerboard & 0xff0000000000, opponentboard & 0xff0000000000)] + pattern_arr[7][make_pair(playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404)] + pattern_arr[7][make_pair(playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000)] + pattern_arr[7][make_pair(playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020)]);
-    
-//    a += (pattern_arr[8][make_pair(playerboard & 0xff00000000, opponentboard & 0xff00000000)] +
-//          pattern_arr[8][make_pair(playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808)] + pattern_arr[8][make_pair(playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000)] + pattern_arr[8][make_pair(playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010)]);
-    
-//    a += (pattern_arr[9][make_pair(playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000)] + pattern_arr[9][make_pair(playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000)] + pattern_arr[9][make_pair(playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707)] + pattern_arr[9][make_pair(playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0)]);
-    
-    a += (pattern_arr[10][make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)] + pattern_arr[10][make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)] + pattern_arr[10][make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)] + pattern_arr[10][make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)]);
-    
-    a += (pattern_arr[11][make_pair(playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000)] + pattern_arr[11][make_pair(playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001)] + pattern_arr[11][make_pair(playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd)] + pattern_arr[11][make_pair(playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080)]);
-    
-    a += (pattern_arr[12][make_pair(playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000)] + pattern_arr[12][make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)] + pattern_arr[12][make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)] + pattern_arr[12][make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)]);
-    
-//    if (a > 0) a+=1;
-//    else a-=1;
-//    a += score_fixedstone_table(playerboard, opponentboard)/10;
-    double b = final_bias + a + ((afterIndex <= 39) ? final_dense[3] * add_arr[mobility] : 0);
+    double a =
+        (pattern_arr[0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
+         pattern_arr[0].at({playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080}));
 
-    return llround(max(-1.0, min(1.0, b)) * 640000000);
-    
-}
+    a += (pattern_arr[1].at({playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100}) +
+          pattern_arr[1].at({playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040}) +
+          pattern_arr[1].at({playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402}) +
+          pattern_arr[1].at({playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000}));
 
-inline int64_t evaluate(const uint64_t &playerboard, const uint64_t &opponentboard) noexcept {
-    
-    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
-//    cout << mobility << endl;
-    
-    double a = (pattern_arr[0][make_pair(playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201)] + pattern_arr[0][make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)]);
-    
-    a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
-    
-    a += (pattern_arr[2][make_pair(playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000)] + pattern_arr[2][make_pair(playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020)] + pattern_arr[2][make_pair(playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804)] + pattern_arr[2][make_pair(playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000)]);
-    
-    a += (pattern_arr[3][make_pair(playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000)] + pattern_arr[3][make_pair(playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810)] + pattern_arr[3][make_pair(playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008)] + pattern_arr[3][make_pair(playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000)]);
-    
-    a += (pattern_arr[5][make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)] +
-          pattern_arr[5][make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)] + pattern_arr[5][make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)] + pattern_arr[5][make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)]);
-    
-    a += (pattern_arr[6][make_pair(playerboard & 0xff000000000000, opponentboard & 0xff000000000000)] + pattern_arr[6][make_pair(playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202)] + pattern_arr[6][make_pair(playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00)] + pattern_arr[6][make_pair(playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040)]);
-    
-    a += (pattern_arr[7][make_pair(playerboard & 0xff0000000000, opponentboard & 0xff0000000000)] + pattern_arr[7][make_pair(playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404)] + pattern_arr[7][make_pair(playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000)] + pattern_arr[7][make_pair(playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020)]);
-    
-    a += (pattern_arr[8][make_pair(playerboard & 0xff00000000, opponentboard & 0xff00000000)] +
-          pattern_arr[8][make_pair(playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808)] + pattern_arr[8][make_pair(playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000)] + pattern_arr[8][make_pair(playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010)]);
-    
-    a += (pattern_arr[9][make_pair(playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000)] + pattern_arr[9][make_pair(playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000)] + pattern_arr[9][make_pair(playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707)] + pattern_arr[9][make_pair(playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0)]);
-    
-    a += (pattern_arr[10][make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)] + pattern_arr[10][make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)] + pattern_arr[10][make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)] + pattern_arr[10][make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)]);
-    
-    a += (pattern_arr[11][make_pair(playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000)] + pattern_arr[11][make_pair(playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001)] + pattern_arr[11][make_pair(playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd)] + pattern_arr[11][make_pair(playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080)]);
-    
-    a += (pattern_arr[12][make_pair(playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000)] + pattern_arr[12][make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)] + pattern_arr[12][make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)] + pattern_arr[12][make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)]);
-//    
-//    double a =
-//        (pattern_arr[0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
-//         pattern_arr[0].at({playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080}));
-//
-//    a += (pattern_arr[1].at({playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100}) +
-//          pattern_arr[1].at({playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040}) +
-//          pattern_arr[1].at({playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402}) +
-//          pattern_arr[1].at({playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000}));
-//
 //    a += (pattern_arr[2].at({playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000}) +
 //          pattern_arr[2].at({playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020}) +
 //          pattern_arr[2].at({playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804}) +
 //          pattern_arr[2].at({playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000}));
-//
+
 //    a += (pattern_arr[3].at({playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000}) +
 //          pattern_arr[3].at({playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810}) +
 //          pattern_arr[3].at({playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008}) +
 //          pattern_arr[3].at({playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000}));
-//
+
 //    a += (pattern_arr[5].at({playerboard & 0x42FF, opponentboard & 0x42FF}) +
 //          pattern_arr[5].at({playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080}) +
 //          pattern_arr[5].at({playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000}) +
 //          pattern_arr[5].at({playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301}));
-//
-//    a += (pattern_arr[6].at({playerboard & 0xff000000000000, opponentboard & 0xff000000000000}) +
-//          pattern_arr[6].at({playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202}) +
-//          pattern_arr[6].at({playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00}) +
-//          pattern_arr[6].at({playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040}));
-//
+
+    a += (pattern_arr[6].at({playerboard & 0xff000000000000, opponentboard & 0xff000000000000}) +
+          pattern_arr[6].at({playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202}) +
+          pattern_arr[6].at({playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00}) +
+          pattern_arr[6].at({playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040}));
+
 //    a += (pattern_arr[7].at({playerboard & 0xff0000000000, opponentboard & 0xff0000000000}) +
 //          pattern_arr[7].at({playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404}) +
 //          pattern_arr[7].at({playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000}) +
 //          pattern_arr[7].at({playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020}));
-//
+
 //    a += (pattern_arr[8].at({playerboard & 0xff00000000, opponentboard & 0xff00000000}) +
 //          pattern_arr[8].at({playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808}) +
 //          pattern_arr[8].at({playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000}) +
 //          pattern_arr[8].at({playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010}));
-//
+
 //    a += (pattern_arr[9].at({playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000}) +
 //          pattern_arr[9].at({playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000}) +
 //          pattern_arr[9].at({playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707}) +
 //          pattern_arr[9].at({playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0}));
-//
+
 //    a += (pattern_arr[10].at({playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000}) +
 //          pattern_arr[10].at({playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000}) +
 //          pattern_arr[10].at({playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f}) +
 //          pattern_arr[10].at({playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8}));
-//
+
 //    a += (pattern_arr[11].at({playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000}) +
 //          pattern_arr[11].at({playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001}) +
 //          pattern_arr[11].at({playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd}) +
 //          pattern_arr[11].at({playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080}));
-//
-//    a += (pattern_arr[12].at({playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000}) +
-//          pattern_arr[12].at({playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000}) +
-//          pattern_arr[12].at({playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f}) +
-//          pattern_arr[12].at({playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0}));
 
-    double b = final_bias + a + ((afterIndex <= 35) ? final_dense[3] * add_arr[mobility] : 0);
+    a += (pattern_arr[12].at({playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000}) +
+          pattern_arr[12].at({playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000}) +
+          pattern_arr[12].at({playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f}) +
+          pattern_arr[12].at({playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0}));
+
+    double b = final_bias + a + ((afterIndex <= 35) ? add_arr[mobility] : 0);
+
+    return llround(max(-1.0, min(1.0, b)) * 640000000);
+}
+
+inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
+    
+    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+//    cout << mobility << endl;
+//    
+//    double a = (pattern_arr[0][make_pair(playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201)] + pattern_arr[0][make_pair(playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080)]);
+//    
+//    a += (pattern_arr[1][make_pair(playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100)] + pattern_arr[1][make_pair(playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040)] + pattern_arr[1][make_pair(playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402)] + pattern_arr[1][make_pair(playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000)]);
+//    
+//    a += (pattern_arr[2][make_pair(playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000)] + pattern_arr[2][make_pair(playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020)] + pattern_arr[2][make_pair(playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804)] + pattern_arr[2][make_pair(playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000)]);
+//    
+//    a += (pattern_arr[3][make_pair(playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000)] + pattern_arr[3][make_pair(playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810)] + pattern_arr[3][make_pair(playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008)] + pattern_arr[3][make_pair(playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000)]);
+//    
+//    a += (pattern_arr[5][make_pair(playerboard & 0x42FF, opponentboard & 0x42FF)] +
+//          pattern_arr[5][make_pair(playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080)] + pattern_arr[5][make_pair(playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000)] + pattern_arr[5][make_pair(playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301)]);
+//    
+//    a += (pattern_arr[6][make_pair(playerboard & 0xff000000000000, opponentboard & 0xff000000000000)] + pattern_arr[6][make_pair(playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202)] + pattern_arr[6][make_pair(playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00)] + pattern_arr[6][make_pair(playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040)]);
+//    
+//    a += (pattern_arr[7][make_pair(playerboard & 0xff0000000000, opponentboard & 0xff0000000000)] + pattern_arr[7][make_pair(playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404)] + pattern_arr[7][make_pair(playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000)] + pattern_arr[7][make_pair(playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020)]);
+//    
+//    a += (pattern_arr[8][make_pair(playerboard & 0xff00000000, opponentboard & 0xff00000000)] +
+//          pattern_arr[8][make_pair(playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808)] + pattern_arr[8][make_pair(playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000)] + pattern_arr[8][make_pair(playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010)]);
+//    
+//    a += (pattern_arr[9][make_pair(playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000)] + pattern_arr[9][make_pair(playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000)] + pattern_arr[9][make_pair(playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707)] + pattern_arr[9][make_pair(playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0)]);
+//    
+//    a += (pattern_arr[10][make_pair(playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000)] + pattern_arr[10][make_pair(playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000)] + pattern_arr[10][make_pair(playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f)] + pattern_arr[10][make_pair(playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8)]);
+//    
+//    a += (pattern_arr[11][make_pair(playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000)] + pattern_arr[11][make_pair(playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001)] + pattern_arr[11][make_pair(playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd)] + pattern_arr[11][make_pair(playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080)]);
+//    
+//    a += (pattern_arr[12][make_pair(playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000)] + pattern_arr[12][make_pair(playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000)] + pattern_arr[12][make_pair(playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f)] + pattern_arr[12][make_pair(playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0)]);
+
+    //
+    double a =
+        (pattern_arr[0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
+         pattern_arr[0].at({playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080}));
+
+    a += (pattern_arr[1].at({playerboard & 0x4020100804020100, opponentboard & 0x4020100804020100}) +
+          pattern_arr[1].at({playerboard & 0x0001020408102040, opponentboard & 0x0001020408102040}) +
+          pattern_arr[1].at({playerboard & 0x0080402010080402, opponentboard & 0x0080402010080402}) +
+          pattern_arr[1].at({playerboard & 0x0204081020408000, opponentboard & 0x0204081020408000}));
+
+    a += (pattern_arr[2].at({playerboard & 0x2010080402010000, opponentboard & 0x2010080402010000}) +
+          pattern_arr[2].at({playerboard & 0x0000010204081020, opponentboard & 0x0000010204081020}) +
+          pattern_arr[2].at({playerboard & 0x0000804020100804, opponentboard & 0x0000804020100804}) +
+          pattern_arr[2].at({playerboard & 0x0408102040800000, opponentboard & 0x0408102040800000}));
+
+    a += (pattern_arr[3].at({playerboard & 0x1008040201000000, opponentboard & 0x1008040201000000}) +
+          pattern_arr[3].at({playerboard & 0x0000000102040810, opponentboard & 0x0000000102040810}) +
+          pattern_arr[3].at({playerboard & 0x0000008040201008, opponentboard & 0x0000008040201008}) +
+          pattern_arr[3].at({playerboard & 0x0810204080000000, opponentboard & 0x0810204080000000}));
+
+    a += (pattern_arr[5].at({playerboard & 0x42FF, opponentboard & 0x42FF}) +
+          pattern_arr[5].at({playerboard & 0x80c080808080c080, opponentboard & 0x80c080808080c080}) +
+          pattern_arr[5].at({playerboard & 0xff42000000000000, opponentboard & 0xff42000000000000}) +
+          pattern_arr[5].at({playerboard & 0x0103010101010301, opponentboard & 0x0103010101010301}));
+
+    a += (pattern_arr[6].at({playerboard & 0xff000000000000, opponentboard & 0xff000000000000}) +
+          pattern_arr[6].at({playerboard & 0x0202020202020202, opponentboard & 0x0202020202020202}) +
+          pattern_arr[6].at({playerboard & 0x000000000000ff00, opponentboard & 0x000000000000ff00}) +
+          pattern_arr[6].at({playerboard & 0x4040404040404040, opponentboard & 0x4040404040404040}));
+
+    a += (pattern_arr[7].at({playerboard & 0xff0000000000, opponentboard & 0xff0000000000}) +
+          pattern_arr[7].at({playerboard & 0x0404040404040404, opponentboard & 0x0404040404040404}) +
+          pattern_arr[7].at({playerboard & 0x0000000000ff0000, opponentboard & 0x0000000000ff0000}) +
+          pattern_arr[7].at({playerboard & 0x2020202020202020, opponentboard & 0x2020202020202020}));
+
+    a += (pattern_arr[8].at({playerboard & 0xff00000000, opponentboard & 0xff00000000}) +
+          pattern_arr[8].at({playerboard & 0x0808080808080808, opponentboard & 0x0808080808080808}) +
+          pattern_arr[8].at({playerboard & 0x00000000ff000000, opponentboard & 0x00000000ff000000}) +
+          pattern_arr[8].at({playerboard & 0x1010101010101010, opponentboard & 0x1010101010101010}));
+
+    a += (pattern_arr[9].at({playerboard & 0xe0e0e00000000000, opponentboard & 0xe0e0e00000000000}) +
+          pattern_arr[9].at({playerboard & 0x0707070000000000, opponentboard & 0x0707070000000000}) +
+          pattern_arr[9].at({playerboard & 0x0000000000070707, opponentboard & 0x0000000000070707}) +
+          pattern_arr[9].at({playerboard & 0x0000000000e0e0e0, opponentboard & 0x0000000000e0e0e0}));
+
+    a += (pattern_arr[10].at({playerboard & 0xf8c0808080000000, opponentboard & 0xf8c0808080000000}) +
+          pattern_arr[10].at({playerboard & 0x1f03010101000000, opponentboard & 0x1f03010101000000}) +
+          pattern_arr[10].at({playerboard & 0x000000010101031f, opponentboard & 0x000000010101031f}) +
+          pattern_arr[10].at({playerboard & 0x000000808080c0f8, opponentboard & 0x000000808080c0f8}));
+
+    a += (pattern_arr[11].at({playerboard & 0xbd3c000000000000, opponentboard & 0xbd3c000000000000}) +
+          pattern_arr[11].at({playerboard & 0x0100030303030001, opponentboard & 0x0100030303030001}) +
+          pattern_arr[11].at({playerboard & 0x0000000000003cbd, opponentboard & 0x0000000000003cbd}) +
+          pattern_arr[11].at({playerboard & 0x8000c0c0c0c00080, opponentboard & 0x8000c0c0c0c00080}));
+
+    a += (pattern_arr[12].at({playerboard & 0xf0e0c08000000000, opponentboard & 0xf0e0c08000000000}) +
+          pattern_arr[12].at({playerboard & 0x0f07030100000000, opponentboard & 0x0f07030100000000}) +
+          pattern_arr[12].at({playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f}) +
+          pattern_arr[12].at({playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0}));
+
+    double b = final_bias + a + ((afterIndex <= 35) ? add_arr[mobility] : 0);
 
     return llround(max(-1.0, min(1.0, b)) * 640000000);
 }
