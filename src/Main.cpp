@@ -64,7 +64,6 @@ void DrawBoard() {
 
 void Main()
 {
-    firstDEPTH = 10;
     botplayer = WHITE_TURN;
     //盤面初期化
     reset();
@@ -100,10 +99,10 @@ void Main()
         }
     }
     //AIのレベル
-    size_t level_index = 4;
-    Level = (int)level_index+1;
+    double level_index = 10;
+    firstDEPTH = round(level_index);
+    Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
-    constexpr array<int, 6> level_to_depth = {1, 2, 4, 6, 10, 12};
     //白黒
     size_t bot_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};
@@ -129,9 +128,10 @@ void Main()
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
-            if (SimpleGUI::RadioButtons(level_index, AI_level, Vec2(100, 455))) {
-                firstDEPTH = level_to_depth[level_index];
-                Level = (int)level_index+1;
+            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 12, Vec2(10, 505))) {
+                level_index = round(level_index);
+                firstDEPTH = level_index;
+                Level = level_index;
             }
             if (SimpleGUI::RadioButtons(bot_turn, player_turn, Vec2(340, 455))) {
                 botplayer = (int)bot_turn;

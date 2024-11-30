@@ -172,7 +172,7 @@ inline int64_t move_ordering_value(uint64_t playerboard, uint64_t opponentboard)
     if(afterIndex >= 64) return -popcountll(makelegalboard(playerboard, opponentboard));
     auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
     if(it != former_transpose_table.end()) {
-        return (640000000-max(it->second.first, it->second.second));
+        return (64000000000-max(it->second.first, it->second.second));
     } else {
         return evaluate_moveorder(opponentboard, playerboard);
     }
@@ -246,7 +246,7 @@ int ai() {
     printf("put : (%d, %d)\n", tmpx, tmpy);
     if(afterIndex >= 60) printf("Final Score\n");
     printf("Score : %lld\n", score);
-    cout << "Score(stone) : " << score/10000000.0 << endl;
+    cout << "Score(stone) : " << score/1000000000.0 << endl;
     return 1;
 }
 
@@ -980,8 +980,8 @@ inline int score_null_place(const uint64_t playerboard, const uint64_t opponentb
 }
 
 inline int64_t countscore(uint64_t playerboard, uint64_t opponentboard) noexcept {
-    if(!playerboard) [[unlikely]] return -640000000;
-    if(!opponentboard) [[unlikely]] return 640000000;
-    if(afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*10000000;
+    if(!playerboard) [[unlikely]] return -64000000000;
+    if(!opponentboard) [[unlikely]] return 64000000000;
+    if(afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*1000000000;
     return evaluate(playerboard, opponentboard);
 }

@@ -55,8 +55,8 @@ evaluate_additional.kill()
 print('n_data', len(data))
 
 # 学習
-test_ratio = 0.001
-n_epochs = 5
+test_ratio = 0.01
+n_epochs = 6
 
 diagonal8_idx = [[0, 9, 18, 27, 36, 45, 54, 63], [7, 14, 21, 28, 35, 42, 49, 56]]
 for pattern in deepcopy(diagonal8_idx):
@@ -74,9 +74,9 @@ diagonal5_idx = [[3, 12, 21, 30, 39], [24, 33, 42, 51, 60], [4, 11, 18, 25, 32],
 for pattern in deepcopy(diagonal5_idx):
     diagonal5_idx.append(list(reversed(pattern)))
     
-diagonal4_idx = [[4, 13, 22, 31], [32, 41, 50, 59], [3, 10, 17, 24], [39, 46, 53, 60]]
-for pattern in deepcopy(diagonal4_idx):
-    diagonal4_idx.append(list(reversed(pattern)))
+#diagonal4_idx = [[4, 13, 22, 31], [32, 41, 50, 59], [3, 10, 17, 24], [39, 46, 53, 60]]
+#for pattern in deepcopy(diagonal4_idx):
+#    diagonal4_idx.append(list(reversed(pattern)))
 
 edge_2x_idx = [[9, 0, 1, 2, 3, 4, 5, 6, 7, 14], [9, 0, 8, 16, 24, 32, 40, 48, 56, 49], [49, 56, 57, 58, 59, 60, 61, 62, 63, 54], [54, 63, 55, 47, 39, 31, 23, 15, 7, 14]]
 for pattern in deepcopy(edge_2x_idx):
@@ -109,7 +109,7 @@ triangle_idx = [
     [56, 57, 58, 59, 48, 49, 50, 40, 41, 32], [56, 48, 40, 32, 57, 49, 41, 58, 50, 59]
 ]
 
-pattern_idx = [diagonal8_idx, diagonal7_idx, diagonal6_idx, diagonal5_idx, diagonal4_idx, edge_2x_idx, h_v_2_idx, h_v_3_idx, h_v_4_idx, corner_3x3_idx, edge_x_side_idx, edge_block_idx, triangle_idx]
+pattern_idx = [diagonal8_idx, diagonal7_idx, diagonal6_idx, diagonal5_idx, edge_2x_idx, h_v_2_idx, h_v_3_idx, h_v_4_idx, corner_3x3_idx, edge_x_side_idx, edge_block_idx, triangle_idx]
 ln_in = sum([len(elem) for elem in pattern_idx]) + 1
 all_data = [[] for _ in range(ln_in)]
 all_labels = []
@@ -147,7 +147,7 @@ def collect_data(board, player, v1, result):
 
 x = [None for _ in range(ln_in)]
 ys = []
-names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'diagonal4_idx', 'edge_2x_idx', 'h_v_2_idx', 'h_v_3_idx', 'h_v_4_idx', 'corner_3x3_idx', 'edge_x_side_idx', 'edge_block_idx', 'triangle_idx']
+names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'edge_2x_idx', 'h_v_2_idx', 'h_v_3_idx', 'h_v_4_idx', 'corner_3x3_idx', 'edge_x_side_idx', 'edge_block_idx', 'triangle_idx']
 idx = 0
 for i in range(len(pattern_idx)):
     layers = []
@@ -178,7 +178,7 @@ y_all = Dense(1, name='all_dense0')(y_all)
 model = Model(inputs=x, outputs=y_all)
 
 model.summary()
-model.compile(loss='mse', metrics=['mae'], optimizer='adam')
+model.compile(loss='mse', metrics=['mae'], optimizer=Adam(learning_rate=test_ratio))
 
 for i in trange(len(data)):
     collect_data(*data[i])
