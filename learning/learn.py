@@ -2,7 +2,8 @@ from copy import deepcopy
 import tensorflow as tf
 from tensorflow.keras.layers import Add, Dense, Input, LeakyReLU, Concatenate
 from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint
+from keras.regularizers import l2
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard, ModelCheckpoint, LearningRateScheduler
 import numpy as np
 from tqdm import trange, tqdm
 from random import shuffle
@@ -23,7 +24,7 @@ for num in range(1):
     with open('self_play/' + digit(num, 7) + '.txt', 'r') as f:
         records.extend(list(f.read().splitlines()))
 data = []
-evaluate_additional = subprocess.Popen('./evaluate.out'.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+#evaluate_additional = subprocess.Popen('./evaluate.out'.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 for record in tqdm(records):
     o = othello()
     board_data = []
@@ -32,10 +33,10 @@ for record in tqdm(records):
         for j in range(hw):
             for k in range(hw):
                 board_str += '.' if o.grid[j][k] == vacant or o.grid[j][k] == legal else str(o.grid[j][k])
-        evaluate_additional.stdin.write((str(o.player) + '\n' + board_str + '\n').encode('utf-8'))
-        evaluate_additional.stdin.flush()
-        additional_param = [float(elem) for elem in evaluate_additional.stdout.readline().decode().split()]
-        board_data.append([board_str, o.player, additional_param[0]])
+#        evaluate_additional.stdin.write((str(o.player) + '\n' + board_str + '\n').encode('utf-8'))
+#        evaluate_additional.stdin.flush()
+#        additional_param = [float(elem) for elem in evaluate_additional.stdout.readline().decode().split()]
+        board_data.append([board_str, o.player])
         if not o.check_legal():
             o.player = 1 - o.player
             o.check_legal()
@@ -51,11 +52,11 @@ for record in tqdm(records):
     for board_datum in board_data:
         board_datum.append(result)
         data.append(board_datum)
-evaluate_additional.kill()
+#evaluate_additional.kill()
 print('n_data', len(data))
 
 # 学習
-test_ratio = 0.01
+test_ratio = 0.1
 n_epochs = 6
 
 diagonal8_idx = [[0, 9, 18, 27, 36, 45, 54, 63], [7, 14, 21, 28, 35, 42, 49, 56]]
@@ -110,7 +111,7 @@ triangle_idx = [
 ]
 
 pattern_idx = [diagonal8_idx, diagonal7_idx, diagonal6_idx, diagonal5_idx, edge_2x_idx, h_v_2_idx, h_v_3_idx, h_v_4_idx, corner_3x3_idx, edge_x_side_idx, edge_block_idx, triangle_idx]
-ln_in = sum([len(elem) for elem in pattern_idx]) + 1
+ln_in = sum([len(elem) for elem in pattern_idx])
 all_data = [[] for _ in range(ln_in)]
 all_labels = []
 
@@ -131,9 +132,8 @@ def calc_n_stones(board):
         res += int(elem != '.')
     return res
 
-def collect_data(board, player, v1, result):
+def collect_data(board, player, result):
     global all_data, all_labels
-    v1 = float(v1)
     result = float(result) / 64
     player = int(player)
     idx = 0
@@ -142,7 +142,7 @@ def collect_data(board, player, v1, result):
         for line in lines:
             all_data[idx].append(line)
             idx += 1
-    all_data[idx].append([v1 / 30])
+#    all_data[idx].append([(v1 - 15) / 15, (v1 - 15) / 15])
     all_labels.append(result)
 
 x = [None for _ in range(ln_in)]
@@ -151,9 +151,9 @@ names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'ed
 idx = 0
 for i in range(len(pattern_idx)):
     layers = []
-    layers.append(Dense(16, name=names[i] + '_dense0'))
+    layers.append(Dense(64, name=names[i] + '_dense0'))
     layers.append(LeakyReLU(negative_slope=0.01))
-    layers.append(Dense(16, name=names[i] + '_dense1'))
+    layers.append(Dense(64, name=names[i] + '_dense1'))
     layers.append(LeakyReLU(negative_slope=0.01))
     layers.append(Dense(1, name=names[i] + '_out'))
     layers.append(LeakyReLU(negative_slope=0.01))
@@ -167,18 +167,18 @@ for i in range(len(pattern_idx)):
         idx += 1
     ys.append(Add()(add_elems))
 y_pattern = Concatenate(axis=-1)(ys)
-x[idx] = Input(shape=(1,), name='additional_input')
-y_add = Dense(8, name='add_dense0')(x[idx])
-y_add = LeakyReLU(negative_slope=0.01)(y_add)
-y_add = Dense(1, name='add_dense1')(y_add)
-y_add = LeakyReLU(negative_slope=0.01)(y_add)
-y_all = Concatenate(axis=-1)([y_pattern, y_add])
+#x[idx] = Input(shape=3, name='additional_input')
+#y_add = Dense(8, name='add_dense0')(x[idx])
+#y_add = LeakyReLU(alpha=0.01)(y_add)
+#y_add = Dense(1, name='add_dense1')(y_add)
+#y_add = LeakyReLU(alpha=0.01)(y_add)
+y_all = Concatenate(axis=-1)([y_pattern])
 y_all = Dense(1, name='all_dense0')(y_all)
 
 model = Model(inputs=x, outputs=y_all)
 
 model.summary()
-model.compile(loss='mse', metrics=['mae'], optimizer=Adam(learning_rate=test_ratio))
+model.compile(loss='mse', metrics=['mae'], optimizer='adam')
 
 for i in trange(len(data)):
     collect_data(*data[i])
@@ -215,13 +215,10 @@ def lr_schedule(epoch, lr):
         return lr/2
     else:
         return lr
-
 lr_callback = tf.keras.callbacks.LearningRateScheduler(lr_schedule, verbose=1)
-
-
 print(model.evaluate(test_data, test_labels))
 early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-history = model.fit(train_data, train_labels, epochs=n_epochs, validation_data=(test_data, test_labels), callbacks=[early_stop, tensorboard_callback], batch_size=32)
+history = model.fit(train_data, train_labels, epochs=n_epochs, validation_data=(test_data, test_labels), callbacks=[early_stop, tensorboard_callback])
 
 now = datetime.datetime.today()
 model.save('models/model.h5')

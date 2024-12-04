@@ -159,7 +159,7 @@ inline int score_putable(const uint64_t playerboard, const uint64_t opponentboar
 inline int score_fixedstone(const uint64_t playerboard, const uint64_t opponentboard);
 inline int64_t countscore(const uint64_t playerboard, const uint64_t opponentboard) noexcept;
 inline int score_fixedstone_table(const uint64_t playerboard, const uint64_t opponentboard);
-inline int score_null_place(const uint64_t playerboard, const uint64_t opponentboard);
+inline int score_surround(const uint64_t playerboard, const uint64_t opponentboard);
 
 
 #endif /* othello_h */

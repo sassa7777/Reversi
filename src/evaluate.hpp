@@ -26,14 +26,15 @@ constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x20
 
 const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 // モデルの設計パラメータ
-#define n_dense0 16
-#define n_dense1 16
-#define n_add_input 1
-#define n_add_dense0 8
-#define n_all_input 13
+#define n_dense0 64
+#define n_dense1 64
+#define n_add_input 2
+#define n_add_dense0 16
+#define n_all_input 12
 #define max_mobility 36
+#define max_surround 50
 
-array<double, max_mobility * 2 + 1> add_arr;
+double add_arr[max_surround + 1][max_surround + 1];
 double final_dense[n_all_input];
 double final_bias;
 
@@ -84,7 +85,7 @@ inline double leaky_relu(double x){
 }
 
 inline double predict_pattern(int pattern_size, double in_arr[], double dense0[n_dense0][20], double bias0[n_dense0], double dense1[n_dense1][n_dense0], double bias1[n_dense1], double dense2[n_dense1], double bias2){
-    double hidden0[16], hidden1;
+    double hidden0[n_dense0], hidden1;
     int i, j;
     for (i = 0; i < n_dense0; ++i){
         hidden0[i] = bias0[i];
@@ -154,10 +155,11 @@ inline void pre_evaluation_pattern(int pattern_idx, int evaluate_idx, int patter
 }
 
 // 追加パラメータの推論
-inline double predict_add(int mobility, double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense0], double bias1){
+inline double predict_add(int sur0, int sur1, double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense0], double bias1){
     double hidden0[n_add_dense0], in_arr[n_add_input];
     int i, j;
-    in_arr[0] = (double)mobility / 30.0;
+    in_arr[0] = ((double)sur0 - 15.0) / 15.0;
+    in_arr[1] = ((double)sur1 - 15.0) / 15.0;
     for (i = 0; i < n_add_dense0; ++i){
         hidden0[i] = bias0[i];
         for (j = 0; j < n_add_input; ++j)
@@ -173,9 +175,10 @@ inline double predict_add(int mobility, double dense0[n_add_dense0][n_add_input]
 
 // 追加パラメータの前計算
 inline void pre_evaluation_add(double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense0], double bias1){
-    int mobility;
-    for (mobility = -max_mobility; mobility <= max_mobility; ++mobility){
-        add_arr[mobility + max_mobility] = predict_add(mobility, dense0, bias0, dense1, bias1);
+    int sur0, sur1;
+    for (sur0 = 0; sur0 <= max_surround; ++sur0){
+        for (sur1 = 0; sur1 <= max_surround; ++sur1)
+            add_arr[sur0][sur1] = predict_add(sur0, sur1, dense0, bias0, dense1, bias1);
     }
 }
 
@@ -233,24 +236,24 @@ inline void evaluate_init() {
         bias2 = stod(line);
         pre_evaluation_pattern(pattern_idx, pattern_idx, pattern_sizes[pattern_idx], dense0, bias0, dense1, bias1, dense2, bias2);
     }
-    // 追加入力のパラメータを得て前計算をする
-    for (i = 0; i < n_add_dense0; ++i){
-        for (j = 0; j < n_add_input; ++j){
-            getline(ifs, line);
-            add_dense0[i][j] = stod(line);
-        }
-    }
-    for (i = 0; i < n_add_dense0; ++i){
-        getline(ifs, line);
-        add_bias0[i] = stod(line);
-    }
-    for (i = 0; i < n_add_dense0; ++i){
-        getline(ifs, line);
-        add_dense1[i] = stod(line);
-    }
-    getline(ifs, line);
-    add_bias1 = stod(line);
-    pre_evaluation_add(add_dense0, add_bias0, add_dense1, add_bias1);
+//    // 追加入力のパラメータを得て前計算をする
+//    for (i = 0; i < n_add_dense0; ++i){
+//        for (j = 0; j < n_add_input; ++j){
+//            getline(ifs, line);
+//            add_dense0[i][j] = stod(line);
+//        }
+//    }
+//    for (i = 0; i < n_add_dense0; ++i){
+//        getline(ifs, line);
+//        add_bias0[i] = stod(line);
+//    }
+//    for (i = 0; i < n_add_dense0; ++i){
+//        getline(ifs, line);
+//        add_dense1[i] = stod(line);
+//    }
+//    getline(ifs, line);
+//    add_bias1 = stod(line);
+//    pre_evaluation_add(add_dense0, add_bias0, add_dense1, add_bias1);
     // 最後の層のパラメータを得る
     for (i = 0; i < n_all_input; ++i){
         getline(ifs, line);
@@ -261,14 +264,17 @@ inline void evaluate_init() {
             ptr.second *= final_dense[i];
         }
     }
-    for (auto &ptr : add_arr) {
-        ptr *= final_dense[n_all_input - 1];
-    }
+    getline(ifs, line);
+    final_bias = stod(line);
+    cout << "evaluation initialized" << endl;
 }
 
-inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
+inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) {
     
-    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+//    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+    
+//    int sur0 = min(max_surround, score_surround(playerboard, opponentboard));
+//    int sur1 = min(max_surround, score_surround(opponentboard, playerboard));
     
     double a =
         (pattern_arr[0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
@@ -329,14 +335,16 @@ inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) 
           pattern_arr[11].at({playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f}) +
           pattern_arr[11].at({playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0}));
 
-    double b = final_bias + a + ((afterIndex <= 40) ? add_arr[mobility] : 0);
+    double b = final_bias + a/* + ((afterIndex <= 40) ? final_dense[12] * add_arr[sur0][sur1] : 0)*/;
 
     return llround(max(-1.0, min(1.0, b)) * 640000000);
 }
 
-inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
+inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) {
     
-    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+//    int mobility = min(max_mobility * 2, max(0, max_mobility + popcountll(makelegalboard(playerboard, opponentboard))));
+//    int sur0 = min(max_surround, score_surround(playerboard, opponentboard));
+//    int sur1 = min(max_surround, score_surround(opponentboard, playerboard));
 //    cout << mobility << endl;
 //
     double a =
@@ -398,7 +406,7 @@ inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           pattern_arr[11].at({playerboard & 0x000000000103070f, opponentboard & 0x000000000103070f}) +
           pattern_arr[11].at({playerboard & 0x0000000080c0e0f0, opponentboard & 0x0000000080c0e0f0}));
 
-    double b = final_bias + a + ((afterIndex <= 40) ? add_arr[mobility] : 0);
+    double b = final_bias + a/* + ((afterIndex <= 40) ? final_dense[12] * add_arr[sur0][sur1] : 0)*/;
 
     return llround(max(-1.0, min(1.0, b)) * 64000000000);
 }

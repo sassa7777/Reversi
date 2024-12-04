@@ -37,6 +37,7 @@ void reset() {
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
     cout << "Level: " << Level << endl;
+    cout << "initialized" << endl;
     return;
 }
 
@@ -962,21 +963,21 @@ inline int score_fixedstone_table(const uint64_t playerboard, const uint64_t opp
     (fixedstone_table[make_pair(playerboard & UP_BOARD, opponentboard & UP_BOARD)] + fixedstone_table[make_pair(playerboard & RIGHT_BOARD, opponentboard & RIGHT_BOARD)] + fixedstone_table[make_pair(playerboard & DOWN_BOARD, opponentboard & DOWN_BOARD)] + fixedstone_table[make_pair(playerboard & LEFT_BOARD, opponentboard & LEFT_BOARD)] - popcountll(playerboard & 0x8100000000000081ULL) + popcountll(opponentboard & 0x8100000000000081ULL));
 }
 
-inline int score_null_place(const uint64_t playerboard, const uint64_t opponentboard) {
+inline int score_surround(const uint64_t playerboard, const uint64_t opponentboard) {
     uint64_t free_board = ~(playerboard | opponentboard);
     constexpr uint64_t LEFT_MASK = 0x7F7F7F7F7F7F7F7FULL;
     constexpr uint64_t RIGHT_MASK = 0xFEFEFEFEFEFEFEFEULL;
     uint64_t free_mask = 0;
-    free_mask |= (free_board & LEFT_MASK) << 1;
-    free_mask |= (free_board & LEFT_MASK) << 9;
-    free_mask |= (free_board & RIGHT_MASK) << 7;
-    free_mask |= free_board << 8;
-    free_mask |= (free_board & RIGHT_MASK) >> 1;
-    free_mask |= (free_board & RIGHT_MASK) >> 9;
-    free_mask |= (free_board & LEFT_MASK) >> 7;
-    free_mask |= free_board >> 8;
+    free_mask |= free_board & ((playerboard & LEFT_MASK) << 1);
+    free_mask |= free_board & ((playerboard & LEFT_MASK) << 9);
+    free_mask |= free_board & ((playerboard & RIGHT_MASK) << 7);
+    free_mask |= free_board & (playerboard << 8);
+    free_mask |= free_board & ((playerboard & RIGHT_MASK) >> 1);
+    free_mask |= free_board & ((playerboard & RIGHT_MASK) >> 9);
+    free_mask |= free_board & ((playerboard & LEFT_MASK) >> 7);
+    free_mask |= free_board & (playerboard >> 8);
     
-    return popcountll(opponentboard & free_mask)-popcountll(playerboard & free_mask);
+    return popcountll(free_mask);
 }
 
 inline int64_t countscore(uint64_t playerboard, uint64_t opponentboard) noexcept {

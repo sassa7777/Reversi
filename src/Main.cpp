@@ -67,7 +67,7 @@ void Main()
     botplayer = WHITE_TURN;
     //盤面初期化
     reset();
-    fixedstone_table_init();
+//    fixedstone_table_init();
     //テキストのフォント
     Font font{FontMethod::MSDF, 48};
     Font result_font{FontMethod::MSDF, 20};
