@@ -151,9 +151,9 @@ names = ['diagonal8_idx', 'diagonal7_idx', 'diagonal6_idx', 'diagonal5_idx', 'ed
 idx = 0
 for i in range(len(pattern_idx)):
     layers = []
-    layers.append(Dense(64, name=names[i] + '_dense0'))
+    layers.append(Dense(128, name=names[i] + '_dense0'))
     layers.append(LeakyReLU(negative_slope=0.01))
-    layers.append(Dense(64, name=names[i] + '_dense1'))
+    layers.append(Dense(128, name=names[i] + '_dense1'))
     layers.append(LeakyReLU(negative_slope=0.01))
     layers.append(Dense(1, name=names[i] + '_out'))
     layers.append(LeakyReLU(negative_slope=0.01))

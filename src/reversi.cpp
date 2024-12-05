@@ -184,15 +184,7 @@ int ai() {
         return 0;
     }
     printf("[*]Botが考え中..\n");
-    if(Level == 5 && nowIndex >= 29) {
-        DEPTH = 10;
-        afterIndex=nowIndex+DEPTH;
-    }
-    if(Level >= 6 && nowIndex >= 33) {
-        DEPTH = 12;
-        afterIndex=nowIndex+DEPTH;
-    }
-    if(Level >= 5 && nowIndex >= 41) {
+    if(Level >= 10 && nowIndex >= 41) {
         DEPTH = 20;
         afterIndex=60;
     }
