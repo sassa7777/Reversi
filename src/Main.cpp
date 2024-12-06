@@ -64,10 +64,6 @@ void DrawBoard() {
 
 void Main()
 {
-    botplayer = WHITE_TURN;
-    //盤面初期化
-    reset();
-//    fixedstone_table_init();
     //テキストのフォント
     Font font{FontMethod::MSDF, 48};
     Font result_font{FontMethod::MSDF, 20};
@@ -98,6 +94,7 @@ void Main()
             button_array.emplace_back(Rect(stone_edge+stone_size*x, 10+stone_size*y, stone_size, stone_size));
         }
     }
+    botplayer = WHITE_TURN;
     //AIのレベル
     double level_index = 10;
     firstDEPTH = round(level_index);
@@ -107,10 +104,11 @@ void Main()
     size_t bot_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};
     //ゲームが開始しているか
-    int game_status = 0;
+    int game_status = -1;
     int winner = 0;
     //AIの実行結果
     AsyncTask<int> result;
+    AsyncTask<void> init_result;
     //ハコくんのテキストBox
     constexpr Rect hako_text_box(260, 475, 400, 100);
     //ハコくんのテキスト
@@ -122,9 +120,18 @@ void Main()
     int black_stone_count = 0, white_stone_count = 0;
     
     
+    
     while (System::Update()) {
         //メインメニュー
-        if (game_status == 0) {
+        if (game_status == -1) {
+            if (!init_result.isValid()) {
+                init_result = Async(reset);
+            }
+            if (init_result.isReady()) {
+                game_status = 0;
+            }
+            font(U"ロード中...").draw(350, 600);
+        } else if (game_status == 0) {
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
@@ -145,11 +152,11 @@ void Main()
             if (isFinished()) {
                 game_status = 3;
                 if (nowTurn == BLACK_TURN) {
-                    black_stone_count = __builtin_popcountll(b.playerboard);
-                    white_stone_count = __builtin_popcountll(b.opponentboard);
+                    black_stone_count = popcountll(b.playerboard);
+                    white_stone_count = popcountll(b.opponentboard);
                 } else {
-                    white_stone_count = __builtin_popcountll(b.playerboard);
-                    black_stone_count = __builtin_popcountll(b.opponentboard);
+                    white_stone_count = popcountll(b.playerboard);
+                    black_stone_count = popcountll(b.opponentboard);
                 }
                 if ((botplayer == 0 && black_stone_count > white_stone_count) || (botplayer == 1 && white_stone_count > black_stone_count)) {
                     winner = 0;

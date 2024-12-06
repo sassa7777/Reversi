@@ -32,7 +32,8 @@ void reset() {
 //    b.opponentboard = 0x2020e05068743e00;
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     play_record = "";
-    if (pattern_arr[0].size() == 0) evaluate_init();
+    if (pattern_arr[0].size() == 0) evaluate_init(U"model.txt", 1);
+    if (pattern_arr_end[0].size() == 0) evaluate_init(U"model_end.txt", 2);
     if (book.size() == 0) book_init();
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
@@ -169,7 +170,7 @@ void swapboard() {
     cout << play_record << endl;
 }
 
-inline int64_t move_ordering_value(uint64_t playerboard, uint64_t opponentboard) {
+inline int64_t move_ordering_value(uint64_t playerboard, uint64_t opponentboard) noexcept {
     if(afterIndex >= 64) return -popcountll(makelegalboard(playerboard, opponentboard));
     auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
     if(it != former_transpose_table.end()) {
@@ -550,8 +551,8 @@ int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta,
         return a.score > b.score;
     });
     
-    int64_t bound_up = llround(beta + 1.4 * 100);
-    int64_t bound_low = llround(alpha - 1.4 * 100);
+    int64_t bound_up = llround(beta + 4.2 * 1000000000);
+    int64_t bound_low = llround(alpha - 4.2 * 1000000000);
     for (auto& m: moveorder) {
         if (-nega_alpha_moveorder(mpc_depth[depth]-1, -bound_up, -bound_up + 1, m.opponentboard, m.playerboard) >= bound_up) {
             return beta;
