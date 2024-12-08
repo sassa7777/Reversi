@@ -25,6 +25,7 @@ int nowTurn;
 int nowIndex;
 int firstDEPTH;
 int afterIndex;
+int evaluate_ptr_num;
 int visited_nodes;
 uint64_t legalboard;
 uint64_t rev;

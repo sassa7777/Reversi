@@ -49,6 +49,7 @@ extern int nowTurn;
 extern int nowIndex;
 extern int firstDEPTH;
 extern int afterIndex;
+extern int evaluate_ptr_num;
 extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
