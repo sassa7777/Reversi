@@ -36,7 +36,7 @@ void reset() {
 //    if (pattern_arr[0][0].size() == 0) evaluate_init(U"model_start.txt", 0);
 //    if (pattern_arr[1][0].size() == 0) evaluate_init(U"model_mid.txt", 1);
 //    if (pattern_arr[2][0].size() == 0) evaluate_init(U"model_end.txt", 2);
-    if (pattern_arr[0][0].size() == 0) evaluate_init(U"model.txt", 0);
+    if (pattern_arr[0][0].size() == 0) evaluate_init(U"models/model.txt", 0);
     if (book.size() == 0) book_init();
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
