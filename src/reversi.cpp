@@ -33,9 +33,10 @@ void reset() {
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     play_record = "";
     evaluate_ptr_num = 0;
-    if (pattern_arr[0][0].size() == 0) evaluate_init(U"model_start.txt", 0);
-    if (pattern_arr[1][0].size() == 0) evaluate_init(U"model_end.txt", 1);
+//    if (pattern_arr[0][0].size() == 0) evaluate_init(U"model_start.txt", 0);
+//    if (pattern_arr[1][0].size() == 0) evaluate_init(U"model_mid.txt", 1);
 //    if (pattern_arr[2][0].size() == 0) evaluate_init(U"model_end.txt", 2);
+    if (pattern_arr[0][0].size() == 0) evaluate_init(U"model.txt", 0);
     if (book.size() == 0) book_init();
     printf("DEPTH: %d\n", DEPTH);
     printf("Player: %d\n", botplayer);
@@ -83,9 +84,9 @@ int putstone(int_fast8_t y, int_fast8_t x) {
         if (afterIndex <= 20) {
             evaluate_ptr_num = 0;
         } else if (afterIndex <= 40) {
-            evaluate_ptr_num = 1;
+            evaluate_ptr_num = 0;
         } else {
-            evaluate_ptr_num = 1;
+            evaluate_ptr_num = 0;
         }
         play_record += coordinate_to_x_y(put);
         return 1;
