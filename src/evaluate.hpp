@@ -8,6 +8,7 @@
 #include <Siv3D.hpp>
 
 using namespace std;
+using bitboard = std::pair<uint64_t, uint64_t>;
 
 #ifdef __GNUC__
 #define popcountll(x) __builtin_popcountll(x)
@@ -26,14 +27,14 @@ constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x20
 
 const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 // モデルの設計パラメータ
-#define n_dense0 128
-#define n_dense1 128
+#define n_dense0 64
+#define n_dense1 16
 #define n_all_input 12
 
 double final_dense[n_all_input];
 double final_bias[3];
 
-ankerl::unordered_dense::map<pair<uint64_t, uint64_t>, double> pattern_arr[3][n_patterns];
+ankerl::unordered_dense::map<bitboard, double> pattern_arr[3][n_patterns];
 
 inline uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
@@ -179,34 +180,34 @@ inline void evaluate_init(String model_path, int ptr_num){
         for (i = 0; i < n_dense0; ++i){
             for (j = 0; j < pattern_sizes[pattern_idx] * 2; ++j){
                 getline(ifs, line);
-                dense0[i][j] = stod(line);
+                dense0[i][j] = stof(line);
             }
         }
         for (i = 0; i < n_dense0; ++i){
             getline(ifs, line);
-            bias0[i] = stod(line);
+            bias0[i] = stof(line);
         }
         for (i = 0; i < n_dense1; ++i){
             for (j = 0; j < n_dense0; ++j){
                 getline(ifs, line);
-                dense1[i][j] = stod(line);
+                dense1[i][j] = stof(line);
             }
         }
         for (i = 0; i < n_dense1; ++i){
             getline(ifs, line);
-            bias1[i] = stod(line);
+            bias1[i] = stof(line);
         }
         for (i = 0; i < n_dense1; ++i){
             getline(ifs, line);
-            dense2[i] = stod(line);
+            dense2[i] = stof(line);
         }
         getline(ifs, line);
-        bias2 = stod(line);
+        bias2 = stof(line);
         pre_evaluation_pattern(ptr_num, pattern_idx, pattern_idx, pattern_sizes[pattern_idx], dense0, bias0, dense1, bias1, dense2, bias2);
     }
     for (i = 0; i < n_all_input; ++i){
         getline(ifs, line);
-        final_dense[i] = stod(line);
+        final_dense[i] = stof(line);
     }
     for (i = 0; i < n_patterns; ++i){
         for (auto &ptr : pattern_arr[ptr_num][i]) {
@@ -214,8 +215,7 @@ inline void evaluate_init(String model_path, int ptr_num){
         }
     }
     getline(ifs, line);
-    final_bias[ptr_num] = stod(line);
-    cout << "evaluation " << ptr_num+1 << " initialized" << endl;
+    final_bias[ptr_num] = stof(line);
 }
 
 inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
@@ -247,6 +247,10 @@ inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) 
 
 inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
 
+    if (!playerboard) [[unlikely]] return -64000000000;
+    if (!opponentboard) [[unlikely]] return 64000000000;
+    if (afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*1000000000;
+    
     double a = 0;
     a += (pattern_arr[evaluate_ptr_num][0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
           pattern_arr[evaluate_ptr_num][0].at({playerboard & 0x0102040810204080, opponentboard & 0x0102040810204080}));
@@ -308,6 +312,5 @@ inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
     a += final_bias[evaluate_ptr_num];
     
 
-//    return llround(max(-1.0, min(1.0, a)) * 64000000000);
-    return a * 64000000000;
+    return llround(max(-1.0, min(1.0, a)) * 64000000000);
 }

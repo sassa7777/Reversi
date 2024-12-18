@@ -17,6 +17,7 @@ int px, py;
 int whitec;
 int blackc;
 int tmpx, tmpy;
+int hint_x, hint_y;
 uint64_t tmpbit;
 int think_percent;
 int think_count;
@@ -31,6 +32,7 @@ uint64_t legalboard;
 uint64_t rev;
 std::string play_record;
 board b;
+board_back b_back;
 
 constexpr int mpc_depth[] {
     0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
@@ -48,7 +50,5 @@ constexpr uint64_t moveorder_bit[64] = {
 
 ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> transpose_table;
 ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> former_transpose_table;
-
-ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
 
 #endif /* variables_h */

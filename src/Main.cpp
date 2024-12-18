@@ -33,7 +33,8 @@ void DrawBoard() {
                         TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
-                    TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
                     TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 }
@@ -51,7 +52,8 @@ void DrawBoard() {
                         TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
                 } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
-                    TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
+                    else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
                     TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 }
@@ -70,6 +72,7 @@ void Main()
     //画像読み込み
     TextureAsset::Register(U"null", Resource(U"null.png"));
     TextureAsset::Register(U"nullb", Resource(U"nullb.png"));
+    TextureAsset::Register(U"nullc", Resource(U"nullc.png"));
     TextureAsset::Register(U"white", Resource(U"white.png"));
     TextureAsset::Register(U"whiteb", Resource(U"whiteb.png"));
     TextureAsset::Register(U"black", Resource(U"black.png"));
@@ -119,7 +122,7 @@ void Main()
     
     int black_stone_count = 0, white_stone_count = 0;
     
-    
+    bool running_hint = false;
     
     while (System::Update()) {
         //メインメニュー
@@ -130,6 +133,7 @@ void Main()
             if (init_result.isReady()) {
                 game_status = 0;
             }
+            TextureAsset(U"title").draw(title_edge, 0);
             font(U"ロード中...").draw(350, 600);
         } else if (game_status == 0) {
             TextureAsset(U"title").draw(title_edge, 0);
@@ -177,15 +181,27 @@ void Main()
                         swapboard();
                     }
                 }
+            } else if (running_hint) {
+                TextureAsset(U"hako_thinking").draw(200, 475);
+                result_font(U"考え中...({:0>2}%)\n※時間がかかる場合があります"_fmt(think_percent)).draw(hako_text_box, Palette::White);
+                if (!result.isValid()) {
+                    result = Async(ai_hint);
+                }
+                if (result.isReady()) {
+                    running_hint = false;
+                    swapboard();
+                }
             } else {
                 TextureAsset(U"hako_default").draw(200, 475);
                 result_font(hako_text_default).draw(hako_text_box, Palette::White);
                 
             }
-            for (int i = 0; i < 64; ++i) {
-                if (button_array[i].leftClicked() && button_array[i].mouseOver()) {
-                    if(putstone(i/8, i%8) == 1) {
-                        swapboard();
+            if (!running_hint) {
+                for (int i = 0; i < 64; ++i) {
+                    if (button_array[i].leftClicked() && button_array[i].mouseOver()) {
+                        if(putstone(i/8, i%8) == 1) {
+                            swapboard();
+                        }
                     }
                 }
             }
@@ -201,6 +217,16 @@ void Main()
                 if (!result.isValid()) {
                     game_status = 0;
                 }
+            }
+            if (SimpleGUI::Button(U"\U000F054C", Vec2{500, 550}, 50) && nowIndex > 1) {
+                b.playerboard = b_back.playerboard;
+                b.opponentboard = b_back.opponentboard;
+                tmpx = b_back.put_x;
+                tmpy = b_back.put_y;
+                legalboard = makelegalboard(b.playerboard, b.opponentboard);
+            }
+            if (SimpleGUI::Button(U"ヒント", Vec2{500, 600}, 100)) {
+                running_hint = true;
             }
             DrawBoard();
         //ゲーム終了
