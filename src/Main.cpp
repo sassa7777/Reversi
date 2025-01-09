@@ -218,7 +218,7 @@ void Main()
                     game_status = 0;
                 }
             }
-            if (SimpleGUI::Button(U"\U000F054C", Vec2{500, 550}, 50) && nowIndex > 1) {
+            if (SimpleGUI::Button(U"1手戻す \U000F054C", Vec2{500, 550}, 100) && nowIndex > 1) {
                 b.playerboard = b_back.playerboard;
                 b.opponentboard = b_back.opponentboard;
                 tmpx = b_back.put_x;

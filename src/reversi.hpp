@@ -78,13 +78,13 @@ public:
     uint64_t opponentboard;
     int64_t score;
 
-    bool operator<(const board& b) const {
+    bool operator<(const board& b) const noexcept {
         return this->score > b.score;
     }
-    bool operator==(const board& other) const {
+    bool operator==(const board& other) const noexcept {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
-    bool operator!=(const board& other) const {
+    bool operator!=(const board& other) const noexcept {
         return this->playerboard != other.playerboard || this->opponentboard != other.opponentboard;
     }
 };
@@ -104,10 +104,10 @@ public:
     uint64_t legalboard;
     int64_t score;
 
-    bool operator<(const board_finish& b) const {
+    bool operator<(const board_finish& b) const noexcept {
         return this->score < b.score;
     }
-    bool operator==(const board_finish& other) const {
+    bool operator==(const board_finish& other) const noexcept {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
 };
@@ -120,10 +120,10 @@ public:
     uint64_t legalboard;
     int64_t score;
 
-    bool operator<(const board_finish_root& b) const {
+    bool operator<(const board_finish_root& b) const noexcept {
         return this->score < b.score;
     }
-    bool operator==(const board_finish_root& other) const {
+    bool operator==(const board_finish_root& other) const noexcept {
         return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
     }
 };

@@ -11,12 +11,8 @@ using namespace std;
 using bitboard = std::pair<uint64_t, uint64_t>;
 
 #ifdef __GNUC__
-#define popcountll(x) __builtin_popcountll(x)
-#define clzll(x) __builtin_clzll(x)
 #define flipVertical(x) __builtin_bswap64(x)
 #else
-#define    popcountll(x) __popcnt64(x)
-#define clzll(x) _lzcnt_u64(x)
 #define flipVertical(x) _byteswap_uint64(x)
 #endif
 
@@ -27,9 +23,10 @@ constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x20
 
 const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 // モデルの設計パラメータ
-#define n_dense0 64
-#define n_dense1 16
+#define n_dense0 128
+#define n_dense1 128
 #define n_all_input 12
+#define use_book false
 
 double final_dense[n_all_input];
 double final_bias[3];
@@ -43,9 +40,10 @@ inline uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
 
 // 水平反転
 inline uint64_t flipHorizontal(uint64_t x) {
-    x = delta_swap(x, 0x5555555555555555, 1);
-    x = delta_swap(x, 0x3333333333333333, 2);
-    return delta_swap(x, 0x0F0F0F0F0F0F0F0F, 4);
+    x = ((x >> 1) & 0x5555555555555555) | ((x & 0x5555555555555555) << 1);
+    x = ((x >> 2) & 0x3333333333333333) | ((x & 0x3333333333333333) << 2);
+    x = ((x >> 4) & 0x0f0f0f0f0f0f0f0f) | ((x & 0x0f0f0f0f0f0f0f0f) << 4);
+    return x;
 }
 
 // A1-H8反転
@@ -64,16 +62,24 @@ inline uint64_t flipDiagonalA8H1(uint64_t x) {
 
 // 時計回りに90度回転
 inline uint64_t rotateClockwise90(uint64_t x) {
-    return flipHorizontal(flipDiagonalA1H8(x));
+    return flipVertical(flipDiagonalA1H8(x));
 }
 
 inline uint64_t rotateCounterclockwise90(uint64_t x) {
-    return flipVertical(flipDiagonalA1H8(x));
+    return flipDiagonalA1H8(flipVertical(x));
 }
 
 inline uint64_t rotate180(uint64_t x) {
     return flipVertical(flipHorizontal(x));
 }
+
+#ifdef __clang__
+#define rotate180(x) __builtin_bitreverse64(x)
+#else
+inline uint64_t rotate180(uint64_t x) {
+    return flipVertical(flipHorizontal(x));
+}
+#endif
 
 inline int cal_pow(int x, int depth) {
     if(depth == 1) return x;
@@ -247,9 +253,9 @@ inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) 
 
 inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
 
-    if (!playerboard) [[unlikely]] return -64000000000;
-    if (!opponentboard) [[unlikely]] return 64000000000;
-    if (afterIndex >= 64) return (popcountll(playerboard)-popcountll(opponentboard))*1000000000;
+    if (!playerboard) return -64000000000;
+    if (!opponentboard) return 64000000000;
+    if (afterIndex >= 64) return (popcount(playerboard)-popcount(opponentboard))*1000000000;
     
     double a = 0;
     a += (pattern_arr[evaluate_ptr_num][0].at({playerboard & 0x8040201008040201, opponentboard & 0x8040201008040201}) +
