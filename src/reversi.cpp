@@ -28,7 +28,7 @@ void reset() {
     if (pattern_arr[0][0].size() == 0) {
         evaluate_init(U"model1.txt", 0);
 //        evaluate_init(U"model4.txt", 1);
-        evaluate_init(U"model2.txt", 1);
+//        evaluate_init(U"model2.txt", 1);
         cout << "evaluation initialized" << endl;
     }
     if (book.size() == 0) book_init();
