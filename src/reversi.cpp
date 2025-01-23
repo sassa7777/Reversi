@@ -12,9 +12,6 @@
 using namespace std;
 using bitboard = std::pair<uint64_t, uint64_t>;
 
-// builtin functions
-// if you are using C++20, you can just use std::popcount(x) for popcount
-
 void reset() {
     cout << "[*]初期化中..." << endl;
     nowTurn = BLACK_TURN;
@@ -30,6 +27,7 @@ void reset() {
     evaluate_ptr_num = 0;
     if (pattern_arr[0][0].size() == 0) {
         evaluate_init(U"model1.txt", 0);
+//        evaluate_init(U"model4.txt", 1);
         evaluate_init(U"model2.txt", 1);
         cout << "evaluation initialized" << endl;
     }
@@ -41,7 +39,7 @@ void reset() {
     return;
 }
 
-int putstone(int_fast8_t y, int_fast8_t x) {
+inline int putstone(int_fast8_t y, int_fast8_t x) {
     uint64_t put = cordinate_to_bit(x, y);
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     if (canput(put, legalboard)) {
@@ -65,7 +63,7 @@ int putstone(int_fast8_t y, int_fast8_t x) {
         } else if (afterIndex <= 40) {
             evaluate_ptr_num = 0;
         } else {
-            evaluate_ptr_num = 1;
+            evaluate_ptr_num = 0;
         }
         play_record += coordinate_to_x_y(put);
         return 1;
@@ -74,7 +72,7 @@ int putstone(int_fast8_t y, int_fast8_t x) {
     }
 }
 
-string coordinate_to_x_y(uint64_t put) {
+inline string coordinate_to_x_y(uint64_t put) {
     constexpr string x = "abcdefgh";
     int pos = countl_zero(put);
     return string(1, x[pos%8]) + to_string(pos/8+1);
