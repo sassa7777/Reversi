@@ -571,8 +571,8 @@ int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta,
         return a.score > b.score;
     });
     
-    int64_t bound_up = llround(beta + 4.2 * 2000000000);
-    int64_t bound_low = llround(alpha - 4.2 * 2000000000);
+    int64_t bound_up = llround(beta + 8LL * 1000000000);
+    int64_t bound_low = llround(alpha - 8LL * 1000000000);
     for (auto& m: moveorder) {
         if (-nega_alpha_moveorder(mpc_depth[depth]-1, -bound_up, -bound_up + 1, m.opponentboard, m.playerboard) >= bound_up) {
             return beta;
@@ -596,7 +596,7 @@ int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta,
         }
     } else {
         for (auto& m: moveorder) {
-            var = -nega_alpha_moveorder(depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
+            var = -nega_alpha_moveorder_mpc(depth-1, -beta, -alpha, m.opponentboard, m.playerboard);
             if (var >= beta) {
                 if (var > l) {
                     transpose_table[board_state] = {u, var};
