@@ -38,9 +38,8 @@ constexpr size_t shn[11] = {1, 1, 0, 0, 3, 1, 1, 1, 1, 3, 3};
 double final_dense[n_all_input];
 double final_bias[3];
 
-//ankerl::unordered_dense::map<bitboard, double> pattern_arr[3][n_patterns];
 vector<vector<vector<vector<vector<double>>>>> pattern_arr(3, vector<vector<vector<vector<double>>>>(n_patterns));
-vector<vector<zp7_masks_64_t>> maskr(n_patterns, vector<zp7_masks_64_t>(4));
+zp7_masks_64_t maskr[n_patterns][4];
 
 inline uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
@@ -57,9 +56,13 @@ inline uint64_t flipHorizontal(uint64_t x) {
 
 // A1-H8反転
 inline uint64_t flipDiagonalA1H8(uint64_t x) {
-    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
-    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
-    return delta_swap(x, 0x00000000F0F0F0F0, 28);
+//    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
+//    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
+//    return delta_swap(x, 0x00000000F0F0F0F0, 28);
+    __m256i    v = _mm256_sllv_epi64(_mm256_broadcastq_epi64(_mm_cvtsi64_si128(x)),
+                                     _mm256_set_epi64x(0, 1, 2, 3));
+    return ((uint64_t) _mm256_movemask_epi8(v) << 32)
+    | (uint32_t) _mm256_movemask_epi8(_mm256_slli_epi64(v, 4));
 }
 
 // A8-H1反転
@@ -338,6 +341,7 @@ inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           pattern_arr[evaluate_ptr_num][11][1][ppext(playerboard, &maskr[11][1])][ppext(opponentboard, &maskr[11][1])] +
           pattern_arr[evaluate_ptr_num][11][2][ppext(playerboard, &maskr[11][2])][ppext(opponentboard, &maskr[11][2])] +
           pattern_arr[evaluate_ptr_num][11][3][ppext(playerboard, &maskr[11][3])][ppext(opponentboard, &maskr[11][3])]);
+  
     a += final_bias[evaluate_ptr_num];
     
 
