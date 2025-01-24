@@ -10,6 +10,7 @@
 
 #include "reversi.hpp"
 
+bool first_reset;
 int DEPTH;
 int search_depth;
 int Level;

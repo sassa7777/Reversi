@@ -116,6 +116,7 @@ void Main()
     int black_stone_count = 0, white_stone_count = 0;
     
     bool running_hint = false;
+    first_reset = true;
     
     while (System::Update()) {
         //メインメニュー

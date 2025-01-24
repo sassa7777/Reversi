@@ -25,10 +25,11 @@ void reset() {
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     play_record = "";
     evaluate_ptr_num = 0;
-    if (pattern_arr[0][0].size() == 0) {
+    if (first_reset) {
         evaluate_init(U"model1.txt", 0);
 //        evaluate_init(U"model4.txt", 1);
 //        evaluate_init(U"model2.txt", 1);
+        first_reset = false;
         cout << "evaluation initialized" << endl;
     }
     if (book.size() == 0) book_init();

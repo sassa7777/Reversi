@@ -38,7 +38,8 @@ constexpr size_t shn[11] = {1, 1, 0, 0, 3, 1, 1, 1, 1, 3, 3};
 double final_dense[n_all_input];
 double final_bias[3];
 
-vector<vector<vector<vector<vector<double>>>>> pattern_arr(3, vector<vector<vector<vector<double>>>>(n_patterns));
+//vector<vector<vector<vector<vector<double>>>>> pattern_arr(3, vector<vector<vector<vector<double>>>>(n_patterns));
+double pattern_arr[1][n_patterns][4][1024][1024];
 zp7_masks_64_t maskr[n_patterns][4];
 
 inline uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
@@ -130,13 +131,13 @@ inline void pre_evaluation_pattern(int ptr_num, int pattern_idx, int evaluate_id
     maskr[pattern_idx][3] = zp7_ppp_64(l90(pattern1));
     size_t popcountPattern = popcount(pattern1);
     size_t totalCombinations = cal_pow(2, (int)popcountPattern);
-    pattern_arr[ptr_num][evaluate_idx].resize(4);
-    for (auto &ptar : pattern_arr[ptr_num][evaluate_idx]) {
-        ptar.resize(1ULL << popcountPattern);
-        for (auto &ptar2 : ptar) {
-            ptar2.resize(1ULL << popcountPattern);
-        }
-    }
+//    pattern_arr[ptr_num][evaluate_idx].resize(4);
+//    for (auto &ptar : pattern_arr[ptr_num][evaluate_idx]) {
+//        ptar.resize(1ULL << popcountPattern);
+//        for (auto &ptar2 : ptar) {
+//            ptar2.resize(1ULL << popcountPattern);
+//        }
+//    }
     vector<uint64_t> bitShifts(bitpositions.size());
     for (size_t i = 0; i < bitpositions.size(); ++i) {
         bitShifts[i] = (0x8000000000000000ULL >> bitpositions[i]);
@@ -185,9 +186,6 @@ inline void pre_evaluation_pattern(int ptr_num, int pattern_idx, int evaluate_id
 }
 
 inline void evaluate_init(String model_path, int ptr_num){
-    for (auto &ptar : pattern_arr[ptr_num]) {
-        ptar.clear();
-    }
     ifstream ifs(FileSystem::RelativePath(Resource(model_path)).narrow());
     if (ifs.fail()){
         cerr << "evaluation file does not exist" << endl;

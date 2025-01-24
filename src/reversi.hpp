@@ -34,6 +34,7 @@
 constexpr int64_t MIN_INF = -9223372036854775807;
 constexpr int64_t MAX_INF = 9223372036854775807;
 
+extern bool first_reset;
 extern int DEPTH;
 extern int search_depth;
 extern int Level;
