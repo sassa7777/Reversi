@@ -9,8 +9,6 @@ C++で書かれていて、NegaScout法/ビットボードを使用していま�
 ```
 を行う必要があります
 
-AVX2に対応したCPUまたはその互換機能を持つ環境が必要です
-
 依存関係: 
 [unordered_dense](https://github.com/martinus/unordered_dense),
 [Siv3d](https://siv3d.github.io/)
