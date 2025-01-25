@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <ankerl/unordered_dense.h>
 #include <Siv3D.hpp>
-#include "../zp7/zp7.c"
+#include "../zp7/zp7.cpp"
 
 using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
@@ -26,21 +26,18 @@ constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x20
 
 const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 
-constexpr uint64_t magic_number[11][4] = {{0x513de207d3f3037d, 0x014fe47f65da7454, 0x0, 0x0}, {0x0058211811e33407, 0x0038385079e568ac, 0x35dfe3487e16bea8, 0x0000437ea663be08}, {0x0000780f605dab1a, 0x0096280cc026ba33, 0x32892c0479f5bf02, 0x0000009c840421c2}, {0x0000009dbeafc4b9, 0x09b7c9bf900046c6, 0x1c87f1fbace32e75, 0x00000001c4e67750}, {0x00000000000026fd, 0x6d7e128964970ce4, 0x657fa299405c5d12, 0x016d8e3e8d0ec8cf}, {0x14432327482504ce, 0x1379c9ffc0076bf1, 0x00ccfd6665e66667, 0x01bd45d2f475a716}, {0x14432327480b0000, 0x0977fb411a695d0e, 0x00003f8987e8a517, 0x037fe7dc0050ffaa}, {0x1443232743767e38, 0x1bf78ffc3a34d4e7, 0x1443232100000000, 0x0019bc0721dbc558}, {0x000000000003e7fd, 0x14432327483ed99b, 0x44f0aa0055758901, 0x123af351dfe9423a}, {0x000000018ed7c80d, 0x000000cf890057d1, 0x56f8bd8dc5ed044f, 0x034d0fcf0a62e000}, {0x0000000000001f35, 0x2a7e9d809b390195, 0x14c2563f0c4ee85d, 0x007e31f1178d5f15}};
-
-constexpr size_t shn[11] = {1, 1, 0, 0, 3, 1, 1, 1, 1, 3, 3};
 // モデルの設計パラメータ
 #define n_dense0 128
 #define n_dense1 128
 #define n_all_input 12
-#define use_book true
+#define model_count 1
+#define use_book false
 
 double final_dense[n_all_input];
 double final_bias[3];
 
-//vector<vector<vector<vector<vector<double>>>>> pattern_arr(3, vector<vector<vector<vector<double>>>>(n_patterns));
-double pattern_arr[1][n_patterns][4][1024][1024];
-zp7_masks_64_t maskr[n_patterns][4];
+static double pattern_arr[model_count][n_patterns][4][1024][1024];
+static zp7_masks_64_t maskr[n_patterns][4];
 
 inline uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
@@ -57,13 +54,9 @@ inline uint64_t flipHorizontal(uint64_t x) {
 
 // A1-H8反転
 inline uint64_t flipDiagonalA1H8(uint64_t x) {
-//    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
-//    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
-//    return delta_swap(x, 0x00000000F0F0F0F0, 28);
-    __m256i    v = _mm256_sllv_epi64(_mm256_broadcastq_epi64(_mm_cvtsi64_si128(x)),
-                                     _mm256_set_epi64x(0, 1, 2, 3));
-    return ((uint64_t) _mm256_movemask_epi8(v) << 32)
-    | (uint32_t) _mm256_movemask_epi8(_mm256_slli_epi64(v, 4));
+    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
+    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
+    return delta_swap(x, 0x00000000F0F0F0F0, 28);
 }
 
 // A8-H1反転
@@ -250,8 +243,6 @@ inline void evaluate_init(String model_path, int ptr_num){
 inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
     
     double a = 0;
-    
-    // 例: aに評価値を加算する部分をppextを使用して簡略化
     a += (pattern_arr[evaluate_ptr_num][0][0][ppext(playerboard, &maskr[0][0])][ppext(opponentboard, &maskr[0][0])] +
           pattern_arr[evaluate_ptr_num][0][1][ppext(playerboard, &maskr[0][1])][ppext(opponentboard, &maskr[0][1])]);
 
@@ -260,10 +251,50 @@ inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) 
           pattern_arr[evaluate_ptr_num][1][2][ppext(playerboard, &maskr[1][2])][ppext(opponentboard, &maskr[1][2])] +
           pattern_arr[evaluate_ptr_num][1][3][ppext(playerboard, &maskr[1][3])][ppext(opponentboard, &maskr[1][3])]);
 
+    a += (pattern_arr[evaluate_ptr_num][2][0][ppext(playerboard, &maskr[2][0])][ppext(opponentboard, &maskr[2][0])] +
+          pattern_arr[evaluate_ptr_num][2][1][ppext(playerboard, &maskr[2][1])][ppext(opponentboard, &maskr[2][1])] +
+          pattern_arr[evaluate_ptr_num][2][2][ppext(playerboard, &maskr[2][2])][ppext(opponentboard, &maskr[2][2])] +
+          pattern_arr[evaluate_ptr_num][2][3][ppext(playerboard, &maskr[2][3])][ppext(opponentboard, &maskr[2][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][3][0][ppext(playerboard, &maskr[3][0])][ppext(opponentboard, &maskr[3][0])] +
+          pattern_arr[evaluate_ptr_num][3][1][ppext(playerboard, &maskr[3][1])][ppext(opponentboard, &maskr[3][1])] +
+          pattern_arr[evaluate_ptr_num][3][2][ppext(playerboard, &maskr[3][2])][ppext(opponentboard, &maskr[3][2])] +
+          pattern_arr[evaluate_ptr_num][3][3][ppext(playerboard, &maskr[3][3])][ppext(opponentboard, &maskr[3][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][4][0][ppext(playerboard, &maskr[4][0])][ppext(opponentboard, &maskr[4][0])] +
+          pattern_arr[evaluate_ptr_num][4][1][ppext(playerboard, &maskr[4][1])][ppext(opponentboard, &maskr[4][1])] +
+          pattern_arr[evaluate_ptr_num][4][2][ppext(playerboard, &maskr[4][2])][ppext(opponentboard, &maskr[4][2])] +
+          pattern_arr[evaluate_ptr_num][4][3][ppext(playerboard, &maskr[4][3])][ppext(opponentboard, &maskr[4][3])]);
+
     a += (pattern_arr[evaluate_ptr_num][5][0][ppext(playerboard, &maskr[5][0])][ppext(opponentboard, &maskr[5][0])] +
           pattern_arr[evaluate_ptr_num][5][1][ppext(playerboard, &maskr[5][1])][ppext(opponentboard, &maskr[5][1])] +
           pattern_arr[evaluate_ptr_num][5][2][ppext(playerboard, &maskr[5][2])][ppext(opponentboard, &maskr[5][2])] +
           pattern_arr[evaluate_ptr_num][5][3][ppext(playerboard, &maskr[5][3])][ppext(opponentboard, &maskr[5][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][6][0][ppext(playerboard, &maskr[6][0])][ppext(opponentboard, &maskr[6][0])] +
+          pattern_arr[evaluate_ptr_num][6][1][ppext(playerboard, &maskr[6][1])][ppext(opponentboard, &maskr[6][1])] +
+          pattern_arr[evaluate_ptr_num][6][2][ppext(playerboard, &maskr[6][2])][ppext(opponentboard, &maskr[6][2])] +
+          pattern_arr[evaluate_ptr_num][6][3][ppext(playerboard, &maskr[6][3])][ppext(opponentboard, &maskr[6][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][7][0][ppext(playerboard, &maskr[7][0])][ppext(opponentboard, &maskr[7][0])] +
+          pattern_arr[evaluate_ptr_num][7][1][ppext(playerboard, &maskr[7][1])][ppext(opponentboard, &maskr[7][1])] +
+          pattern_arr[evaluate_ptr_num][7][2][ppext(playerboard, &maskr[7][2])][ppext(opponentboard, &maskr[7][2])] +
+          pattern_arr[evaluate_ptr_num][7][3][ppext(playerboard, &maskr[7][3])][ppext(opponentboard, &maskr[7][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][8][0][ppext(playerboard, &maskr[8][0])][ppext(opponentboard, &maskr[8][0])] +
+          pattern_arr[evaluate_ptr_num][8][1][ppext(playerboard, &maskr[8][1])][ppext(opponentboard, &maskr[8][1])] +
+          pattern_arr[evaluate_ptr_num][8][2][ppext(playerboard, &maskr[8][2])][ppext(opponentboard, &maskr[8][2])] +
+          pattern_arr[evaluate_ptr_num][8][3][ppext(playerboard, &maskr[8][3])][ppext(opponentboard, &maskr[8][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][9][0][ppext(playerboard, &maskr[9][0])][ppext(opponentboard, &maskr[9][0])] +
+          pattern_arr[evaluate_ptr_num][9][1][ppext(playerboard, &maskr[9][1])][ppext(opponentboard, &maskr[9][1])] +
+          pattern_arr[evaluate_ptr_num][9][2][ppext(playerboard, &maskr[9][2])][ppext(opponentboard, &maskr[9][2])] +
+          pattern_arr[evaluate_ptr_num][9][3][ppext(playerboard, &maskr[9][3])][ppext(opponentboard, &maskr[9][3])]);
+
+    a += (pattern_arr[evaluate_ptr_num][10][0][ppext(playerboard, &maskr[10][0])][ppext(opponentboard, &maskr[10][0])] +
+          pattern_arr[evaluate_ptr_num][10][1][ppext(playerboard, &maskr[10][1])][ppext(opponentboard, &maskr[10][1])] +
+          pattern_arr[evaluate_ptr_num][10][2][ppext(playerboard, &maskr[10][2])][ppext(opponentboard, &maskr[10][2])] +
+          pattern_arr[evaluate_ptr_num][10][3][ppext(playerboard, &maskr[10][3])][ppext(opponentboard, &maskr[10][3])]);
 
     a += (pattern_arr[evaluate_ptr_num][11][0][ppext(playerboard, &maskr[11][0])][ppext(opponentboard, &maskr[11][0])] +
           pattern_arr[evaluate_ptr_num][11][1][ppext(playerboard, &maskr[11][1])][ppext(opponentboard, &maskr[11][1])] +

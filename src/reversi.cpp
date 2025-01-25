@@ -26,7 +26,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model1.txt", 0);
+        evaluate_init(U"model4.txt", 0);
 //        evaluate_init(U"model4.txt", 1);
 //        evaluate_init(U"model2.txt", 1);
         first_reset = false;
