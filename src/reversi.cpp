@@ -26,10 +26,12 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model4.txt", 0);
-//        evaluate_init(U"model4.txt", 1);
+        evaluate_init(U"model11.txt", 0);
+//        evaluate_init(U"model_end.txt", 1);
 //        evaluate_init(U"model2.txt", 1);
         first_reset = false;
+        transpose_table.reserve(100000);
+        former_transpose_table.reserve(100000);
         cout << "evaluation initialized" << endl;
     }
     if (book.size() == 0) book_init();
@@ -59,9 +61,7 @@ inline int putstone(int_fast8_t y, int_fast8_t x) {
         b.opponentboard ^= rev;
         nowIndex++;
         afterIndex++;
-        if (afterIndex <= 20) {
-            evaluate_ptr_num = 0;
-        } else if (afterIndex <= 40) {
+        if (afterIndex <= 30) {
             evaluate_ptr_num = 0;
         } else {
             evaluate_ptr_num = 0;
@@ -116,10 +116,10 @@ inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard)
     mask[1] = 0x7f00000000000000ULL >> (pos);
     mask[2] = 0x0102040810204000ULL >> (pos);
     mask[3] = 0x0040201008040201ULL >> (pos);
-    outflank[0] = (0x8000000000000000ULL >> countl_zero(((opponentboard) & (((mask[0]) & ((mask[0]) - 1)))) ^ (mask[0]))) & playerboard;
-    outflank[1] = (0x8000000000000000ULL >> countl_zero(((OM) & (((mask[1]) & ((mask[1]) - 1)))) ^ (mask[1]))) & playerboard;
-    outflank[2] = (0x8000000000000000ULL >> countl_zero(((OM) & (((mask[2]) & ((mask[2]) - 1)))) ^ (mask[2]))) & playerboard;
-    outflank[3] = (0x8000000000000000ULL >> countl_zero(((OM) & (((mask[3]) & ((mask[3]) - 1)))) ^ (mask[3]))) & playerboard;
+    outflank[0] = (0x8000000000000000ULL >> countl_zero(~opponentboard & mask[0])) & playerboard;
+    outflank[1] = (0x8000000000000000ULL >> countl_zero(~OM & mask[1])) & playerboard;
+    outflank[2] = (0x8000000000000000ULL >> countl_zero(~OM & mask[2])) & playerboard;
+    outflank[3] = (0x8000000000000000ULL >> countl_zero(~OM & mask[3])) & playerboard;
     flipped  = ((~outflank[0] + 1) << 1) & mask[0];
     flipped |= ((~outflank[1] + 1) << 1) & mask[1];
     flipped |= ((~outflank[2] + 1) << 1) & mask[2];
@@ -162,7 +162,7 @@ inline int64_t move_ordering_value(uint64_t playerboard, uint64_t opponentboard)
     if (afterIndex >= 64) return -popcount(makelegalboard(playerboard, opponentboard));
     auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
     if (it != former_transpose_table.end()) {
-        return (64000000000-max(it->second.first, it->second.second));
+        return (64000000000000000-max(it->second.first, it->second.second));
     } else {
         return evaluate_moveorder(opponentboard, playerboard);
     }
@@ -196,7 +196,7 @@ int ai_hint() {
     hint_x = count % 8;
     cout << "suggest : (" << hint_x << ", " << hint_y << ")" << endl;
     cout << "Score : " << score << endl;
-    cout << "Score(stone) : " << score/1000000000.0 << endl;
+    cout << "Score(stone) : " << score/1000000000000000.0 << endl;
     return 1;
 }
 
@@ -257,7 +257,7 @@ int ai() {
     putstone(tmpy, tmpx);
     cout << "suggest : (" << tmpx << ", " << tmpy << ")" << endl;
     cout << "Score : " << score << endl;
-    cout << "Score(stone) : " << score/1000000000.0 << endl;
+    cout << "Score(stone) : " << score/1000000000000000.0 << endl;
     return 1;
 }
 
