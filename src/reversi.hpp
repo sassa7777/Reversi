@@ -151,10 +151,10 @@ bool isFinished();
 void swapboard();
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept;
 
-int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
-int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
+int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
+int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
 int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
-int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
+int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
 int64_t nega_scout_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
 int64_t nega_alpha_moveorder_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
 int64_t nega_alpha_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);

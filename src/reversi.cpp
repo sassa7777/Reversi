@@ -26,8 +26,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model11.txt", 0);
-//        evaluate_init(U"model_end.txt", 1);
+        evaluate_init(U"model2.txt", 0);
 //        evaluate_init(U"model2.txt", 1);
         first_reset = false;
         transpose_table.reserve(100000);
@@ -61,7 +60,7 @@ inline int putstone(int_fast8_t y, int_fast8_t x) {
         b.opponentboard ^= rev;
         nowIndex++;
         afterIndex++;
-        if (afterIndex <= 30) {
+        if (afterIndex <= 40) {
             evaluate_ptr_num = 0;
         } else {
             evaluate_ptr_num = 0;
@@ -87,6 +86,7 @@ inline bool canput(uint64_t put, uint64_t legalboard) {
     return ((put & legalboard) == put);
 }
 
+// code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
 inline uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
     uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
@@ -106,6 +106,24 @@ inline uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
     
     return moves & ~(p|o);
 }
+
+// code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
+#if __has_builtin(__builtin_subcll)
+inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
+    uint64_t flipmask, cy;
+    flipmask = __builtin_subcll(outflank, 1, 0, &cy);
+    return __builtin_addcll(flipmask, 0, cy, &cy);
+}
+#elif (defined(_M_X64) && (_MSC_VER >= 1800)) || (defined(__x86_64__) && defined(__GNUC__) && (__GNUC__ > 7 || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)))
+inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
+    uint64_t flipmask;
+    unsigned char cy = _subborrow_u64(0, outflank, 1, &flipmask);
+    _addcarry_u64(cy, flipmask, 0, &flipmask);
+    return flipmask;
+}
+#else
+    #define OutflankToFlipmask(outflank)    ((outflank) - (unsigned int) ((outflank) != 0))
+#endif
 
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept {
     uint64_t flipped, OM, outflank[4], mask[4];
@@ -209,6 +227,10 @@ int ai() {
         DEPTH = 20;
         afterIndex=60;
     }
+    if (Level >= 10 && afterIndex >= 41) {
+        DEPTH = 12;
+        afterIndex=nowIndex+DEPTH;
+    }
     tmpbit = 0;
     think_percent = 0;
     transpose_table.clear();
@@ -225,13 +247,13 @@ int ai() {
 #if use_book
     auto book_list = book.equal_range(make_pair(b.playerboard, b.opponentboard));
     if (book_list.first != book_list.second) {
-        vector<std::multimap<bitboard, uint64_t>::const_iterator> iterators;
+        vector<multimap<bitboard, uint64_t>::const_iterator> iterators;
             for (auto it = book_list.first; it != book_list.second; ++it) {
                 iterators.push_back(it);
             }
             random_device seed_gen;
             mt19937 engine {seed_gen()};
-            vector<std::multimap<bitboard, uint64_t>::const_iterator> book_itr(1);
+            vector<multimap<bitboard, uint64_t>::const_iterator> book_itr(1);
             sample(iterators.begin(), iterators.end(), book_itr.begin(), 1, engine);
         tmpbit = book_itr[0]->second;
         cout << "book found" << endl;
@@ -326,7 +348,7 @@ int64_t search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hin
     return alpha;
 }
 
-int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) {
+int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (!depth) {
         return evaluate(playerboard, opponentboard);
@@ -416,7 +438,7 @@ int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t play
 }
 
 
-int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) {
+int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (!depth) {
         return evaluate(playerboard, opponentboard);
@@ -485,7 +507,7 @@ int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uin
     return max_score;
 }
 
-int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) {
+int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (!depth) {
         return evaluate(playerboard, opponentboard);
