@@ -26,6 +26,8 @@ macOS版のみビルド済みアプリケーションを配布しています
 
 ※起動時、モデルの読み込みと評価関数の初期化を行うため3~6秒ほど時間がかかります
 
+# その他
+
 依存関係: 
 [unordered_dense](https://github.com/martinus/unordered_dense),
 [Siv3d](https://siv3d.github.io/)
