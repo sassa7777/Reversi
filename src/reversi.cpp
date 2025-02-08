@@ -75,7 +75,7 @@ inline int putstone(int_fast8_t y, int_fast8_t x) {
 inline string coordinate_to_x_y(uint64_t put) {
     constexpr string x = "abcdefgh";
     int pos = countl_zero(put);
-    return string(1, x[pos%8]) + to_string(pos/8+1);
+    return string(1, x[pos % 8]) + to_string((pos / 8) + 1);
 }
 
 inline uint64_t cordinate_to_bit(int_fast8_t put, int_fast8_t y) {
@@ -153,10 +153,10 @@ inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard)
     outflank[1] = mask[1] & ((OM | ~mask[1]) + 1) & playerboard;
     outflank[2] = mask[2] & ((OM | ~mask[2]) + 1) & playerboard;
     outflank[3] = mask[3] & ((OM | ~mask[3]) + 1) & playerboard;
-    flipped |= (outflank[0] - (uint64_t)(outflank[0] != 0)) & mask[0];
-    flipped |= (outflank[1] - (uint64_t)(outflank[1] != 0)) & mask[1];
-    flipped |= (outflank[2] - (uint64_t)(outflank[2] != 0)) & mask[2];
-    flipped |= (outflank[3] - (uint64_t)(outflank[3] != 0)) & mask[3];
+    flipped |= OutflankToFlipmask(outflank[0]) & mask[0];
+    flipped |= OutflankToFlipmask(outflank[1]) & mask[1];
+    flipped |= OutflankToFlipmask(outflank[2]) & mask[2];
+    flipped |= OutflankToFlipmask(outflank[3]) & mask[3];
 
     return flipped;
 }
