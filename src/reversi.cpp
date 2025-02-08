@@ -26,7 +26,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model2.txt", 0);
+        evaluate_init(U"model11.txt", 0);
 //        evaluate_init(U"model2.txt", 1);
         first_reset = false;
         transpose_table.reserve(100000);
@@ -227,10 +227,10 @@ int ai() {
         DEPTH = 20;
         afterIndex=60;
     }
-    if (Level >= 10 && afterIndex >= 41) {
-        DEPTH = 12;
-        afterIndex=nowIndex+DEPTH;
-    }
+//    if (Level >= 10 && afterIndex >= 41) {
+//        DEPTH = 12;
+//        afterIndex=nowIndex+DEPTH;
+//    }
     tmpbit = 0;
     think_percent = 0;
     transpose_table.clear();

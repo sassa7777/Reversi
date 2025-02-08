@@ -61,7 +61,7 @@ constexpr int comp[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 #define n_add_input 1
 #define n_all_input 12
 #define model_count 1
-#define use_book false
+#define use_book true
 
 #define max_mobility 40
 
@@ -156,7 +156,6 @@ inline void pre_evaluation_pattern(int ptr_num, int pattern_idx, int evaluate_id
     size_t popcountPattern = popcount(pattern1);
     size_t totalCombinations = (1UL << popcountPattern);
     pattern_arr_pre[ptr_num][evaluate_idx].resize(4);
-//    vector<bool> A(1ULL << (popcountPattern+comp[pattern_idx]));
     for (auto &ptar : pattern_arr_pre[ptr_num][evaluate_idx]) {
         ptar.resize(1ULL << (popcountPattern+comp[pattern_idx]));
         for (auto &ptar2 : ptar) {
@@ -174,8 +173,6 @@ inline void pre_evaluation_pattern(int ptr_num, int pattern_idx, int evaluate_id
                 newpattern1 ^= bitShifts[i];
             }
         }
-//        if (A[(r90(newpattern1) * mn[evaluate_idx][1]) >> shn[evaluate_idx]] == true && evaluate_idx != 0) cout << "err " << evaluate_idx << " " << r90(pattern1) << endl;
-//        A[(r90(newpattern1) * mn[evaluate_idx][1]) >> shn[evaluate_idx]] = true;
         for (size_t comb2 = 0; comb2 < totalCombinations; ++comb2) {
             uint64_t newpattern2 = pattern1;
             for (size_t i = 0; i < bitpositions.size(); ++i) {
@@ -213,36 +210,6 @@ inline void pre_evaluation_pattern(int ptr_num, int pattern_idx, int evaluate_id
         }
     }
 }
-
-//inline double predict_add(int mobility, double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense1][n_add_dense0], double bias1[n_add_dense1], double dense2[n_add_dense1], double bias2){
-//    double hidden0[n_add_dense0], in_arr[n_add_input], hidden1;
-//    int i, j;
-//    in_arr[0] = (double)mobility / 15.0;
-//    for (i = 0; i < n_add_dense0; ++i){
-//        hidden0[i] = bias0[i];
-//        for (j = 0; j < n_add_input; ++j)
-//            hidden0[i] += in_arr[j] * dense0[i][j];
-//        hidden0[i] = leaky_relu(hidden0[i]);
-//    }
-//    double res = bias2;
-//    for (i = 0; i < n_add_dense1; ++i) {
-//        hidden1 = bias1[i];
-//        for (j = 0; j < n_add_dense0; ++j) {
-//            hidden1 += hidden0[j] * dense1[i][j];
-//        }
-//        hidden1 = leaky_relu(hidden1);
-//        res += hidden1 * dense2[i];
-//    }
-//    res = leaky_relu(res);
-//    return res;
-//}
-//
-//inline void pre_evaluation_add(double dense0[n_add_dense0][n_add_input], double bias0[n_add_dense0], double dense1[n_add_dense1][n_add_dense0], double bias1[n_add_dense1], double dense2[n_add_dense1], double bias2){
-//    int mobility;
-//    for (mobility = -max_mobility; mobility <= max_mobility; ++mobility){
-//        add_arr[mobility + max_mobility] = predict_add(mobility, dense0, bias0, dense1, bias1, dense2, bias2);
-//    }
-//}
 
 inline void evaluate_init(String model_path, int ptr_num){
     ifstream ifs(FileSystem::RelativePath(Resource(model_path)).narrow());
@@ -353,9 +320,6 @@ inline void evaluate_init(String model_path, int ptr_num){
         pattern_arr_pre[ptr_num][i].clear();
     }
     pattern_arr_pre[ptr_num].clear();
-//    for (auto &p : add_arr){
-//        p *= final_dense[12];
-//    }
     getline(ifs, line);
     final_bias[ptr_num] = stof(line) * 64000000000000000;
 }
