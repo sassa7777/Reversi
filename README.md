@@ -8,11 +8,11 @@
 
 ・ビットボード
 
-・深層学習を利用した評価関数のモデル(パターン評価)
+・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、深層学習を利用した評価関数
 
 ・MagicBitboardを利用した高速な評価関数の実行
 
-レベル10以上は残り20手で完全読みを行います
+・残り20手で完全読み
 
 # 使用方法
 
