@@ -10,7 +10,7 @@
 
 ・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、深層学習を利用した評価関数
 
-・MagicBitboardを利用した高速な評価関数の実行
+・MagicBitboardを利用した評価関数の高速な実行
 
 ・残り20手で完全読み
 
