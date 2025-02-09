@@ -26,8 +26,8 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model11.txt", 0);
-//        evaluate_init(U"model2.txt", 1);
+        evaluate_init(U"model2.txt", 0);
+//        evaluate_init(U"model11.txt", 1);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
@@ -38,6 +38,7 @@ void reset() {
     cout << "Player: " << botplayer << endl;
     cout << "Level: " << Level << endl;
     cout << "initialized" << endl;
+//    cout << evaluate(0x844c1002020009a9ULL, ~0x844c1002020009a9ULL) << endl;
     return;
 }
 

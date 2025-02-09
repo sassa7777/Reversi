@@ -16,8 +16,7 @@ using bitboard = pair<uint64_t, uint64_t>;
 #endif
 
 #define n_patterns 12
-//#define pext(s, m) zp7_pext_64(s, m)
-//#define ppext(s, m) zp7_pext_pre_64(s, m)
+
 constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10}; // パターンごとのマスの数
 
 constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0xff42000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000, 0xe0e0e00000000000, 0xf8c0808080000000, 0xbd3c000000000000, 0xf0e0c08000000000};
@@ -26,29 +25,29 @@ const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 1
 
 constexpr uint64_t mn[12][4] = {
     // diagonal8_idx
-    {0x844c1002020009a9, 0x1280219202044004, 0x0, 0x0},
+    {0x844c1002020009a9ULL, 0x1280219202044004ULL, 0x844c1002020009a9ULL, 0x1280219202044004ULL},
     // diagonal7_idx
-    {0x110142000820011, 0x4600120802380400, 0x200200c840820040, 0x809004200250510},
+    {0x110142000820011ULL, 0x4600120802380400ULL, 0x200200c840820040ULL, 0x809004200250510ULL},
     // diagonal6_idx
-    {0x60c080e0802, 0x4044008411800000, 0x4088400c0810300, 0xc004010281844130},
+    {0x60c080e0802ULL, 0x4044008411800000ULL, 0x4088400c0810300ULL, 0xc004010281844130ULL},
     // diagonal5_idx
-    {0x120098a20451002, 0x8808409000a007, 0x3014008080900040, 0x2200331088814},
+    {0x120098a20451002ULL, 0x8808409000a007ULL, 0x3014008080900040ULL, 0x2200331088814ULL},
     // edge_2x_idx
-    {0x4101001020000e51, 0xc01044000801008, 0x1002a080a200110, 0x80200804024001},
+    {0x4101001020000e51ULL, 0xc01044000801008ULL, 0x1002a080a200110ULL, 0x80200804024001ULL},
     // h_v_2_idx
-    {0x4090000220412900, 0x31000a004080240, 0x100900001010044c, 0x1020420004108009},
+    {0x4090000220412900ULL, 0x31000a004080240ULL, 0x100900001010044cULL, 0x1020420004108009ULL},
     // h_v_3_idx
-    {0x21c090000d810080, 0x400a00046011008, 0x2000808050008024, 0x2080201040390204},
+    {0x21c090000d810080ULL, 0x400a00046011008ULL, 0x2000808050008024ULL, 0x2080201040390204ULL},
     // h_v_4_idx
-    {0x1010009004100, 0x7002084088040029, 0x100090100024c, 0x81001204002048},
+    {0x1010009004100ULL, 0x7002084088040029ULL, 0x100090100024cULL, 0x81001204002048ULL},
     // corner_3x3_idx
-    {0x12301240a4012009, 0x80408001312004, 0x2000840082001000, 0xc900042000000004},
+    {0x12301240a4012009ULL, 0x80408001312004ULL, 0x2000840082001000ULL, 0xc900042000000004ULL},
     // edge_x_side_idx
-    {0x20008a204320801, 0xc8048800104, 0xe00800240010085, 0xc980110022040020},
+    {0x20008a204320801ULL, 0xc8048800104ULL, 0xe00800240010085ULL, 0xc980110022040020ULL},
     // edge_block_idx
-    {0x80482080c3, 0x40040010800a020, 0x104002500280060, 0x8098880022001},
+    {0x4000200000404919ULL, 0x104a014000204448ULL, 0x9d10400001400420ULL, 0x1002000800421ULL},
     // triangle_idx
-    {0x820000000100809, 0x10181800200c8, 0xc00c00a01424200, 0x81000408002200}
+    {0x820000000100809ULL, 0x10181800200c8ULL, 0xc00c00a01424200ULL, 0x81000408002200ULL}
 };
 
 constexpr int shn[12] = {56, 57, 58, 59, 54, 56, 56, 56, 55, 54, 53, 54};
@@ -61,7 +60,7 @@ constexpr int comp[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 #define n_add_input 1
 #define n_all_input 12
 #define model_count 1
-#define use_book true
+#define use_book false
 
 #define max_mobility 40
 
@@ -80,7 +79,6 @@ inline constexpr uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     return x ^ t ^ (t << delta);
 }
 
-// 水平反転
 inline constexpr uint64_t flipHorizontal(uint64_t x) {
     x = ((x >> 1) & 0x5555555555555555) | ((x & 0x5555555555555555) << 1);
     x = ((x >> 2) & 0x3333333333333333) | ((x & 0x3333333333333333) << 2);
@@ -88,14 +86,12 @@ inline constexpr uint64_t flipHorizontal(uint64_t x) {
     return x;
 }
 
-// A1-H8反転
 inline constexpr uint64_t flipDiagonalA1H8(uint64_t x) {
     x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
     x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
     return delta_swap(x, 0x00000000F0F0F0F0, 28);
 }
 
-// A8-H1反転
 inline constexpr uint64_t flipDiagonalA8H1(uint64_t x) {
     x = delta_swap(x, 0x0055005500550055, 9);
     x = delta_swap(x, 0x0000333300003333, 18);
@@ -226,13 +222,7 @@ inline void evaluate_init(String model_path, int ptr_num){
     vector<double> bias1(n_dense1);
     vector<double> dense2(n_dense1);
     double bias2;
-//    double add_dense0[n_add_dense0][n_add_input];
-//    double add_bias0[n_add_dense0];
-//    double add_dense1[n_add_dense1][n_add_dense0];
-//    double add_bias1[n_add_dense1];
-//    double add_dense2[n_add_dense1];
-//    double add_bias2;
-
+    
     for (pattern_idx = 0; pattern_idx < n_patterns; ++pattern_idx){
         for (i = 0; i < n_dense0; ++i){
             for (j = 0; j < pattern_sizes[pattern_idx] * 2; ++j){
@@ -262,35 +252,7 @@ inline void evaluate_init(String model_path, int ptr_num){
         bias2 = stof(line);
         pre_evaluation_pattern(ptr_num, pattern_idx, pattern_idx, pattern_sizes[pattern_idx], dense0, bias0, dense1, bias1, dense2, bias2);
     }
-    
-//    for (i = 0; i < n_add_dense0; ++i){
-//        for (j = 0; j < n_add_input; ++j){
-//            getline(ifs, line);
-//            add_dense0[i][j] = stod(line);
-//        }
-//    }
-//    for (i = 0; i < n_add_dense0; ++i){
-//        getline(ifs, line);
-//        add_bias0[i] = stod(line);
-//    }
-//    for (i = 0; i < n_add_dense1; ++i){
-//        for (j = 0; j < n_add_dense0; ++j){
-//            getline(ifs, line);
-//            add_dense1[i][j] = stod(line);
-//        }
-//    }
-//    for (i = 0; i < n_add_dense1; ++i){
-//        getline(ifs, line);
-//        add_bias1[i] = stod(line);
-//    }
-//    for (i = 0; i < n_add_dense1; ++i){
-//        getline(ifs, line);
-//        add_dense2[i] = stod(line);
-//    }
-//    getline(ifs, line);
-//    add_bias2 = stof(line);
-//    pre_evaluation_add(add_dense0, add_bias0, add_dense1, add_bias1, add_dense2, add_bias2);
-    
+        
     for (i = 0; i < n_all_input; ++i){
         getline(ifs, line);
         final_dense[i] = stof(line);
@@ -311,7 +273,7 @@ inline void evaluate_init(String model_path, int ptr_num){
             for (int k = 0; k < 1 << (pattern_sizes[i]+comp[i]); ++k) {
                 pattern_arr[ptr_num][i][j][k].resize(1 << (pattern_sizes[i]+comp[i]));
                 for (int l = 0; l < 1 << (pattern_sizes[i]+comp[i]); ++l) {
-                    pattern_arr[ptr_num][i][j][k][l] = pattern_arr_pre[ptr_num][i][j][k][l] * 64000000000000000;
+                    pattern_arr[ptr_num][i][j][k][l] = (int64_t)(pattern_arr_pre[ptr_num][i][j][k][l] * 64000000000000000);
                 }
                 pattern_arr_pre[ptr_num][i][j][k].clear();
             }
@@ -331,109 +293,109 @@ inline int64_t evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) 
     
     int64_t a = 0;
     
-    a += (pattern_arr[evaluate_ptr_num][0][0][((playerboard & 0x8040201008040201) * mn[0][0]) >> shn[0]]
-          [((opponentboard & 0x8040201008040201) * mn[0][0]) >> shn[0]] +
-          pattern_arr[evaluate_ptr_num][0][1][((playerboard & 0x0102040810204080) * mn[0][1]) >> shn[0]]
-          [((opponentboard & 0x0102040810204080) * mn[0][1]) >> shn[0]]);
-
-    a += (pattern_arr[evaluate_ptr_num][1][0][((playerboard & 0x4020100804020100) * mn[1][0]) >> shn[1]]
-          [((opponentboard & 0x4020100804020100) * mn[1][0]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][1][((playerboard & 0x0001020408102040) * mn[1][1]) >> shn[1]]
-          [((opponentboard & 0x0001020408102040) * mn[1][1]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][2][((playerboard & 0x0080402010080402) * mn[1][2]) >> shn[1]]
-          [((opponentboard & 0x0080402010080402) * mn[1][2]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][3][((playerboard & 0x0204081020408000) * mn[1][3]) >> shn[1]]
-          [((opponentboard & 0x0204081020408000) * mn[1][3]) >> shn[1]]);
-
-    a += (pattern_arr[evaluate_ptr_num][2][0][((playerboard & 0x2010080402010000) * mn[2][0]) >> shn[2]]
-          [((opponentboard & 0x2010080402010000) * mn[2][0]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][1][((playerboard & 0x0000010204081020) * mn[2][1]) >> shn[2]]
-          [((opponentboard & 0x0000010204081020) * mn[2][1]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][2][((playerboard & 0x0000804020100804) * mn[2][2]) >> shn[2]]
-          [((opponentboard & 0x0000804020100804) * mn[2][2]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][3][((playerboard & 0x0408102040800000) * mn[2][3]) >> shn[2]]
-          [((opponentboard & 0x0408102040800000) * mn[2][3]) >> shn[2]]);
-
-    a += (pattern_arr[evaluate_ptr_num][3][0][((playerboard & 0x1008040201000000) * mn[3][0]) >> shn[3]]
-          [((opponentboard & 0x1008040201000000) * mn[3][0]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][1][((playerboard & 0x0000000102040810) * mn[3][1]) >> shn[3]]
-          [((opponentboard & 0x0000000102040810) * mn[3][1]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][2][((playerboard & 0x0000008040201008) * mn[3][2]) >> shn[3]]
-          [((opponentboard & 0x0000008040201008) * mn[3][2]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][3][((playerboard & 0x0810204080000000) * mn[3][3]) >> shn[3]]
-          [((opponentboard & 0x0810204080000000) * mn[3][3]) >> shn[3]]);
-
-    a += (pattern_arr[evaluate_ptr_num][4][0][((playerboard & 0xff42000000000000) * mn[4][0]) >> shn[4]]
-          [((opponentboard & 0xff42000000000000) * mn[4][0]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][1][((playerboard & 0x0103010101010301) * mn[4][1]) >> shn[4]]
-          [((opponentboard & 0x0103010101010301) * mn[4][1]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][2][((playerboard & 0x00000000000042ff) * mn[4][2]) >> shn[4]]
-          [((opponentboard & 0x00000000000042ff) * mn[4][2]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][3][((playerboard & 0x80c080808080c080) * mn[4][3]) >> shn[4]]
-          [((opponentboard & 0x80c080808080c080) * mn[4][3]) >> shn[4]]);
-
-    a += (pattern_arr[evaluate_ptr_num][5][0][((playerboard & 0xff000000000000) * mn[5][0]) >> shn[5]]
-          [((opponentboard & 0xff000000000000) * mn[5][0]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][1][((playerboard & 0x0202020202020202) * mn[5][1]) >> shn[5]]
-          [((opponentboard & 0x0202020202020202) * mn[5][1]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][2][((playerboard & 0x000000000000ff00) * mn[5][2]) >> shn[5]]
-          [((opponentboard & 0x000000000000ff00) * mn[5][2]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][3][((playerboard & 0x4040404040404040) * mn[5][3]) >> shn[5]]
-          [((opponentboard & 0x4040404040404040) * mn[5][3]) >> shn[5]]);
-
-    a += (pattern_arr[evaluate_ptr_num][6][0][((playerboard & 0xff0000000000) * mn[6][0]) >> shn[6]]
-          [((opponentboard & 0xff0000000000) * mn[6][0]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][1][((playerboard & 0x0404040404040404) * mn[6][1]) >> shn[6]]
-          [((opponentboard & 0x0404040404040404) * mn[6][1]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][2][((playerboard & 0x0000000000ff0000) * mn[6][2]) >> shn[6]]
-          [((opponentboard & 0x0000000000ff0000) * mn[6][2]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][3][((playerboard & 0x2020202020202020) * mn[6][3]) >> shn[6]]
-          [((opponentboard & 0x2020202020202020) * mn[6][3]) >> shn[6]]);
-
-    a += (pattern_arr[evaluate_ptr_num][7][0][((playerboard & 0xff00000000) * mn[7][0]) >> shn[7]]
-          [((opponentboard & 0xff00000000) * mn[7][0]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][1][((playerboard & 0x0808080808080808) * mn[7][1]) >> shn[7]]
-          [((opponentboard & 0x0808080808080808) * mn[7][1]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][2][((playerboard & 0x00000000ff000000) * mn[7][2]) >> shn[7]]
-          [((opponentboard & 0x00000000ff000000) * mn[7][2]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][3][((playerboard & 0x1010101010101010) * mn[7][3]) >> shn[7]]
-          [((opponentboard & 0x1010101010101010) * mn[7][3]) >> shn[7]]);
-
-    a += (pattern_arr[evaluate_ptr_num][8][0][((playerboard & 0xe0e0e00000000000) * mn[8][0]) >> shn[8]]
-          [((opponentboard & 0xe0e0e00000000000) * mn[8][0]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][1][((playerboard & 0x0707070000000000) * mn[8][1]) >> shn[8]]
-          [((opponentboard & 0x0707070000000000) * mn[8][1]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][2][((playerboard & 0x0000000000070707) * mn[8][2]) >> shn[8]]
-          [((opponentboard & 0x0000000000070707) * mn[8][2]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][3][((playerboard & 0x0000000000e0e0e0) * mn[8][3]) >> shn[8]]
-          [((opponentboard & 0x0000000000e0e0e0) * mn[8][3]) >> shn[8]]);
-
-    a += (pattern_arr[evaluate_ptr_num][9][0][((playerboard & 0xf8c0808080000000) * mn[9][0]) >> shn[9]]
-          [((opponentboard & 0xf8c0808080000000) * mn[9][0]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][1][((playerboard & 0x1f03010101000000) * mn[9][1]) >> shn[9]]
-          [((opponentboard & 0x1f03010101000000) * mn[9][1]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][2][((playerboard & 0x000000010101031f) * mn[9][2]) >> shn[9]]
-          [((opponentboard & 0x000000010101031f) * mn[9][2]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][3][((playerboard & 0x000000808080c0f8) * mn[9][3]) >> shn[9]]
-          [((opponentboard & 0x000000808080c0f8) * mn[9][3]) >> shn[9]]);
-
-    a += ((pattern_arr[evaluate_ptr_num][10][0][((playerboard & 0xbd3c000000000000) * mn[10][0]) >> shn[10]]
-          [((opponentboard & 0xbd3c000000000000) * mn[10][0]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][1][((playerboard & 0x0100030303030001) * mn[10][1]) >> shn[10]]
-          [((opponentboard & 0x0100030303030001) * mn[10][1]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][2][((playerboard & 0x0000000000003cbd) * mn[10][2]) >> shn[10]]
-          [((opponentboard & 0x0000000000003cbd) * mn[10][3]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][3][((playerboard & 0x8000c0c0c0c00080) * mn[10][3]) >> shn[10]]
-          [((opponentboard & 0x8000c0c0c0c00080) * mn[10][3]) >> shn[10]]));
-
-    a += (pattern_arr[evaluate_ptr_num][11][0][((playerboard & 0xf0e0c08000000000) * mn[11][0]) >> shn[11]]
-          [((opponentboard & 0xf0e0c08000000000) * mn[11][0]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][1][((playerboard & 0x0f07030100000000) * mn[11][1]) >> shn[11]]
-          [((opponentboard & 0x0f07030100000000) * mn[11][1]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][2][((playerboard & 0x000000000103070f) * mn[11][2]) >> shn[11]]
-          [((opponentboard & 0x000000000103070f) * mn[11][2]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0) * mn[11][3]) >> shn[11]]
-          [((opponentboard & 0x0000000080c0e0f0) * mn[11][3]) >> shn[11]]);
+    a += (pattern_arr[evaluate_ptr_num][0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> shn[0]]
+          [((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> shn[0]] +
+          pattern_arr[evaluate_ptr_num][0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> shn[0]]
+          [((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> shn[0]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> shn[1]]
+          [((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> shn[1]]
+          [((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> shn[1]]
+          [((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> shn[1]]
+          [((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> shn[1]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> shn[2]]
+          [((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> shn[2]]
+          [((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> shn[2]]
+          [((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> shn[2]]
+          [((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> shn[2]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> shn[3]]
+          [((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> shn[3]]
+          [((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> shn[3]]
+          [((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> shn[3]]
+          [((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> shn[3]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> shn[4]]
+          [((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> shn[4]]
+          [((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> shn[4]]
+          [((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> shn[4]]
+          [((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> shn[4]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> shn[5]]
+          [((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> shn[5]]
+          [((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> shn[5]]
+          [((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> shn[5]]
+          [((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> shn[5]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> shn[6]]
+          [((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> shn[6]]
+          [((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> shn[6]]
+          [((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> shn[6]]
+          [((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> shn[6]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> shn[7]]
+          [((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> shn[7]]
+          [((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> shn[7]]
+          [((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> shn[7]]
+          [((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> shn[7]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> shn[8]]
+          [((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> shn[8]]
+          [((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> shn[8]]
+          [((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> shn[8]]
+          [((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> shn[8]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> shn[9]]
+          [((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> shn[9]]
+          [((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> shn[9]]
+          [((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> shn[9]]
+          [((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> shn[9]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> shn[10]]
+          [((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> shn[10]]
+          [((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> shn[10]]
+          [((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> shn[10]]
+          [((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> shn[10]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> shn[11]]
+          [((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> shn[11]]
+          [((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> shn[11]]
+          [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> shn[11]]
+          [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> shn[11]]);
     
     a += final_bias[evaluate_ptr_num];
 
@@ -448,109 +410,109 @@ inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
     
     int64_t a = 0;
 
-    a += (pattern_arr[evaluate_ptr_num][0][0][((playerboard & 0x8040201008040201) * mn[0][0]) >> shn[0]]
-          [((opponentboard & 0x8040201008040201) * mn[0][0]) >> shn[0]] +
-          pattern_arr[evaluate_ptr_num][0][1][((playerboard & 0x0102040810204080) * mn[0][1]) >> shn[0]]
-          [((opponentboard & 0x0102040810204080) * mn[0][1]) >> shn[0]]);
-
-    a += (pattern_arr[evaluate_ptr_num][1][0][((playerboard & 0x4020100804020100) * mn[1][0]) >> shn[1]]
-          [((opponentboard & 0x4020100804020100) * mn[1][0]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][1][((playerboard & 0x0001020408102040) * mn[1][1]) >> shn[1]]
-          [((opponentboard & 0x0001020408102040) * mn[1][1]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][2][((playerboard & 0x0080402010080402) * mn[1][2]) >> shn[1]]
-          [((opponentboard & 0x0080402010080402) * mn[1][2]) >> shn[1]] +
-          pattern_arr[evaluate_ptr_num][1][3][((playerboard & 0x0204081020408000) * mn[1][3]) >> shn[1]]
-          [((opponentboard & 0x0204081020408000) * mn[1][3]) >> shn[1]]);
-
-    a += (pattern_arr[evaluate_ptr_num][2][0][((playerboard & 0x2010080402010000) * mn[2][0]) >> shn[2]]
-          [((opponentboard & 0x2010080402010000) * mn[2][0]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][1][((playerboard & 0x0000010204081020) * mn[2][1]) >> shn[2]]
-          [((opponentboard & 0x0000010204081020) * mn[2][1]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][2][((playerboard & 0x0000804020100804) * mn[2][2]) >> shn[2]]
-          [((opponentboard & 0x0000804020100804) * mn[2][2]) >> shn[2]] +
-          pattern_arr[evaluate_ptr_num][2][3][((playerboard & 0x0408102040800000) * mn[2][3]) >> shn[2]]
-          [((opponentboard & 0x0408102040800000) * mn[2][3]) >> shn[2]]);
-
-    a += (pattern_arr[evaluate_ptr_num][3][0][((playerboard & 0x1008040201000000) * mn[3][0]) >> shn[3]]
-          [((opponentboard & 0x1008040201000000) * mn[3][0]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][1][((playerboard & 0x0000000102040810) * mn[3][1]) >> shn[3]]
-          [((opponentboard & 0x0000000102040810) * mn[3][1]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][2][((playerboard & 0x0000008040201008) * mn[3][2]) >> shn[3]]
-          [((opponentboard & 0x0000008040201008) * mn[3][2]) >> shn[3]] +
-          pattern_arr[evaluate_ptr_num][3][3][((playerboard & 0x0810204080000000) * mn[3][3]) >> shn[3]]
-          [((opponentboard & 0x0810204080000000) * mn[3][3]) >> shn[3]]);
-
-    a += (pattern_arr[evaluate_ptr_num][4][0][((playerboard & 0xff42000000000000) * mn[4][0]) >> shn[4]]
-          [((opponentboard & 0xff42000000000000) * mn[4][0]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][1][((playerboard & 0x0103010101010301) * mn[4][1]) >> shn[4]]
-          [((opponentboard & 0x0103010101010301) * mn[4][1]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][2][((playerboard & 0x00000000000042ff) * mn[4][2]) >> shn[4]]
-          [((opponentboard & 0x00000000000042ff) * mn[4][2]) >> shn[4]] +
-          pattern_arr[evaluate_ptr_num][4][3][((playerboard & 0x80c080808080c080) * mn[4][3]) >> shn[4]]
-          [((opponentboard & 0x80c080808080c080) * mn[4][3]) >> shn[4]]);
-
-    a += (pattern_arr[evaluate_ptr_num][5][0][((playerboard & 0x00ff000000000000) * mn[5][0]) >> shn[5]]
-          [((opponentboard & 0x00ff000000000000) * mn[5][0]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][1][((playerboard & 0x0202020202020202) * mn[5][1]) >> shn[5]]
-          [((opponentboard & 0x0202020202020202) * mn[5][1]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][2][((playerboard & 0x000000000000ff00) * mn[5][2]) >> shn[5]]
-          [((opponentboard & 0x000000000000ff00) * mn[5][2]) >> shn[5]] +
-          pattern_arr[evaluate_ptr_num][5][3][((playerboard & 0x4040404040404040) * mn[5][3]) >> shn[5]]
-          [((opponentboard & 0x4040404040404040) * mn[5][3]) >> shn[5]]);
-
-    a += (pattern_arr[evaluate_ptr_num][6][0][((playerboard & 0x0000ff0000000000) * mn[6][0]) >> shn[6]]
-          [((opponentboard & 0x0000ff0000000000) * mn[6][0]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][1][((playerboard & 0x0404040404040404) * mn[6][1]) >> shn[6]]
-          [((opponentboard & 0x0404040404040404) * mn[6][1]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][2][((playerboard & 0x0000000000ff0000) * mn[6][2]) >> shn[6]]
-          [((opponentboard & 0x0000000000ff0000) * mn[6][2]) >> shn[6]] +
-          pattern_arr[evaluate_ptr_num][6][3][((playerboard & 0x2020202020202020) * mn[6][3]) >> shn[6]]
-          [((opponentboard & 0x2020202020202020) * mn[6][3]) >> shn[6]]);
-
-    a += (pattern_arr[evaluate_ptr_num][7][0][((playerboard & 0x000000ff00000000) * mn[7][0]) >> shn[7]]
-          [((opponentboard & 0x000000ff00000000) * mn[7][0]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][1][((playerboard & 0x0808080808080808) * mn[7][1]) >> shn[7]]
-          [((opponentboard & 0x0808080808080808) * mn[7][1]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][2][((playerboard & 0x00000000ff000000) * mn[7][2]) >> shn[7]]
-          [((opponentboard & 0x00000000ff000000) * mn[7][2]) >> shn[7]] +
-          pattern_arr[evaluate_ptr_num][7][3][((playerboard & 0x1010101010101010) * mn[7][3]) >> shn[7]]
-          [((opponentboard & 0x1010101010101010) * mn[7][3]) >> shn[7]]);
-
-    a += (pattern_arr[evaluate_ptr_num][8][0][((playerboard & 0xe0e0e00000000000) * mn[8][0]) >> shn[8]]
-          [((opponentboard & 0xe0e0e00000000000) * mn[8][0]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][1][((playerboard & 0x0707070000000000) * mn[8][1]) >> shn[8]]
-          [((opponentboard & 0x0707070000000000) * mn[8][1]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][2][((playerboard & 0x0000000000070707) * mn[8][2]) >> shn[8]]
-          [((opponentboard & 0x0000000000070707) * mn[8][2]) >> shn[8]] +
-          pattern_arr[evaluate_ptr_num][8][3][((playerboard & 0x0000000000e0e0e0) * mn[8][3]) >> shn[8]]
-          [((opponentboard & 0x0000000000e0e0e0) * mn[8][3]) >> shn[8]]);
-
-    a += (pattern_arr[evaluate_ptr_num][9][0][((playerboard & 0xf8c0808080000000) * mn[9][0]) >> shn[9]]
-          [((opponentboard & 0xf8c0808080000000) * mn[9][0]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][1][((playerboard & 0x1f03010101000000) * mn[9][1]) >> shn[9]]
-          [((opponentboard & 0x1f03010101000000) * mn[9][1]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][2][((playerboard & 0x000000010101031f) * mn[9][2]) >> shn[9]]
-          [((opponentboard & 0x000000010101031f) * mn[9][2]) >> shn[9]] +
-          pattern_arr[evaluate_ptr_num][9][3][((playerboard & 0x000000808080c0f8) * mn[9][3]) >> shn[9]]
-          [((opponentboard & 0x000000808080c0f8) * mn[9][3]) >> shn[9]]);
-
-    a += (pattern_arr[evaluate_ptr_num][10][0][((playerboard & 0xbd3c000000000000) * mn[10][0]) >> shn[10]]
-          [((opponentboard & 0xbd3c000000000000) * mn[10][0]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][1][((playerboard & 0x0100030303030001) * mn[10][1]) >> shn[10]]
-          [((opponentboard & 0x0100030303030001) * mn[10][1]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][2][((playerboard & 0x0000000000003cbd) * mn[10][2]) >> shn[10]]
-          [((opponentboard & 0x0000000000003cbd) * mn[10][3]) >> shn[10]] +
-          pattern_arr[evaluate_ptr_num][10][3][((playerboard & 0x8000c0c0c0c00080) * mn[10][3]) >> shn[10]]
-          [((opponentboard & 0x8000c0c0c0c00080) * mn[10][3]) >> shn[10]]);
-
-    a += (pattern_arr[evaluate_ptr_num][11][0][((playerboard & 0xf0e0c08000000000) * mn[11][0]) >> shn[11]]
-          [((opponentboard & 0xf0e0c08000000000) * mn[11][0]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][1][((playerboard & 0x0f07030100000000) * mn[11][1]) >> shn[11]]
-          [((opponentboard & 0x0f07030100000000) * mn[11][1]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][2][((playerboard & 0x000000000103070f) * mn[11][2]) >> shn[11]]
-          [((opponentboard & 0x000000000103070f) * mn[11][2]) >> shn[11]] +
-          pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0) * mn[11][3]) >> shn[11]]
-          [((opponentboard & 0x0000000080c0e0f0) * mn[11][3]) >> shn[11]]);
+    a += (pattern_arr[evaluate_ptr_num][0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> shn[0]]
+          [((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> shn[0]] +
+          pattern_arr[evaluate_ptr_num][0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> shn[0]]
+          [((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> shn[0]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> shn[1]]
+          [((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> shn[1]]
+          [((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> shn[1]]
+          [((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> shn[1]] +
+          pattern_arr[evaluate_ptr_num][1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> shn[1]]
+          [((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> shn[1]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> shn[2]]
+          [((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> shn[2]]
+          [((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> shn[2]]
+          [((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> shn[2]] +
+          pattern_arr[evaluate_ptr_num][2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> shn[2]]
+          [((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> shn[2]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> shn[3]]
+          [((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> shn[3]]
+          [((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> shn[3]]
+          [((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> shn[3]] +
+          pattern_arr[evaluate_ptr_num][3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> shn[3]]
+          [((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> shn[3]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> shn[4]]
+          [((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> shn[4]]
+          [((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> shn[4]]
+          [((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> shn[4]] +
+          pattern_arr[evaluate_ptr_num][4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> shn[4]]
+          [((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> shn[4]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> shn[5]]
+          [((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> shn[5]]
+          [((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> shn[5]]
+          [((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> shn[5]] +
+          pattern_arr[evaluate_ptr_num][5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> shn[5]]
+          [((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> shn[5]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> shn[6]]
+          [((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> shn[6]]
+          [((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> shn[6]]
+          [((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> shn[6]] +
+          pattern_arr[evaluate_ptr_num][6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> shn[6]]
+          [((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> shn[6]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> shn[7]]
+          [((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> shn[7]]
+          [((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> shn[7]]
+          [((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> shn[7]] +
+          pattern_arr[evaluate_ptr_num][7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> shn[7]]
+          [((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> shn[7]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> shn[8]]
+          [((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> shn[8]]
+          [((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> shn[8]]
+          [((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> shn[8]] +
+          pattern_arr[evaluate_ptr_num][8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> shn[8]]
+          [((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> shn[8]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> shn[9]]
+          [((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> shn[9]]
+          [((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> shn[9]]
+          [((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> shn[9]] +
+          pattern_arr[evaluate_ptr_num][9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> shn[9]]
+          [((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> shn[9]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> shn[10]]
+          [((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> shn[10]]
+          [((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> shn[10]]
+          [((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> shn[10]] +
+          pattern_arr[evaluate_ptr_num][10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> shn[10]]
+          [((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> shn[10]]);
+    
+    a += (pattern_arr[evaluate_ptr_num][11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> shn[11]]
+          [((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> shn[11]]
+          [((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> shn[11]]
+          [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> shn[11]] +
+          pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> shn[11]]
+          [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> shn[11]]);
 
     a += final_bias[evaluate_ptr_num];
     return a;

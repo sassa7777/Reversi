@@ -392,7 +392,7 @@
 				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_FAST_MATH = NO;
+				GCC_FAST_MATH = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -433,7 +433,7 @@
 					../../lib/macOS/opus,
 					../../lib/macOS/zlib,
 				);
-				LLVM_LTO = YES_THIN;
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -442,6 +442,7 @@
 					"-fvisibility=hidden",
 					"-fexperimental-library",
 					"-mpopcnt",
+					"-ffp-contract=fast",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -489,7 +490,7 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_FAST_MATH = NO;
+				GCC_FAST_MATH = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
@@ -527,7 +528,7 @@
 					../../lib/macOS/opus,
 					../../lib/macOS/zlib,
 				);
-				LLVM_LTO = YES_THIN;
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
@@ -536,6 +537,7 @@
 					"-fvisibility=hidden",
 					"-fexperimental-library",
 					"-mpopcnt",
+					"-ffp-contract=fast",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
