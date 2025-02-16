@@ -16,10 +16,18 @@ using bitboard = pair<uint64_t, uint64_t>;
 #endif
 
 #define n_patterns 12
+#define n_dense0 128
+#define n_dense1 128
+//#define n_add_dense0 16
+//#define n_add_dense1 16
+//#define n_add_input 1
+#define n_all_input 12
+#define model_count 1
+#define use_book true
 
-constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10}; // パターンごとのマスの数
+constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10};
 
-constexpr uint64_t bit_pattern[] = {0x8040201008040201, 0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0xff42000000000000, 0xff000000000000, 0xff0000000000, 0xff00000000, 0xe0e0e00000000000, 0xf8c0808080000000, 0xbd3c000000000000, 0xf0e0c08000000000};
+constexpr uint64_t bit_pattern[] = {0x8040201008040201ULL, 0x4020100804020100ULL, 0x2010080402010000ULL, 0x1008040201000000ULL, 0xff42000000000000ULL, 0xff000000000000ULL, 0xff0000000000ULL, 0xff00000000ULL, 0xe0e0e00000000000ULL, 0xf8c0808080000000ULL, 0xbd3c000000000000ULL, 0xf0e0c08000000000ULL};
 
 const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 
@@ -52,17 +60,6 @@ constexpr uint64_t mn[12][4] = {
 
 constexpr int shn[12] = {56, 57, 58, 59, 54, 56, 56, 56, 55, 54, 53, 54};
 constexpr int comp[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
-
-#define n_dense0 128
-#define n_dense1 128
-#define n_add_dense0 16
-#define n_add_dense1 16
-#define n_add_input 1
-#define n_all_input 12
-#define model_count 1
-#define use_book false
-
-#define max_mobility 40
 
 static double final_dense[n_all_input];
 static int64_t final_bias[model_count];
@@ -114,13 +111,8 @@ inline constexpr uint64_t r180(uint64_t x) {
 }
 #endif
 
-inline int cal_pow(int x, int depth) {
-    if(depth == 1) return x;
-    return x * cal_pow(x, depth - 1);
-}
-
 inline double leaky_relu(double x){
-    return max(0.01 * x, x);
+    return ((x > 0) ? x : 0.01 * x);
 }
 
 inline double predict_pattern(int pattern_size, double in_arr[], const vector<vector<double>>& dense0, const vector<double>& bias0, const vector<vector<double>>& dense1, const vector<double>& bias1, const vector<double>& dense2, double bias2){
