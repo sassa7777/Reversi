@@ -10,6 +10,7 @@
 
 #include "reversi.hpp"
 
+int end_search_stone_count;
 bool first_reset;
 int DEPTH;
 int search_depth;
@@ -36,7 +37,7 @@ board b;
 board_back b_back;
 
 constexpr int mpc_depth[] {
-    0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 6
+    0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
 };
 
 
