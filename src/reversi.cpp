@@ -26,7 +26,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"model7.txt", 0);
+        evaluate_init(U"model1.txt", 0);
 //        evaluate_init(U"model2.txt", 0);
         first_reset = false;
         transpose_table.reserve(100000);
@@ -651,13 +651,10 @@ int64_t search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
             m.put <<= 1;
         }
         int64_t alpha = MIN_INF, beta = MAX_INF;
-//        int wave = 0;
         int end_depth = min(16, 64-popcount(playerboard | opponentboard));
         end_search_stone_count = popcount(playerboard | opponentboard)+end_depth;
-        think_count = (100/(100));
+        think_count = (100/(popcount(legalboard)+7));
         for (search_depth = max(1, end_depth-6); search_depth <= end_depth; ++search_depth) {
-//            think_percent = wave*think_count;
-//            ++wave;
             afterIndex = nowIndex+search_depth;
             for (auto& m: moveorder) {
                 m.score = move_ordering_value(m.opponentboard, m.playerboard);
@@ -671,10 +668,8 @@ int64_t search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
             if (search_depth == end_depth) {
                 tmpbit = moveorder[0].put;
             }
-            think_percent += think_count;
             for (size_t i = 1; i < moveorder.size(); ++i) {
                 var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
-                think_percent += think_count;
                 if (var > alpha) {
                     alpha = var;
                     var = -nega_scout(search_depth-1, -beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
@@ -682,6 +677,7 @@ int64_t search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
                 alpha = max(var, alpha);
             }
             cout << "depth: " << search_depth << " Visited nodes " << visited_nodes << endl;
+            think_percent += think_count;
             transpose_table.swap(former_transpose_table);
             transpose_table.clear();
         }
