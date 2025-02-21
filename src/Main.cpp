@@ -133,9 +133,9 @@ void Main()
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
-            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 12, Vec2(10, 505))) {
+            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 6, Vec2(10, 505))) {
                 level_index = round(level_index);
-                firstDEPTH = level_index;
+                firstDEPTH = level_index*2;
                 Level = level_index;
             }
             if (SimpleGUI::RadioButtons(bot_turn, player_turn, Vec2(340, 455))) {

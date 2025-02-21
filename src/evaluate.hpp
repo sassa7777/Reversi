@@ -64,11 +64,8 @@ constexpr int comp[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
 static double final_dense[n_all_input];
 static int64_t final_bias[model_count];
 
-//static double pattern_arr[model_count][n_patterns][4][1024][1024];
 static vector<vector<vector<vector<vector<double>>>>> pattern_arr_pre(model_count, vector<vector<vector<vector<double>>>>(n_patterns));
-vector<vector<vector<vector<vector<int64_t>>>>> pattern_arr(model_count, vector<vector<vector<vector<int64_t>>>>(n_patterns));
-
-//static vector<double> add_arr(max_mobility * 2 + 1);
+static vector<vector<vector<vector<vector<int64_t>>>>> pattern_arr(model_count, vector<vector<vector<vector<int64_t>>>>(n_patterns));
 
 
 inline constexpr uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
@@ -274,6 +271,7 @@ inline void evaluate_init(String model_path, int ptr_num){
         pattern_arr_pre[ptr_num][i].clear();
     }
     pattern_arr_pre[ptr_num].clear();
+    free(&pattern_arr_pre[ptr_num]);
     getline(ifs, line);
     final_bias[ptr_num] = stof(line) * 64000000000000000;
 }
@@ -398,7 +396,7 @@ inline int64_t evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
 
     if (playerboard == 0) [[unlikely]] return -64000000000000000;
     if (opponentboard == 0) [[unlikely]] return 64000000000000000;
-    if (afterIndex >= 64) return (popcount(playerboard)-popcount(opponentboard))*1000000000000000;
+//    if (afterIndex >= 64) return (popcount(playerboard)-popcount(opponentboard))*1000000000000000;
     
     int64_t a = 0;
 

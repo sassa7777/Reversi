@@ -224,7 +224,7 @@ int ai() {
         return 0;
     }
     cout << "[*]Botが考え中.." << endl;
-    if (Level >= 10 && nowIndex >= 39) {
+    if (Level >= 5 && nowIndex >= 41) {
         DEPTH = 60;
         afterIndex=60;
     }
@@ -590,14 +590,16 @@ int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta,
         return a.score > b.score;
     });
     
-    int64_t bound_up = (beta + 7000000000000000LL);
-    int64_t bound_low = (alpha - 7000000000000000LL);
-    for (int i = 0; i < count; ++i) {
-        if (-nega_alpha_moveorder(mpc_depth[depth]-1, -bound_up, -bound_up + 1, moveorder[i].opponentboard, moveorder[i].playerboard) >= bound_up) {
-            return beta;
-        }
-        if (-nega_alpha_moveorder(mpc_depth[depth]-1, -bound_low - 1, -bound_low, moveorder[i].opponentboard, moveorder[i].playerboard) <= bound_low) {
-            return alpha;
+    if (alpha > MIN_INF && beta < MAX_INF) {
+        int64_t bound_up = (beta + 6000000000000000LL);
+        int64_t bound_low = (alpha - 6000000000000000LL);
+        for (int i = 0; i < count; ++i) {
+            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up + 1, moveorder[i].opponentboard, moveorder[i].playerboard) >= bound_up) {
+                return beta;
+            }
+            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low - 1, -bound_low, moveorder[i].opponentboard, moveorder[i].playerboard) <= bound_low) {
+                return alpha;
+            }
         }
     }
     
