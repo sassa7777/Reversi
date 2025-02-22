@@ -92,8 +92,8 @@ void Main()
     }
     botplayer = WHITE_TURN;
     //AIのレベル
-    double level_index = 10;
-    firstDEPTH = round(level_index);
+    double level_index = 5;
+    firstDEPTH = round(level_index)*2;
     Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
     //白黒

@@ -347,7 +347,7 @@ int64_t search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hin
 
 int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
-    if (!depth) {
+    if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
     }
     bitboard board_state = make_pair(playerboard, opponentboard);
@@ -397,7 +397,7 @@ int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t play
         alpha = max(alpha, var);
         max_score = max(max_score, var);
         for (int i = 1; i < count; ++i) {
-            var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
+            var = -nega_alpha_moveorder_mpc(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
                 if (var > l) {
                     transpose_table[board_state] = {u, var};
@@ -436,7 +436,7 @@ int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t play
 
 int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
-    if (!depth) {
+    if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
     }
     int64_t u = MAX_INF, l = MIN_INF;
@@ -505,7 +505,7 @@ int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uin
 
 int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
-    if (!depth) {
+    if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
     }
     bitboard board_state = make_pair(playerboard, opponentboard);
@@ -552,7 +552,7 @@ int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t play
 
 int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) {
     ++visited_nodes;
-    if (!depth) {
+    if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
     }
     int64_t u = MAX_INF, l = MIN_INF;
@@ -590,16 +590,14 @@ int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta,
         return a.score > b.score;
     });
     
-    if (alpha > MIN_INF && beta < MAX_INF) {
-        int64_t bound_up = (beta + 6000000000000000LL);
-        int64_t bound_low = (alpha - 6000000000000000LL);
-        for (int i = 0; i < count; ++i) {
-            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up + 1, moveorder[i].opponentboard, moveorder[i].playerboard) >= bound_up) {
-                return beta;
-            }
-            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low - 1, -bound_low, moveorder[i].opponentboard, moveorder[i].playerboard) <= bound_low) {
-                return alpha;
-            }
+//    int64_t bound_up = (beta + 0000000000000000LL);
+//    int64_t bound_low = (alpha - 0000000000000000LL);
+    for (int i = 0; i < count; ++i) {
+        if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -beta, -beta + 1, moveorder[i].opponentboard, moveorder[i].playerboard) >= beta) {
+            return beta;
+        }
+        if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -alpha - 1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard) <= alpha) {
+            return alpha;
         }
     }
     
