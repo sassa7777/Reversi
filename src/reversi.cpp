@@ -397,7 +397,7 @@ int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t play
         alpha = max(alpha, var);
         max_score = max(max_score, var);
         for (int i = 1; i < count; ++i) {
-            var = -nega_alpha_moveorder_mpc(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
+            var = -nega_alpha_moveorder(depth-1, -alpha-1, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard);
             if (var >= beta) {
                 if (var > l) {
                     transpose_table[board_state] = {u, var};
