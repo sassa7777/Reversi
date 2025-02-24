@@ -31,8 +31,8 @@
 #include <execution>
 #include <thread>
 
-constexpr int64_t MIN_INF = -9223372036854775807;
-constexpr int64_t MAX_INF = 9223372036854775807;
+constexpr int MIN_INF = -2147483647;
+constexpr int MAX_INF = 2147483647;
 
 extern bool first_reset;
 extern int DEPTH;
@@ -132,10 +132,8 @@ public:
 extern board b;
 extern board_back b_back;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> transpose_table;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int64_t, int64_t>> former_transpose_table;
-
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, int> fixedstone_table;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
+extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
 
 //main functions
 void reset();
@@ -151,17 +149,17 @@ bool isFinished();
 void swapboard();
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept;
 
-int64_t nega_alpha(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int64_t nega_alpha_moveorder(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int64_t nega_alpha_moveorder_mpc(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
-int64_t nega_scout(int_fast8_t depth, int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int64_t nega_scout_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
-int64_t nega_alpha_moveorder_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
-int64_t nega_alpha_finish(int64_t alpha, int64_t beta, uint64_t playerboard, uint64_t opponentboard);
+int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
+int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
+int nega_alpha_moveorder_mpc(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard);
+int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
+int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
+int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
+int nega_alpha_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard);
 
-int64_t search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint);
+int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint);
 int search_finish(uint64_t playerboard, uint64_t opponentboard);
-int64_t search_finish_scout(uint64_t playerboard, uint64_t opponentboard);
+int search_finish_scout(uint64_t playerboard, uint64_t opponentboard);
 
 std::string coordinate_to_x_y(uint64_t put);
 
