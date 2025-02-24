@@ -6,7 +6,7 @@
 //
 #include "variables.hpp"
 #pragma once
-#include "evaluate_sgd.hpp"
+#include "evaluate.hpp"
 #include "book.hpp"
 
 using namespace std;
@@ -28,7 +28,7 @@ void reset() {
     if (first_reset) {
 //        evaluate_init(U"model2.txt", 0);
 //        evaluate_init(U"out_first.txt", 0);
-        evaluate_init(U"out_sgd3.txt", 0);
+        evaluate_init(U"out_sgd4.txt", 0);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
