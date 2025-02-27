@@ -23,7 +23,7 @@ using bitboard = pair<uint64_t, uint64_t>;
 //#define n_add_input 1
 #define n_all_input 12
 #define model_count 1
-#define use_book false
+#define use_book true
 
 constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10};
 
