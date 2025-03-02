@@ -26,7 +26,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"out_momentum1.txt", 0);
+        evaluate_init(U"out_adam4.txt", 0);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);

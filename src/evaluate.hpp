@@ -23,13 +23,11 @@ using bitboard = pair<uint64_t, uint64_t>;
 //#define n_add_input 1
 #define n_all_input 12
 #define model_count 1
-#define use_book true
+#define use_book false
 
-constexpr int pattern_sizes[n_patterns] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10};
+constexpr int pattern_sizes[] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10};
 
 constexpr uint64_t bit_pattern[] = {0x8040201008040201ULL, 0x4020100804020100ULL, 0x2010080402010000ULL, 0x1008040201000000ULL, 0xff42000000000000ULL, 0xff000000000000ULL, 0xff0000000000ULL, 0xff00000000ULL, 0xe0e0e00000000000ULL, 0xf8c0808080000000ULL, 0xbd3c000000000000ULL, 0xf0e0c08000000000ULL};
-
-const vector<vector<int>> bit_positions = {{0, 9, 18, 27, 36, 45, 54, 63}, {1, 10, 19, 28, 37, 46, 55}, {2, 11, 20, 29, 38, 47}, {3, 12, 21, 30, 39}, {9, 0, 1, 2, 3, 4, 5, 6, 7, 14}, {8, 9, 10, 11, 12, 13, 14, 15}, {16, 17, 18, 19, 20, 21, 22, 23}, {24, 25, 26, 27, 28, 29, 30, 31}, {0, 1, 8, 9, 2, 16, 10, 17, 18}, {32, 24, 16, 8, 0, 9, 1, 2, 3, 4}, {0, 2, 3, 10, 11, 12, 13, 4, 5, 7}, {0, 1, 2, 3, 8, 9, 10, 16, 17, 24}};
 
 constexpr uint64_t mn[12][4] = {
     // diagonal8_idx
@@ -58,9 +56,8 @@ constexpr uint64_t mn[12][4] = {
     {0x820000000100809ULL, 0x10181800200c8ULL, 0xc00c00a01424200ULL, 0x81000408002200ULL}
 };
 
-//constexpr int shn[12] = {56, 57, 58, 59, 54, 56, 56, 56, 55, 54, 53, 54};
 constexpr int shn[12][4] = {{56, 56, 56, 56}, {57, 57, 57, 57}, {58, 58, 58, 58}, {59, 59, 59, 59}, {54, 54, 54, 54}, {56, 56, 56, 56}, {56, 56, 56, 56}, {56, 56, 56, 56}, {55, 55, 55, 55}, {54, 54, 54, 54}, {53, 54, 54, 54}, {54, 54, 54, 54}};
-//constexpr int comp[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0};
+
 constexpr int comp[12][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
 
 static vector<vector<vector<vector<vector<int16_t>>>>> pattern_arr(model_count, vector<vector<vector<vector<int16_t>>>>(n_patterns));
@@ -352,6 +349,6 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54] +
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
-
+    
     return a;
 }
