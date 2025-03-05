@@ -75,6 +75,8 @@
 		2CD8412B283263B2005013A6 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../lib/macOS/boost/libboost_filesystem.a; sourceTree = "<group>"; };
 		5A434F112D6AEEDF006D6950 /* evaluate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = evaluate.hpp; sourceTree = "<group>"; };
 		5A9884582CF1C4D600375844 /* book.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = book.hpp; sourceTree = "<group>"; };
+		5ACC5A662D780DA2005C41F4 /* bit.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit.hpp; sourceTree = "<group>"; };
+		5ACC5A6B2D78325F005C41F4 /* Reversi.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = Reversi.profdata; sourceTree = "<group>"; };
 		5AD6D2BC2C81CCF000CC2850 /* reversi.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = reversi.hpp; sourceTree = "<group>"; };
 		5AD6D2BD2C81CCF000CC2850 /* reversi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = reversi.cpp; sourceTree = "<group>"; };
 		5AD6D2BE2C81CCF000CC2850 /* variables.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variables.hpp; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 				2CC7F9861F45930A0071A239 /* Frameworks */,
 				5ADC7FF02CDF3DBA009391BB /* assets */,
 				5A28A8E22D0CF6C3000EECFC /* models */,
+				5ACC5A6C2D78325F005C41F4 /* OptimizationProfiles */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,6 +155,7 @@
 				5AD6D2BC2C81CCF000CC2850 /* reversi.hpp */,
 				5AD6D2BD2C81CCF000CC2850 /* reversi.cpp */,
 				5AD6D2BE2C81CCF000CC2850 /* variables.hpp */,
+				5ACC5A662D780DA2005C41F4 /* bit.hpp */,
 				5A434F112D6AEEDF006D6950 /* evaluate.hpp */,
 				5A9884582CF1C4D600375844 /* book.hpp */,
 			);
@@ -190,6 +194,14 @@
 				2C5C46DC26B4F00D005E8C85 /* libcurl.tbd */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5ACC5A6C2D78325F005C41F4 /* OptimizationProfiles */ = {
+			isa = PBXGroup;
+			children = (
+				5ACC5A6B2D78325F005C41F4 /* Reversi.profdata */,
+			);
+			path = OptimizationProfiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -367,7 +379,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -391,10 +403,10 @@
 				ENABLE_TESTABILITY = YES;
 				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_FAST_MATH = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -440,9 +452,8 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
-					"-fexperimental-library",
 					"-mpopcnt",
-					"-ffp-contract=fast",
+					"-mlzcnt",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -466,7 +477,7 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_USE_OPTIMIZATION_PROFILE = NO;
+				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -490,9 +501,10 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXCLUDED_ARCHS = arm64;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_FAST_MATH = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = fast;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_UNROLL_LOOPS = YES;
@@ -535,9 +547,8 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=hidden",
-					"-fexperimental-library",
 					"-mpopcnt",
-					"-ffp-contract=fast",
+					"-mlzcnt",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";

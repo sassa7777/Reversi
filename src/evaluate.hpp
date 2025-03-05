@@ -5,31 +5,24 @@
 #include <cmath>
 #include <algorithm>
 #include <Siv3D.hpp>
+#include "bit.hpp"
 
 using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
 
-#ifdef __GNUC__
-#define flipVertical(x) __builtin_bswap64(x)
-#else
-#define flipVertical(x) _byteswap_uint64(x)
-#endif
-
-#define n_patterns 12
-#define n_dense0 128
-#define n_dense1 128
-//#define n_add_dense0 16
-//#define n_add_dense1 16
-//#define n_add_input 1
-#define n_all_input 12
+#define n_patterns 14
 #define model_count 1
-#define use_book false
+#define use_book true
 
-constexpr int pattern_sizes[] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10};
+constexpr int shn[14][4] = {{56, 56, 56, 56}, {57, 57, 57, 57}, {58, 58, 58, 58}, {59, 59, 59, 59}, {54, 54, 54, 54}, {56, 56, 56, 56}, {56, 56, 56, 56}, {56, 56, 56, 56}, {55, 55, 55, 55}, {54, 54, 54, 54}, {53, 54, 54, 54}, {54, 54, 54, 54}, {54, 54, 54, 54}, {54, 54, 54, 54}};
 
-constexpr uint64_t bit_pattern[] = {0x8040201008040201ULL, 0x4020100804020100ULL, 0x2010080402010000ULL, 0x1008040201000000ULL, 0xff42000000000000ULL, 0xff000000000000ULL, 0xff0000000000ULL, 0xff00000000ULL, 0xe0e0e00000000000ULL, 0xf8c0808080000000ULL, 0xbd3c000000000000ULL, 0xf0e0c08000000000ULL};
+constexpr int comp[14][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
+constexpr int pattern_sizes[] = {8, 7, 6, 5, 10, 8, 8, 8, 9, 10, 10, 10, 10, 10};
 
-constexpr uint64_t mn[12][4] = {
+constexpr uint64_t bit_pattern[] = {0x8040201008040201ULL, 0x4020100804020100ULL, 0x2010080402010000ULL, 0x1008040201000000ULL, 0xff42000000000000ULL, 0xff000000000000ULL, 0xff0000000000ULL, 0xff00000000ULL, 0xe0e0e00000000000ULL, 0xf8c0808080000000ULL, 0xbd3c000000000000ULL, 0xf0e0c08000000000ULL, 0xF8F8000000000000, 0xC0C0C0C0C0000000};
+
+
+constexpr uint64_t mn[14][4] = {
     // diagonal8_idx
     {0x844c1002020009a9ULL, 0x1280219202044004ULL, 0x844c1002020009a9ULL, 0x1280219202044004ULL},
     // diagonal7_idx
@@ -53,13 +46,11 @@ constexpr uint64_t mn[12][4] = {
     // edge_block_idx
     {0x4000200000404919ULL, 0x4100004004100016ULL, 0x9104000008090640ULL, 0x5482000820068001ULL},
     // triangle_idx
-    {0x820000000100809ULL, 0x10181800200c8ULL, 0xc00c00a01424200ULL, 0x81000408002200ULL}
+    {0x820000000100809ULL, 0x10181800200c8ULL, 0xc00c00a01424200ULL, 0x81000408002200ULL},
+    //2x5_idx
+    {0x8005011084008061, 0x1000401401, 0x8800401400001100, 0x804010040100002},
+    {0x10000040100403, 0xa004100920410108, 0x1001004004000000, 0x100082200001000}
 };
-
-constexpr int shn[12][4] = {{56, 56, 56, 56}, {57, 57, 57, 57}, {58, 58, 58, 58}, {59, 59, 59, 59}, {54, 54, 54, 54}, {56, 56, 56, 56}, {56, 56, 56, 56}, {56, 56, 56, 56}, {55, 55, 55, 55}, {54, 54, 54, 54}, {53, 54, 54, 54}, {54, 54, 54, 54}};
-
-constexpr int comp[12][4] = {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 0, 0, 0}, {0, 0, 0, 0}};
-
 static vector<vector<vector<vector<vector<int16_t>>>>> pattern_arr(model_count, vector<vector<vector<vector<int16_t>>>>(n_patterns));
 
 
@@ -94,8 +85,9 @@ inline constexpr uint64_t l90(uint64_t x) {
 inline constexpr uint64_t r90(uint64_t x) {
     return flipDiagonalA1H8(flipVertical(x));
 }
-
-#ifdef __clang__
+#ifdef __aarch64__
+#define r180(x) __builtin_arm_rbit64(x)
+#elif defined __clang__
 #define r180(x) __builtin_bitreverse64(x)
 #else
 inline constexpr uint64_t r180(uint64_t x) {
@@ -123,6 +115,7 @@ inline void evaluate_init(String model_path, int ptr_num){
             }
         }
     }
+    pattern_arr[ptr_num][0].resize(2);
 }
 
 inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
@@ -235,6 +228,24 @@ inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noex
           [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54] +
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
+    
+    a += (pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+          [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
+          pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+          [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
+          pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+          [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
+          pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+          [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
+    
+    a += (pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+          [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
+          pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+          [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
+          pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+          [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
+          pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+          [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
     
     return a;
 }
@@ -349,6 +360,24 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54] +
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
+    
+    a += (pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+          [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
+          pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+          [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
+          pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+          [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
+          pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+          [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
+    
+    a += (pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+          [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
+          pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+          [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
+          pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+          [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
+          pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+          [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
     
     return a;
 }

@@ -8,9 +8,10 @@
 #pragma once
 #include "evaluate.hpp"
 #include "book.hpp"
+#include "bit.hpp"
 
 using namespace std;
-using bitboard = std::pair<uint64_t, uint64_t>;
+using bitboard = pair<uint64_t, uint64_t>;
 
 void reset() {
     cout << "[*]初期化中..." << endl;
@@ -26,7 +27,7 @@ void reset() {
     play_record = "";
     evaluate_ptr_num = 0;
     if (first_reset) {
-        evaluate_init(U"out_adam4.txt", 0);
+        evaluate_init(U"out_adam5.txt", 0);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
@@ -75,7 +76,7 @@ inline int putstone(int_fast8_t y, int_fast8_t x) {
 
 inline string coordinate_to_x_y(uint64_t put) {
     constexpr string x = "abcdefgh";
-    int pos = countl_zero(put);
+    int pos = clz_u64(put);
     return string(1, x[pos % 8]) + to_string((pos / 8) + 1);
 }
 
@@ -128,17 +129,17 @@ inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
 
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept {
     uint64_t flipped, OM, outflank[4], mask[4];
-    int pos = countl_zero(put);
+    int pos = clz_u64(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
     
     mask[0] = 0x0080808080808080ULL >> (pos);
     mask[1] = 0x7f00000000000000ULL >> (pos);
     mask[2] = 0x0102040810204000ULL >> (pos);
     mask[3] = 0x0040201008040201ULL >> (pos);
-    outflank[0] = (0x8000000000000000ULL >> countl_zero(~opponentboard & mask[0])) & playerboard;
-    outflank[1] = (0x8000000000000000ULL >> countl_zero(~OM & mask[1])) & playerboard;
-    outflank[2] = (0x8000000000000000ULL >> countl_zero(~OM & mask[2])) & playerboard;
-    outflank[3] = (0x8000000000000000ULL >> countl_zero(~OM & mask[3])) & playerboard;
+    outflank[0] = (0x8000000000000000ULL >> clz_u64(~opponentboard & mask[0])) & playerboard;
+    outflank[1] = (0x8000000000000000ULL >> clz_u64(~OM & mask[1])) & playerboard;
+    outflank[2] = (0x8000000000000000ULL >> clz_u64(~OM & mask[2])) & playerboard;
+    outflank[3] = (0x8000000000000000ULL >> clz_u64(~OM & mask[3])) & playerboard;
     flipped  = ((~outflank[0] + 1) << 1) & mask[0];
     flipped |= ((~outflank[1] + 1) << 1) & mask[1];
     flipped |= ((~outflank[2] + 1) << 1) & mask[2];
@@ -193,7 +194,7 @@ int ai_hint() {
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
-    int putable_count = popcount(legalboard);
+    int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
         return 0;
     }
@@ -209,7 +210,7 @@ int ai_hint() {
         cout << "error" << endl;
         return 0;
     }
-    int count = countl_zero(tmpbit);
+    int count = clz_u64(tmpbit);
     hint_y = count / 8;
     hint_x = count % 8;
     cout << "suggest : (" << hint_x << ", " << hint_y << ")" << endl;
@@ -232,7 +233,7 @@ int ai() {
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
-    int putable_count = popcount(legalboard);
+    int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
         swapboard();
         return 0;
@@ -269,7 +270,7 @@ int ai() {
         cout << "error" << endl;
         return 0;
     }
-    int count = countl_zero(tmpbit);
+    int count = clz_u64(tmpbit);
     tmpy = count / 8;
     tmpx = count % 8;
     putstone(tmpy, tmpx);
@@ -288,7 +289,7 @@ int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
     uint64_t rev;
     board_root m;
     vector<board_root> moveorder;
-    moveorder.reserve(popcount(legalboard));
+    moveorder.reserve(popcnt_u64(legalboard));
     m.put = 1;
     for (auto i = 0; i < 64; ++i) {
         if (legalboard & m.put) {
@@ -300,10 +301,12 @@ int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
         m.put <<= 1;
     }
     int alpha = MIN_INF, beta = MAX_INF;
-    think_count = 100/(popcount(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
+    think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
     int wave = 0;
     int end_depth;
     if (hint == true) {
+        end_depth = 9;
+    } else if (nowIndex <= 10 && Level == 7) {
         end_depth = 10;
     } else {
         end_depth = DEPTH;
@@ -635,10 +638,10 @@ int search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
     int var = 0, score = 0;
     uint64_t rev;
     end_search_stone_count = 0;
-    if (popcount(playerboard | opponentboard) < 50) {
+    if (popcnt_u64(playerboard | opponentboard) < 50) {
         board_root m;
         vector<board_root> moveorder;
-        moveorder.reserve(popcount(legalboard));
+        moveorder.reserve(popcnt_u64(legalboard));
         m.put = 1;
         for (auto i = 0; i < 64; ++i) {
             if (legalboard & m.put) {
@@ -650,9 +653,9 @@ int search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
             m.put <<= 1;
         }
         int alpha = MIN_INF, beta = MAX_INF;
-        int end_depth = min(16, 64-popcount(playerboard | opponentboard));
-        end_search_stone_count = popcount(playerboard | opponentboard)+end_depth;
-        think_count = (100/(popcount(legalboard)+7));
+        int end_depth = min(16, 64-popcnt_u64(playerboard | opponentboard));
+        end_search_stone_count = popcnt_u64(playerboard | opponentboard)+end_depth;
+        think_count = (100/(popcnt_u64(legalboard)+7));
         for (search_depth = max(1, end_depth-6); search_depth <= end_depth; ++search_depth) {
             afterIndex = nowIndex+search_depth;
             for (auto& m: moveorder) {
@@ -683,7 +686,7 @@ int search_finish_scout(uint64_t playerboard, uint64_t opponentboard) {
     }
     var = 0;
     cout << "final_search" << endl;
-    vector<board_finish_root> moveorder(popcount(legalboard));
+    vector<board_finish_root> moveorder(popcnt_u64(legalboard));
     for (uint64_t put = 0x8000000000000000; put >= 1; put >>= 1) {
         if (legalboard & put) {
             rev = Flip(put, playerboard, opponentboard);
@@ -735,14 +738,14 @@ int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
     
     if (!legalboard) [[unlikely]] {
         uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
-        if (!legalboard2) [[unlikely]] return (popcount(playerboard) - popcount(opponentboard));
+        if (!legalboard2) [[unlikely]] return (popcnt_u64(playerboard) - popcnt_u64(opponentboard));
         else return -nega_scout_finish(-beta, -alpha, opponentboard, playerboard, legalboard2);
     }
     int var, max_score = MIN_INF, count = 0;
     uint64_t rev;
     board_finish moveorder[34];
     uint64_t put;
-    int stones = popcount(playerboard | opponentboard);
+    int stones = popcnt_u64(playerboard | opponentboard);
     if (stones < end_search_stone_count) {
         while(legalboard) {
             put = legalboard & (~legalboard + 1);
@@ -762,7 +765,7 @@ int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;
             moveorder[count].legalboard = makelegalboard(moveorder[count].opponentboard, moveorder[count].playerboard);
-            moveorder[count].score = popcount(moveorder[count].legalboard);
+            moveorder[count].score = popcnt_u64(moveorder[count].legalboard);
             ++count;
         }
     }
@@ -837,14 +840,14 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
     
     if (!legalboard) [[unlikely]] {
         uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
-        if (!legalboard2) [[unlikely]] return (popcount(playerboard) - popcount(opponentboard));
+        if (!legalboard2) [[unlikely]] return (popcnt_u64(playerboard) - popcnt_u64(opponentboard));
         else return -nega_alpha_moveorder_finish(-beta, -alpha, opponentboard, playerboard, legalboard2);
     }
     int var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
     board_finish moveorder[34];
     uint64_t put;
-    int stones = popcount(playerboard | opponentboard);
+    int stones = popcnt_u64(playerboard | opponentboard);
     if (stones < end_search_stone_count) {
         while(legalboard) {
             put = legalboard & (~legalboard + 1);
@@ -864,7 +867,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;
             moveorder[count].legalboard = makelegalboard(moveorder[count].opponentboard, moveorder[count].playerboard);
-            moveorder[count].score = popcount(moveorder[count].legalboard);
+            moveorder[count].score = popcnt_u64(moveorder[count].legalboard);
             ++count;
         }
     }
@@ -904,7 +907,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
 int nega_alpha_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) {
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if (!legalboard) {
-        if (!(makelegalboard(opponentboard, playerboard))) return (popcount(playerboard) - popcount(opponentboard));
+        if (!(makelegalboard(opponentboard, playerboard))) return (popcnt_u64(playerboard) - popcnt_u64(opponentboard));
         else {
             return -nega_alpha_finish(-beta, -alpha, opponentboard, playerboard);
         }
@@ -931,11 +934,11 @@ int nega_alpha_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
 
 int winner() {
     if (nowTurn == BLACK_TURN) {
-        blackc = popcount(b.playerboard);
-        whitec = popcount(b.opponentboard);
+        blackc = popcnt_u64(b.playerboard);
+        whitec = popcnt_u64(b.opponentboard);
     } else {
-        whitec = popcount(b.playerboard);
-        blackc = popcount(b.opponentboard);
+        whitec = popcnt_u64(b.playerboard);
+        blackc = popcnt_u64(b.opponentboard);
     }
     return (blackc > whitec) ? 1 : (blackc < whitec) ? 2 : 0;
 }
