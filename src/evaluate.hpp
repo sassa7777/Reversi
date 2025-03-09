@@ -197,23 +197,23 @@ inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noex
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
     
-    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
-          [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
-          [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
-          [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
-          [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
+    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000ULL) * mn[12][0]) >> 54]
+          [((opponentboard & 0xF8F8000000000000ULL) * mn[12][0]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000ULL) * mn[12][1]) >> 54]
+          [((opponentboard & 0x0303030303000000ULL) * mn[12][1]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1fULL) * mn[12][2]) >> 54]
+          [((opponentboard & 0x0000000000001f1fULL) * mn[12][2]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0ULL) * mn[12][3]) >> 54]
+          [((opponentboard & 0x000000c0c0c0c0c0ULL) * mn[12][3]) >> 54]);
     
-    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
-          [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
-          [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
-          [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
-          [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
+    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000ULL) * mn[13][0]) >> 54]
+          [((opponentboard & 0xC0C0C0C0C0000000ULL) * mn[13][0]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000ULL) * mn[13][1]) >> 54]
+          [((opponentboard & 0x1f1f000000000000ULL) * mn[13][1]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303ULL) * mn[13][2]) >> 54]
+          [((opponentboard & 0x0000000303030303ULL) * mn[13][2]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]
+          [((opponentboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]);
     
     return a;
 }
@@ -329,23 +329,23 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
     
-    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
-          [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
-          [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
-          [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
-          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
-          [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
+    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000ULL) * mn[12][0]) >> 54]
+          [((opponentboard & 0xF8F8000000000000ULL) * mn[12][0]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000ULL) * mn[12][1]) >> 54]
+          [((opponentboard & 0x0303030303000000ULL) * mn[12][1]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1fULL) * mn[12][2]) >> 54]
+          [((opponentboard & 0x0000000000001f1fULL) * mn[12][2]) >> 54] +
+          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0ULL) * mn[12][3]) >> 54]
+          [((opponentboard & 0x000000c0c0c0c0c0ULL) * mn[12][3]) >> 54]);
     
-    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
-          [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
-          [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
-          [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
-          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
-          [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
+    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000ULL) * mn[13][0]) >> 54]
+          [((opponentboard & 0xC0C0C0C0C0000000ULL) * mn[13][0]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000ULL) * mn[13][1]) >> 54]
+          [((opponentboard & 0x1f1f000000000000ULL) * mn[13][1]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303ULL) * mn[13][2]) >> 54]
+          [((opponentboard & 0x0000000303030303ULL) * mn[13][2]) >> 54] +
+          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]
+          [((opponentboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]);
     
     return a;
 }

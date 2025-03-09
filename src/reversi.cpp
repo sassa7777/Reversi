@@ -31,7 +31,7 @@ void reset() {
     tmpx = -1;
     tmpy = -1;
     if (first_reset) {
-        evaluate_init(U"out_adam6.txt", 0);
+        evaluate_init(U"eval.bin", 0);
 //        evaluate_init(U"out_adam1.txt", 1);
         first_reset = false;
         transpose_table.reserve(100000);
