@@ -53,55 +53,22 @@ constexpr uint64_t mn[14][4] = {
 };
 static vector<vector<vector<vector<vector<int16_t>>>>> pattern_arr(model_count, vector<vector<vector<vector<int16_t>>>>(n_patterns));
 
-
-inline constexpr uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
-    uint64_t t = (x ^ (x >> delta)) & mask;
-    return x ^ t ^ (t << delta);
-}
-
-inline constexpr uint64_t flipHorizontal(uint64_t x) {
-    x = ((x >> 1) & 0x5555555555555555) | ((x & 0x5555555555555555) << 1);
-    x = ((x >> 2) & 0x3333333333333333) | ((x & 0x3333333333333333) << 2);
-    x = ((x >> 4) & 0x0f0f0f0f0f0f0f0f) | ((x & 0x0f0f0f0f0f0f0f0f) << 4);
-    return x;
-}
-
-inline constexpr uint64_t flipDiagonalA1H8(uint64_t x) {
-    x = delta_swap(x, 0x00AA00AA00AA00AA, 7);
-    x = delta_swap(x, 0x0000CCCC0000CCCC, 14);
-    return delta_swap(x, 0x00000000F0F0F0F0, 28);
-}
-
-inline constexpr uint64_t flipDiagonalA8H1(uint64_t x) {
-    x = delta_swap(x, 0x0055005500550055, 9);
-    x = delta_swap(x, 0x0000333300003333, 18);
-    return delta_swap(x, 0x000000000F0F0F0F, 36);
-}
-
-inline constexpr uint64_t l90(uint64_t x) {
-    return flipVertical(flipDiagonalA1H8(x));
-}
-
-inline constexpr uint64_t r90(uint64_t x) {
-    return flipDiagonalA1H8(flipVertical(x));
-}
-#ifdef __aarch64__
-#define r180(x) __builtin_arm_rbit64(x)
-#elif defined __clang__
-#define r180(x) __builtin_bitreverse64(x)
-#else
-inline constexpr uint64_t r180(uint64_t x) {
-    return flipVertical(flipHorizontal(x));
-}
-#endif
-
 inline void evaluate_init(String model_path, int ptr_num){
-    ifstream ifs(FileSystem::RelativePath(Resource(model_path)).narrow());
-    if (ifs.fail()){
+    FILE* file = fopen(FileSystem::RelativePath(Resource(model_path)).narrow().c_str(), "rb");
+    if (!file) {
         cerr << "evaluation file does not exist" << endl;
         exit(1);
     }
-    string line;
+    fseek(file, 0, SEEK_END);
+    size_t file_size = ftell(file);
+    rewind(file);
+    
+    char* buffer = new char[file_size + 1];
+    fread(buffer, 1, file_size, file);
+    buffer[file_size] = '\0';
+    
+    fclose(file);
+    char* token = strtok(buffer, "\n");
     for (int i = 0; i < n_patterns; ++i) {
         pattern_arr[ptr_num][i].resize(4);
         for (int j = 0; j < 4; ++j) {
@@ -109,13 +76,14 @@ inline void evaluate_init(String model_path, int ptr_num){
             for (int k = 0; k < 1 << (pattern_sizes[i]+comp[i][j]); ++k) {
                 pattern_arr[ptr_num][i][j][k].resize(1 << (pattern_sizes[i]+comp[i][j]));
                 for (int l = 0; l < 1 << (pattern_sizes[i]+comp[i][j]); ++l) {
-                    getline(ifs, line);
-                    pattern_arr[ptr_num][i][j][k][l] = stoi(line);
+                    pattern_arr[ptr_num][i][j][k][l] = atoi(token);
+                    token = strtok(nullptr, "\n");
                 }
             }
         }
     }
     pattern_arr[ptr_num][0].resize(2);
+    delete[] buffer;
 }
 
 inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noexcept {
@@ -229,22 +197,22 @@ inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noex
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
     
-    a += (pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
           [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
-          pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
           [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
-          pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
           [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
-          pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
           [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
     
-    a += (pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
           [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
-          pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
           [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
-          pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
           [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
-          pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
     
     return a;
@@ -361,22 +329,22 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           pattern_arr[evaluate_ptr_num][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]);
     
-    a += (pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+    a += (pattern_arr[evaluate_ptr_num][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
           [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54] +
-          pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
           [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54] +
-          pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
           [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54] +
-          pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+          pattern_arr[evaluate_ptr_num][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
           [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]);
     
-    a += (pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+    a += (pattern_arr[evaluate_ptr_num][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
           [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54] +
-          pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
           [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54] +
-          pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
           [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54] +
-          pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+          pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54]);
     
     return a;

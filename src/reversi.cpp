@@ -26,8 +26,13 @@ void reset() {
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     play_record = "";
     evaluate_ptr_num = 0;
+    hint_x = -1;
+    hint_y = -1;
+    tmpx = -1;
+    tmpy = -1;
     if (first_reset) {
-        evaluate_init(U"out_adam5.txt", 0);
+        evaluate_init(U"out_adam6.txt", 0);
+//        evaluate_init(U"out_adam1.txt", 1);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
@@ -61,7 +66,7 @@ inline int putstone(int_fast8_t y, int_fast8_t x) {
         b.opponentboard ^= rev;
         nowIndex++;
         afterIndex++;
-        if (afterIndex <= 40) {
+        if (afterIndex <= 30) {
             evaluate_ptr_num = 0;
         } else {
             evaluate_ptr_num = 0;
