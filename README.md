@@ -8,7 +8,7 @@
 
 ・ビットボード
 
-・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、深層学習を利用した評価関数
+・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、線形回帰を利用して最適化した評価関数
 
 ・MagicBitboardを利用した評価関数の高速な実行
 
@@ -24,8 +24,6 @@ macOS版のみビルド済みアプリケーションを配布しています
 ```
 を行う必要があります
 
-※起動時、モデルの読み込みと評価関数の初期化を行うため3~6秒ほど時間がかかります
-
 # その他
 
 依存関係: 
@@ -37,8 +35,6 @@ macOS版のみビルド済みアプリケーションを配布しています
 [bitboard tricks](http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm),
 [bitboardの回転](https://qiita.com/ysuzuk81/items/453b08a14d23fb8c6c11),
 [Chess Programming Wiki](https://www.chessprogramming.org/Magic_Bitboards)
-
-評価関数の学習と読み込みには、[OthelloAI_Textbook](https://github.com/Nyanyan/OthelloAI_Textbook)のコードをベースに改変したものを、
 
 学習データには[Egaroucidの自己対戦の棋譜](https://www.egaroucid.nyanyan.dev/ja/technology/transcript/)を作者の許可を得て使用しています。
 
