@@ -74,4 +74,12 @@ inline constexpr uint64_t r180(uint64_t x) {
 }
 #endif
 
+#ifdef __BMI__
+#define blsr_u64(x) _blsr_u64(x)
+#define blsi_u64(x) _blsi_u64(x)
+#else
+#define blsr_u64(x) (x & (x - 1))
+#define blsi_u64(x) (x & -x)
+#endif
+
 #endif /* bit_h */

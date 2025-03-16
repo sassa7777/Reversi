@@ -8,6 +8,7 @@
 #pragma once
 #include "evaluate.hpp"
 #include "book.hpp"
+//#include "book2.hpp"
 #include "bit.hpp"
 
 using namespace std;
@@ -24,6 +25,8 @@ void reset() {
 //    b.playerboard = 9948208703946496;
 //    b.opponentboard = 18436795865005588735;
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
+    transpose_table.max_load_factor(0.5);
+    former_transpose_table.max_load_factor(0.5);
     play_record = "";
     evaluate_ptr_num = 0;
     hint_x = -1;
@@ -31,8 +34,7 @@ void reset() {
     tmpx = -1;
     tmpy = -1;
     if (first_reset) {
-        evaluate_init(U"eval.bin", 0);
-//        evaluate_init(U"out_adam1.txt", 1);
+        evaluate_init(U"out_adam_first9.txt", 0);
         first_reset = false;
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
@@ -223,13 +225,55 @@ int ai_hint() {
     cout << "Score(stone) : " << score/256 << endl;
     return 1;
 }
+//
+//int search_book(uint64_t playerboard, uint64_t opponentboard) {
+//    cout << "algorithm: NegaScout" << endl;
+//    transpose_table.clear();
+//    former_transpose_table.clear();
+//    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
+//    int var = 0;
+//    uint64_t rev;
+//    board_root m;
+//    vector<board_root> moveorder;
+//    moveorder.reserve(popcnt_u64(legalboard));
+//    m.put = 1;
+//    for (auto i = 0; i < 64; ++i) {
+//        if (legalboard & m.put) {
+//            rev = Flip(m.put, playerboard, opponentboard);
+//            m.playerboard = playerboard ^ (m.put | rev);
+//            m.opponentboard = opponentboard ^ rev;
+//            moveorder.emplace_back(m);
+//        }
+//        m.put <<= 1;
+//    }
+//    int alpha = MIN_INF, beta = MAX_INF;
+//    think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
+//    int wave = 0;
+//    int end_depth;
+//    end_depth = 1;
+//    think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
+//    ++wave;
+//    afterIndex = nowIndex+search_depth;
+//    alpha = MIN_INF;
+//    beta = MAX_INF;
+//    think_percent += think_count;
+//    for (size_t i = 0; i < moveorder.size(); ++i) {
+//        var = -(book.count({moveorder[i].opponentboard, moveorder[i].playerboard}) > 0 ? book[{moveorder[i].opponentboard, moveorder[i].playerboard}] : nega_scout(DEPTH-1, -beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard));
+//        think_percent += think_count;
+//        if (var > alpha) {
+//            tmpbit = moveorder[i].put;
+//        }
+//        alpha = max(var, alpha);
+//    }
+//    return alpha;
+//}
 
 int ai() {
     if (nowTurn == 1-botplayer) {
         return 0;
     }
     cout << "[*]Botが考え中.." << endl;
-    if (Level >= 5 && nowIndex >= 41) {
+    if (Level >= 5 && nowIndex >= 42) {
         DEPTH = 60;
         afterIndex=60;
     }
@@ -237,6 +281,13 @@ int ai() {
     think_percent = 0;
     transpose_table.clear();
     former_transpose_table.clear();
+    if (afterIndex <= 20) {
+        evaluate_init(U"eval1.bin", 0);
+    } else if (afterIndex <= 40) {
+        evaluate_init(U"eval2.bin", 0);
+    } else {
+        evaluate_init(U"eval3.bin", 0);
+    }
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
@@ -260,6 +311,9 @@ int ai() {
         tmpbit = book_itr[0]->second;
         cout << "book found" << endl;
     }
+//    if (nowIndex <= 10) {
+//        score = search_book(b.playerboard, b.opponentboard);
+//    }
 #endif
     if (!tmpbit) {
         if (afterIndex >= 60) {
@@ -311,8 +365,8 @@ int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
     int end_depth;
     if (hint == true) {
         end_depth = 9;
-    } else if (nowIndex <= 10 && Level == 7) {
-        end_depth = 10;
+    } else if (nowIndex <= 10) {
+        end_depth = DEPTH;
     } else {
         end_depth = DEPTH;
     }
@@ -367,8 +421,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uin
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if (!legalboard) [[unlikely]] {
@@ -380,8 +434,8 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uin
     board moveorder[34];
     uint64_t put;
     while(legalboard) {
-        put = legalboard & (~legalboard + 1);
-        legalboard ^= put;
+        put = blsi_u64(legalboard);
+        legalboard = blsr_u64(legalboard);
         rev = Flip(put, playerboard, opponentboard);
         moveorder[count].playerboard = playerboard ^ (put | rev);
         moveorder[count].opponentboard = opponentboard ^ rev;
@@ -456,8 +510,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t player
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if (!legalboard) [[unlikely]] {
@@ -469,8 +523,8 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t player
     board moveorder[34];
     uint64_t put;
     while(legalboard) {
-        put = legalboard & (~legalboard + 1);
-        legalboard ^= put;
+        put = blsi_u64(legalboard);
+        legalboard = blsr_u64(legalboard);
         rev = Flip(put, playerboard, opponentboard);
         moveorder[count].playerboard = playerboard ^ (put | rev);
         moveorder[count].opponentboard = opponentboard ^ rev;
@@ -525,8 +579,8 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uin
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if (!legalboard) [[unlikely]] {
@@ -572,8 +626,8 @@ int nega_alpha_moveorder_mpc(int_fast8_t depth, int alpha, int beta, uint64_t pl
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     uint64_t legalboard = makelegalboard(playerboard, opponentboard);
     if (!legalboard) [[unlikely]] {
@@ -585,8 +639,8 @@ int nega_alpha_moveorder_mpc(int_fast8_t depth, int alpha, int beta, uint64_t pl
     board moveorder[36];
     uint64_t put;
     while(legalboard) {
-        put = legalboard & (~legalboard + 1);
-        legalboard ^= put;
+        put = blsi_u64(legalboard);
+        legalboard = blsr_u64(legalboard);
         rev = Flip(put, playerboard, opponentboard);
         moveorder[count].playerboard = playerboard ^ (put | rev);
         moveorder[count].opponentboard = opponentboard ^ rev;
@@ -738,8 +792,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     if (!legalboard) [[unlikely]] {
         uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
@@ -753,8 +807,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
     int stones = popcnt_u64(playerboard | opponentboard);
     if (stones < end_search_stone_count) {
         while(legalboard) {
-            put = legalboard & (~legalboard + 1);
-            legalboard ^= put;
+            put = blsi_u64(legalboard);
+            legalboard = blsr_u64(legalboard);
             rev = Flip(put, playerboard, opponentboard);
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;
@@ -764,8 +818,8 @@ int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t oppone
         }
     } else {
         while(legalboard) {
-            put = legalboard & (~legalboard + 1);
-            legalboard ^= put;
+            put = blsi_u64(legalboard);
+            legalboard = blsr_u64(legalboard);
             rev = Flip(put, playerboard, opponentboard);
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;
@@ -840,8 +894,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
         if (l >= beta) return l;
         alpha = max(l, alpha);
         beta = min(u, beta);
+        if (u == l) return u;
     }
-    if (u == l) return u;
     
     if (!legalboard) [[unlikely]] {
         uint64_t legalboard2 = makelegalboard(opponentboard, playerboard);
@@ -855,8 +909,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
     int stones = popcnt_u64(playerboard | opponentboard);
     if (stones < end_search_stone_count) {
         while(legalboard) {
-            put = legalboard & (~legalboard + 1);
-            legalboard ^= put;
+            put = blsi_u64(legalboard);
+            legalboard = blsr_u64(legalboard);
             rev = Flip(put, playerboard, opponentboard);
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;
@@ -866,8 +920,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint6
         }
     } else {
         while(legalboard) {
-            put = legalboard & (~legalboard + 1);
-            legalboard ^= put;
+            put = blsi_u64(legalboard);
+            legalboard = blsr_u64(legalboard);
             rev = Flip(put, playerboard, opponentboard);
             moveorder[count].playerboard = playerboard ^ (put | rev);
             moveorder[count].opponentboard = opponentboard ^ rev;

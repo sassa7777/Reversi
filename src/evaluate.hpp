@@ -214,7 +214,7 @@ inline int evaluate_moveorder(uint64_t playerboard, uint64_t opponentboard) noex
           [((opponentboard & 0x0000000303030303ULL) * mn[13][2]) >> 54] +
           pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]);
-    
+        
     return a;
 }
 
@@ -346,6 +346,6 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           [((opponentboard & 0x0000000303030303ULL) * mn[13][2]) >> 54] +
           pattern_arr[evaluate_ptr_num][13][3][((playerboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]);
-    
+        
     return a;
 }
