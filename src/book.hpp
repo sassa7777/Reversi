@@ -47,7 +47,7 @@ void put_book_init(uint64_t put, uint64_t &p, uint64_t &o) {
 void book_init() {
     book.clear();
     play_record_to_coordinate_init();
-    fstream ifs(FileSystem::RelativePath(Resource(U"book2.txt")).narrow());
+    fstream ifs(s3d::FileSystem::RelativePath(s3d::Resource(U"book2.txt")).narrow());
     if (ifs.fail()){
         cerr << "book file does not exist" << endl;
         exit(1);

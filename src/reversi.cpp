@@ -8,7 +8,6 @@
 #pragma once
 #include "evaluate.hpp"
 #include "book.hpp"
-//#include "book2.hpp"
 #include "bit.hpp"
 
 using namespace std;
@@ -34,26 +33,28 @@ void reset() {
     tmpx = -1;
     tmpy = -1;
     if (first_reset) {
-        evaluate_init(U"out_adam_first9.txt", 0);
         first_reset = false;
+        evaluate_init(U"eval0.zstd");
+        
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
-        cout << "evaluation initialized" << endl;
+//        cout << "evaluation initialized" << endl;
     }
     if (book.size() == 0) book_init();
+    eval_num.assign(eval_num.size(), false);
     cout << "DEPTH: " << DEPTH << endl;
-    cout << "Player: " << botplayer << endl;
+    cout << "Player: " << AIplayer << endl;
     cout << "Level: " << Level << endl;
     cout << "initialized" << endl;
-//    cout << evaluate(0x844c1002020009a9ULL, ~0x844c1002020009a9ULL) << endl;
+    cout << evaluate(0x844c1002020009a9ULL, ~0x844c1002020009a9ULL) << endl;
     return;
 }
 
-inline int putstone(int_fast8_t y, int_fast8_t x) {
+int putstone(int y, int x) {
     uint64_t put = cordinate_to_bit(x, y);
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     if (canput(put, legalboard)) {
-        if (nowTurn == (1 - botplayer)) {
+        if (nowTurn == (1 - AIplayer)) {
             b_back.playerboard = b.playerboard;
             b_back.opponentboard = b.opponentboard;
             b_back.put_x = tmpx;
@@ -87,7 +88,7 @@ inline string coordinate_to_x_y(uint64_t put) {
     return string(1, x[pos % 8]) + to_string((pos / 8) + 1);
 }
 
-inline uint64_t cordinate_to_bit(int_fast8_t put, int_fast8_t y) {
+inline uint64_t cordinate_to_bit(int put, int y) {
     return 0x8000000000000000ULL >> ((y<<3)+put);
 }
 
@@ -96,7 +97,7 @@ inline bool canput(uint64_t put, uint64_t legalboard) {
 }
 
 // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
-inline uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
+uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
     uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
     hb = o & 0x7e7e7e7e7e7e7e7eULL;
@@ -134,6 +135,7 @@ inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
     #define OutflankToFlipmask(outflank)    ((outflank) - (unsigned int) ((outflank) != 0))
 #endif
 
+//code based on http://www.amy.hi-ho.ne.jp/okuhara/flipcuda.htm
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept {
     uint64_t flipped, OM, outflank[4], mask[4];
     int pos = clz_u64(put);
@@ -185,17 +187,16 @@ void swapboard() {
 //    cout << play_record << endl;
 }
 
-inline int move_ordering_value(uint64_t playerboard, uint64_t opponentboard) noexcept {
-    auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
-    if (it != former_transpose_table.end()) {
-        return (16384-max(it->second.first, it->second.second));
-    } else {
-        return evaluate_moveorder(opponentboard, playerboard);
+void sync_model() {
+    int index = min(afterIndex / 4, 14);
+    if (!eval_num[index]) {
+        evaluate_init(U"eval" + Format(index) + U".zstd");
+        eval_num[index] = true;
     }
 }
 
 int ai_hint() {
-    cout << "[*]Botが考え中.." << endl;
+    cout << "[*]AIが考え中.." << endl;
     tmpbit = 0;
     think_percent = 0;
     transpose_table.clear();
@@ -225,69 +226,25 @@ int ai_hint() {
     cout << "Score(stone) : " << score/256 << endl;
     return 1;
 }
-//
-//int search_book(uint64_t playerboard, uint64_t opponentboard) {
-//    cout << "algorithm: NegaScout" << endl;
-//    transpose_table.clear();
-//    former_transpose_table.clear();
-//    uint64_t legalboard = makelegalboard(playerboard, opponentboard);
-//    int var = 0;
-//    uint64_t rev;
-//    board_root m;
-//    vector<board_root> moveorder;
-//    moveorder.reserve(popcnt_u64(legalboard));
-//    m.put = 1;
-//    for (auto i = 0; i < 64; ++i) {
-//        if (legalboard & m.put) {
-//            rev = Flip(m.put, playerboard, opponentboard);
-//            m.playerboard = playerboard ^ (m.put | rev);
-//            m.opponentboard = opponentboard ^ rev;
-//            moveorder.emplace_back(m);
-//        }
-//        m.put <<= 1;
-//    }
-//    int alpha = MIN_INF, beta = MAX_INF;
-//    think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
-//    int wave = 0;
-//    int end_depth;
-//    end_depth = 1;
-//    think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
-//    ++wave;
-//    afterIndex = nowIndex+search_depth;
-//    alpha = MIN_INF;
-//    beta = MAX_INF;
-//    think_percent += think_count;
-//    for (size_t i = 0; i < moveorder.size(); ++i) {
-//        var = -(book.count({moveorder[i].opponentboard, moveorder[i].playerboard}) > 0 ? book[{moveorder[i].opponentboard, moveorder[i].playerboard}] : nega_scout(DEPTH-1, -beta, -alpha, moveorder[i].opponentboard, moveorder[i].playerboard));
-//        think_percent += think_count;
-//        if (var > alpha) {
-//            tmpbit = moveorder[i].put;
-//        }
-//        alpha = max(var, alpha);
-//    }
-//    return alpha;
-//}
 
 int ai() {
-    if (nowTurn == 1-botplayer) {
+    if (nowTurn == 1-AIplayer) {
         return 0;
     }
-    cout << "[*]Botが考え中.." << endl;
+    cout << "[*]AIが考え中.." << endl;
     if (Level >= 5 && nowIndex >= 42) {
         DEPTH = 60;
         afterIndex=60;
     }
+    if (nowIndex >= 30) {
+        DEPTH = firstDEPTH + 2;
+        afterIndex = nowIndex + DEPTH;
+    }
     tmpbit = 0;
     think_percent = 0;
+    sync_model();
     transpose_table.clear();
     former_transpose_table.clear();
-    if (afterIndex <= 20) {
-        evaluate_init(U"eval1.bin", 0);
-    } else if (afterIndex <= 40) {
-        evaluate_init(U"eval2.bin", 0);
-    } else {
-        evaluate_init(U"eval3.bin", 0);
-    }
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
     int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
@@ -337,6 +294,15 @@ int ai() {
     cout << "Score : " << score << endl;
     cout << "Score(stone) : " << ((afterIndex < 60) ? score/256 : score) << endl;
     return 1;
+}
+
+inline int move_ordering_value(uint64_t playerboard, uint64_t opponentboard) noexcept {
+    auto it = former_transpose_table.find(make_pair(playerboard, opponentboard));
+    if (it != former_transpose_table.end()) {
+        return (32768-max(it->second.first, it->second.second));
+    } else {
+        return evaluate_moveorder(opponentboard, playerboard);
+    }
 }
 
 int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
@@ -406,7 +372,7 @@ int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
     return alpha;
 }
 
-int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
+int nega_scout(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
@@ -495,7 +461,7 @@ int nega_scout(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uin
     return max_score;
 }
 
-int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
+int nega_alpha_moveorder(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
@@ -564,7 +530,7 @@ int nega_alpha_moveorder(int_fast8_t depth, int alpha, int beta, uint64_t player
     return max_score;
 }
 
-int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
+int nega_alpha(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(playerboard, opponentboard);
@@ -611,7 +577,7 @@ int nega_alpha(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uin
     return max_score;
 }
 
-int nega_alpha_moveorder_mpc(int_fast8_t depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) {
+int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(playerboard, opponentboard);

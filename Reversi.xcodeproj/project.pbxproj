@@ -423,6 +423,7 @@
 					../../include,
 					../../include/ThirdParty,
 					/usr/local/include,
+					/opt/homebrew/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -518,6 +519,7 @@
 					../../include,
 					../../include/ThirdParty,
 					/usr/local/include,
+					/opt/homebrew/include,
 				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

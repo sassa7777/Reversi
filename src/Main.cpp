@@ -24,7 +24,7 @@ void DrawBoard() {
                     } else {
                         TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
-                } else if((botplayer == WHITE_TURN && (legalboard & mask) != 0)) {
+                } else if((AIplayer == WHITE_TURN && (legalboard & mask) != 0)) {
                     if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
@@ -43,7 +43,7 @@ void DrawBoard() {
                     } else {
                         TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     }
-                } else if((botplayer == BLACK_TURN && (legalboard & mask) != 0)) {
+                } else if((AIplayer == BLACK_TURN && (legalboard & mask) != 0)) {
                     if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
                     else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
                 } else {
@@ -90,14 +90,14 @@ void Main()
             button_array.emplace_back(Rect(stone_edge+stone_size*x, 10+stone_size*y, stone_size, stone_size));
         }
     }
-    botplayer = WHITE_TURN;
+    AIplayer = WHITE_TURN;
     //AIのレベル
     double level_index = 5;
     firstDEPTH = round(level_index)*2;
     Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
     //白黒
-    size_t bot_turn = 1;
+    size_t AI_turn = 1;
     const Array<String> player_turn = {U"白", U"黒"};
     //ゲームが開始しているか
     int game_status = -1;
@@ -138,8 +138,8 @@ void Main()
                 firstDEPTH = level_index*2;
                 Level = level_index;
             }
-            if (SimpleGUI::RadioButtons(bot_turn, player_turn, Vec2(340, 455))) {
-                botplayer = (int)bot_turn;
+            if (SimpleGUI::RadioButtons(AI_turn, player_turn, Vec2(340, 455))) {
+                AIplayer = (int)AI_turn;
             }
             if (SimpleGUI::Button(U"スタート", Vec2(350, 600))) {
                 game_status = 1;
@@ -156,15 +156,15 @@ void Main()
                     white_stone_count = popcount(b.playerboard);
                     black_stone_count = popcount(b.opponentboard);
                 }
-                if ((botplayer == 0 && black_stone_count > white_stone_count) || (botplayer == 1 && white_stone_count > black_stone_count)) {
+                if ((AIplayer == 0 && black_stone_count > white_stone_count) || (AIplayer == 1 && white_stone_count > black_stone_count)) {
                     winner = 0;
-                } else if ((botplayer == 1 && black_stone_count > white_stone_count) || (botplayer == 0 && white_stone_count > black_stone_count)) {
+                } else if ((AIplayer == 1 && black_stone_count > white_stone_count) || (AIplayer == 0 && white_stone_count > black_stone_count)) {
                         winner = 1;
                 } else {
                     winner = 2;
                 }
             }
-            if (nowTurn == botplayer) {
+            if (nowTurn == AIplayer) {
                 TextureAsset(U"hako_thinking").draw(200, 475);
                 result_font(U"考え中...({:0>2}%)\n※時間がかかる場合があります"_fmt(think_percent)).draw(hako_text_box, Palette::White);
                 if (!result.isValid()) {
