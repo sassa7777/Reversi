@@ -29,6 +29,7 @@ macOS版のみビルド済みアプリケーションを配布しています
 [Siv3d](https://siv3d.github.io/)
 
 参考文献:
+
 [オセロAIの教科書](https://note.com/nyanyan_cubetech/m/m54104c8d2f12)
 
 [bitboard tricks](http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm)
