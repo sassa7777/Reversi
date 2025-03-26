@@ -32,16 +32,14 @@ void reset() {
     hint_y = -1;
     tmpx = -1;
     tmpy = -1;
+    eval_num.assign(eval_num.size(), false);
     if (first_reset) {
         first_reset = false;
-        evaluate_init(U"eval0.zstd");
-        
+        sync_model();
         transpose_table.reserve(100000);
         former_transpose_table.reserve(100000);
-//        cout << "evaluation initialized" << endl;
     }
     if (book.size() == 0) book_init();
-    eval_num.assign(eval_num.size(), false);
     cout << "DEPTH: " << DEPTH << endl;
     cout << "Player: " << AIplayer << endl;
     cout << "Level: " << Level << endl;
@@ -199,6 +197,7 @@ int ai_hint() {
     cout << "[*]AIが考え中.." << endl;
     tmpbit = 0;
     think_percent = 0;
+    sync_model();
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b.playerboard, b.opponentboard);
@@ -330,7 +329,7 @@ int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint) {
     int wave = 0;
     int end_depth;
     if (hint == true) {
-        end_depth = 9;
+        end_depth = 8;
     } else if (nowIndex <= 10) {
         end_depth = DEPTH;
     } else {

@@ -55,66 +55,60 @@ static vector<vector<vector<vector<int16_t>>>> pattern_arr(n_patterns);
 static vector<vector<int16_t>> mobility_arr(36, vector<int16_t>(36));
 static vector<vector<int16_t>> stone_arr(65, vector<int16_t>(65));
 
+inline int fast_next_int(char*& p) {
+    int num = 0;
+    int sign = 1;
+    while (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
+        ++p;
+    if (*p == '-') {
+        sign = -1;
+        ++p;
+    }
+    while (*p >= '0' && *p <= '9') {
+        num = num * 10 + (*p - '0');
+        ++p;
+    }
+    return num * sign;
+}
+
 inline void evaluate_init(String model_path) {
-    ifstream file(FileSystem::RelativePath(Resource(model_path)).narrow(), ios::binary | ios::ate);
-    if (!file) {
-        cerr << "Evaluation file does not exist or cannot be opened." << endl;
-        exit(1);
-    }
-    
-    size_t compressed_size = file.tellg();
-    file.seekg(0);
-    
+    FILE* fp = fopen(FileSystem::RelativePath(Resource(model_path)).narrow().c_str(), "rb");
+    fseek(fp, 0, SEEK_END);
+    size_t compressed_size = ftell(fp);
+    rewind(fp);
     vector<char> compressed_data(compressed_size);
-    file.read(compressed_data.data(), compressed_size);
-    file.close();
-    
+    fread(compressed_data.data(), 1, compressed_size, fp);
+    fclose(fp);
+
     size_t decompressed_size = ZSTD_getFrameContentSize(compressed_data.data(), compressed_size);
-    if (decompressed_size == ZSTD_CONTENTSIZE_ERROR) {
-        cerr << "Not a valid ZSTD file." << endl;
-        exit(1);
-    }
-    if (decompressed_size == ZSTD_CONTENTSIZE_UNKNOWN) {
-        cerr << "Cannot determine decompressed size." << endl;
-        exit(1);
-    }
-    
     vector<char> buffer(decompressed_size);
-    
-    size_t result = ZSTD_decompress(buffer.data(), decompressed_size, compressed_data.data(), compressed_size);
-    if (ZSTD_isError(result)) {
-        cerr << "Decompression failed: " << ZSTD_getErrorName(result) << endl;
-        exit(1);
-    }
-    
-    // データをパース
-    char* token = strtok(buffer.data(), "\n");
+    ZSTD_decompress(buffer.data(), decompressed_size, compressed_data.data(), compressed_size);
+
+    char* p = buffer.data();
+
     for (int i = 0; i < n_patterns; ++i) {
         pattern_arr[i].resize(4);
         for (int j = 0; j < 4; ++j) {
-            pattern_arr[i][j].resize(1 << (pattern_sizes[i] + comp[i][j]));
-            for (int k = 0; k < (1 << (pattern_sizes[i] + comp[i][j])); ++k) {
-                pattern_arr[i][j][k].resize(1 << (pattern_sizes[i] + comp[i][j]));
-                for (int l = 0; l < (1 << (pattern_sizes[i] + comp[i][j])); ++l) {
-                    pattern_arr[i][j][k][l] = atoi(token);
-                    token = strtok(nullptr, "\n");
+            int dim = 1 << (pattern_sizes[i] + comp[i][j]);
+            pattern_arr[i][j].resize(dim);
+            for (int k = 0; k < dim; ++k) {
+                pattern_arr[i][j][k].resize(dim);
+                for (int l = 0; l < dim; ++l) {
+                    pattern_arr[i][j][k][l] = fast_next_int(p);
                 }
             }
         }
     }
-    for (auto& v1 : mobility_arr) {
-        for (auto& v2 : v1) {
-            v2 = atoi(token);
-            token = strtok(nullptr, "\n");
+    for (auto &v1 : mobility_arr) {
+        for (auto &v2 : v1) {
+            v2 = fast_next_int(p);
         }
     }
-    for (auto& v1 : stone_arr) {
-        for (auto& v2 : v1) {
-            v2 = atoi(token);
-            token = strtok(nullptr, "\n");
+    for (auto &v1 : stone_arr) {
+        for (auto &v2 : v1) {
+            v2 = fast_next_int(p);
         }
     }
-    pattern_arr[0].resize(2);
 }
 
 #define evaluate_moveorder(p, o) evaluate(p, o)

@@ -148,6 +148,7 @@ bool isPass();
 bool isFinished();
 void swapboard();
 inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept;
+void sync_model();
 
 int nega_alpha(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
 int nega_alpha_moveorder(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
