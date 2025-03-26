@@ -52,8 +52,8 @@ constexpr uint64_t mn[14][4] = {
     {0x10000040100403, 0xa004100920410108, 0x1001004004000000, 0x100082200001000}
 };
 static vector<vector<vector<vector<int16_t>>>> pattern_arr(n_patterns);
-vector<vector<int16_t>> mobility_arr(36, vector<int16_t>(36));
-vector<vector<int16_t>> stone_arr(65, vector<int16_t>(65));
+static vector<vector<int16_t>> mobility_arr(36, vector<int16_t>(36));
+static vector<vector<int16_t>> stone_arr(65, vector<int16_t>(65));
 
 inline void evaluate_init(String model_path) {
     ifstream file(FileSystem::RelativePath(Resource(model_path)).narrow(), ios::binary | ios::ate);
@@ -119,7 +119,7 @@ inline void evaluate_init(String model_path) {
 
 #define evaluate_moveorder(p, o) evaluate(p, o)
 
-inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
+inline int evaluate(const uint64_t playerboard, const uint64_t opponentboard) noexcept {
 
     if (playerboard == 0) [[unlikely]] return -32768;
     if (opponentboard == 0) [[unlikely]] return 32768;
@@ -248,9 +248,9 @@ inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
           pattern_arr[13][3][((playerboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8ULL) * mn[13][3]) >> 54]);
             
-    a += mobility_arr[popcount(makelegalboard(playerboard, opponentboard))][popcount(makelegalboard(opponentboard, playerboard))];
+    a += mobility_arr[popcnt_u64(makelegalboard(playerboard, opponentboard))][popcnt_u64(makelegalboard(opponentboard, playerboard))];
     
-    a += stone_arr[popcount(playerboard)][popcount(opponentboard)];
+    a += stone_arr[popcnt_u64(playerboard)][popcnt_u64(opponentboard)];
     
     return a;
 }

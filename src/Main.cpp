@@ -6,54 +6,51 @@ using App = SceneManager<String>;
 
 int stone_edge, stone_size;
 
+struct Drawable {
+    int x;
+    int y;
+    String textureKey;
+};
+
+vector<Drawable> drawables;
+
 void DrawBoard() {
+    for (const auto& drawable : drawables) {
+        TextureAsset(drawable.textureKey).draw(stone_edge + stone_size * drawable.x,
+                                                10 + stone_size * drawable.y);
+    }
+}
+
+void sync_board_data() {
     uint64_t mask = 0x8000000000000000ULL;
-//    uint64_t legalboard = makelegalboard(b.playerboard, b.opponentboard);
     for (int y = 0; y < 8; ++y) {
         for (int x = 0; x < 8; ++x) {
-            if(nowTurn == BLACK_TURN) {
-                if(b.playerboard & mask) {
-                    if(tmpy == y && tmpx == x) {
-                        TextureAsset(U"blackb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    } else {
-                        TextureAsset(U"black").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    }
-                } else if(b.opponentboard & mask) {
-                    if(tmpy == y && tmpx == x) {
-                        TextureAsset(U"whiteb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    } else {
-                        TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    }
-                } else if((AIplayer == WHITE_TURN && (legalboard & mask) != 0)) {
-                    if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                } else {
-                    TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                }
-            } else {
-                if(b.opponentboard & mask) {
-                    if(tmpy == y && tmpx == x) {
-                        TextureAsset(U"blackb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    } else {
-                        TextureAsset(U"black").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    }
-                } else if(b.playerboard & mask) {
-                    if(tmpy == y && tmpx == x) {
-                        TextureAsset(U"whiteb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    } else {
-                        TextureAsset(U"white").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    }
-                } else if((AIplayer == BLACK_TURN && (legalboard & mask) != 0)) {
-                    if (hint_y == y && hint_x == x) TextureAsset(U"nullc").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                    else TextureAsset(U"nullb").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                } else {
-                    TextureAsset(U"null").draw(stone_edge+stone_size*x, 10+stone_size*y);
-                }
+
+            bool isBlackTurn = (nowTurn == BLACK_TURN);
+            bool stoneBlack = isBlackTurn ? (b.playerboard & mask) : (b.opponentboard & mask);
+            bool stoneWhite = isBlackTurn ? (b.opponentboard & mask) : (b.playerboard & mask);
+            
+            bool legal = isBlackTurn ? (AIplayer == WHITE_TURN && (legalboard & mask))
+                                     : (AIplayer == BLACK_TURN && (legalboard & mask));
+            String textureName;
+            if (stoneBlack) {
+                textureName = (tmpy == y && tmpx == x) ? U"blackb" : U"black";
             }
-            mask >>=1;
+            else if (stoneWhite) {
+                textureName = (tmpy == y && tmpx == x) ? U"whiteb" : U"white";
+            }
+            else if (legal) {
+                textureName = (hint_y == y && hint_x == x) ? U"nullc" : U"nullb";
+            }
+            else {
+                textureName = U"null";
+            }
+            
+            TextureAsset(textureName).draw(stone_edge + stone_size * x, 10 + stone_size * y);
+            drawables.push_back({x, y, textureName});
+            mask >>= 1;
         }
     }
-    return;
 }
 
 void Main()
@@ -92,8 +89,8 @@ void Main()
     }
     AIplayer = WHITE_TURN;
     //AIのレベル
-    double level_index = 5;
-    firstDEPTH = round(level_index)*2;
+    double level_index = 10;
+    firstDEPTH = round(level_index);
     Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
     //白黒
@@ -117,7 +114,6 @@ void Main()
     
     bool running_hint = false;
     first_reset = true;
-    
     while (System::Update()) {
         //メインメニュー
         if (game_status == -1) {
@@ -133,9 +129,9 @@ void Main()
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
-            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 6, Vec2(10, 505))) {
+            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 13, Vec2(10, 505))) {
                 level_index = round(level_index);
-                firstDEPTH = level_index*2;
+                firstDEPTH = level_index;
                 Level = level_index;
             }
             if (SimpleGUI::RadioButtons(AI_turn, player_turn, Vec2(340, 455))) {
@@ -144,6 +140,7 @@ void Main()
             if (SimpleGUI::Button(U"スタート", Vec2(350, 600))) {
                 game_status = 1;
                 reset();
+                sync_board_data();
             }
         //ゲーム中
         } else if (game_status == 1) {
@@ -173,6 +170,7 @@ void Main()
                 if (result.isReady()) {
                     if (result.get() == 1) {
                         swapboard();
+                        sync_board_data();
                     }
                 }
             } else if (running_hint) {
@@ -184,6 +182,7 @@ void Main()
                 if (result.isReady()) {
                     running_hint = false;
                     swapboard();
+                    sync_board_data();
                 }
             } else {
                 TextureAsset(U"hako_default").draw(200, 475);
@@ -195,16 +194,19 @@ void Main()
                     if (button_array[i].leftClicked() && button_array[i].mouseOver()) {
                         if(putstone(i/8, i%8) == 1) {
                             swapboard();
+                            sync_board_data();
                         }
                     }
                 }
             }
             if (isPass()) {
                 swapboard();
+                sync_board_data();
             }
             if (SimpleGUI::Button(U"リセット", Vec2{350, 550}, 100)) {
                 if (!result.isValid()) {
                     reset();
+                    sync_board_data();
                 }
             }
             if (SimpleGUI::Button(U"閉じる", Vec2{350, 600}, 100)) {
@@ -218,6 +220,7 @@ void Main()
                 tmpx = b_back.put_x;
                 tmpy = b_back.put_y;
                 legalboard = makelegalboard(b.playerboard, b.opponentboard);
+                sync_board_data();
             }
             if (SimpleGUI::Button(U"ヒント", Vec2{500, 600}, 100)) {
                 running_hint = true;

@@ -1,22 +1,15 @@
 #include <bits/stdc++.h>
-#include <arm_neon.h>
+#include <zstd.h>
 
 using namespace std;
 
 struct Adam {
-    double w = 0;
+    int w = 0;
     int64_t delta = 0;
     double m = 0.0, v = 0.0;
     unsigned int t = 0;
 
     Adam() = default;
-};
-
-struct Mobility {
-    double w = 0;
-    int64_t delta = 0;
-    unsigned int t = 0;
-    Mobility() = default;
 };
 
 constexpr int shn[14][4] = {{56, 56, 56, 56}, {57, 57, 57, 57}, {58, 58, 58, 58}, {59, 59, 59, 59}, {54, 54, 54, 54}, {56, 56, 56, 56}, {56, 56, 56, 56}, {56, 56, 56, 56}, {55, 55, 55, 55}, {54, 54, 54, 54}, {53, 54, 54, 54}, {54, 54, 54, 54}, {54, 54, 54, 54}, {54, 54, 54, 54}};
@@ -57,7 +50,9 @@ constexpr uint64_t mn[14][4] = {
     {0x10000040100403, 0xa004100920410108, 0x1001004004000000, 0x100082200001000}
 };
 
-vector<vector<vector<vector<vector<Adam>>>>> pattern_arr(1, vector<vector<vector<vector<Adam>>>>(14));
+vector<vector<vector<vector<Adam>>>> pattern_arr(14);
+vector<vector<Adam>> mobility_arr(36, vector<Adam>(36));
+vector<vector<Adam>> stone_arr(65, vector<Adam>(65));
 inline constexpr uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
     uint64_t t = (x ^ (x >> delta)) & mask;
     return x ^ t ^ (t << delta);
@@ -104,7 +99,7 @@ inline constexpr uint64_t r180(uint64_t x) {
 #endif
 
 // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
-inline uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
+uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
     uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
     hb = o & 0x7e7e7e7e7e7e7e7eULL;
@@ -124,263 +119,271 @@ inline uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
     return moves & ~(p|o);
 }
 
-inline double evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
-    double a = 0;
+inline int evaluate(uint64_t playerboard, uint64_t opponentboard) noexcept {
+    int a = 0;
 
-    a += (pattern_arr[0][0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56]
+    a += (pattern_arr[0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56]
           [((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> 56].w +
-          pattern_arr[0][0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56]
+          pattern_arr[0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56]
           [((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> 56].w);
 
-    a += (pattern_arr[0][1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57]
+    a += (pattern_arr[1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57]
           [((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> 57].w +
-          pattern_arr[0][1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57]
+          pattern_arr[1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57]
           [((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> 57].w +
-          pattern_arr[0][1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57]
+          pattern_arr[1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57]
           [((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> 57].w +
-          pattern_arr[0][1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57]
+          pattern_arr[1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57]
           [((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> 57].w);
 
-    a += (pattern_arr[0][2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58]
+    a += (pattern_arr[2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58]
           [((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> 58].w +
-          pattern_arr[0][2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58]
+          pattern_arr[2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58]
           [((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> 58].w +
-          pattern_arr[0][2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58]
+          pattern_arr[2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58]
           [((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> 58].w +
-          pattern_arr[0][2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58]
+          pattern_arr[2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58]
           [((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> 58].w);
 
-    a += (pattern_arr[0][3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59]
+    a += (pattern_arr[3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59]
           [((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> 59].w +
-          pattern_arr[0][3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59]
+          pattern_arr[3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59]
           [((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> 59].w +
-          pattern_arr[0][3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59]
+          pattern_arr[3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59]
           [((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> 59].w +
-          pattern_arr[0][3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59]
+          pattern_arr[3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59]
           [((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> 59].w);
 
-    a += (pattern_arr[0][4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54]
+    a += (pattern_arr[4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54]
           [((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> 54].w +
-          pattern_arr[0][4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54]
+          pattern_arr[4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54]
           [((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> 54].w +
-          pattern_arr[0][4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54]
+          pattern_arr[4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54]
           [((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> 54].w +
-          pattern_arr[0][4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54]
+          pattern_arr[4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54]
           [((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54].w);
 
-    a += (pattern_arr[0][5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56]
+    a += (pattern_arr[5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56]
           [((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56].w +
-          pattern_arr[0][5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56]
+          pattern_arr[5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56]
           [((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> 56].w +
-          pattern_arr[0][5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56]
+          pattern_arr[5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56]
           [((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56].w +
-          pattern_arr[0][5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56]
+          pattern_arr[5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56]
           [((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> 56].w);
 
-    a += (pattern_arr[0][6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56]
+    a += (pattern_arr[6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56]
           [((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56].w +
-          pattern_arr[0][6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56]
+          pattern_arr[6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56]
           [((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> 56].w +
-          pattern_arr[0][6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56]
+          pattern_arr[6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56]
           [((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56].w +
-          pattern_arr[0][6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56]
+          pattern_arr[6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56]
           [((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> 56].w);
 
-    a += (pattern_arr[0][7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56]
+    a += (pattern_arr[7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56]
           [((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56].w +
-          pattern_arr[0][7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56]
+          pattern_arr[7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56]
           [((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> 56].w +
-          pattern_arr[0][7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56]
+          pattern_arr[7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56]
           [((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56].w +
-          pattern_arr[0][7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56]
+          pattern_arr[7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56]
           [((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> 56].w);
 
-    a += (pattern_arr[0][8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55]
+    a += (pattern_arr[8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55]
           [((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55].w +
-          pattern_arr[0][8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55]
+          pattern_arr[8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55]
           [((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> 55].w +
-          pattern_arr[0][8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55]
+          pattern_arr[8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55]
           [((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> 55].w +
-          pattern_arr[0][8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55]
+          pattern_arr[8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55]
           [((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55].w);
 
-    a += (pattern_arr[0][9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54]
+    a += (pattern_arr[9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54]
           [((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54].w +
-          pattern_arr[0][9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54]
+          pattern_arr[9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54]
           [((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54].w +
-          pattern_arr[0][9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54]
+          pattern_arr[9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54]
           [((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> 54].w +
-          pattern_arr[0][9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54]
+          pattern_arr[9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54]
           [((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54].w);
 
-    a += (pattern_arr[0][10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53]
+    a += (pattern_arr[10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53]
           [((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53].w +
-          pattern_arr[0][10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54]
+          pattern_arr[10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54]
           [((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> 54].w +
-          pattern_arr[0][10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54]
+          pattern_arr[10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54]
           [((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54].w +
-          pattern_arr[0][10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54]
+          pattern_arr[10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54]
           [((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54].w);
 
-    a += (pattern_arr[0][11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54]
+    a += (pattern_arr[11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54]
           [((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54].w +
-          pattern_arr[0][11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54]
+          pattern_arr[11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54]
           [((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54].w +
-          pattern_arr[0][11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54]
+          pattern_arr[11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54]
           [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54].w +
-          pattern_arr[0][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
+          pattern_arr[11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
           [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54].w);
     
-    a += (pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+    a += (pattern_arr[12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
           [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54].w +
-          pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+          pattern_arr[12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
           [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54].w +
-          pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+          pattern_arr[12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
           [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54].w +
-          pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+          pattern_arr[12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
           [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54].w);
     
-    a += (pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+    a += (pattern_arr[13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
           [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54].w +
-          pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+          pattern_arr[13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
           [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54].w +
-          pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+          pattern_arr[13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
           [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54].w +
-          pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+          pattern_arr[13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
           [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54].w);
-        
+         
+    a += mobility_arr[popcount(makelegalboard(playerboard, opponentboard))][popcount(makelegalboard(opponentboard, playerboard))].w;
+    
+    a += stone_arr[popcount(playerboard)][popcount(opponentboard)].w;
+    
     return a;
 }
 
 inline void init_appear(uint64_t playerboard, uint64_t opponentboard) noexcept {
-    pattern_arr[0][0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56]
+    pattern_arr[0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56]
     [((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> 56].t++;
-    pattern_arr[0][0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56]
+    pattern_arr[0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56]
     [((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> 56].t++;
     
-    pattern_arr[0][1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57]
+    pattern_arr[1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57]
     [((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> 57].t++;
-    pattern_arr[0][1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57]
+    pattern_arr[1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57]
     [((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> 57].t++;
-    pattern_arr[0][1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57]
+    pattern_arr[1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57]
     [((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> 57].t++;
-    pattern_arr[0][1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57]
+    pattern_arr[1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57]
     [((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> 57].t++;
     
-    pattern_arr[0][2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58]
+    pattern_arr[2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58]
     [((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> 58].t++;
-    pattern_arr[0][2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58]
+    pattern_arr[2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58]
     [((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> 58].t++;
-    pattern_arr[0][2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58]
+    pattern_arr[2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58]
     [((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> 58].t++;
-    pattern_arr[0][2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58]
+    pattern_arr[2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58]
     [((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> 58].t++;
     
-    pattern_arr[0][3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59]
+    pattern_arr[3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59]
     [((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> 59].t++;
-    pattern_arr[0][3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59]
+    pattern_arr[3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59]
     [((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> 59].t++;
-    pattern_arr[0][3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59]
+    pattern_arr[3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59]
     [((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> 59].t++;
-    pattern_arr[0][3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59]
+    pattern_arr[3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59]
     [((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> 59].t++;
     
-    pattern_arr[0][4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54]
+    pattern_arr[4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54]
     [((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> 54].t++;
-    pattern_arr[0][4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54]
+    pattern_arr[4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54]
     [((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> 54].t++;
-    pattern_arr[0][4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54]
+    pattern_arr[4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54]
     [((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> 54].t++;
-    pattern_arr[0][4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54]
+    pattern_arr[4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54]
     [((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54].t++;
     
-    pattern_arr[0][5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56]
+    pattern_arr[5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56]
     [((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56].t++;
-    pattern_arr[0][5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56]
+    pattern_arr[5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56]
     [((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> 56].t++;
-    pattern_arr[0][5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56]
+    pattern_arr[5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56]
     [((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56].t++;
-    pattern_arr[0][5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56]
+    pattern_arr[5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56]
     [((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> 56].t++;
     
-    pattern_arr[0][6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56]
+    pattern_arr[6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56]
     [((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56].t++;
-    pattern_arr[0][6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56]
+    pattern_arr[6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56]
     [((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> 56].t++;
-    pattern_arr[0][6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56]
+    pattern_arr[6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56]
     [((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56].t++;
-    pattern_arr[0][6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56]
+    pattern_arr[6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56]
     [((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> 56].t++;
     
-    pattern_arr[0][7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56]
+    pattern_arr[7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56]
     [((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56].t++;
-    pattern_arr[0][7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56]
+    pattern_arr[7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56]
     [((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> 56].t++;
-    pattern_arr[0][7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56]
+    pattern_arr[7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56]
     [((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56].t++;
-    pattern_arr[0][7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56]
+    pattern_arr[7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56]
     [((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> 56].t++;
     
-    pattern_arr[0][8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55]
+    pattern_arr[8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55]
     [((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55].t++;
-    pattern_arr[0][8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55]
+    pattern_arr[8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55]
     [((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> 55].t++;
-    pattern_arr[0][8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55]
+    pattern_arr[8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55]
     [((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> 55].t++;
-    pattern_arr[0][8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55]
+    pattern_arr[8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55]
     [((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55].t++;
     
-    pattern_arr[0][9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54]
+    pattern_arr[9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54]
     [((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54].t++;
-    pattern_arr[0][9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54]
+    pattern_arr[9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54]
     [((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54].t++;
-    pattern_arr[0][9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54]
+    pattern_arr[9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54]
     [((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> 54].t++;
-    pattern_arr[0][9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54]
+    pattern_arr[9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54]
     [((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54].t++;
     
-    pattern_arr[0][10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53]
+    pattern_arr[10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53]
     [((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53].t++;
-    pattern_arr[0][10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54]
+    pattern_arr[10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54]
     [((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> 54].t++;
-    pattern_arr[0][10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54]
+    pattern_arr[10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54]
     [((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54].t++;
-    pattern_arr[0][10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54]
+    pattern_arr[10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54]
     [((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54].t++;
     
-    pattern_arr[0][11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54]
+    pattern_arr[11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54]
     [((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54].t++;
-    pattern_arr[0][11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54]
+    pattern_arr[11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54]
     [((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54].t++;
-    pattern_arr[0][11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54]
+    pattern_arr[11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54]
     [((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54].t++;
-    pattern_arr[0][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
+    pattern_arr[11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54]
     [((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54].t++;
     
-    pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+    pattern_arr[12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
     [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54].t++;
-    pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+    pattern_arr[12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
     [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54].t++;
-    pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+    pattern_arr[12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
     [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54].t++;
-    pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+    pattern_arr[12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
     [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54].t++;
     
-    pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+    pattern_arr[13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
     [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54].t++;
-    pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+    pattern_arr[13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
     [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54].t++;
-    pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+    pattern_arr[13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
     [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54].t++;
-    pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+    pattern_arr[13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
     [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54].t++;
+        
+    mobility_arr[popcount(makelegalboard(playerboard, opponentboard))][popcount(makelegalboard(opponentboard, playerboard))].t++;
+    
+    stone_arr[popcount(playerboard)][popcount(opponentboard)].t++;
     
     return;
 }
 
-constexpr int game_phase_start = 40 + 4;
-constexpr int game_phase_end = 60 + 4;
-double alpha = 0.05;
+constexpr int game_phase_start = 57 + 4 - 1;
+constexpr int game_phase_end = 60 + 4 + 1;
+double alpha = 0.02;
 //double alpha_t = alpha / 5.0;
 double alpha_t = alpha;
 int phase = 0;
@@ -388,12 +391,13 @@ int phase = 0;
 inline void adam(Adam &a) {
     constexpr double beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8;
     if (a.t == 0) return;
-    double lr = alpha_t / a.t;
+    constexpr unsigned int M = 100;
+    double lr = alpha_t / max(a.t, M);
     double grad = (a.delta * 2);
     double lrt = lr * sqrt(1.0 - pow(beta2, phase)) / (1.0 - pow(beta1, phase));
     a.m += (1.0 - beta1) * (grad - a.m);
     a.v += (1.0 - beta2) * (grad * grad - a.v);
-
+    double update = lrt * a.m / (sqrt(a.v) + epsilon);
     a.w += lrt * a.m / (sqrt(a.v) + epsilon);
     a.delta = 0;
 }
@@ -401,11 +405,11 @@ inline void adam(Adam &a) {
 template <typename T>
 inline void gd(T &a) {
     if (a.t == 0) return;
-    constexpr unsigned int M = 50;
+    constexpr unsigned int M = 100;
     double lr = alpha_t / std::max(M, a.t);
     double grad = (a.delta * 2);
-
-    a.w += lr * grad;
+    double update = lr * grad;
+    a.w += (update >= 0) ? ceil(update) : floor(update);
     a.delta = 0;
 }
 
@@ -424,167 +428,185 @@ inline void cal_diff(Adam &a, int grad) {
     a.delta += grad;
 }
 
-inline void cal_diff(Mobility &a, int grad, uint64_t playerboard, uint64_t opponentboard) {
-    int legal_moves = popcount(makelegalboard(playerboard, opponentboard));
-    if (legal_moves > 0) {
-        a.delta += grad / legal_moves;
-    }
-}
-
+uint64_t grad_global = 0;
 
 inline void update_eval_param(uint64_t playerboard, uint64_t opponentboard, int ans) noexcept {
     int grad = (ans - evaluate(playerboard, opponentboard));
+    grad_global += abs(grad);
     
-    cal_diff(pattern_arr[0][0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56][((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> 56], grad);
+    cal_diff(pattern_arr[0][0][((playerboard & 0x8040201008040201ULL) * mn[0][0]) >> 56][((opponentboard & 0x8040201008040201ULL) * mn[0][0]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56][((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> 56], grad);
+    cal_diff(pattern_arr[0][1][((playerboard & 0x0102040810204080ULL) * mn[0][1]) >> 56][((opponentboard & 0x0102040810204080ULL) * mn[0][1]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57][((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> 57], grad);
+    cal_diff(pattern_arr[1][0][((playerboard & 0x4020100804020100ULL) * mn[1][0]) >> 57][((opponentboard & 0x4020100804020100ULL) * mn[1][0]) >> 57], grad);
 
-    cal_diff(pattern_arr[0][1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57][((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> 57], grad);
+    cal_diff(pattern_arr[1][1][((playerboard & 0x0001020408102040ULL) * mn[1][1]) >> 57][((opponentboard & 0x0001020408102040ULL) * mn[1][1]) >> 57], grad);
 
-    cal_diff(pattern_arr[0][1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57][((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> 57], grad);
+    cal_diff(pattern_arr[1][2][((playerboard & 0x0080402010080402ULL) * mn[1][2]) >> 57][((opponentboard & 0x0080402010080402ULL) * mn[1][2]) >> 57], grad);
 
-    cal_diff(pattern_arr[0][1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57][((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> 57], grad);
+    cal_diff(pattern_arr[1][3][((playerboard & 0x0204081020408000ULL) * mn[1][3]) >> 57][((opponentboard & 0x0204081020408000ULL) * mn[1][3]) >> 57], grad);
 
-    cal_diff(pattern_arr[0][2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58][((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> 58], grad);
+    cal_diff(pattern_arr[2][0][((playerboard & 0x2010080402010000ULL) * mn[2][0]) >> 58][((opponentboard & 0x2010080402010000ULL) * mn[2][0]) >> 58], grad);
 
-    cal_diff(pattern_arr[0][2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58][((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> 58], grad);
+    cal_diff(pattern_arr[2][1][((playerboard & 0x0000010204081020ULL) * mn[2][1]) >> 58][((opponentboard & 0x0000010204081020ULL) * mn[2][1]) >> 58], grad);
 
-    cal_diff(pattern_arr[0][2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58][((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> 58], grad);
+    cal_diff(pattern_arr[2][2][((playerboard & 0x0000804020100804ULL) * mn[2][2]) >> 58][((opponentboard & 0x0000804020100804ULL) * mn[2][2]) >> 58], grad);
 
-    cal_diff(pattern_arr[0][2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58][((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> 58], grad);
+    cal_diff(pattern_arr[2][3][((playerboard & 0x0408102040800000ULL) * mn[2][3]) >> 58][((opponentboard & 0x0408102040800000ULL) * mn[2][3]) >> 58], grad);
 
-    cal_diff(pattern_arr[0][3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59][((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> 59], grad);
+    cal_diff(pattern_arr[3][0][((playerboard & 0x1008040201000000ULL) * mn[3][0]) >> 59][((opponentboard & 0x1008040201000000ULL) * mn[3][0]) >> 59], grad);
 
-    cal_diff(pattern_arr[0][3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59][((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> 59], grad);
+    cal_diff(pattern_arr[3][1][((playerboard & 0x0000000102040810ULL) * mn[3][1]) >> 59][((opponentboard & 0x0000000102040810ULL) * mn[3][1]) >> 59], grad);
 
-    cal_diff(pattern_arr[0][3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59][((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> 59], grad);
+    cal_diff(pattern_arr[3][2][((playerboard & 0x0000008040201008ULL) * mn[3][2]) >> 59][((opponentboard & 0x0000008040201008ULL) * mn[3][2]) >> 59], grad);
 
-    cal_diff(pattern_arr[0][3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59][((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> 59], grad);
+    cal_diff(pattern_arr[3][3][((playerboard & 0x0810204080000000ULL) * mn[3][3]) >> 59][((opponentboard & 0x0810204080000000ULL) * mn[3][3]) >> 59], grad);
 
-    cal_diff(pattern_arr[0][4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54][((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> 54], grad);
+    cal_diff(pattern_arr[4][0][((playerboard & 0xff42000000000000ULL) * mn[4][0]) >> 54][((opponentboard & 0xff42000000000000ULL) * mn[4][0]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54][((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> 54], grad);
+    cal_diff(pattern_arr[4][1][((playerboard & 0x0103010101010301ULL) * mn[4][1]) >> 54][((opponentboard & 0x0103010101010301ULL) * mn[4][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54][((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> 54], grad);
+    cal_diff(pattern_arr[4][2][((playerboard & 0x00000000000042ffULL) * mn[4][2]) >> 54][((opponentboard & 0x00000000000042ffULL) * mn[4][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54][((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54], grad);
+    cal_diff(pattern_arr[4][3][((playerboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54][((opponentboard & 0x80c080808080c080ULL) * mn[4][3]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56][((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56], grad);
+    cal_diff(pattern_arr[5][0][((playerboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56][((opponentboard & 0x00ff000000000000ULL) * mn[5][0]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56][((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> 56], grad);
+    cal_diff(pattern_arr[5][1][((playerboard & 0x0202020202020202ULL) * mn[5][1]) >> 56][((opponentboard & 0x0202020202020202ULL) * mn[5][1]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56][((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56], grad);
+    cal_diff(pattern_arr[5][2][((playerboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56][((opponentboard & 0x000000000000ff00ULL) * mn[5][2]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56][((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> 56], grad);
+    cal_diff(pattern_arr[5][3][((playerboard & 0x4040404040404040ULL) * mn[5][3]) >> 56][((opponentboard & 0x4040404040404040ULL) * mn[5][3]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56][((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56], grad);
+    cal_diff(pattern_arr[6][0][((playerboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56][((opponentboard & 0x0000ff0000000000ULL) * mn[6][0]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56][((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> 56], grad);
+    cal_diff(pattern_arr[6][1][((playerboard & 0x0404040404040404ULL) * mn[6][1]) >> 56][((opponentboard & 0x0404040404040404ULL) * mn[6][1]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56][((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56], grad);
+    cal_diff(pattern_arr[6][2][((playerboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56][((opponentboard & 0x0000000000ff0000ULL) * mn[6][2]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56][((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> 56], grad);
+    cal_diff(pattern_arr[6][3][((playerboard & 0x2020202020202020ULL) * mn[6][3]) >> 56][((opponentboard & 0x2020202020202020ULL) * mn[6][3]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56][((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56], grad);
+    cal_diff(pattern_arr[7][0][((playerboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56][((opponentboard & 0x000000ff00000000ULL) * mn[7][0]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56][((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> 56], grad);
+    cal_diff(pattern_arr[7][1][((playerboard & 0x0808080808080808ULL) * mn[7][1]) >> 56][((opponentboard & 0x0808080808080808ULL) * mn[7][1]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56][((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56], grad);
+    cal_diff(pattern_arr[7][2][((playerboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56][((opponentboard & 0x00000000ff000000ULL) * mn[7][2]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56][((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> 56], grad);
+    cal_diff(pattern_arr[7][3][((playerboard & 0x1010101010101010ULL) * mn[7][3]) >> 56][((opponentboard & 0x1010101010101010ULL) * mn[7][3]) >> 56], grad);
 
-    cal_diff(pattern_arr[0][8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55][((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55], grad);
+    cal_diff(pattern_arr[8][0][((playerboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55][((opponentboard & 0xe0e0e00000000000ULL) * mn[8][0]) >> 55], grad);
 
-    cal_diff(pattern_arr[0][8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55][((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> 55], grad);
+    cal_diff(pattern_arr[8][1][((playerboard & 0x0707070000000000ULL) * mn[8][1]) >> 55][((opponentboard & 0x0707070000000000ULL) * mn[8][1]) >> 55], grad);
 
-    cal_diff(pattern_arr[0][8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55][((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> 55], grad);
+    cal_diff(pattern_arr[8][2][((playerboard & 0x0000000000070707ULL) * mn[8][2]) >> 55][((opponentboard & 0x0000000000070707ULL) * mn[8][2]) >> 55], grad);
 
-    cal_diff(pattern_arr[0][8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55][((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55], grad);
+    cal_diff(pattern_arr[8][3][((playerboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55][((opponentboard & 0x0000000000e0e0e0ULL) * mn[8][3]) >> 55], grad);
 
-    cal_diff(pattern_arr[0][9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54][((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54], grad);
+    cal_diff(pattern_arr[9][0][((playerboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54][((opponentboard & 0xf8c0808080000000ULL) * mn[9][0]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54][((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54], grad);
+    cal_diff(pattern_arr[9][1][((playerboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54][((opponentboard & 0x1f03010101000000ULL) * mn[9][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54][((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> 54], grad);
+    cal_diff(pattern_arr[9][2][((playerboard & 0x000000010101031fULL) * mn[9][2]) >> 54][((opponentboard & 0x000000010101031fULL) * mn[9][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54][((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54], grad);
+    cal_diff(pattern_arr[9][3][((playerboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54][((opponentboard & 0x000000808080c0f8ULL) * mn[9][3]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53][((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53], grad);
+    cal_diff(pattern_arr[10][0][((playerboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53][((opponentboard & 0xbd3c000000000000ULL) * mn[10][0]) >> 53], grad);
 
-    cal_diff(pattern_arr[0][10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54][((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> 54], grad);
+    cal_diff(pattern_arr[10][1][((playerboard & 0x0100030303030001ULL) * mn[10][1]) >> 54][((opponentboard & 0x0100030303030001ULL) * mn[10][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54][((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54], grad);
+    cal_diff(pattern_arr[10][2][((playerboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54][((opponentboard & 0x0000000000003cbdULL) * mn[10][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54][((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54], grad);
+    cal_diff(pattern_arr[10][3][((playerboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54][((opponentboard & 0x8000c0c0c0c00080ULL) * mn[10][3]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54][((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54], grad);
+    cal_diff(pattern_arr[11][0][((playerboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54][((opponentboard & 0xf0e0c08000000000ULL) * mn[11][0]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54][((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54], grad);
+    cal_diff(pattern_arr[11][1][((playerboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54][((opponentboard & 0x0f07030100000000ULL) * mn[11][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54][((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54], grad);
+    cal_diff(pattern_arr[11][2][((playerboard & 0x000000000103070fULL) * mn[11][2]) >> 54][((opponentboard & 0x000000000103070fULL) * mn[11][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54][((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54], grad);
+    cal_diff(pattern_arr[11][3][((playerboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54][((opponentboard & 0x0000000080c0e0f0ULL) * mn[11][3]) >> 54], grad);
     
-    cal_diff(pattern_arr[0][12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
+    cal_diff(pattern_arr[12][0][((playerboard & 0xF8F8000000000000) * mn[12][0]) >> 54]
                       [((opponentboard & 0xF8F8000000000000) * mn[12][0]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
+    cal_diff(pattern_arr[12][1][((playerboard & 0x0303030303000000) * mn[12][1]) >> 54]
                       [((opponentboard & 0x0303030303000000) * mn[12][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
+    cal_diff(pattern_arr[12][2][((playerboard & 0x0000000000001f1f) * mn[12][2]) >> 54]
                       [((opponentboard & 0x0000000000001f1f) * mn[12][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
+    cal_diff(pattern_arr[12][3][((playerboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54]
                       [((opponentboard & 0x000000c0c0c0c0c0) * mn[12][3]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
+    cal_diff(pattern_arr[13][0][((playerboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54]
                       [((opponentboard & 0xC0C0C0C0C0000000) * mn[13][0]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
+    cal_diff(pattern_arr[13][1][((playerboard & 0x1f1f000000000000) * mn[13][1]) >> 54]
                       [((opponentboard & 0x1f1f000000000000) * mn[13][1]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
+    cal_diff(pattern_arr[13][2][((playerboard & 0x0000000303030303) * mn[13][2]) >> 54]
                       [((opponentboard & 0x0000000303030303) * mn[13][2]) >> 54], grad);
 
-    cal_diff(pattern_arr[0][13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
+    cal_diff(pattern_arr[13][3][((playerboard & 0x000000000000f8f8) * mn[13][3]) >> 54]
                       [((opponentboard & 0x000000000000f8f8) * mn[13][3]) >> 54], grad);
+    
+    cal_diff(mobility_arr[popcount(makelegalboard(playerboard, opponentboard))][popcount(makelegalboard(opponentboard, playerboard))], grad);
+    
+    cal_diff(stone_arr[popcount(playerboard)][popcount(opponentboard)], grad);
 }
 
 void load_model(string str) {
-    int ptr_num = 0;
-    for (int evaluate_idx = 0; evaluate_idx < 14; ++evaluate_idx) {
-        int pattern_idx = evaluate_idx;
-        uint64_t pattern1 = bit_pattern[pattern_idx];
-        size_t popcountPattern = popcount(pattern1);
-        size_t totalCombinations = (1UL << popcountPattern);
-        pattern_arr[ptr_num][evaluate_idx].resize(4);
-        for (int i = 0; i < 4; ++i) {
-            pattern_arr[ptr_num][evaluate_idx][i].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
-            for (int j = 0; j < (1 << (popcountPattern+comp[pattern_idx][i])); ++j) {
-                pattern_arr[ptr_num][evaluate_idx][i][j].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
-            }
-        }
+    
+    ifstream file(str, ios::binary | ios::ate);
+    if (!file) {
+        cerr << "Evaluation file does not exist or cannot be opened." << endl;
+        exit(1);
     }
-    ifstream model(str);
-    string line;
-    for (auto& v1 : pattern_arr) {
-        for (auto& v2 : v1) {
-            for (auto& v3 : v2) {
-                for (auto& v4 : v3) {
-                    for (auto& value : v4) {
-                        getline(model, line);
-                        value.w = stoi(line);
+    
+    size_t compressed_size = file.tellg();
+    file.seekg(0);
+    
+    vector<char> compressed_data(compressed_size);
+    file.read(compressed_data.data(), compressed_size);
+    file.close();
+    
+    size_t decompressed_size = ZSTD_getFrameContentSize(compressed_data.data(), compressed_size);
+    if (decompressed_size == ZSTD_CONTENTSIZE_ERROR) {
+        cerr << "Not a valid ZSTD file." << endl;
+        exit(1);
+    }
+    if (decompressed_size == ZSTD_CONTENTSIZE_UNKNOWN) {
+        cerr << "Cannot determine decompressed size." << endl;
+        exit(1);
+    }
+    
+    vector<char> buffer(decompressed_size);
+    
+    size_t result = ZSTD_decompress(buffer.data(), decompressed_size, compressed_data.data(), compressed_size);
+    if (ZSTD_isError(result)) {
+        cerr << "Decompression failed: " << ZSTD_getErrorName(result) << endl;
+        exit(1);
+    }
+    
+    // データをパース
+    char* token = strtok(buffer.data(), "\n");
+    for (int i = 0; i < 14; ++i) {
+        pattern_arr[i].resize(4);
+        for (int j = 0; j < 4; ++j) {
+            pattern_arr[i][j].resize(1 << (pattern_sizes[i] + comp[i][j]));
+            for (int k = 0; k < (1 << (pattern_sizes[i] + comp[i][j])); ++k) {
+                pattern_arr[i][j][k].resize(1 << (pattern_sizes[i] + comp[i][j]));
+                for (int l = 0; l < (1 << (pattern_sizes[i] + comp[i][j])); ++l) {
+                    if (!token) {
+                        cerr << "Unexpected end of file." << endl;
+                        exit(1);
                     }
+                    pattern_arr[i][j][k][l].w = atoi(token);
+                    token = strtok(nullptr, "\n");
                 }
             }
         }
     }
-//    for (auto& value : mobility_arr) {
-//        getline(model, line);
-//        value.w = stoi(line);
-//    }
 }
 
 inline void fastParseLine(const std::string &line, uint64_t &p, uint64_t &o, int &ans) {
@@ -621,23 +643,22 @@ inline void fastParseLine(const std::string &line, uint64_t &p, uint64_t &o, int
 }
 
 int main() {
-    int ptr_num = 0;
     for (int evaluate_idx = 0; evaluate_idx < 14; ++evaluate_idx) {
         int pattern_idx = evaluate_idx;
         uint64_t pattern1 = bit_pattern[pattern_idx];
         size_t popcountPattern = popcount(pattern1);
         size_t totalCombinations = (1UL << popcountPattern);
-        pattern_arr[ptr_num][evaluate_idx].resize(4);
+        pattern_arr[evaluate_idx].resize(4);
         for (int i = 0; i < 4; ++i) {
-            pattern_arr[ptr_num][evaluate_idx][i].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
+            pattern_arr[evaluate_idx][i].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
             for (int j = 0; j < (1 << (popcountPattern+comp[pattern_idx][i])); ++j) {
-                pattern_arr[ptr_num][evaluate_idx][i][j].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
+                pattern_arr[evaluate_idx][i][j].resize(1ULL << (popcountPattern+comp[pattern_idx][i]));
             }
         }
     }
-//    load_model("eval.bin");
+//    load_model("eval15.zstd");
     ifstream test_file("test_data.txt");
-//    ifstream test_file("train_data_first.txt");
+//    ifstream test_file("train_data.txt");
     string line;
     uint64_t idx = 0;
     double MSE = 0, MAE = 0, MSE_b = 0, MAE_b = 0;
@@ -727,7 +748,8 @@ int main() {
                   << std::flush;
     }
     cout << endl;
-    for (phase = 1; phase <= 70; ++phase) {
+    for (phase = 1; phase <= 40; ++phase) {
+        grad_global = 0;
         MSE_b = MSE;
         MAE_b = MAE;
         cout << "phase: " << phase << endl;
@@ -761,18 +783,26 @@ int main() {
             update_eval_param(flipVertical(r180(o)), flipVertical(r180(p)), -ans);
             update_eval_param(flipVertical(l90(o)), flipVertical(l90(p)), -ans);
             idx += 16;
-            std::cout << "\rstep: " << idx << std::flush;
+            std::cout << "\rstep: " << idx << " MAE: " << (double)grad_global/(idx*256) << std::setw(10) << std::flush;
         }
         cout << endl;
         for (auto& v1 : pattern_arr) {
             for (auto& v2 : v1) {
                 for (auto& v3 : v2) {
                     for (auto& v4 : v3) {
-                        for (auto& value : v4) {
-                            gd(value);
-                        }
+                        gd(v4);
                     }
                 }
+            }
+        }
+        for (auto& v1 : mobility_arr) {
+            for (auto& v2 : v1) {
+                gd(v2);
+            }
+        }
+        for (auto& v1 : stone_arr) {
+            for (auto& v2 : v1) {
+                gd(v2);
             }
         }
         idx = 0;
@@ -781,7 +811,7 @@ int main() {
         abs_error_sum = 0;
         squared_error_sum = 0;
         ifstream test_file("test_data.txt");
-//        ifstream test_file("train_data_first.txt");
+//        ifstream test_file("train_data.txt");
         while (getline(test_file, line)) {
             istringstream stream(line);
             string token;
@@ -835,18 +865,26 @@ int main() {
         if (alpha_t > alpha) {
             alpha_t = alpha;
         }
-        string txt = "out_adam_first" + to_string(phase) + ".txt";
+        string txt = "out14_" + to_string(phase) + ".txt";
         ofstream ofs(txt);
         // 5次元ベクターをファイルに出力
         for (const auto& v1 : pattern_arr) {
             for (const auto& v2 : v1) {
                 for (const auto& v3 : v2) {
                     for (const auto& v4 : v3) {
-                        for (const auto& value : v4) {
-                            ofs << round(value.w) << "\n";
-                        }
+                        ofs << v4.w << "\n";
                     }
                 }
+            }
+        }
+        for (auto& v1 : mobility_arr) {
+            for (auto& v2 : v1) {
+                ofs << v2.w << "\n";
+            }
+        }
+        for (auto& v1 : stone_arr) {
+            for (auto& v2 : v1) {
+                ofs << v2.w << "\n";
             }
         }
     }

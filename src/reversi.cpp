@@ -97,7 +97,7 @@ inline bool canput(uint64_t put, uint64_t legalboard) {
 }
 
 // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
-uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
+uint64_t makelegalboard(const uint64_t p, const uint64_t o) noexcept {
     uint64_t moves, hb, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
     hb = o & 0x7e7e7e7e7e7e7e7eULL;
@@ -119,7 +119,7 @@ uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept {
 
 // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
 #if __has_builtin(__builtin_subcll)
-inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
+inline uint64_t OutflankToFlipmask(const uint64_t outflank) noexcept {
     uint64_t flipmask, cy;
     flipmask = __builtin_subcll(outflank, 1, 0, &cy);
     return __builtin_addcll(flipmask, 0, cy, &cy);
@@ -136,7 +136,7 @@ inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
 #endif
 
 //code based on http://www.amy.hi-ho.ne.jp/okuhara/flipcuda.htm
-inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept {
+inline uint64_t Flip(const uint64_t put, const uint64_t playerboard, const uint64_t opponentboard) noexcept {
     uint64_t flipped, OM, outflank[4], mask[4];
     int pos = clz_u64(put);
     OM = opponentboard & 0x7e7e7e7e7e7e7e7eULL;
