@@ -13,12 +13,14 @@
 #include <x86intrin.h>
 #define popcnt_u64(x) (int)_popcnt64(x)
 #define clz_u64(x) (int)_lzcnt_u64(x)
+#define crc32c_u64(crc,d) _mm_crc32_u64((crc),(d))
 
 #elif defined(__aarch64__)
 
 #include <arm_acle.h>
 #define popcnt_u64(x) (int)__builtin_popcountll(x)
 #define clz_u64(x) (int)__builtin_arm_clz64(x)
+#define crc32c_u64(crc,d) __crc32cd((crc),(d))
 
 #else
 

@@ -27,8 +27,8 @@ void sync_board_data() {
         for (int x = 0; x < 8; ++x) {
 
             bool isBlackTurn = (nowTurn == BLACK_TURN);
-            bool stoneBlack = isBlackTurn ? (b.playerboard & mask) : (b.opponentboard & mask);
-            bool stoneWhite = isBlackTurn ? (b.opponentboard & mask) : (b.playerboard & mask);
+            bool stoneBlack = isBlackTurn ? (b.p & mask) : (b.o & mask);
+            bool stoneWhite = isBlackTurn ? (b.o & mask) : (b.p & mask);
             
             bool legal = isBlackTurn ? (AIplayer == WHITE_TURN && (legalboard & mask))
                                      : (AIplayer == BLACK_TURN && (legalboard & mask));
@@ -147,11 +147,11 @@ void Main()
             if (isFinished()) {
                 game_status = 3;
                 if (nowTurn == BLACK_TURN) {
-                    black_stone_count = popcount(b.playerboard);
-                    white_stone_count = popcount(b.opponentboard);
+                    black_stone_count = popcount(b.p);
+                    white_stone_count = popcount(b.o);
                 } else {
-                    white_stone_count = popcount(b.playerboard);
-                    black_stone_count = popcount(b.opponentboard);
+                    white_stone_count = popcount(b.p);
+                    black_stone_count = popcount(b.o);
                 }
                 if ((AIplayer == 0 && black_stone_count > white_stone_count) || (AIplayer == 1 && white_stone_count > black_stone_count)) {
                     winner = 0;
@@ -215,11 +215,11 @@ void Main()
                 }
             }
             if (SimpleGUI::Button(U"1手戻す \U000F054C", Vec2{500, 550}, 100) && nowIndex > 1) {
-                b.playerboard = b_back.playerboard;
-                b.opponentboard = b_back.opponentboard;
+                b.p = b_back.p;
+                b.o = b_back.o;
                 tmpx = b_back.put_x;
                 tmpy = b_back.put_y;
-                legalboard = makelegalboard(b.playerboard, b.opponentboard);
+                legalboard = makelegalboard(b);
                 sync_board_data();
             }
             if (SimpleGUI::Button(U"ヒント", Vec2{500, 600}, 100)) {

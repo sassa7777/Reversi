@@ -38,8 +38,42 @@ board b;
 board_back b_back;
 
 constexpr int mpc_depth[] {
-    0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6
+    0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 5, 6
 };
+
+std::vector<std::vector<double>> mpc_deviation(20, std::vector<double>(65)), mpc_mean(20, std::vector<double>(65));
+
+//constexpr double mpc_deviation[] = {
+//    0,
+//    0,
+//    0,
+//    762.478,
+//    691.448,
+//    1001.63,
+//    990.041,
+//    967.152,
+//    889.399,
+//    1114,
+//    1068.45,
+//    1212.08,
+//    1163.04,
+//};
+
+//constexpr double mpc_mean[] = {
+//    0,
+//    0,
+//    0,
+//    -18.6924,
+//    -49.5777,
+//    -773.413,
+//    -106.465,
+//    41.9353,
+//    -60.3942,
+//    -639.905,
+//    -91.8874,
+//    -598.626,
+//    -112.366,
+//};
 
 
 constexpr int moveorder[64][2] = {
@@ -51,7 +85,7 @@ constexpr uint64_t moveorder_bit[64] = {
 };
 
 
-ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
-ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
+phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> transpose_table;
+phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> former_transpose_table;
 
 #endif /* variables_h */

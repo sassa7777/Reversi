@@ -20,19 +20,16 @@
 #include <vector>
 #include <algorithm>
 #include <bit>
-#ifndef USE_UNORDERED_DENSE_DIRECTLY
-#include <ankerl/unordered_dense.h>
-#else
-// Use unordered_dense.h from https://github.com/martinus/unordered_dense/releases/tag/v4.4.0 directly
-#include "unordered_dense.h"
-#endif
 #include <numeric>
 #include <cmath>
 #include <execution>
 #include <thread>
+#include <numeric>
+#include <parallel_hashmap/phmap.h>
+#include "bit.hpp"
 
-constexpr int MIN_INF = -2147483647;
-constexpr int MAX_INF = 2147483647;
+constexpr int MIN_INF = -32768;
+constexpr int MAX_INF = 32768;
 
 extern bool first_reset;
 extern int DEPTH;
@@ -55,85 +52,135 @@ extern int evaluate_ptr_num;
 extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
-struct board_root{
-public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
-    uint64_t put;
-    int64_t score;
 
-    bool operator<(const board_root& b) const {
-        return this->score > b.score;
-    }
-    bool operator==(const board_root& other) const {
-        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
-    }
-    bool operator!=(const board_root& other) const {
-        return this->playerboard != other.playerboard || this->opponentboard != other.opponentboard;
-    }
-};
-
-struct board{
+class board{
 public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
-    int64_t score;
+    uint64_t p;
+    uint64_t o;
+    int score;
 
     bool operator<(const board& b) const noexcept {
         return this->score > b.score;
     }
     bool operator==(const board& other) const noexcept {
-        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
+        return this->p == other.p && this->o == other.o;
     }
     bool operator!=(const board& other) const noexcept {
-        return this->playerboard != other.playerboard || this->opponentboard != other.opponentboard;
+        return this->p != other.p || this->o != other.o;
     }
+    board flipped() const noexcept {
+        return {this->o, this->p, this->score};
+    }
+    struct hash {
+        uint64_t operator()(const board &b) const noexcept {
+            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+            const uint64_t crc = crc32c_u64(0, b.p);
+            return (crc << 32) | crc32c_u64(crc, b.o);
+        }
+    };
 };
 
-struct board_back{
+class board_root{
 public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
+    uint64_t p;
+    uint64_t o;
+    uint64_t put;
+    int score;
+
+    bool operator<(const board_root& b) const {
+        return this->score > b.score;
+    }
+    bool operator==(const board_root& other) const {
+        return this->p == other.p && this->o == other.o;
+    }
+    bool operator!=(const board_root& other) const {
+        return this->p != other.p || this->o != other.o;
+    }
+    board_root flipped() const noexcept {
+        return {this->o, this->p, this->put, this->score};
+    }
+    board to_board() const noexcept {
+        return {this->p, this->o, this->score};
+    }
+    struct hash {
+        uint64_t operator()(const board_root &b) const {
+            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+            const uint64_t crc = crc32c_u64(0, b.p);
+            return (crc << 32) | crc32c_u64(crc, b.o);
+        }
+    };
+};
+
+class board_back{
+public:
+    uint64_t p;
+    uint64_t o;
     int put_x;
     int put_y;
 };
 
-struct board_finish{
+class board_finish{
 public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
+    uint64_t p;
+    uint64_t o;
     uint64_t legalboard;
-    int64_t score;
+    int score;
 
     bool operator<(const board_finish& b) const noexcept {
         return this->score < b.score;
     }
     bool operator==(const board_finish& other) const noexcept {
-        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
+        return this->p == other.p && this->o == other.o;
     }
+    board_finish flipped() const noexcept {
+        return {this->o, this->p, this->legalboard, this->score};
+    }
+    board to_board() const noexcept {
+        return {this->p, this->o, this->score};
+    }
+    struct hash {
+        uint64_t operator()(const board_finish &b) const {
+            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+            const uint64_t crc = crc32c_u64(0, b.p);
+            return (crc << 32) | crc32c_u64(crc, b.o);
+        }
+    };
 };
 
-struct board_finish_root{
+class board_finish_root{
 public:
-    uint64_t playerboard;
-    uint64_t opponentboard;
+    uint64_t p;
+    uint64_t o;
     uint64_t put;
     uint64_t legalboard;
-    int64_t score;
+    int score;
 
     bool operator<(const board_finish_root& b) const noexcept {
         return this->score < b.score;
     }
     bool operator==(const board_finish_root& other) const noexcept {
-        return this->playerboard == other.playerboard && this->opponentboard == other.opponentboard;
+        return this->p == other.p && this->o == other.o;
     }
+    board_finish_root flipped() const noexcept {
+        return {this->o, this->p, this->put, this->legalboard, this->score};
+    }
+    board to_board() const noexcept {
+        return {this->p, this->o, this->score};
+    }
+    struct hash {
+        uint64_t operator()(const board_finish_root &b) const {
+            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+            const uint64_t crc = crc32c_u64(0, b.p);
+            return (crc << 32) | crc32c_u64(crc, b.o);
+        }
+    };
 };
 
 extern board b;
 extern board_back b_back;
 
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> transpose_table;
-extern ankerl::unordered_dense::map<std::pair<uint64_t, uint64_t>, std::pair<int, int>> former_transpose_table;
+extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> transpose_table;
+extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> former_transpose_table;
 
 //main functions
 void reset();
@@ -141,26 +188,26 @@ int winner();
 int ai();
 int ai_hint();
 int putstone(int y, int x);
-inline uint64_t cordinate_to_bit(int x, int y);
-inline bool canput(uint64_t put, uint64_t legalboard);
-uint64_t makelegalboard(uint64_t p, uint64_t o) noexcept;
+uint64_t cordinate_to_bit(int x, int y);
+bool canput(uint64_t put, uint64_t legalboard);
+uint64_t makelegalboard(const board &b) noexcept;
 bool isPass();
 bool isFinished();
 void swapboard();
-inline uint64_t Flip(uint64_t put, uint64_t playerboard, uint64_t opponentboard) noexcept;
+uint64_t Flip(uint64_t put, const board &b) noexcept;
 void sync_model();
+void cal_mpc();
 
-int nega_alpha(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int nega_alpha_moveorder(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard);
-int nega_scout(int depth, int alpha, int beta, uint64_t playerboard, uint64_t opponentboard) noexcept;
-int nega_scout_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
-int nega_alpha_moveorder_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard, uint64_t legalboard);
-int nega_alpha_finish(int alpha, int beta, uint64_t playerboard, uint64_t opponentboard);
+int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept;
+int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcept;
+int nega_scout(int depth, int alpha, int beta, const board &b) noexcept;
+int nega_scout_finish(int alpha, int beta, const board &b, uint64_t legalboard);
+int nega_alpha_moveorder_finish(int alpha, int beta, const board &b, uint64_t legalboard);
+int nega_alpha_finish(int alpha, int beta, const board &b);
 
-int search_nega_scout(uint64_t playerboard, uint64_t opponentboard, bool hint);
-int search_finish(uint64_t playerboard, uint64_t opponentboard);
-int search_finish_scout(uint64_t playerboard, uint64_t opponentboard);
+int search_nega_scout(board b, bool hint);
+int search_finish(board b);
+int search_finish_scout(board b);
 
 std::string coordinate_to_x_y(uint64_t put);
 

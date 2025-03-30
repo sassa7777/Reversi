@@ -15,12 +15,12 @@
 #include <cmath>
 #include <algorithm>
 #include <string>
-#include <ankerl/unordered_dense.h>
+#include <parallel_hashmap/phmap.h>
 
 using namespace std;
 
 multimap<pair<uint64_t, uint64_t>, uint64_t> book;
-ankerl::unordered_dense::map<string, uint64_t> play_record_to_put;
+phmap::parallel_flat_hash_map<string, uint64_t> play_record_to_put;
 
 void play_record_to_coordinate_init() {
     play_record_to_put.clear();
@@ -37,11 +37,12 @@ void play_record_to_coordinate_init() {
         
 }
 
-void put_book_init(uint64_t put, uint64_t &p, uint64_t &o) {
-    uint64_t rev = Flip(put, p, o);
-    p ^= (rev | put);
-    o ^= rev;
-    swap(p, o);
+void put_book_init(uint64_t put, board &b) {
+    if ((makelegalboard(b) & put) == 0) swap(b.p, b.o);
+    uint64_t rev = Flip(put, b);
+    b.p ^= (rev | put);
+    b.o ^= rev;
+    swap(b.p, b.o);
 }
 
 void book_init() {
@@ -53,24 +54,25 @@ void book_init() {
         exit(1);
     }
     string line;
-    uint64_t p = 0x0000000810000000ULL;
-    uint64_t o = 0x0000001008000000ULL;
+    board b;
+    b.p = 0x0000000810000000ULL;
+    b.o = 0x0000001008000000ULL;
     uint64_t put;
     int n = 0;
     while (true) {
-        p = 0x0000000810000000ULL;
-        o = 0x0000001008000000ULL;
+        b.p = 0x0000000810000000ULL;
+        b.o = 0x0000001008000000ULL;
         getline(ifs, line);
         if (ifs.eof()) break;
         while (line.size() > 2) {
-            put_book_init(play_record_to_put.at(line.substr(0, 2)), p, o);
+            put_book_init(play_record_to_put.at(line.substr(0, 2)), b);
             line.erase(0, 2);
         }
         put = play_record_to_put.at(line.substr(0, 2));
-        book.emplace(make_pair(p, o), put);
-        book.emplace(make_pair(r180(p), r180(o)), r180(put));
-        book.emplace(make_pair(flipDiagonalA1H8(p), flipDiagonalA1H8(o)), flipDiagonalA1H8(put));
-        book.emplace(make_pair(flipDiagonalA8H1(p), flipDiagonalA8H1(o)), flipDiagonalA8H1(put));
+        book.emplace(make_pair(b.p, b.o), put);
+        book.emplace(make_pair(r180(b.p), r180(b.o)), r180(put));
+        book.emplace(make_pair(flipDiagonalA1H8(b.p), flipDiagonalA1H8(b.o)), flipDiagonalA1H8(put));
+        book.emplace(make_pair(flipDiagonalA8H1(b.p), flipDiagonalA8H1(b.o)), flipDiagonalA8H1(put));
         ++n;
     }
     cout << "book initialized " << n << endl;
