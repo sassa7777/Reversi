@@ -80,35 +80,16 @@ public:
     };
 };
 
-class board_root{
+class board_root : public board {
 public:
-    uint64_t p;
-    uint64_t o;
     uint64_t put;
-    int score;
 
-    bool operator<(const board_root& b) const {
-        return this->score > b.score;
-    }
-    bool operator==(const board_root& other) const {
-        return this->p == other.p && this->o == other.o;
-    }
-    bool operator!=(const board_root& other) const {
-        return this->p != other.p || this->o != other.o;
-    }
     board_root flipped() const noexcept {
-        return {this->o, this->p, this->put, this->score};
+        return {{this->o, this->p, this->score}, this->put};
     }
     board to_board() const noexcept {
         return {this->p, this->o, this->score};
     }
-    struct hash {
-        uint64_t operator()(const board_root &b) const {
-            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
-            const uint64_t crc = crc32c_u64(0, b.p);
-            return (crc << 32) | crc32c_u64(crc, b.o);
-        }
-    };
 };
 
 class board_back{
@@ -119,61 +100,28 @@ public:
     int put_y;
 };
 
-class board_finish{
+class board_finish : public board {
 public:
-    uint64_t p;
-    uint64_t o;
     uint64_t legalboard;
-    int score;
-
-    bool operator<(const board_finish& b) const noexcept {
-        return this->score < b.score;
-    }
-    bool operator==(const board_finish& other) const noexcept {
-        return this->p == other.p && this->o == other.o;
-    }
+    
     board_finish flipped() const noexcept {
-        return {this->o, this->p, this->legalboard, this->score};
+        return {{this->o, this->p, this->score}, this->legalboard};
     }
     board to_board() const noexcept {
         return {this->p, this->o, this->score};
     }
-    struct hash {
-        uint64_t operator()(const board_finish &b) const {
-            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
-            const uint64_t crc = crc32c_u64(0, b.p);
-            return (crc << 32) | crc32c_u64(crc, b.o);
-        }
-    };
+    bool operator==(const board_finish &other) const noexcept {
+        return static_cast<const board&>(*this) == static_cast<const board&>(other);
+    }
 };
 
-class board_finish_root{
+class board_finish_root : public board_finish {
 public:
-    uint64_t p;
-    uint64_t o;
     uint64_t put;
-    uint64_t legalboard;
-    int score;
 
-    bool operator<(const board_finish_root& b) const noexcept {
-        return this->score < b.score;
+    board_finish to_board_finish() const noexcept {
+        return {{this->o, this->p, this->score}, this->legalboard};
     }
-    bool operator==(const board_finish_root& other) const noexcept {
-        return this->p == other.p && this->o == other.o;
-    }
-    board_finish_root flipped() const noexcept {
-        return {this->o, this->p, this->put, this->legalboard, this->score};
-    }
-    board to_board() const noexcept {
-        return {this->p, this->o, this->score};
-    }
-    struct hash {
-        uint64_t operator()(const board_finish_root &b) const {
-            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
-            const uint64_t crc = crc32c_u64(0, b.p);
-            return (crc << 32) | crc32c_u64(crc, b.o);
-        }
-    };
 };
 
 extern board b;
@@ -181,6 +129,8 @@ extern board_back b_back;
 
 extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> transpose_table;
 extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> former_transpose_table;
+
+
 
 //main functions
 void reset();
@@ -201,9 +151,9 @@ void cal_mpc();
 int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_scout(int depth, int alpha, int beta, const board &b) noexcept;
-int nega_scout_finish(int alpha, int beta, const board &b, uint64_t legalboard);
-int nega_alpha_moveorder_finish(int alpha, int beta, const board &b, uint64_t legalboard);
-int nega_alpha_finish(int alpha, int beta, const board &b);
+int nega_scout_finish(int alpha, int beta, const board_finish &b);
+int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b);
+int nega_alpha_finish(int alpha, int beta, const board_finish &b);
 
 int search_nega_scout(board b, bool hint);
 int search_finish(board b);

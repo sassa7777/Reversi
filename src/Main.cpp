@@ -129,7 +129,7 @@ void Main()
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
-            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 13, Vec2(10, 505))) {
+            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 14, Vec2(10, 505))) {
                 level_index = round(level_index);
                 firstDEPTH = level_index;
                 Level = level_index;

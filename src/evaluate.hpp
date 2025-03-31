@@ -126,8 +126,8 @@ inline void evaluate_init(String model_path) {
 }
 
 #define evaluate_moveorder(b) evaluate(b)
-
-inline int evaluate(const board &b) noexcept {
+template <typename T>
+inline int evaluate(const T &b) noexcept {
 
     if (b.p == 0) [[unlikely]] return -32768;
     if (b.o == 0) [[unlikely]] return 32768;

@@ -455,6 +455,7 @@
 					"-fvisibility=hidden",
 					"-mpopcnt",
 					"-mlzcnt",
+					"-pthread",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -551,6 +552,7 @@
 					"-fvisibility=hidden",
 					"-mpopcnt",
 					"-mlzcnt",
+					"-pthread",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sasa.Reversi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
