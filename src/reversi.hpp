@@ -73,7 +73,7 @@ public:
     }
     struct hash {
         uint64_t operator()(const board &b) const noexcept {
-            // code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+            // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
             const uint64_t crc = crc32c_u64(0, b.p);
             return (crc << 32) | crc32c_u64(crc, b.o);
         }
@@ -86,9 +86,6 @@ public:
 
     board_root flipped() const noexcept {
         return {{this->o, this->p, this->score}, this->put};
-    }
-    board to_board() const noexcept {
-        return {this->p, this->o, this->score};
     }
 };
 
@@ -107,9 +104,7 @@ public:
     board_finish flipped() const noexcept {
         return {{this->o, this->p, this->score}, this->legalboard};
     }
-    board to_board() const noexcept {
-        return {this->p, this->o, this->score};
-    }
+
     bool operator==(const board_finish &other) const noexcept {
         return static_cast<const board&>(*this) == static_cast<const board&>(other);
     }
@@ -118,10 +113,6 @@ public:
 class board_finish_root : public board_finish {
 public:
     uint64_t put;
-
-    board_finish to_board_finish() const noexcept {
-        return {{this->o, this->p, this->score}, this->legalboard};
-    }
 };
 
 extern board b;

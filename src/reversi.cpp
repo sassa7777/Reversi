@@ -42,7 +42,6 @@ void reset() {
     cout << "Player: " << AIplayer << endl;
     cout << "Level: " << Level << endl;
     cout << "initialized" << endl;
-//    cout << evaluate(0x844c1002020009a9ULL, ~0x844c1002020009a9ULL) << endl;
     return;
 }
 
