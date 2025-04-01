@@ -24,7 +24,6 @@ void reset() {
 //    b.o = 18436795865005588735;
     legalboard = makelegalboard(b);
     play_record = "";
-    evaluate_ptr_num = 0;
     hint_x = -1;
     hint_y = -1;
     tmpx = -1;
@@ -181,10 +180,14 @@ void swapboard() {
 
 void sync_model() {
     int index = min(afterIndex / 4, 14);
-    if (!eval_num[index]) {
+    if (index != now_model_idx) {
+        now_model_idx = index;
         evaluate_init(U"eval" + Format(index) + U".zstd");
-        eval_num[index] = true;
     }
+//    if (!eval_num[index]) {
+//        evaluate_init(U"eval" + Format(index) + U".zstd");
+//        eval_num[index] = true;
+//    }
 }
 
 int ai_hint() {
@@ -302,7 +305,7 @@ int ai() {
 //    }
     tmpbit = 0;
     think_percent = 0;
-    sync_model();
+//    sync_model();
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b);
@@ -393,6 +396,7 @@ int search_nega_scout(board b, bool hint) {
         think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
         ++wave;
         afterIndex = nowIndex+search_depth;
+        sync_model();
         for (auto& m: moveorder) {
             m.score = move_ordering_value(m);
         }
@@ -498,15 +502,15 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
     future<int> futures[34];
     int vars[34];
     if (depth > 3) {
-        var = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
-        if (var >= beta) {
-            if (var > l) {
-                transpose_table[b] = {u, var};
+        vars[0] = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
+        if (vars[0] >= beta) {
+            if (vars[0] > l) {
+                transpose_table[b] = {u, vars[0]};
             }
-            return var;
+            return vars[0];
         }
-        alpha = max(alpha, var);
-        max_score = max(max_score, var);
+        alpha = max(alpha, vars[0]);
+        max_score = max(max_score, vars[0]);
         for (int i = 1; i < count; ++i) {
             futures[i] = async(launch::async, [&, i]() -> int {
                 int var = -nega_alpha_moveorder(depth - 1, -alpha - 1, -alpha, moveorder[i]);
@@ -536,8 +540,8 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 }
             }
         }
-        alpha = max(alpha, *max_element(vars+1, vars+count));
-        max_score = max(max_score, *max_element(vars+1, vars+count));
+        alpha = max(alpha, *max_element(vars, vars+count));
+        max_score = max(max_score, *max_element(vars, vars+count));
     } else {
         for (int i = 0; i < count; ++i) {
             futures[i] = async(launch::async, [&, i]() -> int {
@@ -555,8 +559,8 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 return vars[i];
             }
         }
-        alpha = max(alpha, *max_element(vars+1, vars+count));
-        max_score = max(max_score, *max_element(vars+1, vars+count));
+        alpha = max(alpha, *max_element(vars, vars+count));
+        max_score = max(max_score, *max_element(vars, vars+count));
     }
     transpose_table[b] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;
@@ -708,11 +712,12 @@ int search_finish_scout(board b) {
             ++count;
         }
         int alpha = MIN_INF, beta = MAX_INF;
-        int end_depth = min(18, 64-popcnt_u64(b.p | b.o));
+        int end_depth = min(17, 64-popcnt_u64(b.p | b.o));
         end_search_stone_count = popcnt_u64(b.p | b.o)+end_depth;
-        think_count = (100/(popcnt_u64(legalboard)+(end_depth-max(1, min(10, end_depth-6)))));
+        think_count = (100/(count+(end_depth-max(1, min(10, end_depth-6)))));
         for (search_depth = max(1, min(10, end_depth-6)); search_depth <= end_depth; ++search_depth) {
             afterIndex = nowIndex+search_depth;
+            sync_model();
             for (auto& m: moveorder) {
                 m.score = move_ordering_value(m);
             }
@@ -759,6 +764,8 @@ int search_finish_scout(board b) {
         }
     }
     cout << "final_search" << endl;
+    afterIndex = 60;
+    sync_model();
     legalboard = makelegalboard(b);
     vector<board_finish_root> moveorder(popcnt_u64(legalboard));
     int count = 0;
@@ -870,15 +877,15 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
     future<int> futures[34];
     int vars[34];
     if (stones < 57) {
-        var = -nega_scout_finish(-beta, -alpha, moveorder[0]);
-        if (var >= beta) {
-            if (var > l) {
-                transpose_table[b] = {u, var};
+        vars[0] = -nega_scout_finish(-beta, -alpha, moveorder[0]);
+        if (vars[0] >= beta) {
+            if (vars[0] > l) {
+                transpose_table[b] = {u, vars[0]};
             }
-            return var;
+            return vars[0];
         }
-        alpha = max(alpha, var);
-        max_score = max(max_score, var);
+        alpha = max(alpha, vars[0]);
+        max_score = max(max_score, vars[0]);
         for (int i = 1; i < count; ++i) {
             futures[i] = async(launch::async, [&, i]() -> int {
                 return -nega_alpha_moveorder_finish(-alpha - 1, -alpha, moveorder[i]);
@@ -905,8 +912,8 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 }
             }
         }
-        alpha = max(alpha, *max_element(vars+1, vars+count));
-        max_score = max(max_score, *max_element(vars+1, vars+count));
+        alpha = max(alpha, *max_element(vars, vars+count));
+        max_score = max(max_score, *max_element(vars, vars+count));
     } else {
         for (int i = 0; i < count; ++i) {
             futures[i] = async(launch::async, [&, i]() -> int {
@@ -925,8 +932,8 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 return vars[i];
             }
         }
-        alpha = max(alpha, *max_element(vars+1, vars+count));
-        max_score = max(max_score, *max_element(vars+1, vars+count));
+        alpha = max(alpha, *max_element(vars, vars+count));
+        max_score = max(max_score, *max_element(vars, vars+count));
     }
     transpose_table[b] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
     return max_score;

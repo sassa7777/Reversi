@@ -28,7 +28,7 @@ int nowTurn;
 int nowIndex;
 int firstDEPTH;
 int afterIndex;
-int evaluate_ptr_num;
+int now_model_idx;
 int visited_nodes;
 std::vector<bool> eval_num(15);
 uint64_t legalboard;
