@@ -25,7 +25,6 @@ macOS版のみビルド済みアプリケーションを配布しています
 # その他
 
 依存関係: 
-[unordered_dense](https://github.com/martinus/unordered_dense),
 [Siv3d](https://siv3d.github.io/)
 
 参考文献:
