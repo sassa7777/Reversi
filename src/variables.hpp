@@ -88,6 +88,6 @@ constexpr uint64_t moveorder_bit[64] = {
 phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> transpose_table;
 phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> former_transpose_table;
 
-std::mutex table_mtx;
+std::shared_mutex table_mtx;
 
 #endif /* variables_h */

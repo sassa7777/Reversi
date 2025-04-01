@@ -89,7 +89,7 @@ void Main()
     }
     AIplayer = WHITE_TURN;
     //AIのレベル
-    double level_index = 10;
+    double level_index = 11;
     firstDEPTH = round(level_index);
     Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
