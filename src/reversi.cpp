@@ -305,7 +305,7 @@ int ai() {
 //    }
     tmpbit = 0;
     think_percent = 0;
-//    sync_model();
+    sync_model();
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b);
@@ -396,7 +396,7 @@ int search_nega_scout(board b, bool hint) {
         think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
         ++wave;
         afterIndex = nowIndex+search_depth;
-        sync_model();
+//        sync_model();
         for (auto& m: moveorder) {
             m.score = move_ordering_value(m);
         }
@@ -428,23 +428,6 @@ int search_nega_scout(board b, bool hint) {
         size_t index_max_score = max_element(vars, vars+moveorder.size()) - vars;
         tmpbit = moveorder[index_max_score].put;
         alpha = vars[index_max_score];
-//        alpha = -nega_scout(search_depth-1, -beta, -alpha, b1);
-//        if (search_depth == end_depth) {
-//            tmpbit = moveorder[0].put;
-//        }
-//        think_percent += think_count;
-//        for (size_t i = 1; i < moveorder.size(); ++i) {
-//            var = -nega_alpha_moveorder(search_depth-1, -alpha-1, -alpha, moveorder[i]);
-//            think_percent += think_count;
-//            if (var > alpha) {
-//                alpha = var;
-//                var = -nega_scout(search_depth-1, -beta, -alpha, moveorder[i]);
-//                if (search_depth == end_depth) {
-//                    tmpbit = moveorder[i].put;
-//                }
-//            }
-//            alpha = max(var, alpha);
-//        }
         cout << "depth: " << search_depth << " Visited nodes " << visited_nodes << endl;
         transpose_table.swap(former_transpose_table);
         transpose_table.clear();
@@ -482,7 +465,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
             return -nega_scout(depth, -beta, -alpha, b2);
         }
     }
-    int var, max_score = MIN_INF, count = 0;
+    int max_score = MIN_INF, count = 0;
     uint64_t rev;
     board moveorder[34];
     uint64_t put;
@@ -513,8 +496,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         max_score = max(max_score, vars[0]);
         for (int i = 1; i < count; ++i) {
             futures[i] = async(launch::async, [&, i]() -> int {
-                int var = -nega_alpha_moveorder(depth - 1, -alpha - 1, -alpha, moveorder[i]);
-                return var;
+                return -nega_alpha_moveorder(depth - 1, -alpha - 1, -alpha, moveorder[i]);
             });
         }
         for (int i = 1; i < count; ++i) {
@@ -523,7 +505,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, var};
+                    transpose_table[b] = {u, vars[i]};
                 }
                 return vars[i];
             }
@@ -533,7 +515,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 if (vars[i] >= beta) {
                     {
                         if (vars[i] > l) {
-                            transpose_table[b] = {u, var};
+                            transpose_table[b] = {u, vars[i]};
                         }
                     }
                     return vars[i];
@@ -554,7 +536,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, var};
+                    transpose_table[b] = {u, vars[i]};
                 }
                 return vars[i];
             }
@@ -804,16 +786,6 @@ int search_finish_scout(board b) {
     size_t index_max_score = max_element(vars, vars+count) - vars;
     tmpbit = moveorder[index_max_score].put;
     alpha = vars[index_max_score];
-//    for (int i = 1; i < count; ++i) {
-//        score = -nega_alpha_moveorder_finish(-alpha-1, -alpha, moveorder[i]);
-//        think_percent += think_count;
-//        if (score > alpha) {
-//            alpha = score;
-//            score = -nega_scout_finish(-beta, -alpha, moveorder[i]);
-//            tmpbit = moveorder[i].put;
-//        }
-//        alpha = max(score, alpha);
-//    }
     transpose_table.swap(former_transpose_table);
     transpose_table.clear();
     think_percent += think_count;
@@ -843,7 +815,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         if (!b2.legalboard) [[unlikely]] return (popcnt_u64(b.p) - popcnt_u64(b.o));
         else return -nega_scout_finish(-beta, -alpha, b2);
     }
-    int var, max_score = MIN_INF, count = 0;
+    int max_score = MIN_INF, count = 0;
     uint64_t rev;
     board_finish moveorder[34];
     int stones = popcnt_u64(b.p | b.o);
@@ -897,7 +869,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, var};
+                    transpose_table[b] = {u, vars[i]};
                 }
                 return vars[i];
             }
@@ -906,7 +878,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 vars[i] = -nega_scout_finish(-beta, -vars[i], moveorder[i]);
                 if (vars[i] >= beta) {
                     if (vars[i] > l) {
-                        transpose_table[b] = {u, var};
+                        transpose_table[b] = {u, vars[i]};
                     }
                     return vars[i];
                 }
@@ -927,7 +899,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, var};
+                    transpose_table[b] = {u, vars[i]};
                 }
                 return vars[i];
             }
