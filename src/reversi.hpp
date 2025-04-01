@@ -58,7 +58,7 @@ public:
     uint64_t p;
     uint64_t o;
     int score;
-
+    
     bool operator<(const board& b) const noexcept {
         return this->score > b.score;
     }
@@ -83,7 +83,7 @@ public:
 class board_root : public board {
 public:
     uint64_t put;
-
+    
     board_root flipped() const noexcept {
         return {{this->o, this->p, this->score}, this->put};
     }
@@ -104,7 +104,7 @@ public:
     board_finish flipped() const noexcept {
         return {{this->o, this->p, this->score}, this->legalboard};
     }
-
+    
     bool operator==(const board_finish &other) const noexcept {
         return static_cast<const board&>(*this) == static_cast<const board&>(other);
     }
@@ -117,9 +117,14 @@ public:
 
 extern board b;
 extern board_back b_back;
-
-extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> transpose_table;
-extern phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash> former_transpose_table;
+using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>,
+board::hash,
+std::equal_to<board>,
+std::allocator<std::pair<const board, std::pair<int, int>>>,
+4,
+std::mutex>;
+extern MAP transpose_table;
+extern MAP former_transpose_table;
 
 
 
