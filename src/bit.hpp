@@ -30,9 +30,9 @@
 #endif
 
 #ifdef __GNUC__
-#define flipVertical(x) __builtin_bswap64(x)
+#define VerticalMirror(x) __builtin_bswap64(x)
 #else
-#define flipVertical(x) _byteswap_uint64(x)
+#define VerticalMirror(x) _byteswap_uint64(x)
 #endif
 
 inline constexpr uint64_t delta_swap(uint64_t x, uint64_t mask, int delta) {
@@ -60,11 +60,11 @@ inline constexpr uint64_t flipDiagonalA8H1(uint64_t x) {
 }
 
 inline constexpr uint64_t l90(uint64_t x) {
-    return flipVertical(flipDiagonalA1H8(x));
+    return VerticalMirror(flipDiagonalA1H8(x));
 }
 
 inline constexpr uint64_t r90(uint64_t x) {
-    return flipDiagonalA1H8(flipVertical(x));
+    return flipDiagonalA1H8(VerticalMirror(x));
 }
 #ifdef __aarch64__
 #define r180(x) __builtin_arm_rbit64(x)

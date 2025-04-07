@@ -117,12 +117,8 @@ public:
 
 extern board b;
 extern board_back b_back;
-using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>,
-board::hash,
-std::equal_to<board>,
-std::allocator<std::pair<const board, std::pair<int, int>>>,
-4,
-std::mutex>;
+using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash, std::equal_to<board>,
+std::allocator<std::pair<const board, std::pair<int, int>>>, 4, std::mutex>;
 extern MAP transpose_table;
 extern MAP former_transpose_table;
 
@@ -141,11 +137,14 @@ bool isPass();
 bool isFinished();
 void swapboard();
 uint64_t Flip(uint64_t put, const board &b) noexcept;
-void sync_model();
+void sync_model(int afterIndex);
 void cal_mpc();
+
+int move_ordering_value(const board &b) noexcept;
 
 int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcept;
+int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_scout(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_scout_finish(int alpha, int beta, const board_finish &b);
 int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b);
