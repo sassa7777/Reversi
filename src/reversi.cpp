@@ -1177,11 +1177,11 @@ int nega_alpha_finish(int alpha, int beta, const board_finish &b) {
     for (const auto& i: moveorder_bit) {
         if (canput(i, b.legalboard)) {
             rev = Flip(i, b);
-            b1.p = b.o ^rev;
-            b1.o = b.p ^ (i | rev);
+            b1.o = b.o ^rev;
+            b1.p = b.p ^ (i | rev);
             b1.index_p = b.index_p;
             b1.index_o = b.index_o;
-            SYNC_INDEX(b.o, b.p, b1);
+            SYNC_INDEX(i, rev, b1);
             swap(b1.p, b1.o);
             swap(b1.index_p, b1.index_o);
             b1.legalboard = makelegalboard(b1);
