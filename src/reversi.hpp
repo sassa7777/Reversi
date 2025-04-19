@@ -26,6 +26,7 @@
 #include <thread>
 #include <numeric>
 #include <parallel_hashmap/phmap.h>
+#include <Siv3D.hpp>
 #include "bit.hpp"
 
 constexpr int MIN_INF = -32768;
@@ -53,12 +54,105 @@ extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
 
+constexpr int pow3[11] = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049};
+
+struct PATTERN_INDEX {
+    uint16_t diagonal8_0;
+    uint16_t diagonal8_1;
+    uint16_t diagonal7_0;
+    uint16_t diagonal7_1;
+    uint16_t diagonal7_2;
+    uint16_t diagonal7_3;
+    uint16_t diagonal6_0;
+    uint16_t diagonal6_1;
+    uint16_t diagonal6_2;
+    uint16_t diagonal6_3;
+    uint16_t diagonal5_0;
+    uint16_t diagonal5_1;
+    uint16_t diagonal5_2;
+    uint16_t diagonal5_3;
+    uint16_t edge_2x_0;
+    uint16_t edge_2x_1;
+    uint16_t edge_2x_2;
+    uint16_t edge_2x_3;
+    uint16_t h_v_2_0;
+    uint16_t h_v_2_1;
+    uint16_t h_v_2_2;
+    uint16_t h_v_2_3;
+    uint16_t h_v_3_0;
+    uint16_t h_v_3_1;
+    uint16_t h_v_3_2;
+    uint16_t h_v_3_3;
+    uint16_t h_v_4_0;
+    uint16_t h_v_4_1;
+    uint16_t h_v_4_2;
+    uint16_t h_v_4_3;
+    uint16_t corner_3x3_0;
+    uint16_t corner_3x3_1;
+    uint16_t corner_3x3_2;
+    uint16_t corner_3x3_3;
+    uint16_t edge_x_side_0;
+    uint16_t edge_x_side_1;
+    uint16_t edge_x_side_2;
+    uint16_t edge_x_side_3;
+    uint16_t edge_block_0;
+    uint16_t edge_block_1;
+    uint16_t edge_block_2;
+    uint16_t edge_block_3;
+    uint16_t triangle_0;
+    uint16_t triangle_1;
+    uint16_t triangle_2;
+    uint16_t triangle_3;
+    uint16_t corner_2x5_0;
+    uint16_t corner_2x5_1;
+    uint16_t corner_2x5_2;
+    uint16_t corner_2x5_3;
+    uint16_t corner_2x5_4;
+    uint16_t corner_2x5_5;
+    uint16_t corner_2x5_6;
+    uint16_t corner_2x5_7;
+};
+
+struct Pattern_Eval {
+    int16_t diagonal8[pow3[8]];
+    int16_t diagonal7[pow3[7]];
+    int16_t diagonal6[pow3[6]];
+    int16_t diagonal5[pow3[5]];
+    int16_t edge_2x[pow3[10]];
+    int16_t h_v_2[pow3[8]];
+    int16_t h_v_3[pow3[8]];
+    int16_t h_v_4[pow3[8]];
+    int16_t corner_3x3[pow3[9]];
+    int16_t edge_x_side[pow3[10]];
+    int16_t edge_block[pow3[10]];
+    int16_t triangle[pow3[10]];
+    int16_t corner_2x5[pow3[10]];
+};
+
+constexpr int PatternSizes[] = {
+    pow3[8],
+    pow3[7],
+    pow3[6],
+    pow3[5],
+    pow3[10],
+    pow3[8],
+    pow3[8],
+    pow3[8],
+    pow3[10],
+    pow3[10],
+    pow3[10],
+    pow3[10],
+    pow3[10],
+    pow3[10]
+};
+
 class board{
 public:
     uint64_t p;
     uint64_t o;
     int score;
-    
+    PATTERN_INDEX index_p;
+    PATTERN_INDEX index_o;
     bool operator<(const board& b) const noexcept {
         return this->score > b.score;
     }
@@ -69,7 +163,7 @@ public:
         return this->p != other.p || this->o != other.o;
     }
     board flipped() const noexcept {
-        return {this->o, this->p, this->score};
+        return {this->o, this->p, this->score, this->index_o, this->index_p};
     }
     struct hash {
         uint64_t operator()(const board &b) const noexcept {
@@ -85,7 +179,7 @@ public:
     uint64_t put;
     
     board_root flipped() const noexcept {
-        return {{this->o, this->p, this->score}, this->put};
+        return {{this->o, this->p, this->score, this->index_o, this->index_p}, this->put};
     }
 };
 
@@ -102,7 +196,7 @@ public:
     uint64_t legalboard;
     
     board_finish flipped() const noexcept {
-        return {{this->o, this->p, this->score}, this->legalboard};
+        return {{this->o, this->p, this->score, this->index_o, this->index_p}, this->legalboard};
     }
     
     bool operator==(const board_finish &other) const noexcept {
@@ -136,7 +230,7 @@ uint64_t makelegalboard(const board &b) noexcept;
 bool isPass();
 bool isFinished();
 void swapboard();
-uint64_t Flip(uint64_t put, const board &b) noexcept;
+uint64_t Flip(const uint64_t put, const board &b) noexcept;
 void sync_model(int afterIndex);
 void cal_mpc();
 

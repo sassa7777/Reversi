@@ -41,8 +41,9 @@ constexpr int mpc_depth[] {
     0, 0, 0, 1, 2, 2, 2, 3, 4, 4, 4, 4, 4, 5, 6, 5, 6
 };
 
+constexpr int MAX_MPC_DEPTH = 12;
 std::vector<std::vector<double>> mpc_deviation(20, std::vector<double>(65)), mpc_mean(20, std::vector<double>(65));
-double aa=0.2445, bb=-0.0288, cc=0.2273, dd=-4.1310, ee=101.4350, ff=-625.8740, gg=1333.5146;
+double aa=0.2563, bb=0.0072, cc=0.1773, dd=-3.4824, ee=91.7588, ff=-631.0864, gg=1552.0915;
 
 
 //constexpr double mpc_deviation[] = {

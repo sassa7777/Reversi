@@ -8,6 +8,7 @@
 #pragma once
 #include "evaluate.hpp"
 #include "book.hpp"
+#include "index.hpp"
 
 using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
@@ -29,8 +30,11 @@ void reset() {
     eval_num.assign(eval_num.size(), false);
     if (first_reset) {
         first_reset = false;
-        sync_model(afterIndex);
-//        cal_mpc();
+        //        sync_model(afterIndex);
+        for (int i = 0; i <= 14; ++i) {
+            evaluate_init(U"eval" + Format(i) + U".zstd", i);
+        }
+        //        cal_mpc();
     }
     if (book.size() == 0) book_init();
     cout << "DEPTH: " << DEPTH << endl;
@@ -81,7 +85,7 @@ inline bool canput(uint64_t put, uint64_t legalboard) {
     return ((put & legalboard) == put);
 }
 
-// code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
+// code based on  http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
 uint64_t makelegalboard(const board &b) noexcept {
     uint64_t moves, mO, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
     
@@ -99,11 +103,11 @@ uint64_t makelegalboard(const board &b) noexcept {
     flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);    flip1 |= pre1 & (flip1 >> 2);
     moves |= flip7 >> 7;        moves |= flip9 >> 9;        moves |= flip8 >> 8;        moves |= flip1 >> 1;
     
-    return moves & ~(b.p | b.o);    // mask with empties
+    return moves & ~(b.p | b.o);
 }
 
 //code based on http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
-inline uint64_t Flip(const uint64_t put, const board &b) noexcept {
+uint64_t Flip(const uint64_t put, const board &b) noexcept {
     uint64_t flipped, mO, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8, outflank1, outflank7, outflank8, outflank9;
     mO = b.o & 0x7e7e7e7e7e7e7e7e;
     flip1 = (put << 1) & mO;        flip7 = (put << 7) & mO;        flip9 = (put << 9) & mO;        flip8 = (put << 8) & b.o;
@@ -142,23 +146,19 @@ void swapboard() {
     //    cout << play_record << endl;
 }
 
-void sync_model(int afterIndex) {
-    int index = min(afterIndex / 4, 14);
-    if (index != now_model_idx) {
-        now_model_idx = index;
-        evaluate_init(U"eval" + Format(index) + U".zstd");
-    }
-    //    if (!eval_num[index]) {
-    //        evaluate_init(U"eval" + Format(index) + U".zstd");
-    //        eval_num[index] = true;
-    //    }
-}
+//void sync_model(int afterIndex) {
+//    int index = min(afterIndex / 4, 14);
+//    if (index != now_model_idx) {
+//        now_model_idx = index;
+//        evaluate_init(U"eval" + Format(index) + U".zstd");
+//    }
+//}
 
 int ai_hint() {
     cout << "[*]AIが考え中.." << endl;
     tmpbit = 0;
     think_percent = 0;
-    sync_model(nowIndex + 8);
+    //    sync_model(nowIndex + 8);
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b);
@@ -209,7 +209,7 @@ void cal_mpc() {
     board bb;
     play_record_to_coordinate_init();
     vector<int> stones, diffs, deep, light;
-    for (int i = 0; i < 11; ++i) {
+    for (int i = 0; i < 13; ++i) {
         vector<vector<int>> diff(65);
         for (auto &transcript : transcripts) {
             bb.p = 0x0000000810000000ULL;
@@ -218,12 +218,12 @@ void cal_mpc() {
                 string kifu = string({transcript[j], transcript[j+1]});
                 put_book_init(play_record_to_put[kifu], bb);
                 if (mpc_depth[i] <= 0) continue;
-                sync_model(popcnt_u64(bb.p | bb.o) + i - 4);
+                //                sync_model(popcnt_u64(bb.p | bb.o) + i - 4);
                 transpose_table.clear();
-//                int a = search_nega_scout_custom(bb, i);
+                //                int a = search_nega_scout_custom(bb, i);
                 int a = nega_scout(i, MIN_INF, MAX_INF, bb);
                 transpose_table.clear();
-//                int b = search_nega_scout_custom(bb, mpc_depth[i]);
+                //                int b = search_nega_scout_custom(bb, mpc_depth[i]);
                 int b = nega_scout(mpc_depth[i], MIN_INF, MAX_INF, bb);
                 diff[popcnt_u64(bb.p | bb.o)].emplace_back(b - a);
                 stones.emplace_back(popcnt_u64(bb.p | bb.o));
@@ -289,7 +289,7 @@ int ai() {
     //    }
     tmpbit = 0;
     think_percent = 0;
-    sync_model(afterIndex);
+    //    sync_model(afterIndex);
     transpose_table.clear();
     former_transpose_table.clear();
     legalboard = makelegalboard(b);
@@ -358,6 +358,7 @@ int search_nega_scout(board b, bool hint) {
     cout << "algorithm: NegaScout" << endl;
     transpose_table.clear();
     former_transpose_table.clear();
+    INIT_INDEX(b);
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
     vector<board_root> moveorder(popcnt_u64(legalboard));
@@ -366,8 +367,13 @@ int search_nega_scout(board b, bool hint) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
         rev = Flip(moveorder[count].put, b);
-        moveorder[count].o = b.p ^ (moveorder[count].put | rev);
-        moveorder[count].p = b.o ^ rev;
+        moveorder[count].p = b.p ^ (moveorder[count].put | rev);
+        moveorder[count].o = b.o ^ rev;
+        moveorder[count].index_o = b.index_o;
+        moveorder[count].index_p = b.index_p;
+        SYNC_INDEX(moveorder[count].put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+        swap(moveorder[count].index_p, moveorder[count].index_o);
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
@@ -384,7 +390,7 @@ int search_nega_scout(board b, bool hint) {
         think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
         ++wave;
         afterIndex = nowIndex+search_depth;
-        sync_model(afterIndex);
+        //        sync_model(afterIndex);
         for (auto& m: moveorder) {
             m.score = move_ordering_value(m);
         }
@@ -463,8 +469,13 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
         rev = Flip(put, b);
-        moveorder[count].o = b.p ^ (put | rev);
-        moveorder[count].p = b.o ^ rev;
+        moveorder[count].p = b.p ^ (put | rev);
+        moveorder[count].o = b.o ^ rev;
+        moveorder[count].index_o = b.index_o;
+        moveorder[count].index_p = b.index_p;
+        SYNC_INDEX(put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+        swap(moveorder[count].index_p, moveorder[count].index_o);
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
@@ -473,20 +484,20 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         return a.score > b.score;
     });
     
-//    if (mpc_depth[depth] > 0) {
-//        double A = aa*popcnt_u64(b.p | b.o) + bb*depth + cc*mpc_depth[depth];
-//        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
-//        int bound_up = beta + 1.8 * dev;
-//        int bound_low = alpha - 1.8 * dev;
-//        for (int i = 0; i < count; ++i) {
-//            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
-//                return bound_low;
-//            }
-//            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up+1, moveorder[i]) >= bound_up) {
-//                return bound_up;
-//            }
-//        }
-//    }
+    //    if (mpc_depth[depth] > 0 && depth <= MAX_MPC_DEPTH) {
+    //        double A = aa*popcnt_u64(b.p | b.o) + bb*depth + cc*mpc_depth[depth];
+    //        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
+    //        int bound_up = beta + 1.6 * dev;
+    //        int bound_low = alpha - 1.6 * dev;
+    //        for (int i = 0; i < count; ++i) {
+    //            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
+    //                return bound_low;
+    //            }
+    //            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up+1, moveorder[i]) >= bound_up) {
+    //                return bound_up;
+    //            }
+    //        }
+    //    }
     
     future<int> futures[34];
     int vars[34];
@@ -599,8 +610,13 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
         put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
         rev = Flip(put, b);
-        moveorder[count].o = b.p ^ (put | rev);
-        moveorder[count].p = b.o ^ rev;
+        moveorder[count].p = b.p ^ (put | rev);
+        moveorder[count].o = b.o ^ rev;
+        moveorder[count].index_o = b.index_o;
+        moveorder[count].index_p = b.index_p;
+        SYNC_INDEX(put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+        swap(moveorder[count].index_p, moveorder[count].index_o);
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
@@ -666,8 +682,13 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
     for (const auto& i: moveorder_bit) {
         if (canput(i, legalboard)) {
             rev = Flip(i, b);
-            b1.p = b.o ^ rev;
-            b1.o = b.p ^ (i | rev);
+            b1.o = b.o ^ rev;
+            b1.p = b.p ^ (i | rev);
+            b1.index_o = b.index_o;
+            b1.index_p = b.index_p;
+            SYNC_INDEX(i, rev, b1);
+            swap(b1.p, b1.o);
+            swap(b1.index_p, b1.index_o);
             var = -nega_alpha(depth-1, -beta, -alpha, b1);
             if (var >= beta) {
                 return var;
@@ -714,8 +735,13 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
         rev = Flip(put, b);
-        moveorder[count].o = b.p ^ (put | rev);
-        moveorder[count].p = b.o ^ rev;
+        moveorder[count].p = b.p ^ (put | rev);
+        moveorder[count].o = b.o ^ rev;
+        moveorder[count].index_o = b.index_o;
+        moveorder[count].index_p = b.index_p;
+        SYNC_INDEX(put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+        swap(moveorder[count].index_p, moveorder[count].index_o);
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
@@ -723,11 +749,11 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         return a.score > b.score;
     });
     
-    if (mpc_depth[depth] > 0) {
+    if (mpc_depth[depth] > 0 && depth <= MAX_MPC_DEPTH) {
         double A = aa*popcnt_u64(b.p | b.o) + bb*depth + cc*mpc_depth[depth];
         double dev = dd*A*A*A + ee*A*A + ff*A + gg;
-        int bound_up = beta + 1.8 * dev;
-        int bound_low = alpha - 1.8 * dev;
+        int bound_up = beta + 1.6 * dev;
+        int bound_low = alpha - 1.6 * dev;
         for (int i = 0; i < count; ++i) {
             if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
                 return bound_low;
@@ -783,6 +809,8 @@ int search_finish_scout(board b) {
     cout << "algorithm: NegaScout" << endl;
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
+    
+    INIT_INDEX(b);
     end_search_stone_count = 0;
     if (popcnt_u64(b.p | b.o) < 50) {
         uint64_t rev;
@@ -792,8 +820,13 @@ int search_finish_scout(board b) {
             moveorder[count].put = blsi_u64(legalboard);
             legalboard = blsr_u64(legalboard);
             rev = Flip(moveorder[count].put, b);
-            moveorder[count].o = b.p ^ (moveorder[count].put | rev);
-            moveorder[count].p = b.o ^ rev;
+            moveorder[count].p = b.p ^ (moveorder[count].put | rev);
+            moveorder[count].o = b.o ^ rev;
+            moveorder[count].index_o = b.index_o;
+            moveorder[count].index_p = b.index_p;
+            SYNC_INDEX(moveorder[count].put, rev, moveorder[count]);
+            swap(moveorder[count].p, moveorder[count].o);
+            swap(moveorder[count].index_p, moveorder[count].index_o);
             moveorder[count].score = move_ordering_value(moveorder[count]);
             ++count;
         }
@@ -803,7 +836,7 @@ int search_finish_scout(board b) {
         think_count = (100/(count+(end_depth-max(1, min(10, end_depth-6)))));
         for (search_depth = max(1, min(10, end_depth-6)); search_depth <= end_depth; ++search_depth) {
             afterIndex = nowIndex+search_depth;
-            sync_model(afterIndex);
+            //            sync_model(afterIndex);
             for (auto& m: moveorder) {
                 m.score = move_ordering_value(m);
             }
@@ -843,7 +876,7 @@ int search_finish_scout(board b) {
     }
     cout << "final_search" << endl;
     afterIndex = 60;
-    sync_model(afterIndex);
+    //    sync_model(afterIndex);
     legalboard = makelegalboard(b);
     vector<board_finish_root> moveorder(popcnt_u64(legalboard));
     int count = 0;
@@ -851,8 +884,13 @@ int search_finish_scout(board b) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
         rev = Flip(moveorder[count].put, b);
-        moveorder[count].o = b.p ^ (moveorder[count].put | rev);
-        moveorder[count].p = b.o ^ rev;
+        moveorder[count].p = b.p ^ (moveorder[count].put | rev);
+        moveorder[count].o = b.o ^ rev;
+        moveorder[count].index_o = b.index_o;
+        moveorder[count].index_p = b.index_p;
+        SYNC_INDEX(moveorder[count].put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+        swap(moveorder[count].index_p, moveorder[count].index_o);
         moveorder[count].score = move_ordering_value(moveorder[count]);
         moveorder[count].legalboard = makelegalboard(moveorder[count]);
         ++count;
@@ -919,8 +957,13 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
                 rev = Flip(put, b);
-                moveorder[count].o = b.p ^ (put | rev);
-                moveorder[count].p = b.o ^ rev;
+                moveorder[count].p = b.p ^ (put | rev);
+                moveorder[count].o = b.o ^ rev;
+                moveorder[count].index_o = b.index_o;
+                moveorder[count].index_p = b.index_p;
+                SYNC_INDEX(put, rev, moveorder[count]);
+                swap(moveorder[count].p, moveorder[count].o);
+                swap(moveorder[count].index_p, moveorder[count].index_o);
                 moveorder[count].legalboard = makelegalboard(moveorder[count]);
                 moveorder[count].score = -move_ordering_value(moveorder[count]);
                 ++count;
@@ -930,8 +973,13 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
                 rev = Flip(put, b);
-                moveorder[count].o = b.p ^ (put | rev);
-                moveorder[count].p = b.o ^ rev;
+                moveorder[count].p = b.p ^ (put | rev);
+                moveorder[count].o = b.o ^ rev;
+                moveorder[count].index_o = b.index_o;
+                moveorder[count].index_p = b.index_p;
+                SYNC_INDEX(put, rev, moveorder[count]);
+                swap(moveorder[count].p, moveorder[count].o);
+                swap(moveorder[count].index_p, moveorder[count].index_o);
                 moveorder[count].legalboard = makelegalboard(moveorder[count]);
                 moveorder[count].score = popcnt_u64(moveorder[count].legalboard);
                 ++count;
@@ -1040,8 +1088,13 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
                 rev = Flip(put, b);
-                moveorder[count].o = b.p ^ (put | rev);
-                moveorder[count].p = b.o ^ rev;
+                moveorder[count].p = b.p ^ (put | rev);
+                moveorder[count].o = b.o ^ rev;
+                moveorder[count].index_o = b.index_o;
+                moveorder[count].index_p = b.index_p;
+                SYNC_INDEX(put, rev, moveorder[count]);
+                swap(moveorder[count].p, moveorder[count].o);
+                swap(moveorder[count].index_p, moveorder[count].index_o);
                 moveorder[count].legalboard = makelegalboard(moveorder[count]);
                 moveorder[count].score = -move_ordering_value(moveorder[count]);
                 ++count;
@@ -1051,8 +1104,13 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
                 rev = Flip(put, b);
-                moveorder[count].o = b.p ^ (put | rev);
-                moveorder[count].p = b.o ^ rev;
+                moveorder[count].p = b.p ^ (put | rev);
+                moveorder[count].o = b.o ^ rev;
+                moveorder[count].index_o = b.index_o;
+                moveorder[count].index_p = b.index_p;
+                SYNC_INDEX(put, rev, moveorder[count]);
+                swap(moveorder[count].p, moveorder[count].o);
+                swap(moveorder[count].index_p, moveorder[count].index_o);
                 moveorder[count].legalboard = makelegalboard(moveorder[count]);
                 moveorder[count].score = popcnt_u64(moveorder[count].legalboard);
                 ++count;
@@ -1121,6 +1179,11 @@ int nega_alpha_finish(int alpha, int beta, const board_finish &b) {
             rev = Flip(i, b);
             b1.p = b.o ^rev;
             b1.o = b.p ^ (i | rev);
+            b1.index_p = b.index_p;
+            b1.index_o = b.index_o;
+            SYNC_INDEX(b.o, b.p, b1);
+            swap(b1.p, b1.o);
+            swap(b1.index_p, b1.index_o);
             b1.legalboard = makelegalboard(b1);
             var = -nega_alpha_finish(-beta, -alpha, b1);
             if (var >= beta) {
