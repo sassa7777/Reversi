@@ -119,12 +119,12 @@ inline void evaluate_init(String model_path, int eval_num) {
     for (auto &x : pattern_arr[eval_num].corner_2x5) {
         x = fast_next_int(p);
     }
-    for (auto &x : mobility_arr[eval_num]) {
-        x = fast_next_int(p);
-    }
-    for (auto &x : stone_arr[eval_num]) {
-        x = fast_next_int(p);
-    }
+//    for (auto &x : mobility_arr[eval_num]) {
+//        x = fast_next_int(p);
+//    }
+//    for (auto &x : stone_arr[eval_num]) {
+//        x = fast_next_int(p);
+//    }
 }
 
 void mpc_init() {
@@ -253,10 +253,10 @@ inline int evaluate(const board &b) noexcept {
     
     if (b.p == 0) [[unlikely]] return -32768;
     if (b.o == 0) [[unlikely]] return 32768;
-    int plegal = popcnt_u64(makelegalboard(b));
-    board b2 = b.flipped();
-    int olegal = popcnt_u64(makelegalboard(b2));
-    if (plegal == 0 && olegal == 0) return 256 * (popcnt_u64(b.p) - popcnt_u64(b.o));
+//    int plegal = popcnt_u64(makelegalboard(b));
+//    board b2 = b.flipped();
+//    int olegal = popcnt_u64(makelegalboard(b2));
+//    if (plegal == 0 && olegal == 0) return 256 * (popcnt_u64(b.p) - popcnt_u64(b.o));
     int P_cnt = popcnt_u64(b.p);
     int O_cnt = popcnt_u64(b.o);
     int eval_num = (P_cnt + O_cnt - 5) / 4;
@@ -332,10 +332,10 @@ inline int evaluate(const board &b) noexcept {
     a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_6 + b.index_o.corner_2x5_6 * 2];
     a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_7 + b.index_o.corner_2x5_7 * 2];
 
-    
-    a += mobility_arr[eval_num][plegal * 36 + olegal];
-    
-    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
+//    
+//    a += mobility_arr[eval_num][plegal * 36 + olegal];
+//    
+//    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
     
     return a;
 }
