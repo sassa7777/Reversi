@@ -12,7 +12,7 @@ using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
 
 #define n_patterns 14
-#define use_book false
+#define use_book true
 
 constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t0, const uint64_t t1, const uint64_t t2, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
     return ((B & t0) ? 1 : 0) * pow3[9] + ((B & t1) ? 1 : 0) * pow3[8] + ((B & t2) ? 1 : 0) * pow3[7] + ((B & t3) ? 1 : 0) * pow3[6] +
@@ -119,9 +119,9 @@ inline void evaluate_init(String model_path, int eval_num) {
     for (auto &x : pattern_arr[eval_num].corner_2x5) {
         x = fast_next_int(p);
     }
-//    for (auto &x : mobility_arr[eval_num]) {
-//        x = fast_next_int(p);
-//    }
+    for (auto &x : mobility_arr[eval_num]) {
+        x = fast_next_int(p);
+    }
 //    for (auto &x : stone_arr[eval_num]) {
 //        x = fast_next_int(p);
 //    }
@@ -212,7 +212,7 @@ void mpc_init() {
 //    a += pattern_arr[eval_num].h_v_4[CALC_INDEX(b.p, INDEX_A5, INDEX_B5, INDEX_C5, INDEX_D5, INDEX_E5, INDEX_F5, INDEX_G5, INDEX_H5) + CALC_INDEX(b.o, INDEX_A5, INDEX_B5, INDEX_C5, INDEX_D5, INDEX_E5, INDEX_F5, INDEX_G5, INDEX_H5) * 2];
 //    a += pattern_arr[eval_num].h_v_4[CALC_INDEX(b.p, INDEX_D1, INDEX_D2, INDEX_D3, INDEX_D4, INDEX_D5, INDEX_D6, INDEX_D7, INDEX_D8) + CALC_INDEX(b.o, INDEX_D1, INDEX_D2, INDEX_D3, INDEX_D4, INDEX_D5, INDEX_D6, INDEX_D7, INDEX_D8) * 2];
 //
-//    a += pattern_arr[eval_num].corner_3x3[CALC_INDEX(b.p, INDEX_A1, INDEX_B1, INDEX_C1, INDEX_A2, INDEX_B2, INDEX_C2, INDEX_A3, INDEX_B2, INDEX_C3) + CALC_INDEX(b.o, INDEX_A1, INDEX_B1, INDEX_C1, INDEX_A2, INDEX_B2, INDEX_C2, INDEX_A3, INDEX_B2, INDEX_C3) * 2];
+//    a += pattern_arr[eval_num].corner_3x3[CALC_INDEX(b.p, INDEX_A1, INDEX_B1, INDEX_C1, INDEX_A2, INDEX_B2, INDEX_C2, INDEX_A3, INDEX_B3, INDEX_C3) + CALC_INDEX(b.o, INDEX_A1, INDEX_B1, INDEX_C1, INDEX_A2, INDEX_B2, INDEX_C2, INDEX_A3, INDEX_B3, INDEX_C3) * 2];
 //    a += pattern_arr[eval_num].corner_3x3[CALC_INDEX(b.p, INDEX_H1, INDEX_H2, INDEX_H3, INDEX_G1, INDEX_G2, INDEX_G3, INDEX_F1, INDEX_F2, INDEX_F3) + CALC_INDEX(b.o, INDEX_H1, INDEX_H2, INDEX_H3, INDEX_G1, INDEX_G2, INDEX_G3, INDEX_F1, INDEX_F2, INDEX_F3) * 2];
 //    a += pattern_arr[eval_num].corner_3x3[CALC_INDEX(b.p, INDEX_H8, INDEX_G8, INDEX_F8, INDEX_H7, INDEX_G7, INDEX_F7, INDEX_H6, INDEX_G6, INDEX_F6) + CALC_INDEX(b.o, INDEX_H8, INDEX_G8, INDEX_F8, INDEX_H7, INDEX_G7, INDEX_F7, INDEX_H6, INDEX_G6, INDEX_F6) * 2];
 //    a += pattern_arr[eval_num].corner_3x3[CALC_INDEX(b.p, INDEX_A8, INDEX_A7, INDEX_A6, INDEX_B8, INDEX_B7, INDEX_B6, INDEX_C8, INDEX_C7, INDEX_C6) + CALC_INDEX(b.o, INDEX_A8, INDEX_A7, INDEX_A6, INDEX_B8, INDEX_B7, INDEX_B6, INDEX_C8, INDEX_C7, INDEX_C6) * 2];
@@ -253,10 +253,10 @@ inline int evaluate(const board &b) noexcept {
     
     if (b.p == 0) [[unlikely]] return -32768;
     if (b.o == 0) [[unlikely]] return 32768;
-//    int plegal = popcnt_u64(makelegalboard(b));
-//    board b2 = b.flipped();
-//    int olegal = popcnt_u64(makelegalboard(b2));
-//    if (plegal == 0 && olegal == 0) return 256 * (popcnt_u64(b.p) - popcnt_u64(b.o));
+    int plegal = popcnt_u64(makelegalboard(b));
+    board b2 = b.flipped();
+    int olegal = popcnt_u64(makelegalboard(b2));
+    if (plegal == 0 && olegal == 0) return 256 * (popcnt_u64(b.p) - popcnt_u64(b.o));
     int P_cnt = popcnt_u64(b.p);
     int O_cnt = popcnt_u64(b.o);
     int eval_num = (P_cnt + O_cnt - 5) / 4;
@@ -332,8 +332,8 @@ inline int evaluate(const board &b) noexcept {
     a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_6 + b.index_o.corner_2x5_6 * 2];
     a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_7 + b.index_o.corner_2x5_7 * 2];
 
-//    
-//    a += mobility_arr[eval_num][plegal * 36 + olegal];
+    
+    a += mobility_arr[eval_num][plegal * 36 + olegal];
 //    
 //    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
     
