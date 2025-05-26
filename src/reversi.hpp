@@ -114,15 +114,15 @@ struct PATTERN_INDEX {
 };
 
 struct Pattern_Eval {
-    int16_t diagonal8[pow3[8]];
-    int16_t diagonal7[pow3[7]];
-    int16_t diagonal6[pow3[6]];
-    int16_t diagonal5[pow3[5]];
+    int16_t diagonal8[pow3[10]];
+    int16_t diagonal7[pow3[10]];
+    int16_t diagonal6[pow3[10]];
+    int16_t diagonal5[pow3[10]];
     int16_t edge_2x[pow3[10]];
-    int16_t h_v_2[pow3[8]];
-    int16_t h_v_3[pow3[8]];
-    int16_t h_v_4[pow3[8]];
-    int16_t corner_3x3[pow3[9]];
+    int16_t h_v_2[pow3[10]];
+    int16_t h_v_3[pow3[10]];
+    int16_t h_v_4[pow3[10]];
+    int16_t corner_3x3[pow3[10]];
     int16_t edge_x_side[pow3[10]];
     int16_t edge_block[pow3[10]];
     int16_t triangle[pow3[10]];

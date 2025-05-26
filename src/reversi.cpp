@@ -34,7 +34,7 @@ void reset() {
         for (int i = 0; i <= 14; ++i) {
             evaluate_init(U"eval" + Format(i) + U".zstd", i);
         }
-        cal_mpc();
+//        cal_mpc();
     }
     if (book.size() == 0) book_init();
     cout << "DEPTH: " << DEPTH << endl;
@@ -243,8 +243,9 @@ void cal_mpc() {
     vector<vector<double>> deviations(20, vector<double>(65)), means(20, vector<double>(65));
     board bb;
     play_record_to_coordinate_init();
-    vector<int> stones, diffs, deep, light;
-    for (int i = 0; i < 13; ++i) {
+    vector<int> stones, deep, light;
+    vector<int> diffs;
+    for (int i = 0; i < 11; ++i) {
         vector<vector<int>> diff(65);
         for (auto &transcript : transcripts) {
             bb.p = 0x0000000810000000ULL;
@@ -255,6 +256,7 @@ void cal_mpc() {
                 if (mpc_depth[i] <= 0) continue;
                 //                sync_model(popcnt_u64(bb.p | bb.o) + i - 4);
                 //                int a = search_nega_scout_custom(bb, i);
+                INIT_INDEX(bb);
                 int b = nega_scout(mpc_depth[i], MIN_INF, MAX_INF, bb);
                 swap(transpose_table, former_transpose_table);
                 transpose_table.clear();
@@ -262,7 +264,7 @@ void cal_mpc() {
                 //                int b = search_nega_scout_custom(bb, mpc_depth[i]);
 //                diff[popcnt_u64(~(bb.p | bb.o))].emplace_back(b - a);
                 stones.emplace_back(popcnt_u64(bb.p | bb.o));
-                diffs.emplace_back((a - b) / 256);
+                diffs.emplace_back(round((a - b) / 256.0));
                 deep.emplace_back(i);
                 light.emplace_back(mpc_depth[i]);
             }
@@ -317,7 +319,7 @@ int ai() {
         return 0;
     }
     cout << "[*]AIが考え中.." << endl;
-    if (Level >= 5 && nowIndex >= 41) {
+    if (Level >= 10 && nowIndex >= 43) {
         DEPTH = 60;
         afterIndex=60;
     }
@@ -526,8 +528,8 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
 //        double A = aa*popcnt_u64((b.p | b.o))/64.0 + bb*mpc_depth[depth]/60.0 + cc*depth/60.0;
 //        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
 //        dev *= 256;
-//        int bound_up = beta + 1.4 * dev;
-//        int bound_low = alpha - 1.4 * dev;
+//        int bound_up = beta + 2.6 * dev;
+//        int bound_low = alpha - 2.6 * dev;
 //        for (int i = 0; i < count; ++i) {
 //            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
 //                return bound_low;
@@ -792,8 +794,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         double A = aa*popcnt_u64((b.p | b.o))/64.0 + bb*mpc_depth[depth]/60.0 + cc*depth/60.0;
         double dev = dd*A*A*A + ee*A*A + ff*A + gg;
         dev *= 256;
-        int bound_up = beta + 1.4 * dev;
-        int bound_low = alpha - 1.4 * dev;
+        int bound_up = beta + 2.6 * dev;
+        int bound_low = alpha - 2.6 * dev;
         for (int i = 0; i < count; ++i) {
             if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
                 return bound_low;

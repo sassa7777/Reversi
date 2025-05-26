@@ -127,25 +127,7 @@ inline void evaluate_init(String model_path, int eval_num) {
 //    }
 }
 
-void mpc_init() {
-    ifstream ifs(FileSystem::RelativePath(Resource(U"mpc.txt")).narrow());
-    string line;
-    for (auto &x : mpc_deviation) {
-        for (auto &y : x) {
-            getline(ifs, line);
-            y = stod(line);
-        }
-    }
-    for (auto &x : mpc_mean) {
-        for (auto &y : x) {
-            getline(ifs, line);
-            y = stod(line);
-        }
-    }
-}
-
 #define evaluate_moveorder(b) evaluate(b)
-
 
 //inline int evaluate(const board &b) noexcept {
 //    
@@ -260,7 +242,6 @@ inline int evaluate(const board &b) noexcept {
     int P_cnt = popcnt_u64(b.p);
     int O_cnt = popcnt_u64(b.o);
     int eval_num = (P_cnt + O_cnt - 5) / 4;
-//    int eval_num = (b.p_cnt + b.o_cnt - 4);
     int32_t a = 0;
     
 
