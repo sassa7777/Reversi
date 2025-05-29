@@ -144,7 +144,8 @@ public:
 
 class table_data {
 public:
-    uint64_t hash;
+    uint64_t p;
+    uint64_t o;
     int u;
     int l;
     bool registered;

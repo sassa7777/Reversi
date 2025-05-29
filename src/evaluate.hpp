@@ -213,7 +213,7 @@ inline int evaluate(const board &b) noexcept {
 
     
     a += mobility_arr[eval_num][plegal * 36 + olegal];
-//    
+    
 //    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
     
     return a;
