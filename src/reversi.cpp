@@ -345,7 +345,7 @@ int ai() {
         cout << "book found" << endl;
     }
 #endif
-    auto start = std::chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();
     if (!tmpbit) {
         if (afterIndex >= 60) {
             score = search_finish_scout(b);
@@ -353,8 +353,8 @@ int ai() {
             score = search_nega_scout(b, false);
         }
     }
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
     think_percent = 100;
     if (tmpbit == 0) {
         cout << "error" << endl;
@@ -527,7 +527,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         vars[0] = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {true, u, vars[0], hash};
+                search_table[hash & table_mask] = {hash, u, vars[0], true};
             }
             return vars[0];
         }
@@ -544,7 +544,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {true, u, vars[i], hash};
+                    search_table[hash & table_mask] = {hash, u, vars[i], true};
                 }
                 return vars[i];
             }
@@ -554,7 +554,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 if (vars[i] >= beta) {
                     {
                         if (vars[i] > l) {
-                            search_table[hash & table_mask] = {true, u, vars[i], hash};
+                            search_table[hash & table_mask] = {hash, u, vars[i], true};
                         }
                     }
                     return vars[i];
@@ -569,7 +569,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(vars[0], alpha);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {true, u, vars[0], hash};
+                search_table[hash & table_mask] = {hash, u, vars[0], true};
             }
             return vars[0];
         }
@@ -584,7 +584,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {true, u, vars[i], hash};
+                    search_table[hash & table_mask] = {hash, u, vars[i], true};
                 }
                 return vars[i];
             }
@@ -593,7 +593,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
+    search_table[hash & table_mask] = {hash, max_score, ((max_score > alpha) ? max_score : l), true};
     return max_score;
 }
 
@@ -605,7 +605,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     int u = MAX_INF, l = MIN_INF;
     uint64_t hash = b.hash();
     {
-        scoped_lock lock(table_mutexes[hash & table_mask]);
+        lock_guard<spinlock> lock(table_locks[hash & table_mask]);
         if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
             u = search_table[hash & table_mask].u;
             l = search_table[hash & table_mask].l;
@@ -651,8 +651,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -664,8 +664,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             var = -nega_alpha_moveorder(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -673,8 +673,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             max_score = max(max_score, var);
         }
     }
-    scoped_lock lock(table_mutexes[hash & table_mask]);
-    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
+    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+    search_table[hash & table_mask] = {hash, max_score, ((max_score > alpha) ? max_score : l), true};
     return max_score;
 }
 
@@ -721,7 +721,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
     int u = MAX_INF, l = MIN_INF;
     uint64_t hash = b.hash();
     {
-        scoped_lock lock(table_mutexes[hash & table_mask]);
+        lock_guard<spinlock> lock(table_locks[hash & table_mask]);
         if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
             u = search_table[hash & table_mask].u;
             l = search_table[hash & table_mask].l;
@@ -783,8 +783,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -796,8 +796,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             var = -nega_alpha_moveorder_mpc(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -805,8 +805,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             max_score = max(max_score, var);
         }
     }
-    scoped_lock lock(table_mutexes[hash & table_mask]);
-    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
+    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+    search_table[hash & table_mask] = {hash, max_score, ((max_score > alpha) ? max_score : l), true};
     return max_score;
 }
 
@@ -998,7 +998,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         vars[0] = -nega_scout_finish(-beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {true, u, vars[0], hash};
+                search_table[hash & table_mask] = {hash, u, vars[0], true};
             }
             return vars[0];
         }
@@ -1015,7 +1015,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {true, u, vars[i], hash};
+                    search_table[hash & table_mask] = {hash, u, vars[i], true};
                 }
                 return vars[i];
             }
@@ -1024,7 +1024,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 vars[i] = -nega_scout_finish(-beta, -vars[i], moveorder[i]);
                 if (vars[i] >= beta) {
                     if (vars[i] > l) {
-                        search_table[hash & table_mask] = {true, u, vars[i], hash};
+                        search_table[hash & table_mask] = {hash, u, vars[i], true};
                     }
                     return vars[i];
                 }
@@ -1046,7 +1046,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {true, u, vars[i], hash};
+                    search_table[hash & table_mask] = {hash, u, vars[i], true};
                 }
                 return vars[i];
             }
@@ -1055,7 +1055,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
+    search_table[hash & table_mask] = {hash, max_score, ((max_score > alpha) ? max_score : l), true};
     return max_score;
 }
 
@@ -1064,7 +1064,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
     int u = MAX_INF, l = MIN_INF;
     uint64_t hash = b.hash();
     {
-        scoped_lock lock(table_mutexes[hash & table_mask]);
+        lock_guard<spinlock> lock(table_locks[hash & table_mask]);
         if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
             u = search_table[hash & table_mask].u;
             l = search_table[hash & table_mask].l;
@@ -1127,8 +1127,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             var = -nega_alpha_moveorder_finish(-beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -1140,8 +1140,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             var = -nega_alpha_finish(-beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    scoped_lock lock(table_mutexes[hash & table_mask]);
-                    search_table[hash & table_mask] = {true, u, var, hash};
+                    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+                    search_table[hash & table_mask] = {hash, u, var, true};
                 }
                 return var;
             }
@@ -1149,8 +1149,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             max_score = max(max_score, var);
         }
     }
-    scoped_lock lock(table_mutexes[hash & table_mask]);
-    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
+    lock_guard<spinlock> lock(table_locks[hash & table_mask]);
+    search_table[hash & table_mask] = {hash, max_score, ((max_score > alpha) ? max_score : l), true};
     return max_score;
 }
 

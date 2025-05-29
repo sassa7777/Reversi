@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <bit>
 #include <numeric>
+#include <atomic>
 #include <cmath>
 #include <execution>
 #include <thread>
@@ -128,29 +129,25 @@ struct Pattern_Eval {
     int16_t corner_2x5[pow3[10]];
 };
 
-constexpr int PatternSizes[] = {
-    pow3[8],
-    pow3[7],
-    pow3[6],
-    pow3[5],
-    pow3[10],
-    pow3[8],
-    pow3[8],
-    pow3[8],
-    pow3[10],
-    pow3[10],
-    pow3[10],
-    pow3[10],
-    pow3[10],
-    pow3[10]
+class spinlock {
+    std::atomic_flag flag = ATOMIC_FLAG_INIT;
+public:
+    void lock() {
+        while (flag.test_and_set(std::memory_order_acquire)) {
+//             std::this_thread::yield();
+        }
+    }
+    void unlock() {
+        flag.clear(std::memory_order_release);
+    }
 };
 
 class table_data {
 public:
-    bool registered;
+    uint64_t hash;
     int u;
     int l;
-    uint64_t hash;
+    bool registered;
 };
 
 class board{
@@ -223,12 +220,6 @@ public:
 
 extern board b;
 extern board_back b_back;
-//using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash, std::equal_to<board>,
-//std::allocator<std::pair<const board, std::pair<int, int>>>, 4, std::mutex>;
-//extern MAP transpose_table;
-//extern MAP former_transpose_table;
-
-
 
 //main functions
 void reset();
