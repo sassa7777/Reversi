@@ -30,7 +30,6 @@ void reset() {
     eval_num.assign(eval_num.size(), false);
     if (first_reset) {
         first_reset = false;
-        //        sync_model(afterIndex);
         for (int i = 0; i <= 14; ++i) {
             evaluate_init(U"eval" + Format(i) + U".zstd", i);
         }
@@ -146,21 +145,12 @@ void swapboard() {
     //    cout << play_record << endl;
 }
 
-//void sync_model(int afterIndex) {
-//    int index = min(afterIndex / 4, 14);
-//    if (index != now_model_idx) {
-//        now_model_idx = index;
-//        evaluate_init(U"eval" + Format(index) + U".zstd");
-//    }
-//}
-
 int ai_hint() {
     cout << "[*]AIが考え中.." << endl;
     tmpbit = 0;
     think_percent = 0;
-    //    sync_model(nowIndex + 8);
-    transpose_table.clear();
-    former_transpose_table.clear();
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
     legalboard = makelegalboard(b);
     int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
@@ -258,8 +248,8 @@ void cal_mpc() {
                 //                int a = search_nega_scout_custom(bb, i);
                 INIT_INDEX(bb);
                 int b = nega_scout(mpc_depth[i], MIN_INF, MAX_INF, bb);
-                swap(transpose_table, former_transpose_table);
-                transpose_table.clear();
+                swap(search_table, former_search_table);
+                memset(search_table, 0, sizeof(search_table));
                 int a = nega_scout(i, MIN_INF, MAX_INF, bb);
                 //                int b = search_nega_scout_custom(bb, mpc_depth[i]);
 //                diff[popcnt_u64(~(bb.p | bb.o))].emplace_back(b - a);
@@ -319,7 +309,7 @@ int ai() {
         return 0;
     }
     cout << "[*]AIが考え中.." << endl;
-    if (Level >= 10 && nowIndex >= 43) {
+    if (Level >= 10 && nowIndex >= 41) {
         DEPTH = 60;
         afterIndex=60;
     }
@@ -329,9 +319,8 @@ int ai() {
     //    }
     tmpbit = 0;
     think_percent = 0;
-    //    sync_model(afterIndex);
-    transpose_table.clear();
-    former_transpose_table.clear();
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
     legalboard = makelegalboard(b);
     int putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
@@ -383,12 +372,9 @@ int ai() {
 }
 
 inline int move_ordering_value(const board &b) noexcept {
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    if (former_transpose_table.if_contains(b, get_value)) {
-        return (32768 - val.first);
+    uint64_t hash = b.hash();
+    if (former_search_table[hash & table_mask].registered && former_search_table[hash & table_mask].hash == hash) {
+        return (32768 - former_search_table[hash & table_mask].u);
     } else {
         return -evaluate_moveorder(b);
     }
@@ -396,8 +382,8 @@ inline int move_ordering_value(const board &b) noexcept {
 
 int search_nega_scout(board b, bool hint) {
     cout << "algorithm: NegaScout" << endl;
-    transpose_table.clear();
-    former_transpose_table.clear();
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
     INIT_INDEX(b);
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
@@ -463,12 +449,11 @@ int search_nega_scout(board b, bool hint) {
         tmpbit = moveorder[index_max_score].put;
         alpha = vars[index_max_score];
         cout << "depth: " << search_depth << " Visited nodes " << visited_nodes << endl;
-        //        transpose_table.swap(former_transpose_table);
-        swap(transpose_table, former_transpose_table);
-        transpose_table.clear();
+        swap(search_table, former_search_table);
+        memset(search_table, 0, sizeof(search_table));
     }
-    transpose_table.clear();
-    former_transpose_table.clear();
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
     return alpha;
 }
 
@@ -478,14 +463,10 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         return evaluate(b);
     }
     int u = MAX_INF, l = MIN_INF;
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    
-    if (transpose_table.if_contains(b, get_value)) {
-        u = val.first;
-        l = val.second;
+    uint64_t hash = b.hash();
+    if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
+        u = search_table[hash & table_mask].u;
+        l = search_table[hash & table_mask].l;
         if (u <= alpha) return u;
         if (l >= beta) return l;
         if (u == l) return u;
@@ -546,7 +527,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         vars[0] = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                transpose_table[b] = {u, vars[0]};
+                search_table[hash & table_mask] = {true, u, vars[0], hash};
             }
             return vars[0];
         }
@@ -563,7 +544,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, vars[i]};
+                    search_table[hash & table_mask] = {true, u, vars[i], hash};
                 }
                 return vars[i];
             }
@@ -573,7 +554,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 if (vars[i] >= beta) {
                     {
                         if (vars[i] > l) {
-                            transpose_table[b] = {u, vars[i]};
+                            search_table[hash & table_mask] = {true, u, vars[i], hash};
                         }
                     }
                     return vars[i];
@@ -588,7 +569,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(vars[0], alpha);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                transpose_table[b] = {u, vars[0]};
+                search_table[hash & table_mask] = {true, u, vars[0], hash};
             }
             return vars[0];
         }
@@ -603,7 +584,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, vars[i]};
+                    search_table[hash & table_mask] = {true, u, vars[i], hash};
                 }
                 return vars[i];
             }
@@ -612,7 +593,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    transpose_table[b] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
+    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
     return max_score;
 }
 
@@ -622,20 +603,20 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
         return evaluate(b);
     }
     int u = MAX_INF, l = MIN_INF;
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    
-    if (transpose_table.if_contains(b, get_value)) {
-        u = val.first;
-        l = val.second;
-        if (u <= alpha) return u;
-        if (l >= beta) return l;
-        if (u == l) return u;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+    uint64_t hash = b.hash();
+    {
+        scoped_lock lock(table_mutexes[hash & table_mask]);
+        if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
+            u = search_table[hash & table_mask].u;
+            l = search_table[hash & table_mask].l;
+            if (u <= alpha) return u;
+            if (l >= beta) return l;
+            if (u == l) return u;
+            alpha = max(l, alpha);
+            beta = min(u, beta);
+        }
     }
+
     
     uint64_t legalboard = makelegalboard(b);
     if (!legalboard) [[unlikely]] {
@@ -670,11 +651,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -686,11 +664,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             var = -nega_alpha_moveorder(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -698,11 +673,8 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             max_score = max(max_score, var);
         }
     }
-    auto it = make_pair(max_score, ((max_score > alpha) ? max_score : l));
-    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-        v.second = it;
-    },
-                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+    scoped_lock lock(table_mutexes[hash & table_mask]);
+    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
     return max_score;
 }
 
@@ -747,20 +719,20 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         return evaluate(b);
     }
     int u = MAX_INF, l = MIN_INF;
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    
-    if (transpose_table.if_contains(b, get_value)) {
-        u = val.first;
-        l = val.second;
-        if (u <= alpha) return u;
-        if (l >= beta) return l;
-        if (u == l) return u;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+    uint64_t hash = b.hash();
+    {
+        scoped_lock lock(table_mutexes[hash & table_mask]);
+        if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
+            u = search_table[hash & table_mask].u;
+            l = search_table[hash & table_mask].l;
+            if (u <= alpha) return u;
+            if (l >= beta) return l;
+            if (u == l) return u;
+            alpha = max(l, alpha);
+            beta = min(u, beta);
+        }
     }
+
     
     uint64_t legalboard = makelegalboard(b);
     if (!legalboard) [[unlikely]] {
@@ -811,11 +783,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -827,11 +796,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             var = -nega_alpha_moveorder_mpc(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -839,11 +805,8 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             max_score = max(max_score, var);
         }
     }
-    auto it = make_pair(max_score, ((max_score > alpha) ? max_score : l));
-    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-        v.second = it;
-    },
-                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+    scoped_lock lock(table_mutexes[hash & table_mask]);
+    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
     return max_score;
 }
 
@@ -912,8 +875,8 @@ int search_finish_scout(board b) {
             alpha = vars[index_max_score];
             cout << "depth: " << search_depth << " Visited nodes " << visited_nodes << endl;
             think_percent += think_count;
-            swap(transpose_table, former_transpose_table);
-            transpose_table.clear();
+            swap(search_table, former_search_table);
+            memset(search_table, 0, sizeof(search_table));
         }
     }
     cout << "final_search" << endl;
@@ -962,8 +925,8 @@ int search_finish_scout(board b) {
     size_t index_max_score = max_element(vars, vars+count) - vars;
     tmpbit = moveorder[index_max_score].put;
     alpha = vars[index_max_score];
-    swap(transpose_table, former_transpose_table);
-    transpose_table.clear();
+    swap(search_table, former_search_table);
+    memset(search_table, 0, sizeof(search_table));
     think_percent += think_count;
     cout << "Visited nodes " << visited_nodes << endl;
     return alpha;
@@ -972,13 +935,10 @@ int search_finish_scout(board b) {
 int nega_scout_finish(int alpha, int beta, const board_finish &b) {
     ++visited_nodes;
     int u = MAX_INF, l = MIN_INF;
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    if (transpose_table.if_contains(b, get_value)) {
-        u = val.first;
-        l = val.second;
+    uint64_t hash = b.hash();
+    if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
+        u = search_table[hash & table_mask].u;
+        l = search_table[hash & table_mask].l;
         if (u <= alpha) return u;
         if (l >= beta) return l;
         if (u == l) return u;
@@ -1038,7 +998,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         vars[0] = -nega_scout_finish(-beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                transpose_table[b] = {u, vars[0]};
+                search_table[hash & table_mask] = {true, u, vars[0], hash};
             }
             return vars[0];
         }
@@ -1055,7 +1015,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, vars[i]};
+                    search_table[hash & table_mask] = {true, u, vars[i], hash};
                 }
                 return vars[i];
             }
@@ -1064,7 +1024,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 vars[i] = -nega_scout_finish(-beta, -vars[i], moveorder[i]);
                 if (vars[i] >= beta) {
                     if (vars[i] > l) {
-                        transpose_table[b] = {u, vars[i]};
+                        search_table[hash & table_mask] = {true, u, vars[i], hash};
                     }
                     return vars[i];
                 }
@@ -1086,7 +1046,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    transpose_table[b] = {u, vars[i]};
+                    search_table[hash & table_mask] = {true, u, vars[i], hash};
                 }
                 return vars[i];
             }
@@ -1095,26 +1055,25 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    transpose_table[b] = make_pair(max_score, ((max_score > alpha) ? max_score : l));
+    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
     return max_score;
 }
 
 int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
     ++visited_nodes;
     int u = MAX_INF, l = MIN_INF;
-    pair<int, int> val;
-    auto get_value = [&val](const MAP::value_type& v) {
-        val = v.second;
-    };
-    
-    if (transpose_table.if_contains(b, get_value)) {
-        u = val.first;
-        l = val.second;
-        if (u <= alpha) return u;
-        if (l >= beta) return l;
-        if (u == l) return u;
-        alpha = max(l, alpha);
-        beta = min(u, beta);
+    uint64_t hash = b.hash();
+    {
+        scoped_lock lock(table_mutexes[hash & table_mask]);
+        if (search_table[hash & table_mask].registered && search_table[hash & table_mask].hash == hash) {
+            u = search_table[hash & table_mask].u;
+            l = search_table[hash & table_mask].l;
+            if (u <= alpha) return u;
+            if (l >= beta) return l;
+            if (u == l) return u;
+            alpha = max(l, alpha);
+            beta = min(u, beta);
+        }
     }
     if (!b.legalboard) [[unlikely]] {
         board_finish b2 = b.flipped();
@@ -1168,11 +1127,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             var = -nega_alpha_moveorder_finish(-beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -1184,11 +1140,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             var = -nega_alpha_finish(-beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
-                    pair<int, int> it = {u, var};
-                    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-                        v.second = it;
-                    },
-                                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+                    scoped_lock lock(table_mutexes[hash & table_mask]);
+                    search_table[hash & table_mask] = {true, u, var, hash};
                 }
                 return var;
             }
@@ -1196,11 +1149,8 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             max_score = max(max_score, var);
         }
     }
-    auto it = make_pair(max_score, ((max_score > alpha) ? max_score : l));
-    transpose_table.lazy_emplace_l(b, [&it](MAP::value_type& v) {
-        v.second = it;
-    },
-                                   [&it, &b](const MAP::constructor& ctor) { ctor(b, it); });
+    scoped_lock lock(table_mutexes[hash & table_mask]);
+    search_table[hash & table_mask] = {true, max_score, ((max_score > alpha) ? max_score : l), hash};
     return max_score;
 }
 

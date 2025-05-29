@@ -25,7 +25,6 @@
 #include <execution>
 #include <thread>
 #include <numeric>
-#include <parallel_hashmap/phmap.h>
 #include <Siv3D.hpp>
 #include "bit.hpp"
 
@@ -146,6 +145,14 @@ constexpr int PatternSizes[] = {
     pow3[10]
 };
 
+class table_data {
+public:
+    bool registered;
+    int u;
+    int l;
+    uint64_t hash;
+};
+
 class board{
 public:
     uint64_t p;
@@ -164,6 +171,11 @@ public:
     }
     board flipped() const noexcept {
         return {this->o, this->p, this->score, this->index_o, this->index_p};
+    }
+    uint64_t hash() const noexcept {
+        // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
+        const uint64_t crc = crc32c_u64(0, this->p);
+        return (crc << 32) | crc32c_u64(crc, this->o);
     }
     struct hash {
         uint64_t operator()(const board &b) const noexcept {
@@ -211,10 +223,10 @@ public:
 
 extern board b;
 extern board_back b_back;
-using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash, std::equal_to<board>,
-std::allocator<std::pair<const board, std::pair<int, int>>>, 4, std::mutex>;
-extern MAP transpose_table;
-extern MAP former_transpose_table;
+//using MAP = phmap::parallel_flat_hash_map<board, std::pair<int, int>, board::hash, std::equal_to<board>,
+//std::allocator<std::pair<const board, std::pair<int, int>>>, 4, std::mutex>;
+//extern MAP transpose_table;
+//extern MAP former_transpose_table;
 
 
 

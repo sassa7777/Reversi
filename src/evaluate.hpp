@@ -12,7 +12,7 @@ using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
 
 #define n_patterns 14
-#define use_book true
+#define use_book false
 
 constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t0, const uint64_t t1, const uint64_t t2, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
     return ((B & t0) ? 1 : 0) * pow3[9] + ((B & t1) ? 1 : 0) * pow3[8] + ((B & t2) ? 1 : 0) * pow3[7] + ((B & t3) ? 1 : 0) * pow3[6] +
