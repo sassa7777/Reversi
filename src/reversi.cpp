@@ -27,7 +27,6 @@ void reset() {
     hint_y = -1;
     tmpx = -1;
     tmpy = -1;
-    eval_num.assign(eval_num.size(), false);
     if (first_reset) {
         first_reset = false;
         for (int i = 0; i <= 14; ++i) {

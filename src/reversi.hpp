@@ -29,8 +29,8 @@
 #include <Siv3D.hpp>
 #include "bit.hpp"
 
-constexpr int MIN_INF = -32768;
-constexpr int MAX_INF = 32768;
+constexpr int MIN_INF = -INT_MAX;
+constexpr int MAX_INF = INT_MAX;
 
 extern bool first_reset;
 extern int DEPTH;
