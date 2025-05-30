@@ -134,21 +134,12 @@ class spinlock {
 public:
     void lock() {
         while (flag.test_and_set(std::memory_order_acquire)) {
-//             std::this_thread::yield();
+             std::this_thread::yield();
         }
     }
     void unlock() {
         flag.clear(std::memory_order_release);
     }
-};
-
-class table_data {
-public:
-    uint64_t p;
-    uint64_t o;
-    int u;
-    int l;
-    bool registered;
 };
 
 class board{
@@ -158,13 +149,13 @@ public:
     int score;
     PATTERN_INDEX index_p;
     PATTERN_INDEX index_o;
-    bool operator<(const board& b) const noexcept {
+    bool operator<(const auto& b) const noexcept {
         return this->score > b.score;
     }
-    bool operator==(const board& other) const noexcept {
+    bool operator==(const auto& other) const noexcept {
         return this->p == other.p && this->o == other.o;
     }
-    bool operator!=(const board& other) const noexcept {
+    bool operator!=(const auto& other) const noexcept {
         return this->p != other.p || this->o != other.o;
     }
     board flipped() const noexcept {
@@ -175,13 +166,6 @@ public:
         const uint64_t crc = crc32c_u64(0, this->p);
         return (crc << 32) | crc32c_u64(crc, this->o);
     }
-    struct hash {
-        uint64_t operator()(const board &b) const noexcept {
-            // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
-            const uint64_t crc = crc32c_u64(0, b.p);
-            return (crc << 32) | crc32c_u64(crc, b.o);
-        }
-    };
 };
 
 class board_root : public board {
@@ -208,15 +192,22 @@ public:
     board_finish flipped() const noexcept {
         return {{this->o, this->p, this->score, this->index_o, this->index_p}, this->legalboard};
     }
-    
-    bool operator==(const board_finish &other) const noexcept {
-        return static_cast<const board&>(*this) == static_cast<const board&>(other);
-    }
 };
 
 class board_finish_root : public board_finish {
 public:
     uint64_t put;
+};
+
+class table_data {
+public:
+    uint64_t p;
+    uint64_t o;
+    int u;
+    int l;
+    bool operator==(const auto& other) const noexcept {
+        return this->p == other.p && this->o == other.o;
+    }
 };
 
 extern board b;
