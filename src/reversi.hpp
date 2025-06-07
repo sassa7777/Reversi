@@ -56,61 +56,9 @@ extern bool search_mode_enabled;
 
 constexpr int pow3[11] = {1, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049};
 
-struct PATTERN_INDEX {
-    uint16_t diagonal8_0;
-    uint16_t diagonal8_1;
-    uint16_t diagonal7_0;
-    uint16_t diagonal7_1;
-    uint16_t diagonal7_2;
-    uint16_t diagonal7_3;
-    uint16_t diagonal6_0;
-    uint16_t diagonal6_1;
-    uint16_t diagonal6_2;
-    uint16_t diagonal6_3;
-    uint16_t diagonal5_0;
-    uint16_t diagonal5_1;
-    uint16_t diagonal5_2;
-    uint16_t diagonal5_3;
-    uint16_t edge_2x_0;
-    uint16_t edge_2x_1;
-    uint16_t edge_2x_2;
-    uint16_t edge_2x_3;
-    uint16_t h_v_2_0;
-    uint16_t h_v_2_1;
-    uint16_t h_v_2_2;
-    uint16_t h_v_2_3;
-    uint16_t h_v_3_0;
-    uint16_t h_v_3_1;
-    uint16_t h_v_3_2;
-    uint16_t h_v_3_3;
-    uint16_t h_v_4_0;
-    uint16_t h_v_4_1;
-    uint16_t h_v_4_2;
-    uint16_t h_v_4_3;
-    uint16_t corner_3x3_0;
-    uint16_t corner_3x3_1;
-    uint16_t corner_3x3_2;
-    uint16_t corner_3x3_3;
-    uint16_t edge_x_side_0;
-    uint16_t edge_x_side_1;
-    uint16_t edge_x_side_2;
-    uint16_t edge_x_side_3;
-    uint16_t edge_block_0;
-    uint16_t edge_block_1;
-    uint16_t edge_block_2;
-    uint16_t edge_block_3;
-    uint16_t triangle_0;
-    uint16_t triangle_1;
-    uint16_t triangle_2;
-    uint16_t triangle_3;
-    uint16_t corner_2x5_0;
-    uint16_t corner_2x5_1;
-    uint16_t corner_2x5_2;
-    uint16_t corner_2x5_3;
-    uint16_t corner_2x5_4;
-    uint16_t corner_2x5_5;
-    uint16_t corner_2x5_6;
-    uint16_t corner_2x5_7;
+union features {
+    uint16_t indexes_1[56];
+    __m128i indexes_8[7];
 };
 
 struct Pattern_Eval {
@@ -144,11 +92,11 @@ public:
 
 class board{
 public:
+    features index_p;
+    features index_o;
     uint64_t p;
     uint64_t o;
     int score;
-    PATTERN_INDEX index_p;
-    PATTERN_INDEX index_o;
     bool operator<(const auto& b) const noexcept {
         return this->score > b.score;
     }
@@ -159,12 +107,11 @@ public:
         return this->p != other.p || this->o != other.o;
     }
     board flipped() const noexcept {
-        return {this->o, this->p, this->score, this->index_o, this->index_p};
+        return {this->index_o, this->index_p, this->o, this->p, this->score};
     }
     uint64_t hash() const noexcept {
         // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
-        const uint64_t crc = crc32c_u64(0, this->p);
-        return (crc << 32) | crc32c_u64(crc, this->o);
+        return crc32c_u64(crc32c_u64(0, this->p), this->o);
     }
 };
 
@@ -173,7 +120,7 @@ public:
     uint64_t put;
     
     board_root flipped() const noexcept {
-        return {{this->o, this->p, this->score, this->index_o, this->index_p}, this->put};
+        return {{this->index_o, this->index_p, this->o, this->p, this->score}, this->put};
     }
 };
 
@@ -190,7 +137,7 @@ public:
     uint64_t legalboard;
     
     board_finish flipped() const noexcept {
-        return {{this->o, this->p, this->score, this->index_o, this->index_p}, this->legalboard};
+        return {{this->index_o, this->index_p, this->o, this->p, this->score}, this->legalboard};
     }
 };
 

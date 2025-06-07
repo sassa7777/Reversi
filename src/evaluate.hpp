@@ -14,38 +14,6 @@ using bitboard = pair<uint64_t, uint64_t>;
 #define n_patterns 14
 #define use_book false
 
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t0, const uint64_t t1, const uint64_t t2, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t0) ? 1 : 0) * pow3[9] + ((B & t1) ? 1 : 0) * pow3[8] + ((B & t2) ? 1 : 0) * pow3[7] + ((B & t3) ? 1 : 0) * pow3[6] +
-           ((B & t4) ? 1 : 0) * pow3[5] + ((B & t5) ? 1 : 0) * pow3[4] + ((B & t6) ? 1 : 0) * pow3[3] + ((B & t7) ? 1 : 0) * pow3[2] +
-           ((B & t8) ? 1 : 0) * pow3[1] + ((B & t9) ? 1 : 0) * pow3[0];
-}
-
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t1, const uint64_t t2, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t1) ? 1 : 0) * pow3[8] + ((B & t2) ? 1 : 0) * pow3[7] + ((B & t3) ? 1 : 0) * pow3[6] + ((B & t4) ? 1 : 0) * pow3[5] +
-           ((B & t5) ? 1 : 0) * pow3[4] + ((B & t6) ? 1 : 0) * pow3[3] + ((B & t7) ? 1 : 0) * pow3[2] + ((B & t8) ? 1 : 0) * pow3[1] +
-           ((B & t9) ? 1 : 0) * pow3[0];
-}
-
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t2, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t2) ? 1 : 0) * pow3[7] + ((B & t3) ? 1 : 0) * pow3[6] + ((B & t4) ? 1 : 0) * pow3[5] + ((B & t5) ? 1 : 0) * pow3[4] +
-           ((B & t6) ? 1 : 0) * pow3[3] + ((B & t7) ? 1 : 0) * pow3[2] + ((B & t8) ? 1 : 0) * pow3[1] + ((B & t9) ? 1 : 0) * pow3[0];
-}
-
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t3, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t3) ? 1 : 0) * pow3[6] + ((B & t4) ? 1 : 0) * pow3[5] + ((B & t5) ? 1 : 0) * pow3[4] + ((B & t6) ? 1 : 0) * pow3[3] +
-           ((B & t7) ? 1 : 0) * pow3[2] + ((B & t8) ? 1 : 0) * pow3[1] + ((B & t9) ? 1 : 0) * pow3[0];
-}
-
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t4, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t4) ? 1 : 0) * pow3[5] + ((B & t5) ? 1 : 0) * pow3[4] + ((B & t6) ? 1 : 0) * pow3[3] + ((B & t7) ? 1 : 0) * pow3[2] +
-           ((B & t8) ? 1 : 0) * pow3[1] + ((B & t9) ? 1 : 0) * pow3[0];
-}
-
-constexpr inline uint64_t CALC_INDEX(const uint64_t B, const uint64_t t5, const uint64_t t6, const uint64_t t7, const uint64_t t8, const uint64_t t9) {
-    return ((B & t5) ? 1 : 0) * pow3[4] + ((B & t6) ? 1 : 0) * pow3[3] + ((B & t7) ? 1 : 0) * pow3[2] + ((B & t8) ? 1 : 0) * pow3[1] +
-           ((B & t9) ? 1 : 0) * pow3[0];
-}
-
 Pattern_Eval pattern_arr[15];
 static int16_t mobility_arr[15][36 * 36];
 static int16_t stone_arr[15][65 * 65];
@@ -143,73 +111,72 @@ inline int evaluate(const board &b) noexcept {
     int32_t a = 0;
     
 
-    a += pattern_arr[eval_num].diagonal8[b.index_p.diagonal8_0 + b.index_o.diagonal8_0 * 2];
-    a += pattern_arr[eval_num].diagonal8[b.index_p.diagonal8_1 + b.index_o.diagonal8_1 * 2];
+    a += pattern_arr[eval_num].diagonal8[b.index_p.indexes_1[0] + b.index_o.indexes_1[0] * 2];
+    a += pattern_arr[eval_num].diagonal8[b.index_p.indexes_1[1] + b.index_o.indexes_1[1] * 2];
 
-    a += pattern_arr[eval_num].diagonal7[b.index_p.diagonal7_0 + b.index_o.diagonal7_0 * 2];
-    a += pattern_arr[eval_num].diagonal7[b.index_p.diagonal7_1 + b.index_o.diagonal7_1 * 2];
-    a += pattern_arr[eval_num].diagonal7[b.index_p.diagonal7_2 + b.index_o.diagonal7_2 * 2];
-    a += pattern_arr[eval_num].diagonal7[b.index_p.diagonal7_3 + b.index_o.diagonal7_3 * 2];
+    a += pattern_arr[eval_num].diagonal7[b.index_p.indexes_1[2] + b.index_o.indexes_1[2] * 2];
+    a += pattern_arr[eval_num].diagonal7[b.index_p.indexes_1[3] + b.index_o.indexes_1[3] * 2];
+    a += pattern_arr[eval_num].diagonal7[b.index_p.indexes_1[4] + b.index_o.indexes_1[4] * 2];
+    a += pattern_arr[eval_num].diagonal7[b.index_p.indexes_1[5] + b.index_o.indexes_1[5] * 2];
 
-    a += pattern_arr[eval_num].diagonal6[b.index_p.diagonal6_0 + b.index_o.diagonal6_0 * 2];
-    a += pattern_arr[eval_num].diagonal6[b.index_p.diagonal6_1 + b.index_o.diagonal6_1 * 2];
-    a += pattern_arr[eval_num].diagonal6[b.index_p.diagonal6_2 + b.index_o.diagonal6_2 * 2];
-    a += pattern_arr[eval_num].diagonal6[b.index_p.diagonal6_3 + b.index_o.diagonal6_3 * 2];
+    a += pattern_arr[eval_num].diagonal6[b.index_p.indexes_1[6] + b.index_o.indexes_1[6] * 2];
+    a += pattern_arr[eval_num].diagonal6[b.index_p.indexes_1[7] + b.index_o.indexes_1[7] * 2];
+    a += pattern_arr[eval_num].diagonal6[b.index_p.indexes_1[8] + b.index_o.indexes_1[8] * 2];
+    a += pattern_arr[eval_num].diagonal6[b.index_p.indexes_1[9] + b.index_o.indexes_1[9] * 2];
 
-    a += pattern_arr[eval_num].diagonal5[b.index_p.diagonal5_0 + b.index_o.diagonal5_0 * 2];
-    a += pattern_arr[eval_num].diagonal5[b.index_p.diagonal5_1 + b.index_o.diagonal5_1 * 2];
-    a += pattern_arr[eval_num].diagonal5[b.index_p.diagonal5_2 + b.index_o.diagonal5_2 * 2];
-    a += pattern_arr[eval_num].diagonal5[b.index_p.diagonal5_3 + b.index_o.diagonal5_3 * 2];
+    a += pattern_arr[eval_num].diagonal5[b.index_p.indexes_1[10] + b.index_o.indexes_1[10] * 2];
+    a += pattern_arr[eval_num].diagonal5[b.index_p.indexes_1[11] + b.index_o.indexes_1[11] * 2];
+    a += pattern_arr[eval_num].diagonal5[b.index_p.indexes_1[12] + b.index_o.indexes_1[12] * 2];
+    a += pattern_arr[eval_num].diagonal5[b.index_p.indexes_1[13] + b.index_o.indexes_1[13] * 2];
 
-    a += pattern_arr[eval_num].edge_2x[b.index_p.edge_2x_0 + b.index_o.edge_2x_0 * 2];
-    a += pattern_arr[eval_num].edge_2x[b.index_p.edge_2x_1 + b.index_o.edge_2x_1 * 2];
-    a += pattern_arr[eval_num].edge_2x[b.index_p.edge_2x_2 + b.index_o.edge_2x_2 * 2];
-    a += pattern_arr[eval_num].edge_2x[b.index_p.edge_2x_3 + b.index_o.edge_2x_3 * 2];
+    a += pattern_arr[eval_num].edge_2x[b.index_p.indexes_1[14] + b.index_o.indexes_1[14] * 2];
+    a += pattern_arr[eval_num].edge_2x[b.index_p.indexes_1[15] + b.index_o.indexes_1[15] * 2];
+    a += pattern_arr[eval_num].edge_2x[b.index_p.indexes_1[16] + b.index_o.indexes_1[16] * 2];
+    a += pattern_arr[eval_num].edge_2x[b.index_p.indexes_1[17] + b.index_o.indexes_1[17] * 2];
 
-    a += pattern_arr[eval_num].h_v_2[b.index_p.h_v_2_0 + b.index_o.h_v_2_0 * 2];
-    a += pattern_arr[eval_num].h_v_2[b.index_p.h_v_2_1 + b.index_o.h_v_2_1 * 2];
-    a += pattern_arr[eval_num].h_v_2[b.index_p.h_v_2_2 + b.index_o.h_v_2_2 * 2];
-    a += pattern_arr[eval_num].h_v_2[b.index_p.h_v_2_3 + b.index_o.h_v_2_3 * 2];
+    a += pattern_arr[eval_num].h_v_2[b.index_p.indexes_1[18] + b.index_o.indexes_1[18] * 2];
+    a += pattern_arr[eval_num].h_v_2[b.index_p.indexes_1[19] + b.index_o.indexes_1[19] * 2];
+    a += pattern_arr[eval_num].h_v_2[b.index_p.indexes_1[20] + b.index_o.indexes_1[20] * 2];
+    a += pattern_arr[eval_num].h_v_2[b.index_p.indexes_1[21] + b.index_o.indexes_1[21] * 2];
 
-    a += pattern_arr[eval_num].h_v_3[b.index_p.h_v_3_0 + b.index_o.h_v_3_0 * 2];
-    a += pattern_arr[eval_num].h_v_3[b.index_p.h_v_3_1 + b.index_o.h_v_3_1 * 2];
-    a += pattern_arr[eval_num].h_v_3[b.index_p.h_v_3_2 + b.index_o.h_v_3_2 * 2];
-    a += pattern_arr[eval_num].h_v_3[b.index_p.h_v_3_3 + b.index_o.h_v_3_3 * 2];
+    a += pattern_arr[eval_num].h_v_3[b.index_p.indexes_1[22] + b.index_o.indexes_1[22] * 2];
+    a += pattern_arr[eval_num].h_v_3[b.index_p.indexes_1[23] + b.index_o.indexes_1[23] * 2];
+    a += pattern_arr[eval_num].h_v_3[b.index_p.indexes_1[24] + b.index_o.indexes_1[24] * 2];
+    a += pattern_arr[eval_num].h_v_3[b.index_p.indexes_1[25] + b.index_o.indexes_1[25] * 2];
 
-    a += pattern_arr[eval_num].h_v_4[b.index_p.h_v_4_0 + b.index_o.h_v_4_0 * 2];
-    a += pattern_arr[eval_num].h_v_4[b.index_p.h_v_4_1 + b.index_o.h_v_4_1 * 2];
-    a += pattern_arr[eval_num].h_v_4[b.index_p.h_v_4_2 + b.index_o.h_v_4_2 * 2];
-    a += pattern_arr[eval_num].h_v_4[b.index_p.h_v_4_3 + b.index_o.h_v_4_3 * 2];
+    a += pattern_arr[eval_num].h_v_4[b.index_p.indexes_1[26] + b.index_o.indexes_1[26] * 2];
+    a += pattern_arr[eval_num].h_v_4[b.index_p.indexes_1[27] + b.index_o.indexes_1[27] * 2];
+    a += pattern_arr[eval_num].h_v_4[b.index_p.indexes_1[28] + b.index_o.indexes_1[28] * 2];
+    a += pattern_arr[eval_num].h_v_4[b.index_p.indexes_1[29] + b.index_o.indexes_1[29] * 2];
 
-    a += pattern_arr[eval_num].corner_3x3[b.index_p.corner_3x3_0 + b.index_o.corner_3x3_0 * 2];
-    a += pattern_arr[eval_num].corner_3x3[b.index_p.corner_3x3_1 + b.index_o.corner_3x3_1 * 2];
-    a += pattern_arr[eval_num].corner_3x3[b.index_p.corner_3x3_2 + b.index_o.corner_3x3_2 * 2];
-    a += pattern_arr[eval_num].corner_3x3[b.index_p.corner_3x3_3 + b.index_o.corner_3x3_3 * 2];
+    a += pattern_arr[eval_num].corner_3x3[b.index_p.indexes_1[30] + b.index_o.indexes_1[30] * 2];
+    a += pattern_arr[eval_num].corner_3x3[b.index_p.indexes_1[31] + b.index_o.indexes_1[31] * 2];
+    a += pattern_arr[eval_num].corner_3x3[b.index_p.indexes_1[32] + b.index_o.indexes_1[32] * 2];
+    a += pattern_arr[eval_num].corner_3x3[b.index_p.indexes_1[33] + b.index_o.indexes_1[33] * 2];
 
-    a += pattern_arr[eval_num].edge_x_side[b.index_p.edge_x_side_0 + b.index_o.edge_x_side_0 * 2];
-    a += pattern_arr[eval_num].edge_x_side[b.index_p.edge_x_side_1 + b.index_o.edge_x_side_1 * 2];
-    a += pattern_arr[eval_num].edge_x_side[b.index_p.edge_x_side_2 + b.index_o.edge_x_side_2 * 2];
-    a += pattern_arr[eval_num].edge_x_side[b.index_p.edge_x_side_3 + b.index_o.edge_x_side_3 * 2];
+    a += pattern_arr[eval_num].edge_x_side[b.index_p.indexes_1[34] + b.index_o.indexes_1[34] * 2];
+    a += pattern_arr[eval_num].edge_x_side[b.index_p.indexes_1[35] + b.index_o.indexes_1[35] * 2];
+    a += pattern_arr[eval_num].edge_x_side[b.index_p.indexes_1[36] + b.index_o.indexes_1[36] * 2];
+    a += pattern_arr[eval_num].edge_x_side[b.index_p.indexes_1[37] + b.index_o.indexes_1[37] * 2];
 
-    a += pattern_arr[eval_num].edge_block[b.index_p.edge_block_0 + b.index_o.edge_block_0 * 2];
-    a += pattern_arr[eval_num].edge_block[b.index_p.edge_block_1 + b.index_o.edge_block_1 * 2];
-    a += pattern_arr[eval_num].edge_block[b.index_p.edge_block_2 + b.index_o.edge_block_2 * 2];
-    a += pattern_arr[eval_num].edge_block[b.index_p.edge_block_3 + b.index_o.edge_block_3 * 2];
+    a += pattern_arr[eval_num].edge_block[b.index_p.indexes_1[38] + b.index_o.indexes_1[38] * 2];
+    a += pattern_arr[eval_num].edge_block[b.index_p.indexes_1[39] + b.index_o.indexes_1[39] * 2];
+    a += pattern_arr[eval_num].edge_block[b.index_p.indexes_1[40] + b.index_o.indexes_1[40] * 2];
+    a += pattern_arr[eval_num].edge_block[b.index_p.indexes_1[41] + b.index_o.indexes_1[41] * 2];
 
-    a += pattern_arr[eval_num].triangle[b.index_p.triangle_0 + b.index_o.triangle_0 * 2];
-    a += pattern_arr[eval_num].triangle[b.index_p.triangle_1 + b.index_o.triangle_1 * 2];
-    a += pattern_arr[eval_num].triangle[b.index_p.triangle_2 + b.index_o.triangle_2 * 2];
-    a += pattern_arr[eval_num].triangle[b.index_p.triangle_3 + b.index_o.triangle_3 * 2];
+    a += pattern_arr[eval_num].triangle[b.index_p.indexes_1[42] + b.index_o.indexes_1[42] * 2];
+    a += pattern_arr[eval_num].triangle[b.index_p.indexes_1[43] + b.index_o.indexes_1[43] * 2];
+    a += pattern_arr[eval_num].triangle[b.index_p.indexes_1[44] + b.index_o.indexes_1[44] * 2];
+    a += pattern_arr[eval_num].triangle[b.index_p.indexes_1[45] + b.index_o.indexes_1[45] * 2];
 
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_0 + b.index_o.corner_2x5_0 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_1 + b.index_o.corner_2x5_1 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_2 + b.index_o.corner_2x5_2 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_3 + b.index_o.corner_2x5_3 * 2];
-
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_4 + b.index_o.corner_2x5_4 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_5 + b.index_o.corner_2x5_5 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_6 + b.index_o.corner_2x5_6 * 2];
-    a += pattern_arr[eval_num].corner_2x5[b.index_p.corner_2x5_7 + b.index_o.corner_2x5_7 * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[46] + b.index_o.indexes_1[46] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[47] + b.index_o.indexes_1[47] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[48] + b.index_o.indexes_1[48] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[49] + b.index_o.indexes_1[49] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[50] + b.index_o.indexes_1[50] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[51] + b.index_o.indexes_1[51] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[52] + b.index_o.indexes_1[52] * 2];
+    a += pattern_arr[eval_num].corner_2x5[b.index_p.indexes_1[53] + b.index_o.indexes_1[53] * 2];
 
     
     a += mobility_arr[eval_num][plegal * 36 + olegal];

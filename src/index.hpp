@@ -1,2697 +1,723 @@
 //
-//  index.hpp
+//  index_simd.hpp
 //  Reversi
 //
-//  Created by sasa on 2025/04/19.
+//  Created by sasa on 2025/06/07.
 //
 
-#ifndef index_h
-#define index_h
+#ifndef index_simd_h
+#define index_simd_h
 
-#include "reversi.hpp"
+#include <nmmintrin.h>
 
-inline void SYNC_INDEX(const uint64_t put, const uint64_t rev, board &b) {
-    uint64_t diff_p = put | rev;
-    uint64_t diff_o = rev;
-    if (diff_p & INDEX_A1) {
-        b.index_p.diagonal8_0 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[2];
-        b.index_p.h_v_2_0 += pow3[1];
-        b.index_p.h_v_2_3 += pow3[0];
-        b.index_p.corner_3x3_0 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[9];
-        b.index_p.edge_block_0 += pow3[9];
-        b.index_p.edge_block_3 += pow3[4];
-        b.index_p.triangle_0 += pow3[9];
-        b.index_p.corner_2x5_0 += pow3[9];
-        b.index_p.corner_2x5_4 += pow3[9];
-    }
-    if (diff_p & INDEX_B1) {
-        b.index_p.diagonal7_0 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[2];
-        b.index_p.corner_3x3_0 += pow3[8];
-        b.index_p.edge_x_side_0 += pow3[8];
-        b.index_p.triangle_0 += pow3[8];
-        b.index_p.corner_2x5_0 += pow3[8];
-        b.index_p.corner_2x5_4 += pow3[4];
-    }
-    if (diff_p & INDEX_C1) {
-        b.index_p.diagonal6_0 += pow3[9];
-        b.index_p.diagonal5_0 += pow3[4];
-        b.index_p.edge_2x_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[2];
-        b.index_p.corner_3x3_0 += pow3[7];
-        b.index_p.edge_x_side_0 += pow3[7];
-        b.index_p.edge_block_0 += pow3[8];
-        b.index_p.triangle_0 += pow3[7];
-        b.index_p.corner_2x5_0 += pow3[7];
-    }
-    if (diff_p & INDEX_D1) {
-        b.index_p.diagonal6_0 += pow3[3];
-        b.index_p.diagonal6_3 += pow3[1];
-        b.index_p.diagonal5_0 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[1];
-        b.index_p.edge_2x_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[2];
-        b.index_p.edge_x_side_0 += pow3[6];
-        b.index_p.edge_x_side_1 += pow3[0];
-        b.index_p.edge_block_0 += pow3[7];
-        b.index_p.triangle_0 += pow3[6];
-        b.index_p.corner_2x5_0 += pow3[6];
-        b.index_p.corner_2x5_5 += pow3[5];
-    }
-    if (diff_p & INDEX_E1) {
-        b.index_p.diagonal6_0 += pow3[2];
-        b.index_p.diagonal6_3 += pow3[0];
-        b.index_p.diagonal5_0 += pow3[3];
-        b.index_p.diagonal5_3 += pow3[5];
-        b.index_p.edge_2x_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[5];
-        b.index_p.edge_x_side_1 += pow3[1];
-        b.index_p.edge_block_0 += pow3[6];
-        b.index_p.triangle_1 += pow3[0];
-        b.index_p.corner_2x5_0 += pow3[5];
-        b.index_p.corner_2x5_5 += pow3[6];
-    }
-    if (diff_p & INDEX_F1) {
-        b.index_p.diagonal6_3 += pow3[4];
-        b.index_p.diagonal5_3 += pow3[0];
-        b.index_p.edge_2x_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[9];
-        b.index_p.corner_3x3_1 += pow3[3];
-        b.index_p.edge_x_side_1 += pow3[2];
-        b.index_p.edge_block_0 += pow3[5];
-        b.index_p.triangle_1 += pow3[2];
-        b.index_p.corner_2x5_5 += pow3[7];
-    }
-    if (diff_p & INDEX_G1) {
-        b.index_p.diagonal7_3 += pow3[3];
-        b.index_p.edge_2x_0 += pow3[3];
-        b.index_p.h_v_2_1 += pow3[9];
-        b.index_p.corner_3x3_1 += pow3[6];
-        b.index_p.edge_x_side_1 += pow3[4];
-        b.index_p.triangle_1 += pow3[5];
-        b.index_p.corner_2x5_1 += pow3[4];
-        b.index_p.corner_2x5_5 += pow3[8];
-    }
-    if (diff_p & INDEX_H1) {
-        b.index_p.diagonal8_1 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[2];
-        b.index_p.edge_2x_1 += pow3[9];
-        b.index_p.h_v_2_0 += pow3[0];
-        b.index_p.h_v_2_1 += pow3[1];
-        b.index_p.corner_3x3_1 += pow3[9];
-        b.index_p.edge_x_side_1 += pow3[9];
-        b.index_p.edge_block_0 += pow3[4];
-        b.index_p.edge_block_1 += pow3[9];
-        b.index_p.triangle_1 += pow3[9];
-        b.index_p.corner_2x5_1 += pow3[9];
-        b.index_p.corner_2x5_5 += pow3[9];
-    }
-    if (diff_p & INDEX_A2) {
-        b.index_p.diagonal7_2 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[3];
-        b.index_p.h_v_2_0 += pow3[9];
-        b.index_p.corner_3x3_0 += pow3[6];
-        b.index_p.edge_x_side_0 += pow3[4];
-        b.index_p.triangle_0 += pow3[5];
-        b.index_p.corner_2x5_0 += pow3[4];
-        b.index_p.corner_2x5_4 += pow3[8];
-    }
-    if (diff_p & INDEX_B2) {
-        b.index_p.diagonal8_0 += pow3[8];
-        b.index_p.edge_2x_0 += pow3[1];
-        b.index_p.edge_2x_3 += pow3[0];
-        b.index_p.h_v_2_0 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[3];
-        b.index_p.corner_3x3_0 += pow3[5];
-        b.index_p.edge_x_side_0 += pow3[3];
-        b.index_p.triangle_0 += pow3[4];
-        b.index_p.corner_2x5_0 += pow3[3];
-        b.index_p.corner_2x5_4 += pow3[3];
-    }
-    if (diff_p & INDEX_C2) {
-        b.index_p.diagonal7_0 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[3];
-        b.index_p.corner_3x3_0 += pow3[4];
-        b.index_p.edge_block_0 += pow3[3];
-        b.index_p.triangle_0 += pow3[3];
-        b.index_p.corner_2x5_0 += pow3[2];
-    }
-    if (diff_p & INDEX_D2) {
-        b.index_p.diagonal6_0 += pow3[8];
-        b.index_p.diagonal5_3 += pow3[6];
-        b.index_p.h_v_2_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[3];
-        b.index_p.edge_block_0 += pow3[2];
-        b.index_p.corner_2x5_0 += pow3[1];
-        b.index_p.corner_2x5_5 += pow3[0];
-    }
-    if (diff_p & INDEX_E2) {
-        b.index_p.diagonal6_3 += pow3[5];
-        b.index_p.diagonal5_0 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[8];
-        b.index_p.edge_block_0 += pow3[1];
-        b.index_p.corner_2x5_0 += pow3[0];
-        b.index_p.corner_2x5_5 += pow3[1];
-    }
-    if (diff_p & INDEX_F2) {
-        b.index_p.diagonal7_3 += pow3[4];
-        b.index_p.h_v_2_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[8];
-        b.index_p.corner_3x3_1 += pow3[2];
-        b.index_p.edge_block_0 += pow3[0];
-        b.index_p.triangle_1 += pow3[1];
-        b.index_p.corner_2x5_5 += pow3[2];
-    }
-    if (diff_p & INDEX_G2) {
-        b.index_p.diagonal8_1 += pow3[8];
-        b.index_p.edge_2x_0 += pow3[0];
-        b.index_p.edge_2x_1 += pow3[1];
-        b.index_p.h_v_2_0 += pow3[3];
-        b.index_p.h_v_2_1 += pow3[8];
-        b.index_p.corner_3x3_1 += pow3[5];
-        b.index_p.edge_x_side_1 += pow3[3];
-        b.index_p.triangle_1 += pow3[4];
-        b.index_p.corner_2x5_1 += pow3[3];
-        b.index_p.corner_2x5_5 += pow3[3];
-    }
-    if (diff_p & INDEX_H2) {
-        b.index_p.diagonal7_1 += pow3[9];
-        b.index_p.edge_2x_1 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[2];
-        b.index_p.corner_3x3_1 += pow3[8];
-        b.index_p.edge_x_side_1 += pow3[8];
-        b.index_p.triangle_1 += pow3[8];
-        b.index_p.corner_2x5_1 += pow3[8];
-        b.index_p.corner_2x5_5 += pow3[4];
-    }
-    if (diff_p & INDEX_A3) {
-        b.index_p.diagonal6_2 += pow3[9];
-        b.index_p.diagonal5_2 += pow3[0];
-        b.index_p.edge_2x_3 += pow3[4];
-        b.index_p.h_v_3_0 += pow3[9];
-        b.index_p.corner_3x3_0 += pow3[3];
-        b.index_p.edge_x_side_0 += pow3[2];
-        b.index_p.edge_block_3 += pow3[5];
-        b.index_p.triangle_0 += pow3[2];
-        b.index_p.corner_2x5_4 += pow3[7];
-    }
-    if (diff_p & INDEX_B3) {
-        b.index_p.diagonal7_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[4];
-        b.index_p.h_v_3_0 += pow3[8];
-        b.index_p.corner_3x3_0 += pow3[2];
-        b.index_p.edge_block_3 += pow3[0];
-        b.index_p.triangle_0 += pow3[1];
-        b.index_p.corner_2x5_4 += pow3[2];
-    }
-    if (diff_p & INDEX_C3) {
-        b.index_p.diagonal8_0 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[1];
-        b.index_p.diagonal5_3 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[4];
-        b.index_p.corner_3x3_0 += pow3[1];
-    }
-    if (diff_p & INDEX_D3) {
-        b.index_p.diagonal7_0 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[0];
-        b.index_p.diagonal6_3 += pow3[6];
-        b.index_p.h_v_3_0 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[1];
-        b.index_p.h_v_4_3 += pow3[4];
-    }
-    if (diff_p & INDEX_E3) {
-        b.index_p.diagonal7_0 += pow3[2];
-        b.index_p.diagonal7_3 += pow3[5];
-        b.index_p.diagonal6_0 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[0];
-        b.index_p.h_v_4_1 += pow3[7];
-    }
-    if (diff_p & INDEX_F3) {
-        b.index_p.diagonal8_1 += pow3[7];
-        b.index_p.diagonal7_0 += pow3[1];
-        b.index_p.diagonal5_0 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[7];
-        b.index_p.corner_3x3_1 += pow3[1];
-    }
-    if (diff_p & INDEX_G3) {
-        b.index_p.diagonal7_1 += pow3[8];
-        b.index_p.h_v_2_1 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[3];
-        b.index_p.corner_3x3_1 += pow3[4];
-        b.index_p.edge_block_1 += pow3[3];
-        b.index_p.triangle_1 += pow3[3];
-        b.index_p.corner_2x5_1 += pow3[2];
-    }
-    if (diff_p & INDEX_H3) {
-        b.index_p.diagonal6_1 += pow3[4];
-        b.index_p.diagonal5_1 += pow3[4];
-        b.index_p.edge_2x_1 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[2];
-        b.index_p.corner_3x3_1 += pow3[7];
-        b.index_p.edge_x_side_1 += pow3[7];
-        b.index_p.edge_block_1 += pow3[8];
-        b.index_p.triangle_1 += pow3[7];
-        b.index_p.corner_2x5_1 += pow3[7];
-    }
-    if (diff_p & INDEX_A4) {
-        b.index_p.diagonal6_2 += pow3[0];
-        b.index_p.diagonal6_3 += pow3[2];
-        b.index_p.diagonal5_2 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[3];
-        b.index_p.edge_2x_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[1];
-        b.index_p.edge_x_side_3 += pow3[5];
-        b.index_p.edge_block_3 += pow3[6];
-        b.index_p.triangle_0 += pow3[0];
-        b.index_p.corner_2x5_3 += pow3[5];
-        b.index_p.corner_2x5_4 += pow3[6];
-    }
-    if (diff_p & INDEX_B4) {
-        b.index_p.diagonal6_2 += pow3[8];
-        b.index_p.diagonal5_3 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[8];
-        b.index_p.edge_block_3 += pow3[1];
-        b.index_p.corner_2x5_3 += pow3[0];
-        b.index_p.corner_2x5_4 += pow3[1];
-    }
-    if (diff_p & INDEX_C4) {
-        b.index_p.diagonal7_2 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[2];
-        b.index_p.diagonal6_3 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[7];
-        b.index_p.h_v_4_3 += pow3[0];
-    }
-    if (diff_p & INDEX_D4) {
-        b.index_p.diagonal8_0 += pow3[6];
-        b.index_p.diagonal8_1 += pow3[0];
-        b.index_p.diagonal7_3 += pow3[6];
-        b.index_p.diagonal5_3 += pow3[2];
-        b.index_p.h_v_3_0 += pow3[1];
-        b.index_p.h_v_3_3 += pow3[0];
-        b.index_p.h_v_4_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[5];
-        b.index_p.corner_3x3_0 += pow3[0];
-    }
-    if (diff_p & INDEX_E4) {
-        b.index_p.diagonal8_0 += pow3[1];
-        b.index_p.diagonal8_1 += pow3[6];
-        b.index_p.diagonal7_0 += pow3[6];
-        b.index_p.diagonal5_0 += pow3[2];
-        b.index_p.h_v_3_0 += pow3[0];
-        b.index_p.h_v_3_1 += pow3[1];
-        b.index_p.h_v_4_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[6];
-        b.index_p.corner_3x3_1 += pow3[0];
-    }
-    if (diff_p & INDEX_F4) {
-        b.index_p.diagonal7_0 += pow3[0];
-        b.index_p.diagonal7_1 += pow3[7];
-        b.index_p.diagonal6_0 += pow3[6];
-        b.index_p.h_v_3_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[4];
-        b.index_p.h_v_4_1 += pow3[1];
-    }
-    if (diff_p & INDEX_G4) {
-        b.index_p.diagonal6_1 += pow3[5];
-        b.index_p.diagonal5_0 += pow3[6];
-        b.index_p.h_v_2_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[3];
-        b.index_p.edge_block_1 += pow3[2];
-        b.index_p.corner_2x5_1 += pow3[1];
-        b.index_p.corner_2x5_6 += pow3[0];
-    }
-    if (diff_p & INDEX_H4) {
-        b.index_p.diagonal6_0 += pow3[1];
-        b.index_p.diagonal6_1 += pow3[3];
-        b.index_p.diagonal5_0 += pow3[1];
-        b.index_p.diagonal5_1 += pow3[5];
-        b.index_p.edge_2x_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[2];
-        b.index_p.edge_x_side_1 += pow3[6];
-        b.index_p.edge_x_side_2 += pow3[0];
-        b.index_p.edge_block_1 += pow3[7];
-        b.index_p.triangle_1 += pow3[6];
-        b.index_p.corner_2x5_1 += pow3[6];
-        b.index_p.corner_2x5_6 += pow3[5];
-    }
-    if (diff_p & INDEX_A5) {
-        b.index_p.diagonal6_2 += pow3[1];
-        b.index_p.diagonal6_3 += pow3[3];
-        b.index_p.diagonal5_2 += pow3[1];
-        b.index_p.diagonal5_3 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[2];
-        b.index_p.edge_x_side_0 += pow3[0];
-        b.index_p.edge_x_side_3 += pow3[6];
-        b.index_p.edge_block_3 += pow3[7];
-        b.index_p.triangle_3 += pow3[6];
-        b.index_p.corner_2x5_3 += pow3[6];
-        b.index_p.corner_2x5_4 += pow3[5];
-    }
-    if (diff_p & INDEX_B5) {
-        b.index_p.diagonal6_3 += pow3[8];
-        b.index_p.diagonal5_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[3];
-        b.index_p.edge_block_3 += pow3[2];
-        b.index_p.corner_2x5_3 += pow3[1];
-        b.index_p.corner_2x5_4 += pow3[0];
-    }
-    if (diff_p & INDEX_C5) {
-        b.index_p.diagonal7_2 += pow3[0];
-        b.index_p.diagonal7_3 += pow3[7];
-        b.index_p.diagonal6_2 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[4];
-        b.index_p.h_v_4_3 += pow3[1];
-    }
-    if (diff_p & INDEX_D5) {
-        b.index_p.diagonal8_0 += pow3[0];
-        b.index_p.diagonal8_1 += pow3[5];
-        b.index_p.diagonal7_2 += pow3[6];
-        b.index_p.diagonal5_2 += pow3[2];
-        b.index_p.h_v_3_2 += pow3[0];
-        b.index_p.h_v_3_3 += pow3[1];
-        b.index_p.h_v_4_2 += pow3[5];
-        b.index_p.h_v_4_3 += pow3[6];
-        b.index_p.corner_3x3_3 += pow3[0];
-    }
-    if (diff_p & INDEX_E5) {
-        b.index_p.diagonal8_0 += pow3[5];
-        b.index_p.diagonal8_1 += pow3[1];
-        b.index_p.diagonal7_1 += pow3[6];
-        b.index_p.diagonal5_1 += pow3[2];
-        b.index_p.h_v_3_1 += pow3[0];
-        b.index_p.h_v_3_2 += pow3[1];
-        b.index_p.h_v_4_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[6];
-        b.index_p.corner_3x3_2 += pow3[0];
-    }
-    if (diff_p & INDEX_F5) {
-        b.index_p.diagonal7_0 += pow3[5];
-        b.index_p.diagonal7_1 += pow3[2];
-        b.index_p.diagonal6_1 += pow3[6];
-        b.index_p.h_v_3_1 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[0];
-        b.index_p.h_v_4_2 += pow3[7];
-    }
-    if (diff_p & INDEX_G5) {
-        b.index_p.diagonal6_0 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[6];
-        b.index_p.h_v_2_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[8];
-        b.index_p.edge_block_1 += pow3[1];
-        b.index_p.corner_2x5_1 += pow3[0];
-        b.index_p.corner_2x5_6 += pow3[1];
-    }
-    if (diff_p & INDEX_H5) {
-        b.index_p.diagonal6_0 += pow3[0];
-        b.index_p.diagonal6_1 += pow3[2];
-        b.index_p.diagonal5_0 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[9];
-        b.index_p.edge_x_side_1 += pow3[5];
-        b.index_p.edge_x_side_2 += pow3[1];
-        b.index_p.edge_block_1 += pow3[6];
-        b.index_p.triangle_2 += pow3[0];
-        b.index_p.corner_2x5_1 += pow3[5];
-        b.index_p.corner_2x5_6 += pow3[6];
-    }
-    if (diff_p & INDEX_A6) {
-        b.index_p.diagonal6_3 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[4];
-        b.index_p.edge_2x_3 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[2];
-        b.index_p.corner_3x3_3 += pow3[7];
-        b.index_p.edge_x_side_3 += pow3[7];
-        b.index_p.edge_block_3 += pow3[8];
-        b.index_p.triangle_3 += pow3[7];
-        b.index_p.corner_2x5_3 += pow3[7];
-    }
-    if (diff_p & INDEX_B6) {
-        b.index_p.diagonal7_3 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[3];
-        b.index_p.corner_3x3_3 += pow3[4];
-        b.index_p.edge_block_3 += pow3[3];
-        b.index_p.triangle_3 += pow3[3];
-        b.index_p.corner_2x5_3 += pow3[2];
-    }
-    if (diff_p & INDEX_C6) {
-        b.index_p.diagonal8_1 += pow3[4];
-        b.index_p.diagonal7_2 += pow3[1];
-        b.index_p.diagonal5_2 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[4];
-        b.index_p.h_v_3_3 += pow3[7];
-        b.index_p.corner_3x3_3 += pow3[1];
-    }
-    if (diff_p & INDEX_D6) {
-        b.index_p.diagonal7_1 += pow3[5];
-        b.index_p.diagonal7_2 += pow3[2];
-        b.index_p.diagonal6_2 += pow3[6];
-        b.index_p.h_v_3_2 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[0];
-        b.index_p.h_v_4_3 += pow3[7];
-    }
-    if (diff_p & INDEX_E6) {
-        b.index_p.diagonal7_1 += pow3[0];
-        b.index_p.diagonal7_2 += pow3[5];
-        b.index_p.diagonal6_1 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[6];
-        b.index_p.h_v_4_1 += pow3[4];
-        b.index_p.h_v_4_2 += pow3[1];
-    }
-    if (diff_p & INDEX_F6) {
-        b.index_p.diagonal8_0 += pow3[4];
-        b.index_p.diagonal7_1 += pow3[1];
-        b.index_p.diagonal5_1 += pow3[7];
-        b.index_p.h_v_3_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[7];
-        b.index_p.corner_3x3_2 += pow3[1];
-    }
-    if (diff_p & INDEX_G6) {
-        b.index_p.diagonal7_0 += pow3[4];
-        b.index_p.h_v_2_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[8];
-        b.index_p.corner_3x3_2 += pow3[2];
-        b.index_p.edge_block_1 += pow3[0];
-        b.index_p.triangle_2 += pow3[1];
-        b.index_p.corner_2x5_6 += pow3[2];
-    }
-    if (diff_p & INDEX_H6) {
-        b.index_p.diagonal6_0 += pow3[4];
-        b.index_p.diagonal5_0 += pow3[0];
-        b.index_p.edge_2x_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[9];
-        b.index_p.corner_3x3_2 += pow3[3];
-        b.index_p.edge_x_side_2 += pow3[2];
-        b.index_p.edge_block_1 += pow3[5];
-        b.index_p.triangle_2 += pow3[2];
-        b.index_p.corner_2x5_6 += pow3[7];
-    }
-    if (diff_p & INDEX_A7) {
-        b.index_p.diagonal7_3 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[8];
-        b.index_p.h_v_2_2 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[8];
-        b.index_p.edge_x_side_3 += pow3[8];
-        b.index_p.triangle_3 += pow3[8];
-        b.index_p.corner_2x5_3 += pow3[8];
-        b.index_p.corner_2x5_7 += pow3[4];
-    }
-    if (diff_p & INDEX_B7) {
-        b.index_p.diagonal8_1 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[0];
-        b.index_p.edge_2x_3 += pow3[1];
-        b.index_p.h_v_2_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[8];
-        b.index_p.corner_3x3_3 += pow3[5];
-        b.index_p.edge_x_side_3 += pow3[3];
-        b.index_p.triangle_3 += pow3[4];
-        b.index_p.corner_2x5_3 += pow3[3];
-        b.index_p.corner_2x5_7 += pow3[3];
-    }
-    if (diff_p & INDEX_C7) {
-        b.index_p.diagonal7_1 += pow3[4];
-        b.index_p.h_v_2_2 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[8];
-        b.index_p.corner_3x3_3 += pow3[2];
-        b.index_p.edge_block_2 += pow3[0];
-        b.index_p.triangle_3 += pow3[1];
-        b.index_p.corner_2x5_7 += pow3[2];
-    }
-    if (diff_p & INDEX_D7) {
-        b.index_p.diagonal6_1 += pow3[8];
-        b.index_p.diagonal5_2 += pow3[6];
-        b.index_p.h_v_2_2 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[8];
-        b.index_p.edge_block_2 += pow3[1];
-        b.index_p.corner_2x5_2 += pow3[0];
-        b.index_p.corner_2x5_7 += pow3[1];
-    }
-    if (diff_p & INDEX_E7) {
-        b.index_p.diagonal6_2 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[8];
-        b.index_p.h_v_2_2 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[3];
-        b.index_p.edge_block_2 += pow3[2];
-        b.index_p.corner_2x5_2 += pow3[1];
-        b.index_p.corner_2x5_7 += pow3[0];
-    }
-    if (diff_p & INDEX_F7) {
-        b.index_p.diagonal7_2 += pow3[4];
-        b.index_p.h_v_2_2 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[3];
-        b.index_p.corner_3x3_2 += pow3[4];
-        b.index_p.edge_block_2 += pow3[3];
-        b.index_p.triangle_2 += pow3[3];
-        b.index_p.corner_2x5_2 += pow3[2];
-    }
-    if (diff_p & INDEX_G7) {
-        b.index_p.diagonal8_0 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[0];
-        b.index_p.edge_2x_2 += pow3[1];
-        b.index_p.h_v_2_1 += pow3[3];
-        b.index_p.h_v_2_2 += pow3[3];
-        b.index_p.corner_3x3_2 += pow3[5];
-        b.index_p.edge_x_side_2 += pow3[3];
-        b.index_p.triangle_2 += pow3[4];
-        b.index_p.corner_2x5_2 += pow3[3];
-        b.index_p.corner_2x5_6 += pow3[3];
-    }
-    if (diff_p & INDEX_H7) {
-        b.index_p.diagonal7_0 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[3];
-        b.index_p.h_v_2_2 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[6];
-        b.index_p.edge_x_side_2 += pow3[4];
-        b.index_p.triangle_2 += pow3[5];
-        b.index_p.corner_2x5_2 += pow3[4];
-        b.index_p.corner_2x5_6 += pow3[8];
-    }
-    if (diff_p & INDEX_A8) {
-        b.index_p.diagonal8_1 += pow3[2];
-        b.index_p.edge_2x_2 += pow3[2];
-        b.index_p.edge_2x_3 += pow3[9];
-        b.index_p.h_v_2_2 += pow3[0];
-        b.index_p.h_v_2_3 += pow3[1];
-        b.index_p.corner_3x3_3 += pow3[9];
-        b.index_p.edge_x_side_3 += pow3[9];
-        b.index_p.edge_block_2 += pow3[4];
-        b.index_p.edge_block_3 += pow3[9];
-        b.index_p.triangle_3 += pow3[9];
-        b.index_p.corner_2x5_3 += pow3[9];
-        b.index_p.corner_2x5_7 += pow3[9];
-    }
-    if (diff_p & INDEX_B8) {
-        b.index_p.diagonal7_1 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[3];
-        b.index_p.h_v_2_3 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[6];
-        b.index_p.edge_x_side_3 += pow3[4];
-        b.index_p.triangle_3 += pow3[5];
-        b.index_p.corner_2x5_3 += pow3[4];
-        b.index_p.corner_2x5_7 += pow3[8];
-    }
-    if (diff_p & INDEX_C8) {
-        b.index_p.diagonal6_1 += pow3[9];
-        b.index_p.diagonal5_1 += pow3[0];
-        b.index_p.edge_2x_2 += pow3[4];
-        b.index_p.h_v_3_3 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[3];
-        b.index_p.edge_x_side_3 += pow3[2];
-        b.index_p.edge_block_2 += pow3[5];
-        b.index_p.triangle_3 += pow3[2];
-        b.index_p.corner_2x5_7 += pow3[7];
-    }
-    if (diff_p & INDEX_D8) {
-        b.index_p.diagonal6_1 += pow3[0];
-        b.index_p.diagonal6_2 += pow3[2];
-        b.index_p.diagonal5_1 += pow3[9];
-        b.index_p.diagonal5_2 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[5];
-        b.index_p.h_v_4_3 += pow3[9];
-        b.index_p.edge_x_side_2 += pow3[5];
-        b.index_p.edge_x_side_3 += pow3[1];
-        b.index_p.edge_block_2 += pow3[6];
-        b.index_p.triangle_3 += pow3[0];
-        b.index_p.corner_2x5_2 += pow3[5];
-        b.index_p.corner_2x5_7 += pow3[6];
-    }
-    if (diff_p & INDEX_E8) {
-        b.index_p.diagonal6_1 += pow3[1];
-        b.index_p.diagonal6_2 += pow3[3];
-        b.index_p.diagonal5_1 += pow3[1];
-        b.index_p.diagonal5_2 += pow3[5];
-        b.index_p.edge_2x_2 += pow3[6];
-        b.index_p.h_v_4_1 += pow3[2];
-        b.index_p.edge_x_side_2 += pow3[6];
-        b.index_p.edge_x_side_3 += pow3[0];
-        b.index_p.edge_block_2 += pow3[7];
-        b.index_p.triangle_2 += pow3[6];
-        b.index_p.corner_2x5_2 += pow3[6];
-        b.index_p.corner_2x5_7 += pow3[5];
-    }
-    if (diff_p & INDEX_F8) {
-        b.index_p.diagonal6_2 += pow3[4];
-        b.index_p.diagonal5_2 += pow3[4];
-        b.index_p.edge_2x_2 += pow3[7];
-        b.index_p.h_v_3_1 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[7];
-        b.index_p.edge_x_side_2 += pow3[7];
-        b.index_p.edge_block_2 += pow3[8];
-        b.index_p.triangle_2 += pow3[7];
-        b.index_p.corner_2x5_2 += pow3[7];
-    }
-    if (diff_p & INDEX_G8) {
-        b.index_p.diagonal7_2 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[8];
-        b.index_p.h_v_2_1 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[8];
-        b.index_p.edge_x_side_2 += pow3[8];
-        b.index_p.triangle_2 += pow3[8];
-        b.index_p.corner_2x5_2 += pow3[8];
-        b.index_p.corner_2x5_6 += pow3[4];
-    }
-    if (diff_p & INDEX_H8) {
-        b.index_p.diagonal8_0 += pow3[2];
-        b.index_p.edge_2x_1 += pow3[2];
-        b.index_p.edge_2x_2 += pow3[9];
-        b.index_p.h_v_2_1 += pow3[0];
-        b.index_p.h_v_2_2 += pow3[1];
-        b.index_p.corner_3x3_2 += pow3[9];
-        b.index_p.edge_x_side_2 += pow3[9];
-        b.index_p.edge_block_1 += pow3[4];
-        b.index_p.edge_block_2 += pow3[9];
-        b.index_p.triangle_2 += pow3[9];
-        b.index_p.corner_2x5_2 += pow3[9];
-        b.index_p.corner_2x5_6 += pow3[9];
-    }
-    if (diff_o & INDEX_A1) {
-        b.index_o.diagonal8_0 -= pow3[9];
-        b.index_o.edge_2x_0 -= pow3[9];
-        b.index_o.edge_2x_3 -= pow3[2];
-        b.index_o.h_v_2_0 -= pow3[1];
-        b.index_o.h_v_2_3 -= pow3[0];
-        b.index_o.corner_3x3_0 -= pow3[9];
-        b.index_o.edge_x_side_0 -= pow3[9];
-        b.index_o.edge_block_0 -= pow3[9];
-        b.index_o.edge_block_3 -= pow3[4];
-        b.index_o.triangle_0 -= pow3[9];
-        b.index_o.corner_2x5_0 -= pow3[9];
-        b.index_o.corner_2x5_4 -= pow3[9];
-    }
-    if (diff_o & INDEX_B1) {
-        b.index_o.diagonal7_0 -= pow3[9];
-        b.index_o.edge_2x_0 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[2];
-        b.index_o.corner_3x3_0 -= pow3[8];
-        b.index_o.edge_x_side_0 -= pow3[8];
-        b.index_o.triangle_0 -= pow3[8];
-        b.index_o.corner_2x5_0 -= pow3[8];
-        b.index_o.corner_2x5_4 -= pow3[4];
-    }
-    if (diff_o & INDEX_C1) {
-        b.index_o.diagonal6_0 -= pow3[9];
-        b.index_o.diagonal5_0 -= pow3[4];
-        b.index_o.edge_2x_0 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[2];
-        b.index_o.corner_3x3_0 -= pow3[7];
-        b.index_o.edge_x_side_0 -= pow3[7];
-        b.index_o.edge_block_0 -= pow3[8];
-        b.index_o.triangle_0 -= pow3[7];
-        b.index_o.corner_2x5_0 -= pow3[7];
-    }
-    if (diff_o & INDEX_D1) {
-        b.index_o.diagonal6_0 -= pow3[3];
-        b.index_o.diagonal6_3 -= pow3[1];
-        b.index_o.diagonal5_0 -= pow3[9];
-        b.index_o.diagonal5_3 -= pow3[1];
-        b.index_o.edge_2x_0 -= pow3[6];
-        b.index_o.h_v_4_3 -= pow3[2];
-        b.index_o.edge_x_side_0 -= pow3[6];
-        b.index_o.edge_x_side_1 -= pow3[0];
-        b.index_o.edge_block_0 -= pow3[7];
-        b.index_o.triangle_0 -= pow3[6];
-        b.index_o.corner_2x5_0 -= pow3[6];
-        b.index_o.corner_2x5_5 -= pow3[5];
-    }
-    if (diff_o & INDEX_E1) {
-        b.index_o.diagonal6_0 -= pow3[2];
-        b.index_o.diagonal6_3 -= pow3[0];
-        b.index_o.diagonal5_0 -= pow3[3];
-        b.index_o.diagonal5_3 -= pow3[5];
-        b.index_o.edge_2x_0 -= pow3[5];
-        b.index_o.h_v_4_1 -= pow3[9];
-        b.index_o.edge_x_side_0 -= pow3[5];
-        b.index_o.edge_x_side_1 -= pow3[1];
-        b.index_o.edge_block_0 -= pow3[6];
-        b.index_o.triangle_1 -= pow3[0];
-        b.index_o.corner_2x5_0 -= pow3[5];
-        b.index_o.corner_2x5_5 -= pow3[6];
-    }
-    if (diff_o & INDEX_F1) {
-        b.index_o.diagonal6_3 -= pow3[4];
-        b.index_o.diagonal5_3 -= pow3[0];
-        b.index_o.edge_2x_0 -= pow3[4];
-        b.index_o.h_v_3_1 -= pow3[9];
-        b.index_o.corner_3x3_1 -= pow3[3];
-        b.index_o.edge_x_side_1 -= pow3[2];
-        b.index_o.edge_block_0 -= pow3[5];
-        b.index_o.triangle_1 -= pow3[2];
-        b.index_o.corner_2x5_5 -= pow3[7];
-    }
-    if (diff_o & INDEX_G1) {
-        b.index_o.diagonal7_3 -= pow3[3];
-        b.index_o.edge_2x_0 -= pow3[3];
-        b.index_o.h_v_2_1 -= pow3[9];
-        b.index_o.corner_3x3_1 -= pow3[6];
-        b.index_o.edge_x_side_1 -= pow3[4];
-        b.index_o.triangle_1 -= pow3[5];
-        b.index_o.corner_2x5_1 -= pow3[4];
-        b.index_o.corner_2x5_5 -= pow3[8];
-    }
-    if (diff_o & INDEX_H1) {
-        b.index_o.diagonal8_1 -= pow3[9];
-        b.index_o.edge_2x_0 -= pow3[2];
-        b.index_o.edge_2x_1 -= pow3[9];
-        b.index_o.h_v_2_0 -= pow3[0];
-        b.index_o.h_v_2_1 -= pow3[1];
-        b.index_o.corner_3x3_1 -= pow3[9];
-        b.index_o.edge_x_side_1 -= pow3[9];
-        b.index_o.edge_block_0 -= pow3[4];
-        b.index_o.edge_block_1 -= pow3[9];
-        b.index_o.triangle_1 -= pow3[9];
-        b.index_o.corner_2x5_1 -= pow3[9];
-        b.index_o.corner_2x5_5 -= pow3[9];
-    }
-    if (diff_o & INDEX_A2) {
-        b.index_o.diagonal7_2 -= pow3[9];
-        b.index_o.edge_2x_3 -= pow3[3];
-        b.index_o.h_v_2_0 -= pow3[9];
-        b.index_o.corner_3x3_0 -= pow3[6];
-        b.index_o.edge_x_side_0 -= pow3[4];
-        b.index_o.triangle_0 -= pow3[5];
-        b.index_o.corner_2x5_0 -= pow3[4];
-        b.index_o.corner_2x5_4 -= pow3[8];
-    }
-    if (diff_o & INDEX_B2) {
-        b.index_o.diagonal8_0 -= pow3[8];
-        b.index_o.edge_2x_0 -= pow3[1];
-        b.index_o.edge_2x_3 -= pow3[0];
-        b.index_o.h_v_2_0 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[3];
-        b.index_o.corner_3x3_0 -= pow3[5];
-        b.index_o.edge_x_side_0 -= pow3[3];
-        b.index_o.triangle_0 -= pow3[4];
-        b.index_o.corner_2x5_0 -= pow3[3];
-        b.index_o.corner_2x5_4 -= pow3[3];
-    }
-    if (diff_o & INDEX_C2) {
-        b.index_o.diagonal7_0 -= pow3[8];
-        b.index_o.h_v_2_0 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[3];
-        b.index_o.corner_3x3_0 -= pow3[4];
-        b.index_o.edge_block_0 -= pow3[3];
-        b.index_o.triangle_0 -= pow3[3];
-        b.index_o.corner_2x5_0 -= pow3[2];
-    }
-    if (diff_o & INDEX_D2) {
-        b.index_o.diagonal6_0 -= pow3[8];
-        b.index_o.diagonal5_3 -= pow3[6];
-        b.index_o.h_v_2_0 -= pow3[6];
-        b.index_o.h_v_4_3 -= pow3[3];
-        b.index_o.edge_block_0 -= pow3[2];
-        b.index_o.corner_2x5_0 -= pow3[1];
-        b.index_o.corner_2x5_5 -= pow3[0];
-    }
-    if (diff_o & INDEX_E2) {
-        b.index_o.diagonal6_3 -= pow3[5];
-        b.index_o.diagonal5_0 -= pow3[8];
-        b.index_o.h_v_2_0 -= pow3[5];
-        b.index_o.h_v_4_1 -= pow3[8];
-        b.index_o.edge_block_0 -= pow3[1];
-        b.index_o.corner_2x5_0 -= pow3[0];
-        b.index_o.corner_2x5_5 -= pow3[1];
-    }
-    if (diff_o & INDEX_F2) {
-        b.index_o.diagonal7_3 -= pow3[4];
-        b.index_o.h_v_2_0 -= pow3[4];
-        b.index_o.h_v_3_1 -= pow3[8];
-        b.index_o.corner_3x3_1 -= pow3[2];
-        b.index_o.edge_block_0 -= pow3[0];
-        b.index_o.triangle_1 -= pow3[1];
-        b.index_o.corner_2x5_5 -= pow3[2];
-    }
-    if (diff_o & INDEX_G2) {
-        b.index_o.diagonal8_1 -= pow3[8];
-        b.index_o.edge_2x_0 -= pow3[0];
-        b.index_o.edge_2x_1 -= pow3[1];
-        b.index_o.h_v_2_0 -= pow3[3];
-        b.index_o.h_v_2_1 -= pow3[8];
-        b.index_o.corner_3x3_1 -= pow3[5];
-        b.index_o.edge_x_side_1 -= pow3[3];
-        b.index_o.triangle_1 -= pow3[4];
-        b.index_o.corner_2x5_1 -= pow3[3];
-        b.index_o.corner_2x5_5 -= pow3[3];
-    }
-    if (diff_o & INDEX_H2) {
-        b.index_o.diagonal7_1 -= pow3[9];
-        b.index_o.edge_2x_1 -= pow3[8];
-        b.index_o.h_v_2_0 -= pow3[2];
-        b.index_o.corner_3x3_1 -= pow3[8];
-        b.index_o.edge_x_side_1 -= pow3[8];
-        b.index_o.triangle_1 -= pow3[8];
-        b.index_o.corner_2x5_1 -= pow3[8];
-        b.index_o.corner_2x5_5 -= pow3[4];
-    }
-    if (diff_o & INDEX_A3) {
-        b.index_o.diagonal6_2 -= pow3[9];
-        b.index_o.diagonal5_2 -= pow3[0];
-        b.index_o.edge_2x_3 -= pow3[4];
-        b.index_o.h_v_3_0 -= pow3[9];
-        b.index_o.corner_3x3_0 -= pow3[3];
-        b.index_o.edge_x_side_0 -= pow3[2];
-        b.index_o.edge_block_3 -= pow3[5];
-        b.index_o.triangle_0 -= pow3[2];
-        b.index_o.corner_2x5_4 -= pow3[7];
-    }
-    if (diff_o & INDEX_B3) {
-        b.index_o.diagonal7_2 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[4];
-        b.index_o.h_v_3_0 -= pow3[8];
-        b.index_o.corner_3x3_0 -= pow3[2];
-        b.index_o.edge_block_3 -= pow3[0];
-        b.index_o.triangle_0 -= pow3[1];
-        b.index_o.corner_2x5_4 -= pow3[2];
-    }
-    if (diff_o & INDEX_C3) {
-        b.index_o.diagonal8_0 -= pow3[7];
-        b.index_o.diagonal7_3 -= pow3[1];
-        b.index_o.diagonal5_3 -= pow3[7];
-        b.index_o.h_v_3_0 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[4];
-        b.index_o.corner_3x3_0 -= pow3[1];
-    }
-    if (diff_o & INDEX_D3) {
-        b.index_o.diagonal7_0 -= pow3[7];
-        b.index_o.diagonal7_3 -= pow3[0];
-        b.index_o.diagonal6_3 -= pow3[6];
-        b.index_o.h_v_3_0 -= pow3[6];
-        b.index_o.h_v_4_0 -= pow3[1];
-        b.index_o.h_v_4_3 -= pow3[4];
-    }
-    if (diff_o & INDEX_E3) {
-        b.index_o.diagonal7_0 -= pow3[2];
-        b.index_o.diagonal7_3 -= pow3[5];
-        b.index_o.diagonal6_0 -= pow3[7];
-        b.index_o.h_v_3_0 -= pow3[5];
-        b.index_o.h_v_4_0 -= pow3[0];
-        b.index_o.h_v_4_1 -= pow3[7];
-    }
-    if (diff_o & INDEX_F3) {
-        b.index_o.diagonal8_1 -= pow3[7];
-        b.index_o.diagonal7_0 -= pow3[1];
-        b.index_o.diagonal5_0 -= pow3[7];
-        b.index_o.h_v_3_0 -= pow3[4];
-        b.index_o.h_v_3_1 -= pow3[7];
-        b.index_o.corner_3x3_1 -= pow3[1];
-    }
-    if (diff_o & INDEX_G3) {
-        b.index_o.diagonal7_1 -= pow3[8];
-        b.index_o.h_v_2_1 -= pow3[7];
-        b.index_o.h_v_3_0 -= pow3[3];
-        b.index_o.corner_3x3_1 -= pow3[4];
-        b.index_o.edge_block_1 -= pow3[3];
-        b.index_o.triangle_1 -= pow3[3];
-        b.index_o.corner_2x5_1 -= pow3[2];
-    }
-    if (diff_o & INDEX_H3) {
-        b.index_o.diagonal6_1 -= pow3[4];
-        b.index_o.diagonal5_1 -= pow3[4];
-        b.index_o.edge_2x_1 -= pow3[7];
-        b.index_o.h_v_3_0 -= pow3[2];
-        b.index_o.corner_3x3_1 -= pow3[7];
-        b.index_o.edge_x_side_1 -= pow3[7];
-        b.index_o.edge_block_1 -= pow3[8];
-        b.index_o.triangle_1 -= pow3[7];
-        b.index_o.corner_2x5_1 -= pow3[7];
-    }
-    if (diff_o & INDEX_A4) {
-        b.index_o.diagonal6_2 -= pow3[0];
-        b.index_o.diagonal6_3 -= pow3[2];
-        b.index_o.diagonal5_2 -= pow3[9];
-        b.index_o.diagonal5_3 -= pow3[3];
-        b.index_o.edge_2x_3 -= pow3[5];
-        b.index_o.h_v_4_0 -= pow3[9];
-        b.index_o.edge_x_side_0 -= pow3[1];
-        b.index_o.edge_x_side_3 -= pow3[5];
-        b.index_o.edge_block_3 -= pow3[6];
-        b.index_o.triangle_0 -= pow3[0];
-        b.index_o.corner_2x5_3 -= pow3[5];
-        b.index_o.corner_2x5_4 -= pow3[6];
-    }
-    if (diff_o & INDEX_B4) {
-        b.index_o.diagonal6_2 -= pow3[8];
-        b.index_o.diagonal5_3 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[5];
-        b.index_o.h_v_4_0 -= pow3[8];
-        b.index_o.edge_block_3 -= pow3[1];
-        b.index_o.corner_2x5_3 -= pow3[0];
-        b.index_o.corner_2x5_4 -= pow3[1];
-    }
-    if (diff_o & INDEX_C4) {
-        b.index_o.diagonal7_2 -= pow3[7];
-        b.index_o.diagonal7_3 -= pow3[2];
-        b.index_o.diagonal6_3 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[5];
-        b.index_o.h_v_4_0 -= pow3[7];
-        b.index_o.h_v_4_3 -= pow3[0];
-    }
-    if (diff_o & INDEX_D4) {
-        b.index_o.diagonal8_0 -= pow3[6];
-        b.index_o.diagonal8_1 -= pow3[0];
-        b.index_o.diagonal7_3 -= pow3[6];
-        b.index_o.diagonal5_3 -= pow3[2];
-        b.index_o.h_v_3_0 -= pow3[1];
-        b.index_o.h_v_3_3 -= pow3[0];
-        b.index_o.h_v_4_0 -= pow3[6];
-        b.index_o.h_v_4_3 -= pow3[5];
-        b.index_o.corner_3x3_0 -= pow3[0];
-    }
-    if (diff_o & INDEX_E4) {
-        b.index_o.diagonal8_0 -= pow3[1];
-        b.index_o.diagonal8_1 -= pow3[6];
-        b.index_o.diagonal7_0 -= pow3[6];
-        b.index_o.diagonal5_0 -= pow3[2];
-        b.index_o.h_v_3_0 -= pow3[0];
-        b.index_o.h_v_3_1 -= pow3[1];
-        b.index_o.h_v_4_0 -= pow3[5];
-        b.index_o.h_v_4_1 -= pow3[6];
-        b.index_o.corner_3x3_1 -= pow3[0];
-    }
-    if (diff_o & INDEX_F4) {
-        b.index_o.diagonal7_0 -= pow3[0];
-        b.index_o.diagonal7_1 -= pow3[7];
-        b.index_o.diagonal6_0 -= pow3[6];
-        b.index_o.h_v_3_1 -= pow3[6];
-        b.index_o.h_v_4_0 -= pow3[4];
-        b.index_o.h_v_4_1 -= pow3[1];
-    }
-    if (diff_o & INDEX_G4) {
-        b.index_o.diagonal6_1 -= pow3[5];
-        b.index_o.diagonal5_0 -= pow3[6];
-        b.index_o.h_v_2_1 -= pow3[6];
-        b.index_o.h_v_4_0 -= pow3[3];
-        b.index_o.edge_block_1 -= pow3[2];
-        b.index_o.corner_2x5_1 -= pow3[1];
-        b.index_o.corner_2x5_6 -= pow3[0];
-    }
-    if (diff_o & INDEX_H4) {
-        b.index_o.diagonal6_0 -= pow3[1];
-        b.index_o.diagonal6_1 -= pow3[3];
-        b.index_o.diagonal5_0 -= pow3[1];
-        b.index_o.diagonal5_1 -= pow3[5];
-        b.index_o.edge_2x_1 -= pow3[6];
-        b.index_o.h_v_4_0 -= pow3[2];
-        b.index_o.edge_x_side_1 -= pow3[6];
-        b.index_o.edge_x_side_2 -= pow3[0];
-        b.index_o.edge_block_1 -= pow3[7];
-        b.index_o.triangle_1 -= pow3[6];
-        b.index_o.corner_2x5_1 -= pow3[6];
-        b.index_o.corner_2x5_6 -= pow3[5];
-    }
-    if (diff_o & INDEX_A5) {
-        b.index_o.diagonal6_2 -= pow3[1];
-        b.index_o.diagonal6_3 -= pow3[3];
-        b.index_o.diagonal5_2 -= pow3[1];
-        b.index_o.diagonal5_3 -= pow3[9];
-        b.index_o.edge_2x_3 -= pow3[6];
-        b.index_o.h_v_4_2 -= pow3[2];
-        b.index_o.edge_x_side_0 -= pow3[0];
-        b.index_o.edge_x_side_3 -= pow3[6];
-        b.index_o.edge_block_3 -= pow3[7];
-        b.index_o.triangle_3 -= pow3[6];
-        b.index_o.corner_2x5_3 -= pow3[6];
-        b.index_o.corner_2x5_4 -= pow3[5];
-    }
-    if (diff_o & INDEX_B5) {
-        b.index_o.diagonal6_3 -= pow3[8];
-        b.index_o.diagonal5_2 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[6];
-        b.index_o.h_v_4_2 -= pow3[3];
-        b.index_o.edge_block_3 -= pow3[2];
-        b.index_o.corner_2x5_3 -= pow3[1];
-        b.index_o.corner_2x5_4 -= pow3[0];
-    }
-    if (diff_o & INDEX_C5) {
-        b.index_o.diagonal7_2 -= pow3[0];
-        b.index_o.diagonal7_3 -= pow3[7];
-        b.index_o.diagonal6_2 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[6];
-        b.index_o.h_v_4_2 -= pow3[4];
-        b.index_o.h_v_4_3 -= pow3[1];
-    }
-    if (diff_o & INDEX_D5) {
-        b.index_o.diagonal8_0 -= pow3[0];
-        b.index_o.diagonal8_1 -= pow3[5];
-        b.index_o.diagonal7_2 -= pow3[6];
-        b.index_o.diagonal5_2 -= pow3[2];
-        b.index_o.h_v_3_2 -= pow3[0];
-        b.index_o.h_v_3_3 -= pow3[1];
-        b.index_o.h_v_4_2 -= pow3[5];
-        b.index_o.h_v_4_3 -= pow3[6];
-        b.index_o.corner_3x3_3 -= pow3[0];
-    }
-    if (diff_o & INDEX_E5) {
-        b.index_o.diagonal8_0 -= pow3[5];
-        b.index_o.diagonal8_1 -= pow3[1];
-        b.index_o.diagonal7_1 -= pow3[6];
-        b.index_o.diagonal5_1 -= pow3[2];
-        b.index_o.h_v_3_1 -= pow3[0];
-        b.index_o.h_v_3_2 -= pow3[1];
-        b.index_o.h_v_4_1 -= pow3[5];
-        b.index_o.h_v_4_2 -= pow3[6];
-        b.index_o.corner_3x3_2 -= pow3[0];
-    }
-    if (diff_o & INDEX_F5) {
-        b.index_o.diagonal7_0 -= pow3[5];
-        b.index_o.diagonal7_1 -= pow3[2];
-        b.index_o.diagonal6_1 -= pow3[6];
-        b.index_o.h_v_3_1 -= pow3[5];
-        b.index_o.h_v_4_1 -= pow3[0];
-        b.index_o.h_v_4_2 -= pow3[7];
-    }
-    if (diff_o & INDEX_G5) {
-        b.index_o.diagonal6_0 -= pow3[5];
-        b.index_o.diagonal5_1 -= pow3[6];
-        b.index_o.h_v_2_1 -= pow3[5];
-        b.index_o.h_v_4_2 -= pow3[8];
-        b.index_o.edge_block_1 -= pow3[1];
-        b.index_o.corner_2x5_1 -= pow3[0];
-        b.index_o.corner_2x5_6 -= pow3[1];
-    }
-    if (diff_o & INDEX_H5) {
-        b.index_o.diagonal6_0 -= pow3[0];
-        b.index_o.diagonal6_1 -= pow3[2];
-        b.index_o.diagonal5_0 -= pow3[5];
-        b.index_o.diagonal5_1 -= pow3[3];
-        b.index_o.edge_2x_1 -= pow3[5];
-        b.index_o.h_v_4_2 -= pow3[9];
-        b.index_o.edge_x_side_1 -= pow3[5];
-        b.index_o.edge_x_side_2 -= pow3[1];
-        b.index_o.edge_block_1 -= pow3[6];
-        b.index_o.triangle_2 -= pow3[0];
-        b.index_o.corner_2x5_1 -= pow3[5];
-        b.index_o.corner_2x5_6 -= pow3[6];
-    }
-    if (diff_o & INDEX_A6) {
-        b.index_o.diagonal6_3 -= pow3[9];
-        b.index_o.diagonal5_3 -= pow3[4];
-        b.index_o.edge_2x_3 -= pow3[7];
-        b.index_o.h_v_3_2 -= pow3[2];
-        b.index_o.corner_3x3_3 -= pow3[7];
-        b.index_o.edge_x_side_3 -= pow3[7];
-        b.index_o.edge_block_3 -= pow3[8];
-        b.index_o.triangle_3 -= pow3[7];
-        b.index_o.corner_2x5_3 -= pow3[7];
-    }
-    if (diff_o & INDEX_B6) {
-        b.index_o.diagonal7_3 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[7];
-        b.index_o.h_v_3_2 -= pow3[3];
-        b.index_o.corner_3x3_3 -= pow3[4];
-        b.index_o.edge_block_3 -= pow3[3];
-        b.index_o.triangle_3 -= pow3[3];
-        b.index_o.corner_2x5_3 -= pow3[2];
-    }
-    if (diff_o & INDEX_C6) {
-        b.index_o.diagonal8_1 -= pow3[4];
-        b.index_o.diagonal7_2 -= pow3[1];
-        b.index_o.diagonal5_2 -= pow3[7];
-        b.index_o.h_v_3_2 -= pow3[4];
-        b.index_o.h_v_3_3 -= pow3[7];
-        b.index_o.corner_3x3_3 -= pow3[1];
-    }
-    if (diff_o & INDEX_D6) {
-        b.index_o.diagonal7_1 -= pow3[5];
-        b.index_o.diagonal7_2 -= pow3[2];
-        b.index_o.diagonal6_2 -= pow3[6];
-        b.index_o.h_v_3_2 -= pow3[5];
-        b.index_o.h_v_4_2 -= pow3[0];
-        b.index_o.h_v_4_3 -= pow3[7];
-    }
-    if (diff_o & INDEX_E6) {
-        b.index_o.diagonal7_1 -= pow3[0];
-        b.index_o.diagonal7_2 -= pow3[5];
-        b.index_o.diagonal6_1 -= pow3[7];
-        b.index_o.h_v_3_2 -= pow3[6];
-        b.index_o.h_v_4_1 -= pow3[4];
-        b.index_o.h_v_4_2 -= pow3[1];
-    }
-    if (diff_o & INDEX_F6) {
-        b.index_o.diagonal8_0 -= pow3[4];
-        b.index_o.diagonal7_1 -= pow3[1];
-        b.index_o.diagonal5_1 -= pow3[7];
-        b.index_o.h_v_3_1 -= pow3[4];
-        b.index_o.h_v_3_2 -= pow3[7];
-        b.index_o.corner_3x3_2 -= pow3[1];
-    }
-    if (diff_o & INDEX_G6) {
-        b.index_o.diagonal7_0 -= pow3[4];
-        b.index_o.h_v_2_1 -= pow3[4];
-        b.index_o.h_v_3_2 -= pow3[8];
-        b.index_o.corner_3x3_2 -= pow3[2];
-        b.index_o.edge_block_1 -= pow3[0];
-        b.index_o.triangle_2 -= pow3[1];
-        b.index_o.corner_2x5_6 -= pow3[2];
-    }
-    if (diff_o & INDEX_H6) {
-        b.index_o.diagonal6_0 -= pow3[4];
-        b.index_o.diagonal5_0 -= pow3[0];
-        b.index_o.edge_2x_1 -= pow3[4];
-        b.index_o.h_v_3_2 -= pow3[9];
-        b.index_o.corner_3x3_2 -= pow3[3];
-        b.index_o.edge_x_side_2 -= pow3[2];
-        b.index_o.edge_block_1 -= pow3[5];
-        b.index_o.triangle_2 -= pow3[2];
-        b.index_o.corner_2x5_6 -= pow3[7];
-    }
-    if (diff_o & INDEX_A7) {
-        b.index_o.diagonal7_3 -= pow3[9];
-        b.index_o.edge_2x_3 -= pow3[8];
-        b.index_o.h_v_2_2 -= pow3[9];
-        b.index_o.corner_3x3_3 -= pow3[8];
-        b.index_o.edge_x_side_3 -= pow3[8];
-        b.index_o.triangle_3 -= pow3[8];
-        b.index_o.corner_2x5_3 -= pow3[8];
-        b.index_o.corner_2x5_7 -= pow3[4];
-    }
-    if (diff_o & INDEX_B7) {
-        b.index_o.diagonal8_1 -= pow3[3];
-        b.index_o.edge_2x_2 -= pow3[0];
-        b.index_o.edge_2x_3 -= pow3[1];
-        b.index_o.h_v_2_2 -= pow3[8];
-        b.index_o.h_v_2_3 -= pow3[8];
-        b.index_o.corner_3x3_3 -= pow3[5];
-        b.index_o.edge_x_side_3 -= pow3[3];
-        b.index_o.triangle_3 -= pow3[4];
-        b.index_o.corner_2x5_3 -= pow3[3];
-        b.index_o.corner_2x5_7 -= pow3[3];
-    }
-    if (diff_o & INDEX_C7) {
-        b.index_o.diagonal7_1 -= pow3[4];
-        b.index_o.h_v_2_2 -= pow3[7];
-        b.index_o.h_v_3_3 -= pow3[8];
-        b.index_o.corner_3x3_3 -= pow3[2];
-        b.index_o.edge_block_2 -= pow3[0];
-        b.index_o.triangle_3 -= pow3[1];
-        b.index_o.corner_2x5_7 -= pow3[2];
-    }
-    if (diff_o & INDEX_D7) {
-        b.index_o.diagonal6_1 -= pow3[8];
-        b.index_o.diagonal5_2 -= pow3[6];
-        b.index_o.h_v_2_2 -= pow3[6];
-        b.index_o.h_v_4_3 -= pow3[8];
-        b.index_o.edge_block_2 -= pow3[1];
-        b.index_o.corner_2x5_2 -= pow3[0];
-        b.index_o.corner_2x5_7 -= pow3[1];
-    }
-    if (diff_o & INDEX_E7) {
-        b.index_o.diagonal6_2 -= pow3[5];
-        b.index_o.diagonal5_1 -= pow3[8];
-        b.index_o.h_v_2_2 -= pow3[5];
-        b.index_o.h_v_4_1 -= pow3[3];
-        b.index_o.edge_block_2 -= pow3[2];
-        b.index_o.corner_2x5_2 -= pow3[1];
-        b.index_o.corner_2x5_7 -= pow3[0];
-    }
-    if (diff_o & INDEX_F7) {
-        b.index_o.diagonal7_2 -= pow3[4];
-        b.index_o.h_v_2_2 -= pow3[4];
-        b.index_o.h_v_3_1 -= pow3[3];
-        b.index_o.corner_3x3_2 -= pow3[4];
-        b.index_o.edge_block_2 -= pow3[3];
-        b.index_o.triangle_2 -= pow3[3];
-        b.index_o.corner_2x5_2 -= pow3[2];
-    }
-    if (diff_o & INDEX_G7) {
-        b.index_o.diagonal8_0 -= pow3[3];
-        b.index_o.edge_2x_1 -= pow3[0];
-        b.index_o.edge_2x_2 -= pow3[1];
-        b.index_o.h_v_2_1 -= pow3[3];
-        b.index_o.h_v_2_2 -= pow3[3];
-        b.index_o.corner_3x3_2 -= pow3[5];
-        b.index_o.edge_x_side_2 -= pow3[3];
-        b.index_o.triangle_2 -= pow3[4];
-        b.index_o.corner_2x5_2 -= pow3[3];
-        b.index_o.corner_2x5_6 -= pow3[3];
-    }
-    if (diff_o & INDEX_H7) {
-        b.index_o.diagonal7_0 -= pow3[3];
-        b.index_o.edge_2x_1 -= pow3[3];
-        b.index_o.h_v_2_2 -= pow3[2];
-        b.index_o.corner_3x3_2 -= pow3[6];
-        b.index_o.edge_x_side_2 -= pow3[4];
-        b.index_o.triangle_2 -= pow3[5];
-        b.index_o.corner_2x5_2 -= pow3[4];
-        b.index_o.corner_2x5_6 -= pow3[8];
-    }
-    if (diff_o & INDEX_A8) {
-        b.index_o.diagonal8_1 -= pow3[2];
-        b.index_o.edge_2x_2 -= pow3[2];
-        b.index_o.edge_2x_3 -= pow3[9];
-        b.index_o.h_v_2_2 -= pow3[0];
-        b.index_o.h_v_2_3 -= pow3[1];
-        b.index_o.corner_3x3_3 -= pow3[9];
-        b.index_o.edge_x_side_3 -= pow3[9];
-        b.index_o.edge_block_2 -= pow3[4];
-        b.index_o.edge_block_3 -= pow3[9];
-        b.index_o.triangle_3 -= pow3[9];
-        b.index_o.corner_2x5_3 -= pow3[9];
-        b.index_o.corner_2x5_7 -= pow3[9];
-    }
-    if (diff_o & INDEX_B8) {
-        b.index_o.diagonal7_1 -= pow3[3];
-        b.index_o.edge_2x_2 -= pow3[3];
-        b.index_o.h_v_2_3 -= pow3[9];
-        b.index_o.corner_3x3_3 -= pow3[6];
-        b.index_o.edge_x_side_3 -= pow3[4];
-        b.index_o.triangle_3 -= pow3[5];
-        b.index_o.corner_2x5_3 -= pow3[4];
-        b.index_o.corner_2x5_7 -= pow3[8];
-    }
-    if (diff_o & INDEX_C8) {
-        b.index_o.diagonal6_1 -= pow3[9];
-        b.index_o.diagonal5_1 -= pow3[0];
-        b.index_o.edge_2x_2 -= pow3[4];
-        b.index_o.h_v_3_3 -= pow3[9];
-        b.index_o.corner_3x3_3 -= pow3[3];
-        b.index_o.edge_x_side_3 -= pow3[2];
-        b.index_o.edge_block_2 -= pow3[5];
-        b.index_o.triangle_3 -= pow3[2];
-        b.index_o.corner_2x5_7 -= pow3[7];
-    }
-    if (diff_o & INDEX_D8) {
-        b.index_o.diagonal6_1 -= pow3[0];
-        b.index_o.diagonal6_2 -= pow3[2];
-        b.index_o.diagonal5_1 -= pow3[9];
-        b.index_o.diagonal5_2 -= pow3[3];
-        b.index_o.edge_2x_2 -= pow3[5];
-        b.index_o.h_v_4_3 -= pow3[9];
-        b.index_o.edge_x_side_2 -= pow3[5];
-        b.index_o.edge_x_side_3 -= pow3[1];
-        b.index_o.edge_block_2 -= pow3[6];
-        b.index_o.triangle_3 -= pow3[0];
-        b.index_o.corner_2x5_2 -= pow3[5];
-        b.index_o.corner_2x5_7 -= pow3[6];
-    }
-    if (diff_o & INDEX_E8) {
-        b.index_o.diagonal6_1 -= pow3[1];
-        b.index_o.diagonal6_2 -= pow3[3];
-        b.index_o.diagonal5_1 -= pow3[1];
-        b.index_o.diagonal5_2 -= pow3[5];
-        b.index_o.edge_2x_2 -= pow3[6];
-        b.index_o.h_v_4_1 -= pow3[2];
-        b.index_o.edge_x_side_2 -= pow3[6];
-        b.index_o.edge_x_side_3 -= pow3[0];
-        b.index_o.edge_block_2 -= pow3[7];
-        b.index_o.triangle_2 -= pow3[6];
-        b.index_o.corner_2x5_2 -= pow3[6];
-        b.index_o.corner_2x5_7 -= pow3[5];
-    }
-    if (diff_o & INDEX_F8) {
-        b.index_o.diagonal6_2 -= pow3[4];
-        b.index_o.diagonal5_2 -= pow3[4];
-        b.index_o.edge_2x_2 -= pow3[7];
-        b.index_o.h_v_3_1 -= pow3[2];
-        b.index_o.corner_3x3_2 -= pow3[7];
-        b.index_o.edge_x_side_2 -= pow3[7];
-        b.index_o.edge_block_2 -= pow3[8];
-        b.index_o.triangle_2 -= pow3[7];
-        b.index_o.corner_2x5_2 -= pow3[7];
-    }
-    if (diff_o & INDEX_G8) {
-        b.index_o.diagonal7_2 -= pow3[3];
-        b.index_o.edge_2x_2 -= pow3[8];
-        b.index_o.h_v_2_1 -= pow3[2];
-        b.index_o.corner_3x3_2 -= pow3[8];
-        b.index_o.edge_x_side_2 -= pow3[8];
-        b.index_o.triangle_2 -= pow3[8];
-        b.index_o.corner_2x5_2 -= pow3[8];
-        b.index_o.corner_2x5_6 -= pow3[4];
-    }
-    if (diff_o & INDEX_H8) {
-        b.index_o.diagonal8_0 -= pow3[2];
-        b.index_o.edge_2x_1 -= pow3[2];
-        b.index_o.edge_2x_2 -= pow3[9];
-        b.index_o.h_v_2_1 -= pow3[0];
-        b.index_o.h_v_2_2 -= pow3[1];
-        b.index_o.corner_3x3_2 -= pow3[9];
-        b.index_o.edge_x_side_2 -= pow3[9];
-        b.index_o.edge_block_1 -= pow3[4];
-        b.index_o.edge_block_2 -= pow3[9];
-        b.index_o.triangle_2 -= pow3[9];
-        b.index_o.corner_2x5_2 -= pow3[9];
-        b.index_o.corner_2x5_6 -= pow3[9];
-    }
+constexpr features EVAL_FEATURES[] = {
+    {{ // a1
+        19683,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0, 19683,     0,
+        0,     9,     3,     0,     0,     1,     0,     0,
+        0,     0,     0,     0,     0,     0, 19683,     0,
+        0,     0, 19683,     0,     0,     0, 19683,     0,
+        0,    81, 19683,     0,     0,     0, 19683,     0,
+        0,     0, 19683,     0,     0,     0,     0,     0
+    }},
+    {{ // b1
+        0,     0, 19683,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,  6561,     0,
+        0,     0,     0,     0,     0,     9,     0,     0,
+        0,     0,     0,     0,     0,     0,  6561,     0,
+        0,     0,  6561,     0,     0,     0,     0,     0,
+        0,     0,  6561,     0,     0,     0,  6561,     0,
+        0,     0,    81,     0,     0,     0,     0,     0
+    }},
+    {{ // c1
+        0,     0,     0,     0,     0,     0, 19683,     0,
+        0,     0,    81,     0,     0,     0,  2187,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     9,     0,     0,     0,     0,  2187,     0,
+        0,     0,  2187,     0,     0,     0,  6561,     0,
+        0,     0,  2187,     0,     0,     0,  2187,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d1
+        0,     0,     0,     0,     0,     0,    27,     0,
+        0,     3, 19683,     0,     0,     3,   729,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     9,     0,     0,
+        0,     0,   729,     1,     0,     0,  2187,     0,
+        0,     0,   729,     0,     0,     0,   729,     0,
+        0,     0,     0,   243,     0,     0,     0,     0
+    }},
+    {{ // e1
+        0,     0,     0,     0,     0,     0,     9,     0,
+        0,     1,    27,     0,     0,   243,   243,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0, 19683,     0,     0,     0,     0,
+        0,     0,   243,     3,     0,     0,   729,     0,
+        0,     0,     0,     1,     0,     0,   243,     0,
+        0,     0,     0,   729,     0,     0,     0,     0
+    }},
+    {{ // f1
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,    81,     0,     0,     0,     1,    81,     0,
+        0,     0,     0,     0,     0,     0,     0, 19683,
+        0,     0,     0,     0,     0,     0,     0,    27,
+        0,     0,     0,     9,     0,     0,   243,     0,
+        0,     0,     0,     9,     0,     0,     0,     0,
+        0,     0,     0,  2187,     0,     0,     0,     0
+    }},
+    {{ // g1
+        0,     0,     0,     0,     0,    27,     0,     0,
+        0,     0,     0,     0,     0,     0,    27,     0,
+        0,     0,     0, 19683,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,   729,
+        0,     0,     0,    81,     0,     0,     0,     0,
+        0,     0,     0,   243,     0,     0,     0,    81,
+        0,     0,     0,  6561,     0,     0,     0,     0
+    }},
+    {{ // h1
+        0, 19683,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     9, 19683,
+        0,     0,     1,     3,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0, 19683,
+        0,     0,     0, 19683,     0,     0,    81, 19683,
+        0,     0,     0, 19683,     0,     0,     0, 19683,
+        0,     0,     0, 19683,     0,     0,     0,     0
+    }},
+    {{ // a2
+        0,     0,     0,     0, 19683,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,    27, 19683,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,   729,     0,
+        0,     0,    81,     0,     0,     0,     0,     0,
+        0,     0,   243,     0,     0,     0,    81,     0,
+        0,     0,  6561,     0,     0,     0,     0,     0
+    }},
+    {{ // b2
+        6561,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     3,     0,
+        0,     1,  6561,     0,     0,    27,     0,     0,
+        0,     0,     0,     0,     0,     0,   243,     0,
+        0,     0,    27,     0,     0,     0,     0,     0,
+        0,     0,    81,     0,     0,     0,    27,     0,
+        0,     0,    27,     0,     0,     0,     0,     0
+    }},
+    {{ // c2
+        0,     0,  6561,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,  2187,     0,     0,     0,     0,     0,
+        0,    27,     0,     0,     0,     0,    81,     0,
+        0,     0,     0,     0,     0,     0,    27,     0,
+        0,     0,    27,     0,     0,     0,     9,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d2
+        0,     0,     0,     0,     0,     0,  6561,     0,
+        0,     0,     0,     0,     0,   729,     0,     0,
+        0,     0,   729,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,    27,     0,     0,
+        0,     0,     0,     0,     0,     0,     9,     0,
+        0,     0,     0,     0,     0,     0,     3,     0,
+        0,     0,     0,     1,     0,     0,     0,     0
+    }},
+    {{ // e2
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,   243,  6561,     0,     0,     0,     0,     0,
+        0,     0,   243,     0,     0,     0,     0,     0,
+        0,     0,     0,  6561,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     3,     0,
+        0,     0,     0,     0,     0,     0,     1,     0,
+        0,     0,     0,     3,     0,     0,     0,     0
+    }},
+    {{ // f2
+        0,     0,     0,     0,     0,    81,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,    81,     0,     0,     0,     0,  6561,
+        0,     0,     0,     0,     0,     0,     0,     9,
+        0,     0,     0,     0,     0,     0,     1,     0,
+        0,     0,     0,     3,     0,     0,     0,     0,
+        0,     0,     0,     9,     0,     0,     0,     0
+    }},
+    {{ // g2
+        0,  6561,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     1,     3,
+        0,     0,    27,  6561,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,   243,
+        0,     0,     0,    27,     0,     0,     0,     0,
+        0,     0,     0,    81,     0,     0,     0,    27,
+        0,     0,     0,    27,     0,     0,     0,     0
+    }},
+    {{ // h2
+        0,     0,     0, 19683,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,  6561,
+        0,     0,     9,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,  6561,
+        0,     0,     0,  6561,     0,     0,     0,     0,
+        0,     0,     0,  6561,     0,     0,     0,  6561,
+        0,     0,     0,    81,     0,     0,     0,     0
+    }},
+    {{ // a3
+        0,     0,     0,     0,     0,     0,     0,     0,
+        19683,     0,     0,     0,     1,     0,     0,     0,
+        0,    81,     0,     0,     0,     0, 19683,     0,
+        0,     0,     0,     0,     0,     0,    27,     0,
+        0,     0,     9,     0,     0,     0,     0,     0,
+        0,   243,     9,     0,     0,     0,     0,     0,
+        0,     0,  2187,     0,     0,     0,     0,     0
+    }},
+    {{ // b3
+        0,     0,     0,     0,  6561,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,    81,  6561,     0,
+        0,     0,     0,     0,     0,     0,     9,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     1,     3,     0,     0,     0,     0,     0,
+        0,     0,     9,     0,     0,     0,     0,     0
+    }},
+    {{ // c3
+        2187,     0,     0,     0,     0,     3,     0,     0,
+        0,     0,     0,     0,     0,  2187,     0,     0,
+        0,     0,     0,     0,     0,     0,  2187,     0,
+        0,    81,     0,     0,     0,     0,     3,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d3
+        0,     0,  2187,     0,     0,     1,     0,     0,
+        0,   729,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,   729,     0,
+        0,     0,     3,     0,     0,    81,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // e3
+        0,     0,     9,     0,     0,   243,  2187,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,   243,     0,
+        0,     0,     1,  2187,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // f3
+        0,  2187,     3,     0,     0,     0,     0,     0,
+        0,     0,  2187,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,    81,  2187,
+        0,     0,     0,     0,     0,     0,     0,     3,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g3
+        0,     0,     0,  6561,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,  2187,     0,     0,    27,     0,
+        0,     0,     0,     0,     0,     0,     0,    81,
+        0,     0,     0,     0,     0,     0,     0,    27,
+        0,     0,     0,    27,     0,     0,     0,     9,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // h3
+        0,     0,     0,     0,     0,     0,     0,    81,
+        0,     0,     0,    81,     0,     0,     0,  2187,
+        0,     0,     0,     0,     0,     0,     9,     0,
+        0,     0,     0,     0,     0,     0,     0,  2187,
+        0,     0,     0,  2187,     0,     0,     0,  6561,
+        0,     0,     0,  2187,     0,     0,     0,  2187,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // a4
+        0,     0,     0,     0,     0,     0,     0,     0,
+        1,     9,     0,     0, 19683,    27,     0,     0,
+        0,   243,     0,     0,     0,     0,     0,     0,
+        0,     0, 19683,     0,     0,     0,     0,     0,
+        0,     0,     3,     0,     0,   243,     0,     0,
+        0,   729,     1,     0,     0,     0,     0,     0,
+        0,   243,   729,     0,     0,     0,     0,     0
+    }},
+    {{ // b4
+        0,     0,     0,     0,     0,     0,     0,     0,
+        6561,     0,     0,     0,     0,  6561,     0,     0,
+        0,     0,     0,     0,     0,   243,     0,     0,
+        0,     0,  6561,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     3,     0,     0,     0,     0,     0,     0,
+        0,     1,     3,     0,     0,     0,     0,     0
+    }},
+    {{ // c4
+        0,     0,     0,     0,  2187,     9,     0,     0,
+        0,  2187,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,   243,  2187,     0,     0,     1,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d4
+        729,     1,     0,     0,     0,   729,     0,     0,
+        0,     0,     0,     0,     0,     9,     0,     0,
+        0,     0,     0,     0,     0,     0,     3,     0,
+        0,     1,   729,     0,     0,   243,     1,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // e4
+        3,   729,   729,     0,     0,     0,     0,     0,
+        0,     0,     9,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     1,     3,
+        0,     0,   243,   729,     0,     0,     0,     1,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // f4
+        0,     0,     1,  2187,     0,     0,   729,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,   729,
+        0,     0,    81,     3,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g4
+        0,     0,     0,     0,     0,     0,     0,   243,
+        0,     0,   729,     0,     0,     0,     0,     0,
+        0,     0,     0,   729,     0,     0,     0,     0,
+        0,     0,    27,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     9,
+        0,     0,     0,     0,     0,     0,     0,     3,
+        0,     0,     0,     0,     1,     0,     0,     0
+    }},
+    {{ // h4
+        0,     0,     0,     0,     0,     0,     3,    27,
+        0,     0,     3,   243,     0,     0,     0,   729,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     9,     0,     0,     0,     0,     0,
+        0,     0,     0,   729,     1,     0,     0,  2187,
+        0,     0,     0,   729,     0,     0,     0,   729,
+        0,     0,     0,     0,   243,     0,     0,     0
+    }},
+    {{ // a5
+        0,     0,     0,     0,     0,     0,     0,     0,
+        3,    27,     0,     0,     3, 19683,     0,     0,
+        0,   729,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     9,     0,     0,     0,
+        0,     0,     1,     0,     0,   729,     0,     0,
+        0,  2187,     0,     0,     0,   729,     0,     0,
+        0,   729,   243,     0,     0,     0,     0,     0
+    }},
+    {{ // b5
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,  6561,     0,     0,  6561,     0,     0,     0,
+        0,     0,     0,     0,     0,   729,     0,     0,
+        0,     0,     0,     0,    27,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     9,     0,     0,     0,     0,     0,     0,
+        0,     3,     1,     0,     0,     0,     0,     0
+    }},
+    {{ // c5
+        0,     0,     0,     0,     1,  2187,     0,     0,
+        2187,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,   729,     0,     0,    81,     3,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d5
+        1,   243,     0,     0,   729,     0,     0,     0,
+        0,     0,     0,     0,     9,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        1,     3,     0,     0,   243,   729,     0,     0,
+        0,     1,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // e5
+        243,     3,     0,   729,     0,     0,     0,     0,
+        0,     0,     0,     9,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     1,
+        3,     0,     0,   243,   729,     0,     0,     0,
+        1,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // f5
+        0,     0,   243,     9,     0,     0,     0,   729,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,   243,
+        0,     0,     0,     1,  2187,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g5
+        0,     0,     0,     0,     0,     0,   243,     0,
+        0,     0,     0,   729,     0,     0,     0,     0,
+        0,     0,     0,   243,     0,     0,     0,     0,
+        0,     0,     0,     0,  6561,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     3,
+        0,     0,     0,     0,     0,     0,     0,     1,
+        0,     0,     0,     0,     3,     0,     0,     0
+    }},
+    {{ // h5
+        0,     0,     0,     0,     0,     0,     1,     9,
+        0,     0,   243,    27,     0,     0,     0,   243,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0, 19683,     0,     0,     0,
+        0,     0,     0,   243,     3,     0,     0,   729,
+        0,     0,     0,     0,     1,     0,     0,   243,
+        0,     0,     0,     0,   729,     0,     0,     0
+    }},
+    {{ // a6
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0, 19683,     0,     0,     0,    81,     0,     0,
+        0,  2187,     0,     0,     0,     0,     0,     0,
+        9,     0,     0,     0,     0,     0,     0,     0,
+        0,  2187,     0,     0,     0,  2187,     0,     0,
+        0,  6561,     0,     0,     0,  2187,     0,     0,
+        0,  2187,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // b6
+        0,     0,     0,     0,     0,  6561,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,  2187,     0,     0,
+        27,     0,     0,     0,     0,     0,     0,     0,
+        0,    81,     0,     0,     0,     0,     0,     0,
+        0,    27,     0,     0,     0,    27,     0,     0,
+        0,     9,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // c6
+        0,    81,     0,     0,     3,     0,     0,     0,
+        0,     0,     0,     0,  2187,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        81,  2187,     0,     0,     0,     0,     0,     0,
+        0,     3,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // d6
+        0,     0,     0,   243,     9,     0,     0,     0,
+        729,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        243,     0,     0,     0,     1,  2187,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // e6
+        0,     0,     0,     1,   243,     0,     0,  2187,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        729,     0,     0,    81,     3,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // f6
+        81,     0,     0,     3,     0,     0,     0,     0,
+        0,     0,     0,  2187,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,    81,
+        2187,     0,     0,     0,     0,     0,     0,     0,
+        3,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g6
+        0,     0,    81,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,    81,     0,     0,     0,     0,
+        6561,     0,     0,     0,     0,     0,     0,     0,
+        9,     0,     0,     0,     0,     0,     0,     1,
+        0,     0,     0,     0,     3,     0,     0,     0,
+        0,     0,     0,     0,     9,     0,     0,     0
+    }},
+    {{ // h6
+        0,     0,     0,     0,     0,     0,    81,     0,
+        0,     0,     1,     0,     0,     0,     0,    81,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        19683,     0,     0,     0,     0,     0,     0,     0,
+        27,     0,     0,     0,     9,     0,     0,   243,
+        0,     0,     0,     0,     9,     0,     0,     0,
+        0,     0,     0,     0,  2187,     0,     0,     0
+    }},
+    {{ // a7
+        0,     0,     0,     0,     0, 19683,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,  6561,     0,     0, 19683,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,  6561,     0,     0,     0,  6561,     0,     0,
+        0,     0,     0,     0,     0,  6561,     0,     0,
+        0,  6561,     0,     0,     0,    81,     0,     0
+    }},
+    {{ // b7
+        0,    27,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        1,     3,     0,     0,  6561,  6561,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,   243,     0,     0,     0,    27,     0,     0,
+        0,     0,     0,     0,     0,    81,     0,     0,
+        0,    27,     0,     0,     0,    27,     0,     0
+    }},
+    {{ // c7
+        0,     0,     0,    81,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,  2187,     0,     0,     0,
+        0,  6561,     0,     0,     0,     0,     0,     0,
+        0,     9,     0,     0,     0,     0,     0,     0,
+        1,     0,     0,     0,     0,     3,     0,     0,
+        0,     0,     0,     0,     0,     9,     0,     0
+    }},
+    {{ // d7
+        0,     0,     0,     0,     0,     0,     0,  6561,
+        0,     0,     0,     0,   729,     0,     0,     0,
+        0,     0,     0,     0,   729,     0,     0,     0,
+        0,     0,     0,     0,     0,  6561,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        3,     0,     0,     0,     0,     0,     0,     0,
+        1,     0,     0,     0,     0,     3,     0,     0
+    }},
+    {{ // e7
+        0,     0,     0,     0,     0,     0,     0,     0,
+        243,     0,     0,  6561,     0,     0,     0,     0,
+        0,     0,     0,     0,   243,     0,     0,     0,
+        0,     0,     0,    27,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        9,     0,     0,     0,     0,     0,     0,     0,
+        3,     0,     0,     0,     0,     1,     0,     0
+    }},
+    {{ // f7
+        0,     0,     0,     0,    81,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,    81,     0,     0,    27,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        81,     0,     0,     0,     0,     0,     0,     0,
+        27,     0,     0,     0,    27,     0,     0,     0,
+        9,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g7
+        27,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     1,
+        3,     0,     0,    27,    27,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        243,     0,     0,     0,    27,     0,     0,     0,
+        0,     0,     0,     0,    81,     0,     0,     0,
+        27,     0,     0,     0,    27,     0,     0,     0
+    }},
+    {{ // h7
+        0,     0,    27,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,    27,
+        0,     0,     0,     0,     9,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        729,     0,     0,     0,    81,     0,     0,     0,
+        0,     0,     0,     0,   243,     0,     0,     0,
+        81,     0,     0,     0,  6561,     0,     0,     0
+    }},
+    {{ // a8
+        0,     9,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        9, 19683,     0,     0,     1,     3,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0, 19683,     0,     0,     0, 19683,     0,     0,
+        81, 19683,     0,     0,     0, 19683,     0,     0,
+        0, 19683,     0,     0,     0, 19683,     0,     0
+    }},
+    {{ // b8
+        0,     0,     0,    27,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        27,     0,     0,     0,     0, 19683,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,   729,     0,     0,     0,    81,     0,     0,
+        0,     0,     0,     0,     0,   243,     0,     0,
+        0,    81,     0,     0,     0,  6561,     0,     0
+    }},
+    {{ // c8
+        0,     0,     0,     0,     0,     0,     0, 19683,
+        0,     0,     0,     1,     0,     0,     0,     0,
+        81,     0,     0,     0,     0,     0,     0,     0,
+        0, 19683,     0,     0,     0,     0,     0,     0,
+        0,    27,     0,     0,     0,     9,     0,     0,
+        243,     0,     0,     0,     0,     9,     0,     0,
+        0,     0,     0,     0,     0,  2187,     0,     0
+    }},
+    {{ // d8
+        0,     0,     0,     0,     0,     0,     0,     1,
+        9,     0,     0, 19683,    27,     0,     0,     0,
+        243,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0, 19683,     0,     0,
+        0,     0,     0,     0,   243,     3,     0,     0,
+        729,     0,     0,     0,     0,     1,     0,     0,
+        243,     0,     0,     0,     0,   729,     0,     0
+    }},
+    {{ // e8
+        0,     0,     0,     0,     0,     0,     0,     3,
+        27,     0,     0,     3,   243,     0,     0,     0,
+        729,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     9,     0,     0,     0,     0,
+        0,     0,     0,     0,   729,     1,     0,     0,
+        2187,     0,     0,     0,   729,     0,     0,     0,
+        729,     0,     0,     0,     0,   243,     0,     0
+    }},
+    {{ // f8
+        0,     0,     0,     0,     0,     0,     0,     0,
+        81,     0,     0,     0,    81,     0,     0,     0,
+        2187,     0,     0,     0,     0,     0,     0,     9,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        2187,     0,     0,     0,  2187,     0,     0,     0,
+        6561,     0,     0,     0,  2187,     0,     0,     0,
+        2187,     0,     0,     0,     0,     0,     0,     0
+    }},
+    {{ // g8
+        0,     0,     0,     0,    27,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        6561,     0,     0,     9,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        6561,     0,     0,     0,  6561,     0,     0,     0,
+        0,     0,     0,     0,  6561,     0,     0,     0,
+        6561,     0,     0,     0,    81,     0,     0,     0
+    }},
+    {{ // h8
+        9,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     9,
+        19683,     0,     0,     1,     3,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        19683,     0,     0,     0, 19683,     0,     0,    81,
+        19683,     0,     0,     0, 19683,     0,     0,     0,
+        19683,     0,     0,     0, 19683,     0,     0,     0
+    }},
+    {{ // PASS
+        0,     0,     0,     9,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0,
+        0,     0,     0,     0,     0,     0,     0,     0
+    }}
+};
+
+inline void SYNC_INDEX(uint64_t put, uint64_t rev, board &b) {
+    __m128i f0 = b.index_p.indexes_8[0];
+    __m128i f1 = b.index_p.indexes_8[1];
+    __m128i f2 = b.index_p.indexes_8[2];
+    __m128i f3 = b.index_p.indexes_8[3];
+    __m128i f4 = b.index_p.indexes_8[4];
+    __m128i f5 = b.index_p.indexes_8[5];
+    __m128i f6 = b.index_p.indexes_8[6];
+    
+    __m128i g0 = b.index_o.indexes_8[0];
+    __m128i g1 = b.index_o.indexes_8[1];
+    __m128i g2 = b.index_o.indexes_8[2];
+    __m128i g3 = b.index_o.indexes_8[3];
+    __m128i g4 = b.index_o.indexes_8[4];
+    __m128i g5 = b.index_o.indexes_8[5];
+    __m128i g6 = b.index_o.indexes_8[6];
+    
+    int x = clz_u64(put);
+    f0 = _mm_add_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
+    f1 = _mm_add_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
+    f2 = _mm_add_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
+    f3 = _mm_add_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
+    f4 = _mm_add_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
+    f5 = _mm_add_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
+    f6 = _mm_add_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
+    
+    while (rev) {
+        x = clz_u64(rev);
+        f0 = _mm_add_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
+        f1 = _mm_add_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
+        f2 = _mm_add_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
+        f3 = _mm_add_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
+        f4 = _mm_add_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
+        f5 = _mm_add_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
+        f6 = _mm_add_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
+        
+        g0 = _mm_sub_epi16(g0, EVAL_FEATURES[x].indexes_8[0]);
+        g1 = _mm_sub_epi16(g1, EVAL_FEATURES[x].indexes_8[1]);
+        g2 = _mm_sub_epi16(g2, EVAL_FEATURES[x].indexes_8[2]);
+        g3 = _mm_sub_epi16(g3, EVAL_FEATURES[x].indexes_8[3]);
+        g4 = _mm_sub_epi16(g4, EVAL_FEATURES[x].indexes_8[4]);
+        g5 = _mm_sub_epi16(g5, EVAL_FEATURES[x].indexes_8[5]);
+        g6 = _mm_sub_epi16(g6, EVAL_FEATURES[x].indexes_8[6]);
+        rev &= ~(0x8000000000000000 >> x);
+    }
+    b.index_p.indexes_8[0] = f0;
+    b.index_p.indexes_8[1] = f1;
+    b.index_p.indexes_8[2] = f2;
+    b.index_p.indexes_8[3] = f3;
+    b.index_p.indexes_8[4] = f4;
+    b.index_p.indexes_8[5] = f5;
+    b.index_p.indexes_8[6] = f6;
+    
+    b.index_o.indexes_8[0] = g0;
+    b.index_o.indexes_8[1] = g1;
+    b.index_o.indexes_8[2] = g2;
+    b.index_o.indexes_8[3] = g3;
+    b.index_o.indexes_8[4] = g4;
+    b.index_o.indexes_8[5] = g5;
+    b.index_o.indexes_8[6] = g6;
 }
 
 inline void INIT_INDEX(board &b) {
-    uint64_t diff_p = b.p;
-    uint64_t diff_o = b.o;
-    memset(&b.index_p, 0, sizeof(b.index_p));
-    memset(&b.index_o, 0, sizeof(b.index_o));
-    if (diff_p & INDEX_A1) {
-        b.index_p.diagonal8_0 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[2];
-        b.index_p.h_v_2_0 += pow3[1];
-        b.index_p.h_v_2_3 += pow3[0];
-        b.index_p.corner_3x3_0 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[9];
-        b.index_p.edge_block_0 += pow3[9];
-        b.index_p.edge_block_3 += pow3[4];
-        b.index_p.triangle_0 += pow3[9];
-        b.index_p.corner_2x5_0 += pow3[9];
-        b.index_p.corner_2x5_4 += pow3[9];
-    }
-    if (diff_p & INDEX_B1) {
-        b.index_p.diagonal7_0 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[2];
-        b.index_p.corner_3x3_0 += pow3[8];
-        b.index_p.edge_x_side_0 += pow3[8];
-        b.index_p.triangle_0 += pow3[8];
-        b.index_p.corner_2x5_0 += pow3[8];
-        b.index_p.corner_2x5_4 += pow3[4];
-    }
-    if (diff_p & INDEX_C1) {
-        b.index_p.diagonal6_0 += pow3[9];
-        b.index_p.diagonal5_0 += pow3[4];
-        b.index_p.edge_2x_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[2];
-        b.index_p.corner_3x3_0 += pow3[7];
-        b.index_p.edge_x_side_0 += pow3[7];
-        b.index_p.edge_block_0 += pow3[8];
-        b.index_p.triangle_0 += pow3[7];
-        b.index_p.corner_2x5_0 += pow3[7];
-    }
-    if (diff_p & INDEX_D1) {
-        b.index_p.diagonal6_0 += pow3[3];
-        b.index_p.diagonal6_3 += pow3[1];
-        b.index_p.diagonal5_0 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[1];
-        b.index_p.edge_2x_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[2];
-        b.index_p.edge_x_side_0 += pow3[6];
-        b.index_p.edge_x_side_1 += pow3[0];
-        b.index_p.edge_block_0 += pow3[7];
-        b.index_p.triangle_0 += pow3[6];
-        b.index_p.corner_2x5_0 += pow3[6];
-        b.index_p.corner_2x5_5 += pow3[5];
-    }
-    if (diff_p & INDEX_E1) {
-        b.index_p.diagonal6_0 += pow3[2];
-        b.index_p.diagonal6_3 += pow3[0];
-        b.index_p.diagonal5_0 += pow3[3];
-        b.index_p.diagonal5_3 += pow3[5];
-        b.index_p.edge_2x_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[5];
-        b.index_p.edge_x_side_1 += pow3[1];
-        b.index_p.edge_block_0 += pow3[6];
-        b.index_p.triangle_1 += pow3[0];
-        b.index_p.corner_2x5_0 += pow3[5];
-        b.index_p.corner_2x5_5 += pow3[6];
-    }
-    if (diff_p & INDEX_F1) {
-        b.index_p.diagonal6_3 += pow3[4];
-        b.index_p.diagonal5_3 += pow3[0];
-        b.index_p.edge_2x_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[9];
-        b.index_p.corner_3x3_1 += pow3[3];
-        b.index_p.edge_x_side_1 += pow3[2];
-        b.index_p.edge_block_0 += pow3[5];
-        b.index_p.triangle_1 += pow3[2];
-        b.index_p.corner_2x5_5 += pow3[7];
-    }
-    if (diff_p & INDEX_G1) {
-        b.index_p.diagonal7_3 += pow3[3];
-        b.index_p.edge_2x_0 += pow3[3];
-        b.index_p.h_v_2_1 += pow3[9];
-        b.index_p.corner_3x3_1 += pow3[6];
-        b.index_p.edge_x_side_1 += pow3[4];
-        b.index_p.triangle_1 += pow3[5];
-        b.index_p.corner_2x5_1 += pow3[4];
-        b.index_p.corner_2x5_5 += pow3[8];
-    }
-    if (diff_p & INDEX_H1) {
-        b.index_p.diagonal8_1 += pow3[9];
-        b.index_p.edge_2x_0 += pow3[2];
-        b.index_p.edge_2x_1 += pow3[9];
-        b.index_p.h_v_2_0 += pow3[0];
-        b.index_p.h_v_2_1 += pow3[1];
-        b.index_p.corner_3x3_1 += pow3[9];
-        b.index_p.edge_x_side_1 += pow3[9];
-        b.index_p.edge_block_0 += pow3[4];
-        b.index_p.edge_block_1 += pow3[9];
-        b.index_p.triangle_1 += pow3[9];
-        b.index_p.corner_2x5_1 += pow3[9];
-        b.index_p.corner_2x5_5 += pow3[9];
-    }
-    if (diff_p & INDEX_A2) {
-        b.index_p.diagonal7_2 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[3];
-        b.index_p.h_v_2_0 += pow3[9];
-        b.index_p.corner_3x3_0 += pow3[6];
-        b.index_p.edge_x_side_0 += pow3[4];
-        b.index_p.triangle_0 += pow3[5];
-        b.index_p.corner_2x5_0 += pow3[4];
-        b.index_p.corner_2x5_4 += pow3[8];
-    }
-    if (diff_p & INDEX_B2) {
-        b.index_p.diagonal8_0 += pow3[8];
-        b.index_p.edge_2x_0 += pow3[1];
-        b.index_p.edge_2x_3 += pow3[0];
-        b.index_p.h_v_2_0 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[3];
-        b.index_p.corner_3x3_0 += pow3[5];
-        b.index_p.edge_x_side_0 += pow3[3];
-        b.index_p.triangle_0 += pow3[4];
-        b.index_p.corner_2x5_0 += pow3[3];
-        b.index_p.corner_2x5_4 += pow3[3];
-    }
-    if (diff_p & INDEX_C2) {
-        b.index_p.diagonal7_0 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[3];
-        b.index_p.corner_3x3_0 += pow3[4];
-        b.index_p.edge_block_0 += pow3[3];
-        b.index_p.triangle_0 += pow3[3];
-        b.index_p.corner_2x5_0 += pow3[2];
-    }
-    if (diff_p & INDEX_D2) {
-        b.index_p.diagonal6_0 += pow3[8];
-        b.index_p.diagonal5_3 += pow3[6];
-        b.index_p.h_v_2_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[3];
-        b.index_p.edge_block_0 += pow3[2];
-        b.index_p.corner_2x5_0 += pow3[1];
-        b.index_p.corner_2x5_5 += pow3[0];
-    }
-    if (diff_p & INDEX_E2) {
-        b.index_p.diagonal6_3 += pow3[5];
-        b.index_p.diagonal5_0 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[8];
-        b.index_p.edge_block_0 += pow3[1];
-        b.index_p.corner_2x5_0 += pow3[0];
-        b.index_p.corner_2x5_5 += pow3[1];
-    }
-    if (diff_p & INDEX_F2) {
-        b.index_p.diagonal7_3 += pow3[4];
-        b.index_p.h_v_2_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[8];
-        b.index_p.corner_3x3_1 += pow3[2];
-        b.index_p.edge_block_0 += pow3[0];
-        b.index_p.triangle_1 += pow3[1];
-        b.index_p.corner_2x5_5 += pow3[2];
-    }
-    if (diff_p & INDEX_G2) {
-        b.index_p.diagonal8_1 += pow3[8];
-        b.index_p.edge_2x_0 += pow3[0];
-        b.index_p.edge_2x_1 += pow3[1];
-        b.index_p.h_v_2_0 += pow3[3];
-        b.index_p.h_v_2_1 += pow3[8];
-        b.index_p.corner_3x3_1 += pow3[5];
-        b.index_p.edge_x_side_1 += pow3[3];
-        b.index_p.triangle_1 += pow3[4];
-        b.index_p.corner_2x5_1 += pow3[3];
-        b.index_p.corner_2x5_5 += pow3[3];
-    }
-    if (diff_p & INDEX_H2) {
-        b.index_p.diagonal7_1 += pow3[9];
-        b.index_p.edge_2x_1 += pow3[8];
-        b.index_p.h_v_2_0 += pow3[2];
-        b.index_p.corner_3x3_1 += pow3[8];
-        b.index_p.edge_x_side_1 += pow3[8];
-        b.index_p.triangle_1 += pow3[8];
-        b.index_p.corner_2x5_1 += pow3[8];
-        b.index_p.corner_2x5_5 += pow3[4];
-    }
-    if (diff_p & INDEX_A3) {
-        b.index_p.diagonal6_2 += pow3[9];
-        b.index_p.diagonal5_2 += pow3[0];
-        b.index_p.edge_2x_3 += pow3[4];
-        b.index_p.h_v_3_0 += pow3[9];
-        b.index_p.corner_3x3_0 += pow3[3];
-        b.index_p.edge_x_side_0 += pow3[2];
-        b.index_p.edge_block_3 += pow3[5];
-        b.index_p.triangle_0 += pow3[2];
-        b.index_p.corner_2x5_4 += pow3[7];
-    }
-    if (diff_p & INDEX_B3) {
-        b.index_p.diagonal7_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[4];
-        b.index_p.h_v_3_0 += pow3[8];
-        b.index_p.corner_3x3_0 += pow3[2];
-        b.index_p.edge_block_3 += pow3[0];
-        b.index_p.triangle_0 += pow3[1];
-        b.index_p.corner_2x5_4 += pow3[2];
-    }
-    if (diff_p & INDEX_C3) {
-        b.index_p.diagonal8_0 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[1];
-        b.index_p.diagonal5_3 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[4];
-        b.index_p.corner_3x3_0 += pow3[1];
-    }
-    if (diff_p & INDEX_D3) {
-        b.index_p.diagonal7_0 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[0];
-        b.index_p.diagonal6_3 += pow3[6];
-        b.index_p.h_v_3_0 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[1];
-        b.index_p.h_v_4_3 += pow3[4];
-    }
-    if (diff_p & INDEX_E3) {
-        b.index_p.diagonal7_0 += pow3[2];
-        b.index_p.diagonal7_3 += pow3[5];
-        b.index_p.diagonal6_0 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[0];
-        b.index_p.h_v_4_1 += pow3[7];
-    }
-    if (diff_p & INDEX_F3) {
-        b.index_p.diagonal8_1 += pow3[7];
-        b.index_p.diagonal7_0 += pow3[1];
-        b.index_p.diagonal5_0 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[7];
-        b.index_p.corner_3x3_1 += pow3[1];
-    }
-    if (diff_p & INDEX_G3) {
-        b.index_p.diagonal7_1 += pow3[8];
-        b.index_p.h_v_2_1 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[3];
-        b.index_p.corner_3x3_1 += pow3[4];
-        b.index_p.edge_block_1 += pow3[3];
-        b.index_p.triangle_1 += pow3[3];
-        b.index_p.corner_2x5_1 += pow3[2];
-    }
-    if (diff_p & INDEX_H3) {
-        b.index_p.diagonal6_1 += pow3[4];
-        b.index_p.diagonal5_1 += pow3[4];
-        b.index_p.edge_2x_1 += pow3[7];
-        b.index_p.h_v_3_0 += pow3[2];
-        b.index_p.corner_3x3_1 += pow3[7];
-        b.index_p.edge_x_side_1 += pow3[7];
-        b.index_p.edge_block_1 += pow3[8];
-        b.index_p.triangle_1 += pow3[7];
-        b.index_p.corner_2x5_1 += pow3[7];
-    }
-    if (diff_p & INDEX_A4) {
-        b.index_p.diagonal6_2 += pow3[0];
-        b.index_p.diagonal6_3 += pow3[2];
-        b.index_p.diagonal5_2 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[3];
-        b.index_p.edge_2x_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[9];
-        b.index_p.edge_x_side_0 += pow3[1];
-        b.index_p.edge_x_side_3 += pow3[5];
-        b.index_p.edge_block_3 += pow3[6];
-        b.index_p.triangle_0 += pow3[0];
-        b.index_p.corner_2x5_3 += pow3[5];
-        b.index_p.corner_2x5_4 += pow3[6];
-    }
-    if (diff_p & INDEX_B4) {
-        b.index_p.diagonal6_2 += pow3[8];
-        b.index_p.diagonal5_3 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[8];
-        b.index_p.edge_block_3 += pow3[1];
-        b.index_p.corner_2x5_3 += pow3[0];
-        b.index_p.corner_2x5_4 += pow3[1];
-    }
-    if (diff_p & INDEX_C4) {
-        b.index_p.diagonal7_2 += pow3[7];
-        b.index_p.diagonal7_3 += pow3[2];
-        b.index_p.diagonal6_3 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[5];
-        b.index_p.h_v_4_0 += pow3[7];
-        b.index_p.h_v_4_3 += pow3[0];
-    }
-    if (diff_p & INDEX_D4) {
-        b.index_p.diagonal8_0 += pow3[6];
-        b.index_p.diagonal8_1 += pow3[0];
-        b.index_p.diagonal7_3 += pow3[6];
-        b.index_p.diagonal5_3 += pow3[2];
-        b.index_p.h_v_3_0 += pow3[1];
-        b.index_p.h_v_3_3 += pow3[0];
-        b.index_p.h_v_4_0 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[5];
-        b.index_p.corner_3x3_0 += pow3[0];
-    }
-    if (diff_p & INDEX_E4) {
-        b.index_p.diagonal8_0 += pow3[1];
-        b.index_p.diagonal8_1 += pow3[6];
-        b.index_p.diagonal7_0 += pow3[6];
-        b.index_p.diagonal5_0 += pow3[2];
-        b.index_p.h_v_3_0 += pow3[0];
-        b.index_p.h_v_3_1 += pow3[1];
-        b.index_p.h_v_4_0 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[6];
-        b.index_p.corner_3x3_1 += pow3[0];
-    }
-    if (diff_p & INDEX_F4) {
-        b.index_p.diagonal7_0 += pow3[0];
-        b.index_p.diagonal7_1 += pow3[7];
-        b.index_p.diagonal6_0 += pow3[6];
-        b.index_p.h_v_3_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[4];
-        b.index_p.h_v_4_1 += pow3[1];
-    }
-    if (diff_p & INDEX_G4) {
-        b.index_p.diagonal6_1 += pow3[5];
-        b.index_p.diagonal5_0 += pow3[6];
-        b.index_p.h_v_2_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[3];
-        b.index_p.edge_block_1 += pow3[2];
-        b.index_p.corner_2x5_1 += pow3[1];
-        b.index_p.corner_2x5_6 += pow3[0];
-    }
-    if (diff_p & INDEX_H4) {
-        b.index_p.diagonal6_0 += pow3[1];
-        b.index_p.diagonal6_1 += pow3[3];
-        b.index_p.diagonal5_0 += pow3[1];
-        b.index_p.diagonal5_1 += pow3[5];
-        b.index_p.edge_2x_1 += pow3[6];
-        b.index_p.h_v_4_0 += pow3[2];
-        b.index_p.edge_x_side_1 += pow3[6];
-        b.index_p.edge_x_side_2 += pow3[0];
-        b.index_p.edge_block_1 += pow3[7];
-        b.index_p.triangle_1 += pow3[6];
-        b.index_p.corner_2x5_1 += pow3[6];
-        b.index_p.corner_2x5_6 += pow3[5];
-    }
-    if (diff_p & INDEX_A5) {
-        b.index_p.diagonal6_2 += pow3[1];
-        b.index_p.diagonal6_3 += pow3[3];
-        b.index_p.diagonal5_2 += pow3[1];
-        b.index_p.diagonal5_3 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[2];
-        b.index_p.edge_x_side_0 += pow3[0];
-        b.index_p.edge_x_side_3 += pow3[6];
-        b.index_p.edge_block_3 += pow3[7];
-        b.index_p.triangle_3 += pow3[6];
-        b.index_p.corner_2x5_3 += pow3[6];
-        b.index_p.corner_2x5_4 += pow3[5];
-    }
-    if (diff_p & INDEX_B5) {
-        b.index_p.diagonal6_3 += pow3[8];
-        b.index_p.diagonal5_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[3];
-        b.index_p.edge_block_3 += pow3[2];
-        b.index_p.corner_2x5_3 += pow3[1];
-        b.index_p.corner_2x5_4 += pow3[0];
-    }
-    if (diff_p & INDEX_C5) {
-        b.index_p.diagonal7_2 += pow3[0];
-        b.index_p.diagonal7_3 += pow3[7];
-        b.index_p.diagonal6_2 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[6];
-        b.index_p.h_v_4_2 += pow3[4];
-        b.index_p.h_v_4_3 += pow3[1];
-    }
-    if (diff_p & INDEX_D5) {
-        b.index_p.diagonal8_0 += pow3[0];
-        b.index_p.diagonal8_1 += pow3[5];
-        b.index_p.diagonal7_2 += pow3[6];
-        b.index_p.diagonal5_2 += pow3[2];
-        b.index_p.h_v_3_2 += pow3[0];
-        b.index_p.h_v_3_3 += pow3[1];
-        b.index_p.h_v_4_2 += pow3[5];
-        b.index_p.h_v_4_3 += pow3[6];
-        b.index_p.corner_3x3_3 += pow3[0];
-    }
-    if (diff_p & INDEX_E5) {
-        b.index_p.diagonal8_0 += pow3[5];
-        b.index_p.diagonal8_1 += pow3[1];
-        b.index_p.diagonal7_1 += pow3[6];
-        b.index_p.diagonal5_1 += pow3[2];
-        b.index_p.h_v_3_1 += pow3[0];
-        b.index_p.h_v_3_2 += pow3[1];
-        b.index_p.h_v_4_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[6];
-        b.index_p.corner_3x3_2 += pow3[0];
-    }
-    if (diff_p & INDEX_F5) {
-        b.index_p.diagonal7_0 += pow3[5];
-        b.index_p.diagonal7_1 += pow3[2];
-        b.index_p.diagonal6_1 += pow3[6];
-        b.index_p.h_v_3_1 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[0];
-        b.index_p.h_v_4_2 += pow3[7];
-    }
-    if (diff_p & INDEX_G5) {
-        b.index_p.diagonal6_0 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[6];
-        b.index_p.h_v_2_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[8];
-        b.index_p.edge_block_1 += pow3[1];
-        b.index_p.corner_2x5_1 += pow3[0];
-        b.index_p.corner_2x5_6 += pow3[1];
-    }
-    if (diff_p & INDEX_H5) {
-        b.index_p.diagonal6_0 += pow3[0];
-        b.index_p.diagonal6_1 += pow3[2];
-        b.index_p.diagonal5_0 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[9];
-        b.index_p.edge_x_side_1 += pow3[5];
-        b.index_p.edge_x_side_2 += pow3[1];
-        b.index_p.edge_block_1 += pow3[6];
-        b.index_p.triangle_2 += pow3[0];
-        b.index_p.corner_2x5_1 += pow3[5];
-        b.index_p.corner_2x5_6 += pow3[6];
-    }
-    if (diff_p & INDEX_A6) {
-        b.index_p.diagonal6_3 += pow3[9];
-        b.index_p.diagonal5_3 += pow3[4];
-        b.index_p.edge_2x_3 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[2];
-        b.index_p.corner_3x3_3 += pow3[7];
-        b.index_p.edge_x_side_3 += pow3[7];
-        b.index_p.edge_block_3 += pow3[8];
-        b.index_p.triangle_3 += pow3[7];
-        b.index_p.corner_2x5_3 += pow3[7];
-    }
-    if (diff_p & INDEX_B6) {
-        b.index_p.diagonal7_3 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[3];
-        b.index_p.corner_3x3_3 += pow3[4];
-        b.index_p.edge_block_3 += pow3[3];
-        b.index_p.triangle_3 += pow3[3];
-        b.index_p.corner_2x5_3 += pow3[2];
-    }
-    if (diff_p & INDEX_C6) {
-        b.index_p.diagonal8_1 += pow3[4];
-        b.index_p.diagonal7_2 += pow3[1];
-        b.index_p.diagonal5_2 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[4];
-        b.index_p.h_v_3_3 += pow3[7];
-        b.index_p.corner_3x3_3 += pow3[1];
-    }
-    if (diff_p & INDEX_D6) {
-        b.index_p.diagonal7_1 += pow3[5];
-        b.index_p.diagonal7_2 += pow3[2];
-        b.index_p.diagonal6_2 += pow3[6];
-        b.index_p.h_v_3_2 += pow3[5];
-        b.index_p.h_v_4_2 += pow3[0];
-        b.index_p.h_v_4_3 += pow3[7];
-    }
-    if (diff_p & INDEX_E6) {
-        b.index_p.diagonal7_1 += pow3[0];
-        b.index_p.diagonal7_2 += pow3[5];
-        b.index_p.diagonal6_1 += pow3[7];
-        b.index_p.h_v_3_2 += pow3[6];
-        b.index_p.h_v_4_1 += pow3[4];
-        b.index_p.h_v_4_2 += pow3[1];
-    }
-    if (diff_p & INDEX_F6) {
-        b.index_p.diagonal8_0 += pow3[4];
-        b.index_p.diagonal7_1 += pow3[1];
-        b.index_p.diagonal5_1 += pow3[7];
-        b.index_p.h_v_3_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[7];
-        b.index_p.corner_3x3_2 += pow3[1];
-    }
-    if (diff_p & INDEX_G6) {
-        b.index_p.diagonal7_0 += pow3[4];
-        b.index_p.h_v_2_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[8];
-        b.index_p.corner_3x3_2 += pow3[2];
-        b.index_p.edge_block_1 += pow3[0];
-        b.index_p.triangle_2 += pow3[1];
-        b.index_p.corner_2x5_6 += pow3[2];
-    }
-    if (diff_p & INDEX_H6) {
-        b.index_p.diagonal6_0 += pow3[4];
-        b.index_p.diagonal5_0 += pow3[0];
-        b.index_p.edge_2x_1 += pow3[4];
-        b.index_p.h_v_3_2 += pow3[9];
-        b.index_p.corner_3x3_2 += pow3[3];
-        b.index_p.edge_x_side_2 += pow3[2];
-        b.index_p.edge_block_1 += pow3[5];
-        b.index_p.triangle_2 += pow3[2];
-        b.index_p.corner_2x5_6 += pow3[7];
-    }
-    if (diff_p & INDEX_A7) {
-        b.index_p.diagonal7_3 += pow3[9];
-        b.index_p.edge_2x_3 += pow3[8];
-        b.index_p.h_v_2_2 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[8];
-        b.index_p.edge_x_side_3 += pow3[8];
-        b.index_p.triangle_3 += pow3[8];
-        b.index_p.corner_2x5_3 += pow3[8];
-        b.index_p.corner_2x5_7 += pow3[4];
-    }
-    if (diff_p & INDEX_B7) {
-        b.index_p.diagonal8_1 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[0];
-        b.index_p.edge_2x_3 += pow3[1];
-        b.index_p.h_v_2_2 += pow3[8];
-        b.index_p.h_v_2_3 += pow3[8];
-        b.index_p.corner_3x3_3 += pow3[5];
-        b.index_p.edge_x_side_3 += pow3[3];
-        b.index_p.triangle_3 += pow3[4];
-        b.index_p.corner_2x5_3 += pow3[3];
-        b.index_p.corner_2x5_7 += pow3[3];
-    }
-    if (diff_p & INDEX_C7) {
-        b.index_p.diagonal7_1 += pow3[4];
-        b.index_p.h_v_2_2 += pow3[7];
-        b.index_p.h_v_3_3 += pow3[8];
-        b.index_p.corner_3x3_3 += pow3[2];
-        b.index_p.edge_block_2 += pow3[0];
-        b.index_p.triangle_3 += pow3[1];
-        b.index_p.corner_2x5_7 += pow3[2];
-    }
-    if (diff_p & INDEX_D7) {
-        b.index_p.diagonal6_1 += pow3[8];
-        b.index_p.diagonal5_2 += pow3[6];
-        b.index_p.h_v_2_2 += pow3[6];
-        b.index_p.h_v_4_3 += pow3[8];
-        b.index_p.edge_block_2 += pow3[1];
-        b.index_p.corner_2x5_2 += pow3[0];
-        b.index_p.corner_2x5_7 += pow3[1];
-    }
-    if (diff_p & INDEX_E7) {
-        b.index_p.diagonal6_2 += pow3[5];
-        b.index_p.diagonal5_1 += pow3[8];
-        b.index_p.h_v_2_2 += pow3[5];
-        b.index_p.h_v_4_1 += pow3[3];
-        b.index_p.edge_block_2 += pow3[2];
-        b.index_p.corner_2x5_2 += pow3[1];
-        b.index_p.corner_2x5_7 += pow3[0];
-    }
-    if (diff_p & INDEX_F7) {
-        b.index_p.diagonal7_2 += pow3[4];
-        b.index_p.h_v_2_2 += pow3[4];
-        b.index_p.h_v_3_1 += pow3[3];
-        b.index_p.corner_3x3_2 += pow3[4];
-        b.index_p.edge_block_2 += pow3[3];
-        b.index_p.triangle_2 += pow3[3];
-        b.index_p.corner_2x5_2 += pow3[2];
-    }
-    if (diff_p & INDEX_G7) {
-        b.index_p.diagonal8_0 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[0];
-        b.index_p.edge_2x_2 += pow3[1];
-        b.index_p.h_v_2_1 += pow3[3];
-        b.index_p.h_v_2_2 += pow3[3];
-        b.index_p.corner_3x3_2 += pow3[5];
-        b.index_p.edge_x_side_2 += pow3[3];
-        b.index_p.triangle_2 += pow3[4];
-        b.index_p.corner_2x5_2 += pow3[3];
-        b.index_p.corner_2x5_6 += pow3[3];
-    }
-    if (diff_p & INDEX_H7) {
-        b.index_p.diagonal7_0 += pow3[3];
-        b.index_p.edge_2x_1 += pow3[3];
-        b.index_p.h_v_2_2 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[6];
-        b.index_p.edge_x_side_2 += pow3[4];
-        b.index_p.triangle_2 += pow3[5];
-        b.index_p.corner_2x5_2 += pow3[4];
-        b.index_p.corner_2x5_6 += pow3[8];
-    }
-    if (diff_p & INDEX_A8) {
-        b.index_p.diagonal8_1 += pow3[2];
-        b.index_p.edge_2x_2 += pow3[2];
-        b.index_p.edge_2x_3 += pow3[9];
-        b.index_p.h_v_2_2 += pow3[0];
-        b.index_p.h_v_2_3 += pow3[1];
-        b.index_p.corner_3x3_3 += pow3[9];
-        b.index_p.edge_x_side_3 += pow3[9];
-        b.index_p.edge_block_2 += pow3[4];
-        b.index_p.edge_block_3 += pow3[9];
-        b.index_p.triangle_3 += pow3[9];
-        b.index_p.corner_2x5_3 += pow3[9];
-        b.index_p.corner_2x5_7 += pow3[9];
-    }
-    if (diff_p & INDEX_B8) {
-        b.index_p.diagonal7_1 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[3];
-        b.index_p.h_v_2_3 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[6];
-        b.index_p.edge_x_side_3 += pow3[4];
-        b.index_p.triangle_3 += pow3[5];
-        b.index_p.corner_2x5_3 += pow3[4];
-        b.index_p.corner_2x5_7 += pow3[8];
-    }
-    if (diff_p & INDEX_C8) {
-        b.index_p.diagonal6_1 += pow3[9];
-        b.index_p.diagonal5_1 += pow3[0];
-        b.index_p.edge_2x_2 += pow3[4];
-        b.index_p.h_v_3_3 += pow3[9];
-        b.index_p.corner_3x3_3 += pow3[3];
-        b.index_p.edge_x_side_3 += pow3[2];
-        b.index_p.edge_block_2 += pow3[5];
-        b.index_p.triangle_3 += pow3[2];
-        b.index_p.corner_2x5_7 += pow3[7];
-    }
-    if (diff_p & INDEX_D8) {
-        b.index_p.diagonal6_1 += pow3[0];
-        b.index_p.diagonal6_2 += pow3[2];
-        b.index_p.diagonal5_1 += pow3[9];
-        b.index_p.diagonal5_2 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[5];
-        b.index_p.h_v_4_3 += pow3[9];
-        b.index_p.edge_x_side_2 += pow3[5];
-        b.index_p.edge_x_side_3 += pow3[1];
-        b.index_p.edge_block_2 += pow3[6];
-        b.index_p.triangle_3 += pow3[0];
-        b.index_p.corner_2x5_2 += pow3[5];
-        b.index_p.corner_2x5_7 += pow3[6];
-    }
-    if (diff_p & INDEX_E8) {
-        b.index_p.diagonal6_1 += pow3[1];
-        b.index_p.diagonal6_2 += pow3[3];
-        b.index_p.diagonal5_1 += pow3[1];
-        b.index_p.diagonal5_2 += pow3[5];
-        b.index_p.edge_2x_2 += pow3[6];
-        b.index_p.h_v_4_1 += pow3[2];
-        b.index_p.edge_x_side_2 += pow3[6];
-        b.index_p.edge_x_side_3 += pow3[0];
-        b.index_p.edge_block_2 += pow3[7];
-        b.index_p.triangle_2 += pow3[6];
-        b.index_p.corner_2x5_2 += pow3[6];
-        b.index_p.corner_2x5_7 += pow3[5];
-    }
-    if (diff_p & INDEX_F8) {
-        b.index_p.diagonal6_2 += pow3[4];
-        b.index_p.diagonal5_2 += pow3[4];
-        b.index_p.edge_2x_2 += pow3[7];
-        b.index_p.h_v_3_1 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[7];
-        b.index_p.edge_x_side_2 += pow3[7];
-        b.index_p.edge_block_2 += pow3[8];
-        b.index_p.triangle_2 += pow3[7];
-        b.index_p.corner_2x5_2 += pow3[7];
-    }
-    if (diff_p & INDEX_G8) {
-        b.index_p.diagonal7_2 += pow3[3];
-        b.index_p.edge_2x_2 += pow3[8];
-        b.index_p.h_v_2_1 += pow3[2];
-        b.index_p.corner_3x3_2 += pow3[8];
-        b.index_p.edge_x_side_2 += pow3[8];
-        b.index_p.triangle_2 += pow3[8];
-        b.index_p.corner_2x5_2 += pow3[8];
-        b.index_p.corner_2x5_6 += pow3[4];
-    }
-    if (diff_p & INDEX_H8) {
-        b.index_p.diagonal8_0 += pow3[2];
-        b.index_p.edge_2x_1 += pow3[2];
-        b.index_p.edge_2x_2 += pow3[9];
-        b.index_p.h_v_2_1 += pow3[0];
-        b.index_p.h_v_2_2 += pow3[1];
-        b.index_p.corner_3x3_2 += pow3[9];
-        b.index_p.edge_x_side_2 += pow3[9];
-        b.index_p.edge_block_1 += pow3[4];
-        b.index_p.edge_block_2 += pow3[9];
-        b.index_p.triangle_2 += pow3[9];
-        b.index_p.corner_2x5_2 += pow3[9];
-        b.index_p.corner_2x5_6 += pow3[9];
-    }
-    if (diff_o & INDEX_A1) {
-        b.index_o.diagonal8_0 += pow3[9];
-        b.index_o.edge_2x_0 += pow3[9];
-        b.index_o.edge_2x_3 += pow3[2];
-        b.index_o.h_v_2_0 += pow3[1];
-        b.index_o.h_v_2_3 += pow3[0];
-        b.index_o.corner_3x3_0 += pow3[9];
-        b.index_o.edge_x_side_0 += pow3[9];
-        b.index_o.edge_block_0 += pow3[9];
-        b.index_o.edge_block_3 += pow3[4];
-        b.index_o.triangle_0 += pow3[9];
-        b.index_o.corner_2x5_0 += pow3[9];
-        b.index_o.corner_2x5_4 += pow3[9];
-    }
-    if (diff_o & INDEX_B1) {
-        b.index_o.diagonal7_0 += pow3[9];
-        b.index_o.edge_2x_0 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[2];
-        b.index_o.corner_3x3_0 += pow3[8];
-        b.index_o.edge_x_side_0 += pow3[8];
-        b.index_o.triangle_0 += pow3[8];
-        b.index_o.corner_2x5_0 += pow3[8];
-        b.index_o.corner_2x5_4 += pow3[4];
-    }
-    if (diff_o & INDEX_C1) {
-        b.index_o.diagonal6_0 += pow3[9];
-        b.index_o.diagonal5_0 += pow3[4];
-        b.index_o.edge_2x_0 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[2];
-        b.index_o.corner_3x3_0 += pow3[7];
-        b.index_o.edge_x_side_0 += pow3[7];
-        b.index_o.edge_block_0 += pow3[8];
-        b.index_o.triangle_0 += pow3[7];
-        b.index_o.corner_2x5_0 += pow3[7];
-    }
-    if (diff_o & INDEX_D1) {
-        b.index_o.diagonal6_0 += pow3[3];
-        b.index_o.diagonal6_3 += pow3[1];
-        b.index_o.diagonal5_0 += pow3[9];
-        b.index_o.diagonal5_3 += pow3[1];
-        b.index_o.edge_2x_0 += pow3[6];
-        b.index_o.h_v_4_3 += pow3[2];
-        b.index_o.edge_x_side_0 += pow3[6];
-        b.index_o.edge_x_side_1 += pow3[0];
-        b.index_o.edge_block_0 += pow3[7];
-        b.index_o.triangle_0 += pow3[6];
-        b.index_o.corner_2x5_0 += pow3[6];
-        b.index_o.corner_2x5_5 += pow3[5];
-    }
-    if (diff_o & INDEX_E1) {
-        b.index_o.diagonal6_0 += pow3[2];
-        b.index_o.diagonal6_3 += pow3[0];
-        b.index_o.diagonal5_0 += pow3[3];
-        b.index_o.diagonal5_3 += pow3[5];
-        b.index_o.edge_2x_0 += pow3[5];
-        b.index_o.h_v_4_1 += pow3[9];
-        b.index_o.edge_x_side_0 += pow3[5];
-        b.index_o.edge_x_side_1 += pow3[1];
-        b.index_o.edge_block_0 += pow3[6];
-        b.index_o.triangle_1 += pow3[0];
-        b.index_o.corner_2x5_0 += pow3[5];
-        b.index_o.corner_2x5_5 += pow3[6];
-    }
-    if (diff_o & INDEX_F1) {
-        b.index_o.diagonal6_3 += pow3[4];
-        b.index_o.diagonal5_3 += pow3[0];
-        b.index_o.edge_2x_0 += pow3[4];
-        b.index_o.h_v_3_1 += pow3[9];
-        b.index_o.corner_3x3_1 += pow3[3];
-        b.index_o.edge_x_side_1 += pow3[2];
-        b.index_o.edge_block_0 += pow3[5];
-        b.index_o.triangle_1 += pow3[2];
-        b.index_o.corner_2x5_5 += pow3[7];
-    }
-    if (diff_o & INDEX_G1) {
-        b.index_o.diagonal7_3 += pow3[3];
-        b.index_o.edge_2x_0 += pow3[3];
-        b.index_o.h_v_2_1 += pow3[9];
-        b.index_o.corner_3x3_1 += pow3[6];
-        b.index_o.edge_x_side_1 += pow3[4];
-        b.index_o.triangle_1 += pow3[5];
-        b.index_o.corner_2x5_1 += pow3[4];
-        b.index_o.corner_2x5_5 += pow3[8];
-    }
-    if (diff_o & INDEX_H1) {
-        b.index_o.diagonal8_1 += pow3[9];
-        b.index_o.edge_2x_0 += pow3[2];
-        b.index_o.edge_2x_1 += pow3[9];
-        b.index_o.h_v_2_0 += pow3[0];
-        b.index_o.h_v_2_1 += pow3[1];
-        b.index_o.corner_3x3_1 += pow3[9];
-        b.index_o.edge_x_side_1 += pow3[9];
-        b.index_o.edge_block_0 += pow3[4];
-        b.index_o.edge_block_1 += pow3[9];
-        b.index_o.triangle_1 += pow3[9];
-        b.index_o.corner_2x5_1 += pow3[9];
-        b.index_o.corner_2x5_5 += pow3[9];
-    }
-    if (diff_o & INDEX_A2) {
-        b.index_o.diagonal7_2 += pow3[9];
-        b.index_o.edge_2x_3 += pow3[3];
-        b.index_o.h_v_2_0 += pow3[9];
-        b.index_o.corner_3x3_0 += pow3[6];
-        b.index_o.edge_x_side_0 += pow3[4];
-        b.index_o.triangle_0 += pow3[5];
-        b.index_o.corner_2x5_0 += pow3[4];
-        b.index_o.corner_2x5_4 += pow3[8];
-    }
-    if (diff_o & INDEX_B2) {
-        b.index_o.diagonal8_0 += pow3[8];
-        b.index_o.edge_2x_0 += pow3[1];
-        b.index_o.edge_2x_3 += pow3[0];
-        b.index_o.h_v_2_0 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[3];
-        b.index_o.corner_3x3_0 += pow3[5];
-        b.index_o.edge_x_side_0 += pow3[3];
-        b.index_o.triangle_0 += pow3[4];
-        b.index_o.corner_2x5_0 += pow3[3];
-        b.index_o.corner_2x5_4 += pow3[3];
-    }
-    if (diff_o & INDEX_C2) {
-        b.index_o.diagonal7_0 += pow3[8];
-        b.index_o.h_v_2_0 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[3];
-        b.index_o.corner_3x3_0 += pow3[4];
-        b.index_o.edge_block_0 += pow3[3];
-        b.index_o.triangle_0 += pow3[3];
-        b.index_o.corner_2x5_0 += pow3[2];
-    }
-    if (diff_o & INDEX_D2) {
-        b.index_o.diagonal6_0 += pow3[8];
-        b.index_o.diagonal5_3 += pow3[6];
-        b.index_o.h_v_2_0 += pow3[6];
-        b.index_o.h_v_4_3 += pow3[3];
-        b.index_o.edge_block_0 += pow3[2];
-        b.index_o.corner_2x5_0 += pow3[1];
-        b.index_o.corner_2x5_5 += pow3[0];
-    }
-    if (diff_o & INDEX_E2) {
-        b.index_o.diagonal6_3 += pow3[5];
-        b.index_o.diagonal5_0 += pow3[8];
-        b.index_o.h_v_2_0 += pow3[5];
-        b.index_o.h_v_4_1 += pow3[8];
-        b.index_o.edge_block_0 += pow3[1];
-        b.index_o.corner_2x5_0 += pow3[0];
-        b.index_o.corner_2x5_5 += pow3[1];
-    }
-    if (diff_o & INDEX_F2) {
-        b.index_o.diagonal7_3 += pow3[4];
-        b.index_o.h_v_2_0 += pow3[4];
-        b.index_o.h_v_3_1 += pow3[8];
-        b.index_o.corner_3x3_1 += pow3[2];
-        b.index_o.edge_block_0 += pow3[0];
-        b.index_o.triangle_1 += pow3[1];
-        b.index_o.corner_2x5_5 += pow3[2];
-    }
-    if (diff_o & INDEX_G2) {
-        b.index_o.diagonal8_1 += pow3[8];
-        b.index_o.edge_2x_0 += pow3[0];
-        b.index_o.edge_2x_1 += pow3[1];
-        b.index_o.h_v_2_0 += pow3[3];
-        b.index_o.h_v_2_1 += pow3[8];
-        b.index_o.corner_3x3_1 += pow3[5];
-        b.index_o.edge_x_side_1 += pow3[3];
-        b.index_o.triangle_1 += pow3[4];
-        b.index_o.corner_2x5_1 += pow3[3];
-        b.index_o.corner_2x5_5 += pow3[3];
-    }
-    if (diff_o & INDEX_H2) {
-        b.index_o.diagonal7_1 += pow3[9];
-        b.index_o.edge_2x_1 += pow3[8];
-        b.index_o.h_v_2_0 += pow3[2];
-        b.index_o.corner_3x3_1 += pow3[8];
-        b.index_o.edge_x_side_1 += pow3[8];
-        b.index_o.triangle_1 += pow3[8];
-        b.index_o.corner_2x5_1 += pow3[8];
-        b.index_o.corner_2x5_5 += pow3[4];
-    }
-    if (diff_o & INDEX_A3) {
-        b.index_o.diagonal6_2 += pow3[9];
-        b.index_o.diagonal5_2 += pow3[0];
-        b.index_o.edge_2x_3 += pow3[4];
-        b.index_o.h_v_3_0 += pow3[9];
-        b.index_o.corner_3x3_0 += pow3[3];
-        b.index_o.edge_x_side_0 += pow3[2];
-        b.index_o.edge_block_3 += pow3[5];
-        b.index_o.triangle_0 += pow3[2];
-        b.index_o.corner_2x5_4 += pow3[7];
-    }
-    if (diff_o & INDEX_B3) {
-        b.index_o.diagonal7_2 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[4];
-        b.index_o.h_v_3_0 += pow3[8];
-        b.index_o.corner_3x3_0 += pow3[2];
-        b.index_o.edge_block_3 += pow3[0];
-        b.index_o.triangle_0 += pow3[1];
-        b.index_o.corner_2x5_4 += pow3[2];
-    }
-    if (diff_o & INDEX_C3) {
-        b.index_o.diagonal8_0 += pow3[7];
-        b.index_o.diagonal7_3 += pow3[1];
-        b.index_o.diagonal5_3 += pow3[7];
-        b.index_o.h_v_3_0 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[4];
-        b.index_o.corner_3x3_0 += pow3[1];
-    }
-    if (diff_o & INDEX_D3) {
-        b.index_o.diagonal7_0 += pow3[7];
-        b.index_o.diagonal7_3 += pow3[0];
-        b.index_o.diagonal6_3 += pow3[6];
-        b.index_o.h_v_3_0 += pow3[6];
-        b.index_o.h_v_4_0 += pow3[1];
-        b.index_o.h_v_4_3 += pow3[4];
-    }
-    if (diff_o & INDEX_E3) {
-        b.index_o.diagonal7_0 += pow3[2];
-        b.index_o.diagonal7_3 += pow3[5];
-        b.index_o.diagonal6_0 += pow3[7];
-        b.index_o.h_v_3_0 += pow3[5];
-        b.index_o.h_v_4_0 += pow3[0];
-        b.index_o.h_v_4_1 += pow3[7];
-    }
-    if (diff_o & INDEX_F3) {
-        b.index_o.diagonal8_1 += pow3[7];
-        b.index_o.diagonal7_0 += pow3[1];
-        b.index_o.diagonal5_0 += pow3[7];
-        b.index_o.h_v_3_0 += pow3[4];
-        b.index_o.h_v_3_1 += pow3[7];
-        b.index_o.corner_3x3_1 += pow3[1];
-    }
-    if (diff_o & INDEX_G3) {
-        b.index_o.diagonal7_1 += pow3[8];
-        b.index_o.h_v_2_1 += pow3[7];
-        b.index_o.h_v_3_0 += pow3[3];
-        b.index_o.corner_3x3_1 += pow3[4];
-        b.index_o.edge_block_1 += pow3[3];
-        b.index_o.triangle_1 += pow3[3];
-        b.index_o.corner_2x5_1 += pow3[2];
-    }
-    if (diff_o & INDEX_H3) {
-        b.index_o.diagonal6_1 += pow3[4];
-        b.index_o.diagonal5_1 += pow3[4];
-        b.index_o.edge_2x_1 += pow3[7];
-        b.index_o.h_v_3_0 += pow3[2];
-        b.index_o.corner_3x3_1 += pow3[7];
-        b.index_o.edge_x_side_1 += pow3[7];
-        b.index_o.edge_block_1 += pow3[8];
-        b.index_o.triangle_1 += pow3[7];
-        b.index_o.corner_2x5_1 += pow3[7];
-    }
-    if (diff_o & INDEX_A4) {
-        b.index_o.diagonal6_2 += pow3[0];
-        b.index_o.diagonal6_3 += pow3[2];
-        b.index_o.diagonal5_2 += pow3[9];
-        b.index_o.diagonal5_3 += pow3[3];
-        b.index_o.edge_2x_3 += pow3[5];
-        b.index_o.h_v_4_0 += pow3[9];
-        b.index_o.edge_x_side_0 += pow3[1];
-        b.index_o.edge_x_side_3 += pow3[5];
-        b.index_o.edge_block_3 += pow3[6];
-        b.index_o.triangle_0 += pow3[0];
-        b.index_o.corner_2x5_3 += pow3[5];
-        b.index_o.corner_2x5_4 += pow3[6];
-    }
-    if (diff_o & INDEX_B4) {
-        b.index_o.diagonal6_2 += pow3[8];
-        b.index_o.diagonal5_3 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[5];
-        b.index_o.h_v_4_0 += pow3[8];
-        b.index_o.edge_block_3 += pow3[1];
-        b.index_o.corner_2x5_3 += pow3[0];
-        b.index_o.corner_2x5_4 += pow3[1];
-    }
-    if (diff_o & INDEX_C4) {
-        b.index_o.diagonal7_2 += pow3[7];
-        b.index_o.diagonal7_3 += pow3[2];
-        b.index_o.diagonal6_3 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[5];
-        b.index_o.h_v_4_0 += pow3[7];
-        b.index_o.h_v_4_3 += pow3[0];
-    }
-    if (diff_o & INDEX_D4) {
-        b.index_o.diagonal8_0 += pow3[6];
-        b.index_o.diagonal8_1 += pow3[0];
-        b.index_o.diagonal7_3 += pow3[6];
-        b.index_o.diagonal5_3 += pow3[2];
-        b.index_o.h_v_3_0 += pow3[1];
-        b.index_o.h_v_3_3 += pow3[0];
-        b.index_o.h_v_4_0 += pow3[6];
-        b.index_o.h_v_4_3 += pow3[5];
-        b.index_o.corner_3x3_0 += pow3[0];
-    }
-    if (diff_o & INDEX_E4) {
-        b.index_o.diagonal8_0 += pow3[1];
-        b.index_o.diagonal8_1 += pow3[6];
-        b.index_o.diagonal7_0 += pow3[6];
-        b.index_o.diagonal5_0 += pow3[2];
-        b.index_o.h_v_3_0 += pow3[0];
-        b.index_o.h_v_3_1 += pow3[1];
-        b.index_o.h_v_4_0 += pow3[5];
-        b.index_o.h_v_4_1 += pow3[6];
-        b.index_o.corner_3x3_1 += pow3[0];
-    }
-    if (diff_o & INDEX_F4) {
-        b.index_o.diagonal7_0 += pow3[0];
-        b.index_o.diagonal7_1 += pow3[7];
-        b.index_o.diagonal6_0 += pow3[6];
-        b.index_o.h_v_3_1 += pow3[6];
-        b.index_o.h_v_4_0 += pow3[4];
-        b.index_o.h_v_4_1 += pow3[1];
-    }
-    if (diff_o & INDEX_G4) {
-        b.index_o.diagonal6_1 += pow3[5];
-        b.index_o.diagonal5_0 += pow3[6];
-        b.index_o.h_v_2_1 += pow3[6];
-        b.index_o.h_v_4_0 += pow3[3];
-        b.index_o.edge_block_1 += pow3[2];
-        b.index_o.corner_2x5_1 += pow3[1];
-        b.index_o.corner_2x5_6 += pow3[0];
-    }
-    if (diff_o & INDEX_H4) {
-        b.index_o.diagonal6_0 += pow3[1];
-        b.index_o.diagonal6_1 += pow3[3];
-        b.index_o.diagonal5_0 += pow3[1];
-        b.index_o.diagonal5_1 += pow3[5];
-        b.index_o.edge_2x_1 += pow3[6];
-        b.index_o.h_v_4_0 += pow3[2];
-        b.index_o.edge_x_side_1 += pow3[6];
-        b.index_o.edge_x_side_2 += pow3[0];
-        b.index_o.edge_block_1 += pow3[7];
-        b.index_o.triangle_1 += pow3[6];
-        b.index_o.corner_2x5_1 += pow3[6];
-        b.index_o.corner_2x5_6 += pow3[5];
-    }
-    if (diff_o & INDEX_A5) {
-        b.index_o.diagonal6_2 += pow3[1];
-        b.index_o.diagonal6_3 += pow3[3];
-        b.index_o.diagonal5_2 += pow3[1];
-        b.index_o.diagonal5_3 += pow3[9];
-        b.index_o.edge_2x_3 += pow3[6];
-        b.index_o.h_v_4_2 += pow3[2];
-        b.index_o.edge_x_side_0 += pow3[0];
-        b.index_o.edge_x_side_3 += pow3[6];
-        b.index_o.edge_block_3 += pow3[7];
-        b.index_o.triangle_3 += pow3[6];
-        b.index_o.corner_2x5_3 += pow3[6];
-        b.index_o.corner_2x5_4 += pow3[5];
-    }
-    if (diff_o & INDEX_B5) {
-        b.index_o.diagonal6_3 += pow3[8];
-        b.index_o.diagonal5_2 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[6];
-        b.index_o.h_v_4_2 += pow3[3];
-        b.index_o.edge_block_3 += pow3[2];
-        b.index_o.corner_2x5_3 += pow3[1];
-        b.index_o.corner_2x5_4 += pow3[0];
-    }
-    if (diff_o & INDEX_C5) {
-        b.index_o.diagonal7_2 += pow3[0];
-        b.index_o.diagonal7_3 += pow3[7];
-        b.index_o.diagonal6_2 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[6];
-        b.index_o.h_v_4_2 += pow3[4];
-        b.index_o.h_v_4_3 += pow3[1];
-    }
-    if (diff_o & INDEX_D5) {
-        b.index_o.diagonal8_0 += pow3[0];
-        b.index_o.diagonal8_1 += pow3[5];
-        b.index_o.diagonal7_2 += pow3[6];
-        b.index_o.diagonal5_2 += pow3[2];
-        b.index_o.h_v_3_2 += pow3[0];
-        b.index_o.h_v_3_3 += pow3[1];
-        b.index_o.h_v_4_2 += pow3[5];
-        b.index_o.h_v_4_3 += pow3[6];
-        b.index_o.corner_3x3_3 += pow3[0];
-    }
-    if (diff_o & INDEX_E5) {
-        b.index_o.diagonal8_0 += pow3[5];
-        b.index_o.diagonal8_1 += pow3[1];
-        b.index_o.diagonal7_1 += pow3[6];
-        b.index_o.diagonal5_1 += pow3[2];
-        b.index_o.h_v_3_1 += pow3[0];
-        b.index_o.h_v_3_2 += pow3[1];
-        b.index_o.h_v_4_1 += pow3[5];
-        b.index_o.h_v_4_2 += pow3[6];
-        b.index_o.corner_3x3_2 += pow3[0];
-    }
-    if (diff_o & INDEX_F5) {
-        b.index_o.diagonal7_0 += pow3[5];
-        b.index_o.diagonal7_1 += pow3[2];
-        b.index_o.diagonal6_1 += pow3[6];
-        b.index_o.h_v_3_1 += pow3[5];
-        b.index_o.h_v_4_1 += pow3[0];
-        b.index_o.h_v_4_2 += pow3[7];
-    }
-    if (diff_o & INDEX_G5) {
-        b.index_o.diagonal6_0 += pow3[5];
-        b.index_o.diagonal5_1 += pow3[6];
-        b.index_o.h_v_2_1 += pow3[5];
-        b.index_o.h_v_4_2 += pow3[8];
-        b.index_o.edge_block_1 += pow3[1];
-        b.index_o.corner_2x5_1 += pow3[0];
-        b.index_o.corner_2x5_6 += pow3[1];
-    }
-    if (diff_o & INDEX_H5) {
-        b.index_o.diagonal6_0 += pow3[0];
-        b.index_o.diagonal6_1 += pow3[2];
-        b.index_o.diagonal5_0 += pow3[5];
-        b.index_o.diagonal5_1 += pow3[3];
-        b.index_o.edge_2x_1 += pow3[5];
-        b.index_o.h_v_4_2 += pow3[9];
-        b.index_o.edge_x_side_1 += pow3[5];
-        b.index_o.edge_x_side_2 += pow3[1];
-        b.index_o.edge_block_1 += pow3[6];
-        b.index_o.triangle_2 += pow3[0];
-        b.index_o.corner_2x5_1 += pow3[5];
-        b.index_o.corner_2x5_6 += pow3[6];
-    }
-    if (diff_o & INDEX_A6) {
-        b.index_o.diagonal6_3 += pow3[9];
-        b.index_o.diagonal5_3 += pow3[4];
-        b.index_o.edge_2x_3 += pow3[7];
-        b.index_o.h_v_3_2 += pow3[2];
-        b.index_o.corner_3x3_3 += pow3[7];
-        b.index_o.edge_x_side_3 += pow3[7];
-        b.index_o.edge_block_3 += pow3[8];
-        b.index_o.triangle_3 += pow3[7];
-        b.index_o.corner_2x5_3 += pow3[7];
-    }
-    if (diff_o & INDEX_B6) {
-        b.index_o.diagonal7_3 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[7];
-        b.index_o.h_v_3_2 += pow3[3];
-        b.index_o.corner_3x3_3 += pow3[4];
-        b.index_o.edge_block_3 += pow3[3];
-        b.index_o.triangle_3 += pow3[3];
-        b.index_o.corner_2x5_3 += pow3[2];
-    }
-    if (diff_o & INDEX_C6) {
-        b.index_o.diagonal8_1 += pow3[4];
-        b.index_o.diagonal7_2 += pow3[1];
-        b.index_o.diagonal5_2 += pow3[7];
-        b.index_o.h_v_3_2 += pow3[4];
-        b.index_o.h_v_3_3 += pow3[7];
-        b.index_o.corner_3x3_3 += pow3[1];
-    }
-    if (diff_o & INDEX_D6) {
-        b.index_o.diagonal7_1 += pow3[5];
-        b.index_o.diagonal7_2 += pow3[2];
-        b.index_o.diagonal6_2 += pow3[6];
-        b.index_o.h_v_3_2 += pow3[5];
-        b.index_o.h_v_4_2 += pow3[0];
-        b.index_o.h_v_4_3 += pow3[7];
-    }
-    if (diff_o & INDEX_E6) {
-        b.index_o.diagonal7_1 += pow3[0];
-        b.index_o.diagonal7_2 += pow3[5];
-        b.index_o.diagonal6_1 += pow3[7];
-        b.index_o.h_v_3_2 += pow3[6];
-        b.index_o.h_v_4_1 += pow3[4];
-        b.index_o.h_v_4_2 += pow3[1];
-    }
-    if (diff_o & INDEX_F6) {
-        b.index_o.diagonal8_0 += pow3[4];
-        b.index_o.diagonal7_1 += pow3[1];
-        b.index_o.diagonal5_1 += pow3[7];
-        b.index_o.h_v_3_1 += pow3[4];
-        b.index_o.h_v_3_2 += pow3[7];
-        b.index_o.corner_3x3_2 += pow3[1];
-    }
-    if (diff_o & INDEX_G6) {
-        b.index_o.diagonal7_0 += pow3[4];
-        b.index_o.h_v_2_1 += pow3[4];
-        b.index_o.h_v_3_2 += pow3[8];
-        b.index_o.corner_3x3_2 += pow3[2];
-        b.index_o.edge_block_1 += pow3[0];
-        b.index_o.triangle_2 += pow3[1];
-        b.index_o.corner_2x5_6 += pow3[2];
-    }
-    if (diff_o & INDEX_H6) {
-        b.index_o.diagonal6_0 += pow3[4];
-        b.index_o.diagonal5_0 += pow3[0];
-        b.index_o.edge_2x_1 += pow3[4];
-        b.index_o.h_v_3_2 += pow3[9];
-        b.index_o.corner_3x3_2 += pow3[3];
-        b.index_o.edge_x_side_2 += pow3[2];
-        b.index_o.edge_block_1 += pow3[5];
-        b.index_o.triangle_2 += pow3[2];
-        b.index_o.corner_2x5_6 += pow3[7];
-    }
-    if (diff_o & INDEX_A7) {
-        b.index_o.diagonal7_3 += pow3[9];
-        b.index_o.edge_2x_3 += pow3[8];
-        b.index_o.h_v_2_2 += pow3[9];
-        b.index_o.corner_3x3_3 += pow3[8];
-        b.index_o.edge_x_side_3 += pow3[8];
-        b.index_o.triangle_3 += pow3[8];
-        b.index_o.corner_2x5_3 += pow3[8];
-        b.index_o.corner_2x5_7 += pow3[4];
-    }
-    if (diff_o & INDEX_B7) {
-        b.index_o.diagonal8_1 += pow3[3];
-        b.index_o.edge_2x_2 += pow3[0];
-        b.index_o.edge_2x_3 += pow3[1];
-        b.index_o.h_v_2_2 += pow3[8];
-        b.index_o.h_v_2_3 += pow3[8];
-        b.index_o.corner_3x3_3 += pow3[5];
-        b.index_o.edge_x_side_3 += pow3[3];
-        b.index_o.triangle_3 += pow3[4];
-        b.index_o.corner_2x5_3 += pow3[3];
-        b.index_o.corner_2x5_7 += pow3[3];
-    }
-    if (diff_o & INDEX_C7) {
-        b.index_o.diagonal7_1 += pow3[4];
-        b.index_o.h_v_2_2 += pow3[7];
-        b.index_o.h_v_3_3 += pow3[8];
-        b.index_o.corner_3x3_3 += pow3[2];
-        b.index_o.edge_block_2 += pow3[0];
-        b.index_o.triangle_3 += pow3[1];
-        b.index_o.corner_2x5_7 += pow3[2];
-    }
-    if (diff_o & INDEX_D7) {
-        b.index_o.diagonal6_1 += pow3[8];
-        b.index_o.diagonal5_2 += pow3[6];
-        b.index_o.h_v_2_2 += pow3[6];
-        b.index_o.h_v_4_3 += pow3[8];
-        b.index_o.edge_block_2 += pow3[1];
-        b.index_o.corner_2x5_2 += pow3[0];
-        b.index_o.corner_2x5_7 += pow3[1];
-    }
-    if (diff_o & INDEX_E7) {
-        b.index_o.diagonal6_2 += pow3[5];
-        b.index_o.diagonal5_1 += pow3[8];
-        b.index_o.h_v_2_2 += pow3[5];
-        b.index_o.h_v_4_1 += pow3[3];
-        b.index_o.edge_block_2 += pow3[2];
-        b.index_o.corner_2x5_2 += pow3[1];
-        b.index_o.corner_2x5_7 += pow3[0];
-    }
-    if (diff_o & INDEX_F7) {
-        b.index_o.diagonal7_2 += pow3[4];
-        b.index_o.h_v_2_2 += pow3[4];
-        b.index_o.h_v_3_1 += pow3[3];
-        b.index_o.corner_3x3_2 += pow3[4];
-        b.index_o.edge_block_2 += pow3[3];
-        b.index_o.triangle_2 += pow3[3];
-        b.index_o.corner_2x5_2 += pow3[2];
-    }
-    if (diff_o & INDEX_G7) {
-        b.index_o.diagonal8_0 += pow3[3];
-        b.index_o.edge_2x_1 += pow3[0];
-        b.index_o.edge_2x_2 += pow3[1];
-        b.index_o.h_v_2_1 += pow3[3];
-        b.index_o.h_v_2_2 += pow3[3];
-        b.index_o.corner_3x3_2 += pow3[5];
-        b.index_o.edge_x_side_2 += pow3[3];
-        b.index_o.triangle_2 += pow3[4];
-        b.index_o.corner_2x5_2 += pow3[3];
-        b.index_o.corner_2x5_6 += pow3[3];
-    }
-    if (diff_o & INDEX_H7) {
-        b.index_o.diagonal7_0 += pow3[3];
-        b.index_o.edge_2x_1 += pow3[3];
-        b.index_o.h_v_2_2 += pow3[2];
-        b.index_o.corner_3x3_2 += pow3[6];
-        b.index_o.edge_x_side_2 += pow3[4];
-        b.index_o.triangle_2 += pow3[5];
-        b.index_o.corner_2x5_2 += pow3[4];
-        b.index_o.corner_2x5_6 += pow3[8];
-    }
-    if (diff_o & INDEX_A8) {
-        b.index_o.diagonal8_1 += pow3[2];
-        b.index_o.edge_2x_2 += pow3[2];
-        b.index_o.edge_2x_3 += pow3[9];
-        b.index_o.h_v_2_2 += pow3[0];
-        b.index_o.h_v_2_3 += pow3[1];
-        b.index_o.corner_3x3_3 += pow3[9];
-        b.index_o.edge_x_side_3 += pow3[9];
-        b.index_o.edge_block_2 += pow3[4];
-        b.index_o.edge_block_3 += pow3[9];
-        b.index_o.triangle_3 += pow3[9];
-        b.index_o.corner_2x5_3 += pow3[9];
-        b.index_o.corner_2x5_7 += pow3[9];
-    }
-    if (diff_o & INDEX_B8) {
-        b.index_o.diagonal7_1 += pow3[3];
-        b.index_o.edge_2x_2 += pow3[3];
-        b.index_o.h_v_2_3 += pow3[9];
-        b.index_o.corner_3x3_3 += pow3[6];
-        b.index_o.edge_x_side_3 += pow3[4];
-        b.index_o.triangle_3 += pow3[5];
-        b.index_o.corner_2x5_3 += pow3[4];
-        b.index_o.corner_2x5_7 += pow3[8];
-    }
-    if (diff_o & INDEX_C8) {
-        b.index_o.diagonal6_1 += pow3[9];
-        b.index_o.diagonal5_1 += pow3[0];
-        b.index_o.edge_2x_2 += pow3[4];
-        b.index_o.h_v_3_3 += pow3[9];
-        b.index_o.corner_3x3_3 += pow3[3];
-        b.index_o.edge_x_side_3 += pow3[2];
-        b.index_o.edge_block_2 += pow3[5];
-        b.index_o.triangle_3 += pow3[2];
-        b.index_o.corner_2x5_7 += pow3[7];
-    }
-    if (diff_o & INDEX_D8) {
-        b.index_o.diagonal6_1 += pow3[0];
-        b.index_o.diagonal6_2 += pow3[2];
-        b.index_o.diagonal5_1 += pow3[9];
-        b.index_o.diagonal5_2 += pow3[3];
-        b.index_o.edge_2x_2 += pow3[5];
-        b.index_o.h_v_4_3 += pow3[9];
-        b.index_o.edge_x_side_2 += pow3[5];
-        b.index_o.edge_x_side_3 += pow3[1];
-        b.index_o.edge_block_2 += pow3[6];
-        b.index_o.triangle_3 += pow3[0];
-        b.index_o.corner_2x5_2 += pow3[5];
-        b.index_o.corner_2x5_7 += pow3[6];
-    }
-    if (diff_o & INDEX_E8) {
-        b.index_o.diagonal6_1 += pow3[1];
-        b.index_o.diagonal6_2 += pow3[3];
-        b.index_o.diagonal5_1 += pow3[1];
-        b.index_o.diagonal5_2 += pow3[5];
-        b.index_o.edge_2x_2 += pow3[6];
-        b.index_o.h_v_4_1 += pow3[2];
-        b.index_o.edge_x_side_2 += pow3[6];
-        b.index_o.edge_x_side_3 += pow3[0];
-        b.index_o.edge_block_2 += pow3[7];
-        b.index_o.triangle_2 += pow3[6];
-        b.index_o.corner_2x5_2 += pow3[6];
-        b.index_o.corner_2x5_7 += pow3[5];
-    }
-    if (diff_o & INDEX_F8) {
-        b.index_o.diagonal6_2 += pow3[4];
-        b.index_o.diagonal5_2 += pow3[4];
-        b.index_o.edge_2x_2 += pow3[7];
-        b.index_o.h_v_3_1 += pow3[2];
-        b.index_o.corner_3x3_2 += pow3[7];
-        b.index_o.edge_x_side_2 += pow3[7];
-        b.index_o.edge_block_2 += pow3[8];
-        b.index_o.triangle_2 += pow3[7];
-        b.index_o.corner_2x5_2 += pow3[7];
-    }
-    if (diff_o & INDEX_G8) {
-        b.index_o.diagonal7_2 += pow3[3];
-        b.index_o.edge_2x_2 += pow3[8];
-        b.index_o.h_v_2_1 += pow3[2];
-        b.index_o.corner_3x3_2 += pow3[8];
-        b.index_o.edge_x_side_2 += pow3[8];
-        b.index_o.triangle_2 += pow3[8];
-        b.index_o.corner_2x5_2 += pow3[8];
-        b.index_o.corner_2x5_6 += pow3[4];
-    }
-    if (diff_o & INDEX_H8) {
-        b.index_o.diagonal8_0 += pow3[2];
-        b.index_o.edge_2x_1 += pow3[2];
-        b.index_o.edge_2x_2 += pow3[9];
-        b.index_o.h_v_2_1 += pow3[0];
-        b.index_o.h_v_2_2 += pow3[1];
-        b.index_o.corner_3x3_2 += pow3[9];
-        b.index_o.edge_x_side_2 += pow3[9];
-        b.index_o.edge_block_1 += pow3[4];
-        b.index_o.edge_block_2 += pow3[9];
-        b.index_o.triangle_2 += pow3[9];
-        b.index_o.corner_2x5_2 += pow3[9];
-        b.index_o.corner_2x5_6 += pow3[9];
-    }
+    uint64_t p = b.p;
+    uint64_t o = b.o;
+    __m128i f0 = b.index_p.indexes_8[0];
+    __m128i f1 = b.index_p.indexes_8[1];
+    __m128i f2 = b.index_p.indexes_8[2];
+    __m128i f3 = b.index_p.indexes_8[3];
+    __m128i f4 = b.index_p.indexes_8[4];
+    __m128i f5 = b.index_p.indexes_8[5];
+    __m128i f6 = b.index_p.indexes_8[6];
+    
+    __m128i g0 = b.index_o.indexes_8[0];
+    __m128i g1 = b.index_o.indexes_8[1];
+    __m128i g2 = b.index_o.indexes_8[2];
+    __m128i g3 = b.index_o.indexes_8[3];
+    __m128i g4 = b.index_o.indexes_8[4];
+    __m128i g5 = b.index_o.indexes_8[5];
+    __m128i g6 = b.index_o.indexes_8[6];
+    
+    int x;
+    while (p) {
+        x = clz_u64(p);
+        f0 = _mm_add_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
+        f1 = _mm_add_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
+        f2 = _mm_add_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
+        f3 = _mm_add_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
+        f4 = _mm_add_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
+        f5 = _mm_add_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
+        f6 = _mm_add_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
+        p &= ~(0x8000000000000000 >> x);
+    }
+    while (o) {
+        x = clz_u64(o);
+        g0 = _mm_add_epi16(g0, EVAL_FEATURES[x].indexes_8[0]);
+        g1 = _mm_add_epi16(g1, EVAL_FEATURES[x].indexes_8[1]);
+        g2 = _mm_add_epi16(g2, EVAL_FEATURES[x].indexes_8[2]);
+        g3 = _mm_add_epi16(g3, EVAL_FEATURES[x].indexes_8[3]);
+        g4 = _mm_add_epi16(g4, EVAL_FEATURES[x].indexes_8[4]);
+        g5 = _mm_add_epi16(g5, EVAL_FEATURES[x].indexes_8[5]);
+        g6 = _mm_add_epi16(g6, EVAL_FEATURES[x].indexes_8[6]);
+        o &= ~(0x8000000000000000 >> x);
+    }
+    b.index_p.indexes_8[0] = f0;
+    b.index_p.indexes_8[1] = f1;
+    b.index_p.indexes_8[2] = f2;
+    b.index_p.indexes_8[3] = f3;
+    b.index_p.indexes_8[4] = f4;
+    b.index_p.indexes_8[5] = f5;
+    b.index_p.indexes_8[6] = f6;
+    
+    b.index_o.indexes_8[0] = g0;
+    b.index_o.indexes_8[1] = g1;
+    b.index_o.indexes_8[2] = g2;
+    b.index_o.indexes_8[3] = g3;
+    b.index_o.indexes_8[4] = g4;
+    b.index_o.indexes_8[5] = g5;
+    b.index_o.indexes_8[6] = g6;
 }
 
-#endif /* index_h */
+
+#endif /* index_simd_h */

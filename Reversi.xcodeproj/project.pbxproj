@@ -73,8 +73,8 @@
 		2C5C471026B4F08E005E8C85 /* libzlib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzlib.a; path = ../../lib/macOS/zlib/libzlib.a; sourceTree = "<group>"; };
 		2C6906D72298140F00A427D0 /* engine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = engine; path = App/engine; sourceTree = "<group>"; };
 		2CD8412B283263B2005013A6 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../../lib/macOS/boost/libboost_filesystem.a; sourceTree = "<group>"; };
-		5A04A4EA2DB378D3000ABC37 /* index.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = index.hpp; sourceTree = "<group>"; };
 		5A434F112D6AEEDF006D6950 /* evaluate.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = evaluate.hpp; sourceTree = "<group>"; };
+		5A6AA9DB2DF432C500EED9FB /* index.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = index.hpp; sourceTree = "<group>"; };
 		5A9884582CF1C4D600375844 /* book.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = book.hpp; sourceTree = "<group>"; };
 		5ACC5A662D780DA2005C41F4 /* bit.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit.hpp; sourceTree = "<group>"; };
 		5ACC5A6B2D78325F005C41F4 /* Reversi.profdata */ = {isa = PBXFileReference; lastKnownFileType = file; path = Reversi.profdata; sourceTree = "<group>"; };
@@ -160,7 +160,7 @@
 				5ACC5A662D780DA2005C41F4 /* bit.hpp */,
 				5A434F112D6AEEDF006D6950 /* evaluate.hpp */,
 				5A9884582CF1C4D600375844 /* book.hpp */,
-				5A04A4EA2DB378D3000ABC37 /* index.hpp */,
+				5A6AA9DB2DF432C500EED9FB /* index.hpp */,
 				5AD3C8322DC390FD007AAC99 /* PrefixHeader.pch */,
 			);
 			path = src;

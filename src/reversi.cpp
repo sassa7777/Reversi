@@ -32,7 +32,6 @@ void reset() {
         for (int i = 0; i <= 14; ++i) {
             evaluate_init(U"eval" + Format(i) + U".zstd", i);
         }
-//        cal_mpc();
     }
     if (book.size() == 0) book_init();
     cout << "DEPTH: " << DEPTH << endl;
@@ -278,29 +277,9 @@ void cal_mpc() {
 //        mpc_mean[i] = diff_average;
 //        mpc_deviation[i] = deviation;
     }
-//    for (auto v1 : stones) {
-//        cout << v1 << ", ";
-//    }
     for (size_t i = 0; i < stones.size(); ++ i) {
         cout << stones[i] << " " << light[i] << " " << deep[i] << " " << diffs[i] << endl;
     }
-//    cout << endl;
-//    cout << endl;
-//    for (size_t i = 0, j = diffs.size(); i < j; ++i) {
-//        cout << mpc_deviation[deep[i]][stones[i]] << ", ";
-//    }
-//    cout << endl;
-//    cout << endl;
-//    for (auto v1 : deep) {
-//        cout << v1 << ", ";
-//    }
-//    cout << endl;
-//    cout << endl;
-//    for (auto v1 : light) {
-//        cout << v1 << ", ";
-//    }
-//    cout << endl;
-//    cout << endl;
 }
 
 int ai() {
@@ -476,6 +455,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
     uint64_t legalboard = makelegalboard(b);
     if (!legalboard) [[unlikely]] {
         board b2 = b.flipped();
+        
         if (!(makelegalboard(b2))) [[unlikely]] return evaluate(b);
         else {
             return -nega_scout(depth, -beta, -alpha, b2);
@@ -620,6 +600,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     uint64_t legalboard = makelegalboard(b);
     if (!legalboard) [[unlikely]] {
         board b2 = b.flipped();
+        
         if (!(makelegalboard(b2))) [[unlikely]] return evaluate(b);
         else return -nega_alpha_moveorder(depth, -beta, -alpha, b2);
     }
@@ -685,6 +666,7 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
     uint64_t legalboard = makelegalboard(b);
     if (!legalboard) [[unlikely]] {
         board b2 = b.flipped();
+        
         if (!(makelegalboard(b2))) [[unlikely]] return evaluate(b);
         else return -nega_alpha(depth, -beta, -alpha, b2);
     }
