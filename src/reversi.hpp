@@ -92,11 +92,11 @@ public:
 
 class board{
 public:
-    features index_p;
-    features index_o;
+    features index;
     uint64_t p;
     uint64_t o;
     int score;
+    uint8_t player;
     bool operator<(const auto& b) const noexcept {
         return this->score > b.score;
     }
@@ -107,7 +107,7 @@ public:
         return this->p != other.p || this->o != other.o;
     }
     board flipped() const noexcept {
-        return {this->index_o, this->index_p, this->o, this->p, this->score};
+        return {this->index, this->o, this->p, this->score, static_cast<uint8_t>(this->player ^ 1)};
     }
     uint64_t hash() const noexcept {
         // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
@@ -120,7 +120,7 @@ public:
     uint64_t put;
     
     board_root flipped() const noexcept {
-        return {{this->index_o, this->index_p, this->o, this->p, this->score}, this->put};
+        return {{this->index, this->o, this->p, this->score, static_cast<uint8_t>(this->player ^ 1)}, this->put};
     }
 };
 
@@ -137,7 +137,7 @@ public:
     uint64_t legalboard;
     
     board_finish flipped() const noexcept {
-        return {{this->index_o, this->index_p, this->o, this->p, this->score}, this->legalboard};
+        return {{this->index, this->o, this->p, this->score, static_cast<uint8_t>(this->player ^ 1)}, this->legalboard};
     }
 };
 
