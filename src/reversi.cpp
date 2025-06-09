@@ -351,11 +351,13 @@ int ai() {
 
 inline int move_ordering_value(const board &b) noexcept {
     uint64_t hash = b.hash();
-    if (former_search_table[hash & table_mask].p == b.p && former_search_table[hash & table_mask].o == b.o) {
-        return (32768 - former_search_table[hash & table_mask].u);
-    } else {
-        return -evaluate_moveorder(b);
-    }
+    size_t index = hash & table_mask;
+    const auto &entry = former_search_table[index];
+
+    if (entry.p == b.p && entry.o == b.o)
+        return 32768 - entry.u;
+
+    return -evaluate_moveorder(b);
 }
 
 int search_nega_scout(board b, bool hint) {
@@ -679,8 +681,6 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
     uint64_t rev = 0;
     int var, max_score = MIN_INF;
     board b1;
-    b1.index = b.index;
-    b1.player = b.player;
     for (const auto& i: moveorder_bit) {
         if (canput(i, legalboard)) {
             rev = Flip(i, b);
@@ -688,6 +688,8 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
             b1.p = b.p ^ (i | rev);
 //            b1.index_o = b.index_o;
 //            b1.index_p = b.index_p;
+            b1.index = b.index;
+            b1.player = b.player;
             SYNC_INDEX(i, rev, b1);
             swap(b1.p, b1.o);
 //            swap(b1.index_p, b1.index_o);
@@ -959,7 +961,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
 //                moveorder[count].index_o = b.index_o;
 //                moveorder[count].index_p = b.index_p;
                 moveorder[count].index = b.index;
-        moveorder[count].player = b.player;
+                moveorder[count].player = b.player;
                 SYNC_INDEX(put, rev, moveorder[count]);
                 swap(moveorder[count].p, moveorder[count].o);
 //                swap(moveorder[count].index_p, moveorder[count].index_o);
@@ -977,7 +979,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
 //                moveorder[count].index_o = b.index_o;
 //                moveorder[count].index_p = b.index_p;
                 moveorder[count].index = b.index;
-        moveorder[count].player = b.player;
+                moveorder[count].player = b.player;
                 SYNC_INDEX(put, rev, moveorder[count]);
                 swap(moveorder[count].p, moveorder[count].o);
 //                swap(moveorder[count].index_p, moveorder[count].index_o);
@@ -1093,7 +1095,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
 //                moveorder[count].index_o = b.index_o;
 //                moveorder[count].index_p = b.index_p;
                 moveorder[count].index = b.index;
-        moveorder[count].player = b.player;
+                moveorder[count].player = b.player;
                 SYNC_INDEX(put, rev, moveorder[count]);
                 swap(moveorder[count].p, moveorder[count].o);
 //                swap(moveorder[count].index_p, moveorder[count].index_o);
@@ -1111,7 +1113,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
 //                moveorder[count].index_o = b.index_o;
 //                moveorder[count].index_p = b.index_p;
                 moveorder[count].index = b.index;
-        moveorder[count].player = b.player;
+                moveorder[count].player = b.player;
                 SYNC_INDEX(put, rev, moveorder[count]);
                 swap(moveorder[count].p, moveorder[count].o);
 //                swap(moveorder[count].index_p, moveorder[count].index_o);
@@ -1178,6 +1180,8 @@ int nega_alpha_finish(int alpha, int beta, const board_finish &b) {
             b1.p = b.p ^ (i | rev);
 //            b1.index_p = b.index_p;
 //            b1.index_o = b.index_o;
+            b1.index = b.index;
+            b1.player = b.player;
             SYNC_INDEX(i, rev, b1);
             swap(b1.p, b1.o);
 //            swap(b1.index_p, b1.index_o);

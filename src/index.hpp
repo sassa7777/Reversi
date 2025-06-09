@@ -599,69 +599,40 @@ constexpr features EVAL_FEATURES[] = {
 };
 
 inline void SYNC_INDEX(uint64_t put, uint64_t rev, board &b) {
-    __m128i f0 = b.index.indexes_8[0];
-    __m128i f1 = b.index.indexes_8[1];
-    __m128i f2 = b.index.indexes_8[2];
-    __m128i f3 = b.index.indexes_8[3];
-    __m128i f4 = b.index.indexes_8[4];
-    __m128i f5 = b.index.indexes_8[5];
-    __m128i f6 = b.index.indexes_8[6];
-    
+    __m128i* f = b.index.indexes_8;
+
+    int x = clz_u64(put);
+    const __m128i* add_features = EVAL_FEATURES[x].indexes_8;
+
     if (b.player == 0) {
-        int x = clz_u64(put);
-        f0 = _mm_add_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
-        f1 = _mm_add_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
-        f2 = _mm_add_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
-        f3 = _mm_add_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
-        f4 = _mm_add_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
-        f5 = _mm_add_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
-        f6 = _mm_add_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
-        
+        for (int i = 0; i < 7; ++i)
+            f[i] = _mm_add_epi16(f[i], add_features[i]);
+
         while (rev) {
             x = clz_u64(rev);
-            f0 = _mm_sub_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
-            f1 = _mm_sub_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
-            f2 = _mm_sub_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
-            f3 = _mm_sub_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
-            f4 = _mm_sub_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
-            f5 = _mm_sub_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
-            f6 = _mm_sub_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
+            const __m128i* sub_features = EVAL_FEATURES[x].indexes_8;
 
-            rev &= ~(0x8000000000000000 >> x);
+            for (int i = 0; i < 7; ++i)
+                f[i] = _mm_sub_epi16(f[i], sub_features[i]);
+
+            rev &= ~(0x8000000000000000ULL >> x);
         }
     } else {
-        int x = clz_u64(put);
-        f0 = _mm_add_epi16(f0, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[0], 1));
-        f1 = _mm_add_epi16(f1, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[1], 1));
-        f2 = _mm_add_epi16(f2, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[2], 1));
-        f3 = _mm_add_epi16(f3, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[3], 1));
-        f4 = _mm_add_epi16(f4, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[4], 1));
-        f5 = _mm_add_epi16(f5, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[5], 1));
-        f6 = _mm_add_epi16(f6, _mm_slli_epi16(EVAL_FEATURES[x].indexes_8[6], 1));
-        
+        for (int i = 0; i < 7; ++i)
+            f[i] = _mm_add_epi16(f[i], _mm_slli_epi16(add_features[i], 1));
+
         while (rev) {
             x = clz_u64(rev);
-            f0 = _mm_add_epi16(f0, EVAL_FEATURES[x].indexes_8[0]);
-            f1 = _mm_add_epi16(f1, EVAL_FEATURES[x].indexes_8[1]);
-            f2 = _mm_add_epi16(f2, EVAL_FEATURES[x].indexes_8[2]);
-            f3 = _mm_add_epi16(f3, EVAL_FEATURES[x].indexes_8[3]);
-            f4 = _mm_add_epi16(f4, EVAL_FEATURES[x].indexes_8[4]);
-            f5 = _mm_add_epi16(f5, EVAL_FEATURES[x].indexes_8[5]);
-            f6 = _mm_add_epi16(f6, EVAL_FEATURES[x].indexes_8[6]);
+            const __m128i* add_rev_features = EVAL_FEATURES[x].indexes_8;
 
-            rev &= ~(0x8000000000000000 >> x);
+            for (int i = 0; i < 7; ++i)
+                f[i] = _mm_add_epi16(f[i], add_rev_features[i]);
+
+            rev &= ~(0x8000000000000000ULL >> x);
         }
     }
-    
-    b.index.indexes_8[0] = f0;
-    b.index.indexes_8[1] = f1;
-    b.index.indexes_8[2] = f2;
-    b.index.indexes_8[3] = f3;
-    b.index.indexes_8[4] = f4;
-    b.index.indexes_8[5] = f5;
-    b.index.indexes_8[6] = f6;
-    
-    b.player ^= 1; // switch player
+
+    b.player ^= 1;
 }
 
 inline void INIT_INDEX(board &b) {
