@@ -184,5 +184,9 @@ inline int evaluate(const board &b) noexcept {
     
     //    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
     
+//    if (a < 0) return a / 256 - 1;
+//    else if (a > 0) return a / 256 + 1;
+//    else return 0;
+    
     return a;
 }

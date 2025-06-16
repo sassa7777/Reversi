@@ -33,6 +33,7 @@ void reset() {
             evaluate_init(U"eval" + Format(i) + U".zstd", i);
         }
     }
+//    cal_mpc();
     if (book.size() == 0) book_init();
     cout << "DEPTH: " << DEPTH << endl;
     cout << "Player: " << AIplayer << endl;
@@ -159,7 +160,7 @@ int ai_hint() {
     if (putable_count == 1) {
         tmpbit = legalboard;
     } else {
-        score = search_nega_scout(b, true);
+        score = search_nega_scout(b, true, true);
     }
     think_percent = 100;
     if (tmpbit == 0) {
@@ -173,6 +174,82 @@ int ai_hint() {
     cout << "Score : " << score << endl;
     cout << "Score(stone) : " << score/256 << endl;
     return 1;
+}
+
+int search_nega_scout_mpc_cal(board &b, int depth) {
+//    cout << "algorithm: NegaScout" << endl;
+    use_mpc = false;
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
+    INIT_INDEX(b);
+    uint64_t legalboard = makelegalboard(b);
+    uint64_t rev;
+    vector<board_root> moveorder(popcnt_u64(legalboard));
+    int count = 0;
+    while(legalboard) {
+        moveorder[count].put = blsi_u64(legalboard);
+        legalboard = blsr_u64(legalboard);
+        rev = Flip(moveorder[count].put, b);
+        moveorder[count].p = b.p ^ (moveorder[count].put | rev);
+        moveorder[count].o = b.o ^ rev;
+//        moveorder[count].index_o = b.index_o;
+//        moveorder[count].index_p = b.index_p;
+        moveorder[count].index = b.index;
+        moveorder[count].player = b.player;
+        SYNC_INDEX(moveorder[count].put, rev, moveorder[count]);
+        swap(moveorder[count].p, moveorder[count].o);
+//        swap(moveorder[count].index_p, moveorder[count].index_o);
+        moveorder[count].score = move_ordering_value(moveorder[count]);
+        ++count;
+    }
+    int alpha = MIN_INF, beta = MAX_INF;
+    think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
+    int wave = 0;
+    int end_depth;
+    end_depth = depth;
+    for (search_depth = max(1, end_depth-4); search_depth <= end_depth; ++search_depth) {
+        think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
+        ++wave;
+        afterIndex = nowIndex+search_depth;
+        //        sync_model(afterIndex);
+        for (auto& m: moveorder) {
+            m.score = move_ordering_value(m);
+        }
+        sort(moveorder.begin(), moveorder.end(), [](const auto &a, const auto &b) {
+            return a.score > b.score;
+        });
+        alpha = MIN_INF;
+        beta = MAX_INF;
+        future<int> futures[34];
+        int vars[34];
+        alpha = -nega_scout(search_depth-1, -beta, -alpha, moveorder[0]);
+        vars[0] = alpha;
+        if (search_depth == end_depth) {
+            tmpbit = moveorder[0].put;
+        }
+        for (size_t i = 1; i < moveorder.size(); ++i) {
+            futures[i] = async(launch::async, [&, i]() -> int {
+                return -nega_alpha_moveorder(search_depth-1, -alpha - 1, -alpha, moveorder[i]);
+            });
+        }
+        for (size_t i = 1; i < moveorder.size(); ++i) {
+            vars[i] = futures[i].get();
+        }
+        for (size_t i = 1; i < moveorder.size(); ++i) {
+            if (vars[i] > alpha) {
+                vars[i] = -nega_scout(search_depth-1, -beta, -vars[i], moveorder[i]);
+            }
+        }
+        size_t index_max_score = max_element(vars, vars+moveorder.size()) - vars;
+        tmpbit = moveorder[index_max_score].put;
+        alpha = vars[index_max_score];
+//        cout << "depth: " << search_depth << " Visited nodes " << visited_nodes << endl;
+        swap(search_table, former_search_table);
+        memset(search_table, 0, sizeof(search_table));
+    }
+    memset(search_table, 0, sizeof(search_table));
+    memset(former_search_table, 0, sizeof(former_search_table));
+    return alpha;
 }
 
 void cal_mpc() {
@@ -192,49 +269,15 @@ void cal_mpc() {
         "c4c3e6f6f5d6c5e3d3c6f2d2c2c1d1f3f4e1e7g4g3e2h3g6g5f1h6f8d8g7f7e8d7c8c7g8h8b6b5a6a5b7b3a4b8b4a8a7b2h4a3a1h5h7g1h1h2a2b1g2",
         "c4c3c2f4f5b2e3c5d3e2b3f2g3f6f3d6b6g4c6e6h4d2g5g6a1b4a4b5a5c7c1a3a2b1e1d1f1h5g2h3h2a7e7f7a6e8a8b7d8h1g1b8c8d7f8g7g8h8h7h6",
         "e6f4e3d2g3g5g4f6d6d7c5f5c4f3d3c3c1c6e7c2b5f2b6c7e2b4a3d1f1b1h6d8f8h4b3e8c8h2g6h7h8f7h3h5e1b2a1a2g2a5a6h1a4g1g8g7b7b8a7a8",
-        "f5d6c3d3c4f4f6b4f3e6e3f2d2g5g6g4h4h5h6g3h3c2f1d1c5f7d7c7c6d8e8e7f8g7b3g8e1a4b5e2c1a6a3b6h8h7a5a2c8b1a7a8a1g1b2g2b7b8h1h2",
-        "f5d6c5f4e3f6f3c4d3e6c3f2g3e2g4c2c6b4a4a3a5a6b5d2b3g5c7e7h6d7b6a7g6a2f8e8c8h3d8h4d1c1h5e1f1g1h2f7b2b7g8g7a8b8h8h7a1h1g2b1",
-        "f5f6e6f4e3d6g4h3e7d3c6f7f3c4g5e8d8d7f8h4h6g6c7b6b5a6a4b4c3g3c5d2c2e2a3a5a7b3d1e1a2b7h7c8f1f2a8b8g1c1b2g8g7h5h8h1g2h2b1a1",
-        "f5d6c3d3c4f4c5b3c2b4e3e6c6f6a5a4b5a6d7c7e7d2g3f3f2d1e2h3b1b6c1a1b2g1a3a2b8c8d8f8g6e8g8g4g5h5h4h6g2f7b7h2h1a7a8f1e1h7g7h8",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5f6e6f4g6c5f3g5d6e3h4g3g4h6e2d3h5h3c6e7f2c4d2c1f7f8b4a4b5c7d1b3b1b6d7h7a3c2a5a6a7c3e8d8b8c8g8e1f1g7a2g2h2h1g1a1h8a8b7b2",
-        "f5f6e6f4g5e7d7g6e8h6g4c5h5d6f7h4c6c8d8f8h3h2e3b6c7e2b5h7f3d3c4g3f2d2a5f1e1d1c3b8b7a8a7b4c1b1c2a6a4b3g1h1g2a3a2b2a1g8g7h8",
-        "f5d6c3d3c4f4c5b3c2b4e3e6c6f6a5a4b5a6d7c7e7d2a3a2f2f3e1f8e8d8c8b8b7f7b6b2e2f1g1c1g3h3g4h4g6g7g2h7h5h6g5h1d1a8a7h2h8g8a1b1",
-        "f5d6c3d3c4f4f6f3e6e7c6g6g5f7f8h6d2d8h5g4h3h4h7d7e3e2c8b8e1c7f2b5b6c5a6a4g8g3b4g2g7e8a8h8f1h2b7d1c1h1g1b1c2b2a3a1a7a5a2b3",
-        "f5d6c4d3c3f4c5b3c2e3d2c6b4a4b5b6g4f3e6e2d7e1a6d1a5a7f2c7f1d8c8e8f8e7f6f7g6g3h3g5c1h6h5h7h8h4a2b7g1g7g8g2h1h2a8a3b2a1b1",
-        "f5f6e6d6c3g5c6c5c4b5a6a5a4b6a7f3d7c8e8c7e7f7f8d3h4b3g6h6e3d8g4b4h5h3f4g8f2g3c2e1a3d2e2d1c1b1b2a1a2h7f1g1h2h1g2a8b8b7h8g7",
-        "f5d6c3d3c4f4e3f6g5g3c5b4b3e6f3c2a4e2b6g6f2d2c6h4h5g4h3f1c7d7e8b5a5d8c8a3f7e7h6a6d1e1b2g2h1a1g1h2a2h7c1b1h8f8b7b8g7g8a8a7",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c3d3c4f4c5b3c2b4e3e6c6f6a5a4b5a6d7d8g4g3g5b6a3a2f7d2e7f2b7c7c8e8e1h3f3c1a7a8b8h5g6d1b1h6e2f1b2a1f8g8g7h7h4g2h1h2g1h8",
-        "f5d6c5f4e3c6d3f6e6d7g3c4b4b3g5c3b5a5a4a3b6c7f7d2e2g6e7c2a6f3a2g4e8c8d8f8f2h3c1f1g7a7a8h8h5g8h4d1e1b1g2h7h6g1h1h2b7b8a1b2",
-        "f5d6c3d3c4f4f6f3e6e7c6g6g5f7f8h6d2d8h5g4h3h4h7d7e3e2c8b8e1c7f2b5b6c5a6a4g8g3b4g2g7e8a8h8f1h2b7d1c1h1g1b1c2b2a3a1a7a5a2b3",
-        "f5f6e6f4e3c5c4e7c6e2f3f2g5g4g6d6h3h5g3c3d3b3b5b4b6c7f7h6e8c2d7c8d8f8d2d1a3a6c1b1f1a4e1g1b2a1a2h2g8h8h7g7g2h1h4b8a5b7a7a8",
-        "f5f6e6f4g5e7d7g6e8h6g4c5h5d6f7h4c6c8d8f8h3h2e3b6c7e2b5h7f3d3c4g3f2d2a5f1e1d1c3b8b7a8a7b4c1b1c2a6a4b3g1h1g2a3a2b2a1g8g7h8",
-        "f5d6c3d3c4f4c5b3c2e3d2c6b4a4b5b6g4f3e6e2d7e1a6d1a5a7f2c7f1d8c8e8f8e7f6f7g6g3h3g5c1h6h5h7h8h4a2b7g1g7g8g2h1h2a8a3b2a1b1",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c3d3c4f4f6f3e6e7d7g6g5f7e2g4e3c8e8c5d8f8g3c6h4d2b6c7f2e1h6h5h3f1c1d1g1a5c2b5g2b3a3b2b1h1h2g7h8a1b4a4a2h7g8b8b7a8a7a6",
-        "f5d6c4d3c3f4c5b3c2e3d2c6b4a4b5b6g4f3e6e2d7e1a6d1a5a7f2c7f1d8c8e8f8e7f6f7g6g3h3g5c1h6h5h7h8h4a2b7g1g7g8g2h1h2a8a3b2a1b1",
-        "f5d6c4d3c3f4f6f3e6e7d7g6g5c5c6h6d8b3h4b4e3c7b5g3g4a5c8b6e2h5h7f7h3f8d2e8g8f2c2c1d1f1e1b2a3b1g2b7a1h1a4g1h2a6g7a2b8h8a7a8",
-        "f5f6e6f4g4e7c4f3g5d6e3g3f2h5h3c5b6c3d7h4c6h2d3b5g6b4h6h7e8c2d2f1g7h8g2e2e1d1a3a4f7g8f8h1a5c7g1d8b3b2a1a2b1c1b7a8b8a7a6c8",
-        "f5d6c3d3c4f4f6f3e6e7f7c5b6g6e3e2f1d1g5c6d8g4h6d2h5e8f8c7c2a6c8b5d7b4a3a5b3b7e1b1a8a4a7b8f2h7g7h4g3g2h1g1a2b2a1h2h3g8c1h8",
-        "f5d6c3d3c4f4c5b4b5c6f3e6e3g6b6a5a6a4a3b3g5d2d7e2f2e7f6f7e8g3a2f1c2f8d8c8d1h5h3h4g4h2e1c1h7b2a1g2b1c7g1h1b8a8g7h6h8g8a7b7",
-        "f5d6c3d3c4f4c5b3c2e3d2c6b4a4a3e2a5d1f3c1b6g6d7f6e6b5g5f7e7d8f1f8e1g1c7c8b7h5g4h3e8a8a7g7b8f2h6h7h4g3b2a6b1a1a2h8g8g2h1h2",
-        "f5d6c3d3c4f4f6f3e6e7f7c5b6g6e3e2f1d1g5c6d8g4h6d2h5e8f8c7c2a6c8b5d7b4a3a5b3b7e1b1a8a4a7b8f2h7g7h4g3g2h1g1a2b2a1h2h3g8c1h8",
-        "f5d6c3d3c4b3d2e1b5c5b4e3c2a4c6d1e2c7b6f1e6f3f2g3b1a5a6a7a2f4d7d8h3c1g1g6f6g5h4h5g4b7h6f7f8g7b2g8e8a3a8e7h8a1c8h1h2g2h7b8",
-        "f5d6c5f4e3c6d3f6e6d7g3c4b4b3g5c3b5a5a4a3b6c7f7d2e2g6e7c2a6f3a2g4e8c8d8f8f2h3c1f1g7a7a8h8h5g8h4d1e1b1g2h7h6g1h1h2b7b8a1b2",
-        "f5d6c3d3c4f4f6f3e6e7f7c5b6g6e3e2f1d1g5c6d8g4h6d2h5e8f8c7c2a6c8b5d7b4a3a5b3b7e1b1a8a4a7b8f2h7g7h4g3g2h1g1a2b2a1h2h3g8c1h8",
-        "f5d6c3d3c4f4f6f3e6e7f7c5b6g6e3e2f1d1g5c6d8g4h6d2h5e8f8c7c2a6c8b5d7b4a3a5b3b7e1b1a8a4a7b8f2h7g7h4g3g2h1g1a2b2a1h2h3g8c1h8",
+        "f5f4c3c6e3f6g3f3g4d3g5e6d6g6c5c4f7h4h3h5d7c7b4b5b3c2e7f2h6a5a3d8c8b8a4a2e2e1d1c1d2g2h1h2g1g8f8a6b7e8b6g7h8a8a7h7a1b2b1f1",
     };
     vector<vector<double>> deviations(20, vector<double>(65)), means(20, vector<double>(65));
     board bb;
+    use_mpc = false;
     play_record_to_coordinate_init();
     vector<int> stones, deep, light;
     vector<int> diffs;
-    for (int i = 0; i < 11; ++i) {
-        vector<vector<int>> diff(65);
+    for (int i = 0; i < 16; ++i) {
         for (auto &transcript : transcripts) {
             bb.p = 0x0000000810000000ULL;
             bb.o = 0x0000001008000000ULL;
@@ -242,40 +285,28 @@ void cal_mpc() {
                 string kifu = string({transcript[j], transcript[j+1]});
                 put_book_init(play_record_to_put[kifu], bb);
                 if (mpc_depth[i] <= 0) continue;
+                if (makelegalboard(bb) == 0) continue;
                 //                sync_model(popcnt_u64(bb.p | bb.o) + i - 4);
                 //                int a = search_nega_scout_custom(bb, i);
-                INIT_INDEX(bb);
-                int b = nega_scout(mpc_depth[i], MIN_INF, MAX_INF, bb);
-                swap(search_table, former_search_table);
-                memset(search_table, 0, sizeof(search_table));
-                int a = nega_scout(i, MIN_INF, MAX_INF, bb);
+//                memset(search_table, 0, sizeof(search_table));
+//                memset(former_search_table, 0, sizeof(former_search_table));
+//                INIT_INDEX(bb);
+//                int b = -nega_scout(mpc_depth[i], MIN_INF, MAX_INF, bb);
+                int b = search_nega_scout_mpc_cal(bb, mpc_depth[i]);
+//                swap(search_table, former_search_table);
+//                memset(search_table, 0, sizeof(search_table));
+//                memset(former_search_table, 0, sizeof(former_search_table));
+//                int a = -nega_scout(i, MIN_INF, MAX_INF, bb);
+                int a = search_nega_scout_mpc_cal(bb, i);
                 //                int b = search_nega_scout_custom(bb, mpc_depth[i]);
 //                diff[popcnt_u64(~(bb.p | bb.o))].emplace_back(b - a);
                 stones.emplace_back(popcnt_u64(bb.p | bb.o));
-                diffs.emplace_back(round((a - b) / 256.0));
+                diffs.emplace_back(a - b);
                 deep.emplace_back(i);
                 light.emplace_back(mpc_depth[i]);
             }
         }
-//        vector<double> diff_average(65);
-//        for (size_t j = 0, k = diff.size(); j < k; ++j) {
-//            diff_average[j] = (diff[j].size() == 0) ? 0 : (double)reduce(diff[j].begin(), diff[j].end(), 0L) / diff[j].size();
-//        }
-//        vector<double> variance(65);
-//        for (size_t j = 0, k = diff.size(); j < k; ++j) {
-//            for (auto x : diff[j]) {
-//                variance[j] += (x - diff_average[j]) * (x - diff_average[j]);
-//            }
-//        }
-//        vector<double> deviation(65);
-//        for (size_t j = 0, k = diff.size(); j < k; ++j) {
-//            deviation[j] = (diff[j].size() == 0) ? 0 : sqrt(variance[j] / diff[j].size());
-//        }
-//        deviations[i] = deviation;
-//        means[i] = diff_average;
         cout << "pphase " << i << " done" << endl;
-//        mpc_mean[i] = diff_average;
-//        mpc_deviation[i] = deviation;
     }
     for (size_t i = 0; i < stones.size(); ++ i) {
         cout << stones[i] << " " << light[i] << " " << deep[i] << " " << diffs[i] << endl;
@@ -327,8 +358,15 @@ int ai() {
     if (!tmpbit) {
         if (afterIndex >= 60) {
             score = search_finish_scout(b);
-        } else  {
-            score = search_nega_scout(b, false);
+        } else if (nowIndex >= 35)  {
+            mpc_p = 2.5;
+            score = search_nega_scout(b, false, true);
+        } else if (nowIndex >= 25)  {
+            mpc_p = 2.3;
+            score = search_nega_scout(b, false, true);
+        } else {
+            mpc_p = 2.3;
+            score = search_nega_scout(b, false, true);
         }
     }
     auto end = chrono::high_resolution_clock::now();
@@ -360,8 +398,9 @@ inline int move_ordering_value(const board &b) noexcept {
     return -evaluate_moveorder(b);
 }
 
-int search_nega_scout(board b, bool hint) {
+int search_nega_scout(board b, bool hint, bool mpc) {
     cout << "algorithm: NegaScout" << endl;
+    use_mpc = mpc;
     memset(search_table, 0, sizeof(search_table));
     memset(former_search_table, 0, sizeof(former_search_table));
     INIT_INDEX(b);
@@ -446,9 +485,10 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
     }
     int u = MAX_INF, l = MIN_INF;
     uint64_t hash = b.hash();
-    if (search_table[hash & table_mask] == b) {
-        u = search_table[hash & table_mask].u;
-        l = search_table[hash & table_mask].l;
+    auto &entry = search_table[hash & table_mask];
+    if (entry.p == b.p && entry.o == b.o && entry.depth == depth) {
+        u = entry.u;
+        l = entry.l;
         if (u <= alpha) return u;
         if (l >= beta) return l;
         if (u == l) return u;
@@ -490,21 +530,28 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         return a.score > b.score;
     });
     
-//    if (mpc_depth[depth] > 0 && depth <= MAX_MPC_DEPTH) {
-//        double A = aa*popcnt_u64((b.p | b.o))/64.0 + bb*mpc_depth[depth]/60.0 + cc*depth/60.0;
-//        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
-//        dev *= 256;
-//        int bound_up = beta + 2.6 * dev;
-//        int bound_low = alpha - 2.6 * dev;
-//        for (int i = 0; i < count; ++i) {
-//            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
-//                return bound_low;
+    if (mpc_depth[depth] > 0 && use_mpc) {
+        double A = aa*(double)popcnt_u64((b.p | b.o))/64.0 + bb*(double)mpc_depth[depth]/60.0 + (double)cc*depth/60.0;
+        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
+        int bound_up = static_cast<int>(beta + mpc_p * dev);
+        int bound_low = static_cast<int>(alpha - mpc_p * dev);
+        if (alpha > MIN_INF && beta < MAX_INF) {
+//            for (int i = 0; i < count; ++i) {
+//                if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low -1, -bound_low, moveorder[i]) <= bound_low) {
+//                    return alpha;
+//                }
+//                if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up + 1, moveorder[i]) >= bound_up) {
+//                    return beta;
+//                }
 //            }
-//            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up+1, moveorder[i]) >= bound_up) {
-//                return bound_up;
-//            }
-//        }
-//    }
+            if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
+                return alpha;
+            }
+            if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_up, bound_up + 1, b) >= bound_up) {
+                return beta;
+            }
+        }
+    }
     
     future<int> futures[34];
     int vars[34];
@@ -512,7 +559,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         vars[0] = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {b.p, b.o, u, vars[0]};
+                search_table[hash & table_mask] = {b.p, b.o, u, vars[0], depth};
             }
             return vars[0];
         }
@@ -529,7 +576,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i], depth};
                 }
                 return vars[i];
             }
@@ -539,7 +586,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 if (vars[i] >= beta) {
                     {
                         if (vars[i] > l) {
-                            search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                            search_table[hash & table_mask] = {b.p, b.o, u, vars[i], depth};
                         }
                     }
                     return vars[i];
@@ -554,7 +601,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(vars[0], alpha);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {b.p, b.o, u, vars[0]};
+                search_table[hash & table_mask] = {b.p, b.o, u, vars[0], depth};
             }
             return vars[0];
         }
@@ -569,7 +616,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i], depth};
                 }
                 return vars[i];
             }
@@ -578,7 +625,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l)};
+    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l), depth};
     return max_score;
 }
 
@@ -591,9 +638,10 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     uint64_t hash = b.hash();
     {
         lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-        if (search_table[hash & table_mask] == b) {
-            u = search_table[hash & table_mask].u;
-            l = search_table[hash & table_mask].l;
+        auto &entry = search_table[hash & table_mask];
+        if (entry.p == b.p && entry.o == b.o && entry.depth == depth) {
+            u = entry.u;
+            l = entry.l;
             if (u <= alpha) return u;
             if (l >= beta) return l;
             if (u == l) return u;
@@ -634,13 +682,36 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
         return a.score > b.score;
     });
     
+    if (mpc_depth[depth] > 0 && use_mpc) {
+        double A = aa*(double)popcnt_u64((b.p | b.o))/64.0 + bb*(double)mpc_depth[depth]/60.0 + (double)cc*depth/60.0;
+        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
+        int bound_up = static_cast<int>(beta + mpc_p * dev);
+        int bound_low = static_cast<int>(alpha - mpc_p * dev);
+        if (alpha > MIN_INF && beta < MAX_INF) {
+//            for (int i = 0; i < count; ++i) {
+//                if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low -1, -bound_low, moveorder[i]) <= bound_low) {
+//                    return alpha;
+//                }
+//                if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up + 1, moveorder[i]) >= bound_up) {
+//                    return beta;
+//                }
+//            }
+            if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
+                return alpha;
+            }
+            if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_up, bound_up + 1, b) >= bound_up) {
+                return beta;
+            }
+        }
+    }
+    
     if (depth <= 3) {
         for (int i = 0; i < count; ++i) {
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, depth};
                 }
                 return var;
             }
@@ -653,7 +724,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, depth};
                 }
                 return var;
             }
@@ -662,7 +733,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
         }
     }
     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l)};
+    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l), depth};
     return max_score;
 }
 
@@ -713,9 +784,10 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
     uint64_t hash = b.hash();
     {
         lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-        if (search_table[hash & table_mask] == b) {
-            u = search_table[hash & table_mask].u;
-            l = search_table[hash & table_mask].l;
+        auto &entry = search_table[hash & table_mask];
+        if (entry.p == b.p && entry.o == b.o && entry.depth == depth) {
+            u = entry.u;
+            l = entry.l;
             if (u <= alpha) return u;
             if (l >= beta) return l;
             if (u == l) return u;
@@ -729,7 +801,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
     if (!legalboard) [[unlikely]] {
         board b2 = b.flipped();
         if (!(makelegalboard(b2))) [[unlikely]] return evaluate(b);
-        else return -nega_alpha_moveorder(depth, -beta, -alpha, b2);
+        else return -nega_alpha_moveorder_mpc(depth, -beta, -alpha, b2);
     }
     int var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
@@ -755,29 +827,13 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         return a.score > b.score;
     });
     
-    if (mpc_depth[depth] > 0 && depth <= MAX_MPC_DEPTH) {
-        double A = aa*popcnt_u64((b.p | b.o))/64.0 + bb*mpc_depth[depth]/60.0 + cc*depth/60.0;
-        double dev = dd*A*A*A + ee*A*A + ff*A + gg;
-        dev *= 256;
-        int bound_up = beta + 2.6 * dev;
-        int bound_low = alpha - 2.6 * dev;
-        for (int i = 0; i < count; ++i) {
-            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_low-1, -bound_low, moveorder[i]) <= bound_low) {
-                return bound_low;
-            }
-            if (-nega_alpha_moveorder_mpc(mpc_depth[depth]-1, -bound_up, -bound_up+1, moveorder[i]) >= bound_up) {
-                return bound_up;
-            }
-        }
-    }
-    
     if (depth <= 3) {
         for (int i = 0; i < count; ++i) {
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, depth};
                 }
                 return var;
             }
@@ -790,7 +846,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, depth};
                 }
                 return var;
             }
@@ -799,12 +855,13 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         }
     }
     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l)};
+    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l), depth};
     return max_score;
 }
 
 int search_finish_scout(board b) {
     cout << "algorithm: NegaScout" << endl;
+    use_mpc = false;
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
     
@@ -932,10 +989,12 @@ int search_finish_scout(board b) {
 int nega_scout_finish(int alpha, int beta, const board_finish &b) {
     ++visited_nodes;
     int u = MAX_INF, l = MIN_INF;
+    int stones = popcnt_u64(b.p | b.o);
     uint64_t hash = b.hash();
-    if (search_table[hash & table_mask] == b) {
-        u = search_table[hash & table_mask].u;
-        l = search_table[hash & table_mask].l;
+    auto &entry = search_table[hash & table_mask];
+    if (entry.p == b.p && entry.o == b.o && entry.depth == stones) {
+        u = entry.u;
+        l = entry.l;
         if (u <= alpha) return u;
         if (l >= beta) return l;
         if (u == l) return u;
@@ -951,7 +1010,6 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
     int max_score = MIN_INF, count = 0;
     uint64_t rev;
     board_finish moveorder[34];
-    int stones = popcnt_u64(b.p | b.o);
     if (stones < end_search_stone_count) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
@@ -999,7 +1057,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         vars[0] = -nega_scout_finish(-beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
             if (vars[0] > l) {
-                search_table[hash & table_mask] = {b.p, b.o, u, vars[0]};
+                search_table[hash & table_mask] = {b.p, b.o, u, vars[0], stones};
             }
             return vars[0];
         }
@@ -1016,7 +1074,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i], stones};
                 }
                 return vars[i];
             }
@@ -1025,7 +1083,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
                 vars[i] = -nega_scout_finish(-beta, -vars[i], moveorder[i]);
                 if (vars[i] >= beta) {
                     if (vars[i] > l) {
-                        search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                        search_table[hash & table_mask] = {b.p, b.o, u, vars[i], stones};
                     }
                     return vars[i];
                 }
@@ -1047,7 +1105,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         for (int i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
-                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i]};
+                    search_table[hash & table_mask] = {b.p, b.o, u, vars[i], stones};
                 }
                 return vars[i];
             }
@@ -1056,7 +1114,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b) {
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
-    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l)};
+    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l), stones};
     return max_score;
 }
 
@@ -1066,9 +1124,10 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
     uint64_t hash = b.hash();
     {
         lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-        if (search_table[hash & table_mask] == b) {
-            u = search_table[hash & table_mask].u;
-            l = search_table[hash & table_mask].l;
+        auto &entry = search_table[hash & table_mask];
+        if (entry.p == b.p && entry.o == b.o) {
+            u = entry.u;
+            l = entry.l;
             if (u <= alpha) return u;
             if (l >= beta) return l;
             if (u == l) return u;
@@ -1133,7 +1192,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, stones};
                 }
                 return var;
             }
@@ -1146,7 +1205,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
             if (var >= beta) {
                 if (var > l) {
                     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-                    search_table[hash & table_mask] = {b.p, b.o, u, var};
+                    search_table[hash & table_mask] = {b.p, b.o, u, var, stones};
                 }
                 return var;
             }
@@ -1155,7 +1214,7 @@ int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b) {
         }
     }
     lock_guard<spinlock> lock(table_locks[hash & table_mask]);
-    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l)};
+    search_table[hash & table_mask] = {b.p, b.o, max_score, ((max_score > alpha) ? max_score : l), stones};
     return max_score;
 }
 

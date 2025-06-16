@@ -50,6 +50,8 @@ extern int nowIndex;
 extern int firstDEPTH;
 extern int afterIndex;
 extern int evaluate_ptr_num;
+extern bool use_mpc;
+extern double mpc_p;
 extern uint64_t legalboard;
 extern uint64_t rev;
 extern bool search_mode_enabled;
@@ -152,9 +154,7 @@ public:
     uint64_t o;
     int u;
     int l;
-    bool operator==(const auto& other) const noexcept {
-        return this->p == other.p && this->o == other.o;
-    }
+    int depth;
 };
 
 extern board b;
@@ -186,7 +186,7 @@ int nega_scout_finish(int alpha, int beta, const board_finish &b);
 int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b);
 int nega_alpha_finish(int alpha, int beta, const board_finish &b);
 
-int search_nega_scout(board b, bool hint);
+int search_nega_scout(board b, bool hint, bool mpc);
 int search_finish(board b);
 int search_finish_scout(board b);
 

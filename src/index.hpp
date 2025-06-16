@@ -5,8 +5,8 @@
 //  Created by sasa on 2025/06/07.
 //
 
-#ifndef index_simd_h
-#define index_simd_h
+#ifndef index_h
+#define index_h
 
 #include <nmmintrin.h>
 
@@ -638,13 +638,13 @@ inline void SYNC_INDEX(uint64_t put, uint64_t rev, board &b) {
 inline void INIT_INDEX(board &b) {
     uint64_t p = b.p;
     uint64_t o = b.o;
-    __m128i f0 = b.index.indexes_8[0];
-    __m128i f1 = b.index.indexes_8[1];
-    __m128i f2 = b.index.indexes_8[2];
-    __m128i f3 = b.index.indexes_8[3];
-    __m128i f4 = b.index.indexes_8[4];
-    __m128i f5 = b.index.indexes_8[5];
-    __m128i f6 = b.index.indexes_8[6];
+    __m128i f0 = _mm_setzero_si128();
+    __m128i f1 = _mm_setzero_si128();
+    __m128i f2 = _mm_setzero_si128();
+    __m128i f3 = _mm_setzero_si128();
+    __m128i f4 = _mm_setzero_si128();
+    __m128i f5 = _mm_setzero_si128();
+    __m128i f6 = _mm_setzero_si128();
     
     int x;
     while (p) {
@@ -681,4 +681,4 @@ inline void INIT_INDEX(board &b) {
 }
 
 
-#endif /* index_simd_h */
+#endif /* index_h */
