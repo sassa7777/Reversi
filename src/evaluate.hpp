@@ -12,7 +12,7 @@ using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
 
 #define n_patterns 14
-#define use_book false
+#define use_book true
 
 Pattern_Eval pattern_arr[15];
 static int16_t mobility_arr[15][36 * 36];

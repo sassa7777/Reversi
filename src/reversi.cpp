@@ -271,7 +271,6 @@ void cal_mpc() {
         "e6f4e3d2g3g5g4f6d6d7c5f5c4f3d3c3c1c6e7c2b5f2b6c7e2b4a3d1f1b1h6d8f8h4b3e8c8h2g6h7h8f7h3h5e1b2a1a2g2a5a6h1a4g1g8g7b7b8a7a8",
         "f5f4c3c6e3f6g3f3g4d3g5e6d6g6c5c4f7h4h3h5d7c7b4b5b3c2e7f2h6a5a3d8c8b8a4a2e2e1d1c1d2g2h1h2g1g8f8a6b7e8b6g7h8a8a7h7a1b2b1f1",
     };
-    vector<vector<double>> deviations(20, vector<double>(65)), means(20, vector<double>(65));
     board bb;
     use_mpc = false;
     play_record_to_coordinate_init();
