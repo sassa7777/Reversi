@@ -18,6 +18,7 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <array>
 #include <algorithm>
 #include <bit>
 #include <numeric>
@@ -111,7 +112,7 @@ public:
     board flipped() const noexcept {
         return {this->index, this->o, this->p, this->score, static_cast<uint8_t>(this->player ^ 1)};
     }
-    uint64_t hash() const noexcept {
+    uint32_t hash() const noexcept {
         // original code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm , modified
         return crc32c_u64(crc32c_u64(0, this->p), this->o);
     }
@@ -182,13 +183,13 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noexcept;
 int nega_scout(int depth, int alpha, int beta, const board &b) noexcept;
-int nega_scout_finish(int alpha, int beta, const board_finish &b);
-int nega_alpha_moveorder_finish(int alpha, int beta, const board_finish &b);
-int nega_alpha_finish(int alpha, int beta, const board_finish &b);
+int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noexcept;
+int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_finish &b) noexcept;
+int nega_alpha_moveorder_finish_mpc(int depth, int alpha, int beta, const board_finish &b) noexcept;
+int nega_alpha_finish(int depth, int alpha, int beta, const board_finish &b) noexcept;
 
 int search_nega_scout(board b, bool hint, bool mpc);
-int search_finish(board b);
-int search_finish_scout(board b);
+int search_finish_scout(board b, bool mpc);
 
 std::string coordinate_to_x_y(uint64_t put);
 

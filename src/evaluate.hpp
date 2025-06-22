@@ -12,7 +12,7 @@ using namespace std;
 using bitboard = pair<uint64_t, uint64_t>;
 
 #define n_patterns 14
-#define use_book true
+#define use_book false
 
 Pattern_Eval pattern_arr[15];
 static int16_t mobility_arr[15][36 * 36];
@@ -183,10 +183,6 @@ inline int evaluate(const board &b) noexcept {
     a += mobility_arr[eval_num][plegal * 36 + olegal];
     
     //    a += stone_arr[eval_num][P_cnt * 65 + O_cnt];
-    
-//    if (a < 0) return a / 256 - 1;
-//    else if (a > 0) return a / 256 + 1;
-//    else return 0;
     
     return a;
 }

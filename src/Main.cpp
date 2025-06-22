@@ -90,7 +90,7 @@ void Main()
     }
     AIplayer = WHITE_TURN;
     //AIのレベル
-    double level_index = 12;
+    double level_index = 14;
     firstDEPTH = round(level_index);
     Level = level_index;
     const Array<String> AI_level = {U"⭐︎1", U"⭐︎2", U"⭐︎3", U"⭐︎4", U"⭐︎5", U"⭐︎6"};
@@ -130,7 +130,7 @@ void Main()
             TextureAsset(U"title").draw(title_edge, 0);
             font(U"レベル").draw(25, 10, 455);
             font(U"プレイヤー").draw(25, 200, 455);
-            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 16, Vec2(10, 505), 90.0, 130.0)) {
+            if (SimpleGUI::Slider(U"レベル {:2}"_fmt(level_index), level_index, 1, 18, Vec2(10, 505), 90.0, 130.0)) {
                 level_index = round(level_index);
                 firstDEPTH = level_index;
                 Level = level_index;

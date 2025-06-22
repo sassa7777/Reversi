@@ -38,42 +38,59 @@ std::string play_record;
 board b;
 board_back b_back;
 
+//multi prob cut based on egaroucid https://github.com/Nyanyan/Egaroucid
+constexpr double aa_mid = 3.6498594135461473;
+constexpr double bb_mid = 16.328790201074472;
+constexpr double cc_mid = -4.104748049569666;
+constexpr double dd_mid = -1.0933906581427852;
+constexpr double ee_mid = 53.35363110305511;
+constexpr double ff_mid = 170.13035450582603;
+constexpr double gg_mid = 172.49384089638207;
+
+constexpr double aa_end = 9.864501175177745;
+constexpr double bb_end = -24.22689316517559;
+constexpr double cc_end = 36.860730860309445;
+constexpr double dd_end = -338.68521250573633;
+constexpr double ee_end = 1136.182272092143;
+constexpr double ff_end = 9.803237207924484;
+
 constexpr int mpc_depth[] {
-    0, 0, 0, 1, 2, 1, 2, 3, 4, 3, 4, 3, 4, 5, 6, 5, 6, 5, 6
+    0, 0, 0, 1, 2, 1, 2, 3, 4, 3, 4, 3, 4, 5, 6, 5, 6, 5, 6, 7, 8, 7, 8, 7, 8, 9, 10, 9, 10, 9, 10, 11
 };
 
-std::vector<std::vector<double>> mpc_deviation(20, std::vector<double>(65)), mpc_mean(20, std::vector<double>(65));
-//constexpr double aa = 0.9362459622030622;
-//constexpr double bb = -4.557132868696562;
-//constexpr double cc = 1.9800312890471103;
-//constexpr double dd = 3.75808594982661;
-//constexpr double ee = -6.844843377878804;
-//constexpr double ff = 7.059098357166785;
-//constexpr double gg = 4.8030489141217265;
+constexpr std::array<std::array<double, 21>, 65> init_mpc_mid_data() {
+    std::array<std::array<double, 21>, 65> tmp;
+    for (int i = 0; i < 21; ++i) {
+        for (int j = 0; j < 65; ++j) {
+            double A = aa_mid*(double)j/64.0 + bb_mid*(double)mpc_depth[i]/60.0 + (double)cc_mid*i/60.0;
+            double dev = dd_mid*A*A*A + ee_mid*A*A + ff_mid*A + gg_mid;
+            tmp[j][i] = dev;
+        }
+    }
+    return tmp;
+}
 
-constexpr double aa = 5.372811237744748;
-constexpr double bb = 18.354448593978653;
-constexpr double cc = -6.145473602836057;
-constexpr double dd = -11.989880888846729;
-constexpr double ee = 52.906095523368684;
-constexpr double ff = 163.40855945804338;
-constexpr double gg = 24.888305837389666;
+constexpr std::array<std::array<double, 31>, 65> init_mpc_end_data() {
+    std::array<std::array<double, 31>, 65> tmp;
+    for (int i = 0; i < 31; ++i) {
+        for (int j = 0; j < 65; ++j) {
+            double A = aa_end*(double)j/64.0 + (double)bb_end*i/60.0;
+            double dev = cc_end*A*A*A + dd_end*A*A + ee_end*A + ff_end;
+            tmp[j][i] = dev;
+        }
+    }
+    return tmp;
+}
 
-//constexpr double aa = 0.7308488452189136;
-//constexpr double bb = -4.5708322989025865;
-//constexpr double cc = 1.096319765006055;
-//constexpr double dd = -0.8362251801219095;
-//constexpr double ee = 4.610017383697701;
-//constexpr double ff = 3.818582623595395;
-//constexpr double gg = 1.8775013664098447;
-
+constexpr std::array<std::array<double, 21>, 65> mpc_data_mid = init_mpc_mid_data();
+constexpr std::array<std::array<double, 31>, 65> mpc_data_end = init_mpc_end_data();
 
 constexpr uint64_t moveorder_bit[64] = {
     0x8000000000000000ULL, 0x100000000000000ULL, 0x80ULL, 0x1ULL, 0x2000000000000000ULL, 288230376151711744, 140737488355328, 35184372088832, 4398046511104, 1099511627776, 8388608, 2097152, 262144, 65536, 32, 4, 1152921504606846976, 576460752303423488, 17592186044416, 8796093022208, 549755813888, 137438953472, 68719476736, 34359738368, 17179869184, 4294967296, 2147483648, 536870912, 268435456, 134217728, 67108864, 16777216, 1048576, 524288, 16, 8, 9007199254740992, 4503599627370496, 2251799813685248, 1125899906842624, 70368744177664, 2199023255552, 274877906944, 8589934592, 1073741824, 33554432, 4194304, 131072, 8192, 4096, 2048, 1024, 4611686018427387904, 144115188075855872, 36028797018963968, 281474976710656, 32768, 256, 64, 2, 18014398509481984, 562949953421312, 16384, 512
 };
 
-#define table_size 16777216 // 2^24
-#define table_mask (table_size - 1)
+constexpr size_t table_size = 1UL << 24;
+constexpr size_t table_mask = table_size - 1;
 
 table_data search_table[table_size];
 table_data former_search_table[table_size];
