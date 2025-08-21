@@ -18,9 +18,9 @@ Pattern_Eval pattern_arr[15];
 static int16_t mobility_arr[15][36 * 36];
 static int16_t stone_arr[15][65 * 65];
 
-inline int fast_next_int(char*& p) {
-    int num = 0;
-    int sign = 1;
+inline int32_t fast_next_int(char*& p) {
+    int32_t num = 0;
+    int32_t sign = 1;
     while (*p == ' ' || *p == '\n' || *p == '\r' || *p == '\t')
         ++p;
     if (*p == '-') {
@@ -34,7 +34,7 @@ inline int fast_next_int(char*& p) {
     return num * sign;
 }
 
-inline void evaluate_init(String model_path, int eval_num) {
+inline void evaluate_init(String model_path, int32_t eval_num) {
     FILE* fp = fopen(FileSystem::RelativePath(Resource(model_path)).narrow().c_str(), "rb");
     fseek(fp, 0, SEEK_END);
     size_t compressed_size = ftell(fp);
@@ -97,17 +97,17 @@ inline void evaluate_init(String model_path, int eval_num) {
 
 #define evaluate_moveorder(b) evaluate(b)
 
-inline int evaluate(const board &b) noexcept {
+inline int32_t evaluate(const board &b) noexcept {
     
     if (b.p == 0) [[unlikely]] return -32768;
     if (b.o == 0) [[unlikely]] return 32768;
-    int plegal = popcnt_u64(makelegalboard(b));
+    int32_t plegal = popcnt_u64(makelegalboard(b));
     board b2 = b.flipped();
-    int olegal = popcnt_u64(makelegalboard(b2));
+    int32_t olegal = popcnt_u64(makelegalboard(b2));
     if (plegal == 0 && olegal == 0) return 256 * (popcnt_u64(b.p) - popcnt_u64(b.o));
-    int P_cnt = popcnt_u64(b.p);
-    int O_cnt = popcnt_u64(b.o);
-    int eval_num = (P_cnt + O_cnt - 5) / 4;
+    int32_t P_cnt = popcnt_u64(b.p);
+    int32_t O_cnt = popcnt_u64(b.o);
+    int32_t eval_num = (P_cnt + O_cnt - 5) / 4;
     int32_t a = 0;
     
     

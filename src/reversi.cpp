@@ -33,7 +33,7 @@ void reset() {
     tmpy = -1;
     if (first_reset) {
         first_reset = false;
-        for (int i = 0; i <= 14; ++i) {
+        for (int32_t i = 0; i <= 14; ++i) {
             evaluate_init(U"eval" + Format(i) + U".zstd", i);
         }
     }
@@ -46,7 +46,7 @@ void reset() {
     return;
 }
 
-int putstone(int y, int x) {
+int32_t putstone(int32_t y, int32_t x) {
     uint64_t put = cordinate_to_bit(x, y);
     legalboard = makelegalboard(b);
     if (canput(put, legalboard)) {
@@ -75,11 +75,11 @@ int putstone(int y, int x) {
 
 inline string coordinate_to_x_y(uint64_t put) {
     constexpr string x = "abcdefgh";
-    int pos = clz_u64(put);
+    int32_t pos = clz_u64(put);
     return string(1, x[pos % 8]) + to_string((pos / 8) + 1);
 }
 
-inline uint64_t cordinate_to_bit(int put, int y) {
+inline uint64_t cordinate_to_bit(int32_t put, int32_t y) {
     return 0x8000000000000000ULL >> ((y<<3)+put);
 }
 
@@ -87,26 +87,126 @@ inline bool canput(uint64_t put, uint64_t legalboard) {
     return ((put & legalboard) == put);
 }
 
-// code based on  http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
-uint64_t makelegalboard(const board &b) noexcept {
-    uint64_t moves, mO, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
-    
-    mO = b.o & 0x7e7e7e7e7e7e7e7eULL;
-    flip7  = mO & (b.p << 7);        flip9  = mO & (b.p << 9);        flip8  = b.o & (b.p << 8);        flip1  = mO & (b.p << 1);
-    flip7 |= mO & (flip7 << 7);    flip9 |= mO & (flip9 << 9);    flip8 |= b.o & (flip8 << 8);    moves  = mO + flip1;
-    pre7 = mO & (mO << 7);        pre9 = mO & (mO << 9);        pre8 = b.o & (b.o << 8);
-    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
-    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
-    moves |= flip7 << 7;        moves |= flip9 << 9;        moves |= flip8 << 8;
-    flip7  = mO & (b.p >> 7);        flip9  = mO & (b.p >> 9);        flip8  = b.o & (b.p >> 8);        flip1  = mO & (b.p >> 1);
-    flip7 |= mO & (flip7 >> 7);    flip9 |= mO & (flip9 >> 9);    flip8 |= b.o & (flip8 >> 8);    flip1 |= mO & (flip1 >> 1);
-    pre7 >>= 7;            pre9 >>= 9;            pre8 >>= 8;            pre1 = mO & (mO >> 1);
-    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);    flip1 |= pre1 & (flip1 >> 2);
-    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);    flip1 |= pre1 & (flip1 >> 2);
-    moves |= flip7 >> 7;        moves |= flip9 >> 9;        moves |= flip8 >> 8;        moves |= flip1 >> 1;
-    
-    return moves & ~(b.p | b.o);
+static __m128i __vectorcall calculate_moves_for_pair(const __m128i p, const __m128i o_masked, int dir1, int dir2) {
+    const __m128i mask_lo = _mm_set_epi64x(0, -1);
+    const __m128i mask_hi = _mm_set_epi64x(-1, 0);
+
+    const __m128i p_shifted1 = _mm_slli_epi64(p, dir1);
+    const __m128i p_shifted2 = _mm_srli_epi64(p, dir2);
+    const __m128i seeds = _mm_or_si128(_mm_and_si128(p_shifted1, mask_lo), _mm_and_si128(p_shifted2, mask_hi));
+
+    __m128i flips = _mm_and_si128(o_masked, seeds);
+
+    for (int i = 0; i < 5; ++i) {
+        const __m128i flips_shifted1 = _mm_slli_epi64(flips, dir1);
+        const __m128i flips_shifted2 = _mm_srli_epi64(flips, dir2);
+        const __m128i next_flips = _mm_or_si128(_mm_and_si128(flips_shifted1, mask_lo), _mm_and_si128(flips_shifted2, mask_hi));
+        flips = _mm_or_si128(flips, _mm_and_si128(o_masked, next_flips));
+    }
+
+    const __m128i moves_shifted1 = _mm_slli_epi64(flips, dir1);
+    const __m128i moves_shifted2 = _mm_srli_epi64(flips, dir2);
+    return _mm_or_si128(_mm_and_si128(moves_shifted1, mask_lo), _mm_and_si128(moves_shifted2, mask_hi));
 }
+
+
+uint64_t makelegalboard(const board &b) noexcept {
+    const __m128i p = _mm_set1_epi64x(b.p);
+    const __m128i o = _mm_set1_epi64x(b.o);
+
+    const __m128i h_mask = _mm_set1_epi64x(0x7e7e7e7e7e7e7e7eULL);
+    const __m128i v_mask = _mm_set1_epi64x(0x00ffffffffffff00ULL);
+    const __m128i d_mask = _mm_and_si128(h_mask, v_mask);
+
+    const __m128i o_h = _mm_and_si128(o, h_mask);
+    const __m128i o_v = _mm_and_si128(o, v_mask);
+    const __m128i o_d = _mm_and_si128(o, d_mask);
+
+    const __m128i moves_ew = calculate_moves_for_pair(p, o_h, 1, 1);
+    const __m128i moves_ns = calculate_moves_for_pair(p, o_v, 8, 8);
+    const __m128i moves_nesw = calculate_moves_for_pair(p, o_d, 9, 9);
+    const __m128i moves_nwse = calculate_moves_for_pair(p, o_d, 7, 7);
+
+    __m128i all_moves_vec = _mm_or_si128(_mm_or_si128(moves_ew, moves_ns), _mm_or_si128(moves_nesw, moves_nwse));
+
+    return (_mm_cvtsi128_si64(all_moves_vec) | _mm_cvtsi128_si64(_mm_unpackhi_epi64(all_moves_vec, all_moves_vec))) & ~(b.p | b.o);
+}
+
+
+// code based on  http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
+//uint64_t makelegalboard(const board &b) noexcept {
+//    uint64_t moves, mO, flip1, flip7, flip9, flip8, pre1, pre7, pre9, pre8;
+//    
+//    mO = b.o & 0x7e7e7e7e7e7e7e7eULL;
+//    flip7  = mO & (b.p << 7);        flip9  = mO & (b.p << 9);        flip8  = b.o & (b.p << 8);        flip1  = mO & (b.p << 1);
+//    flip7 |= mO & (flip7 << 7);    flip9 |= mO & (flip9 << 9);    flip8 |= b.o & (flip8 << 8);    moves  = mO + flip1;
+//    pre7 = mO & (mO << 7);        pre9 = mO & (mO << 9);        pre8 = b.o & (b.o << 8);
+//    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
+//    flip7 |= pre7 & (flip7 << 14);    flip9 |= pre9 & (flip9 << 18);    flip8 |= pre8 & (flip8 << 16);
+//    moves |= flip7 << 7;        moves |= flip9 << 9;        moves |= flip8 << 8;
+//    flip7  = mO & (b.p >> 7);        flip9  = mO & (b.p >> 9);        flip8  = b.o & (b.p >> 8);        flip1  = mO & (b.p >> 1);
+//    flip7 |= mO & (flip7 >> 7);    flip9 |= mO & (flip9 >> 9);    flip8 |= b.o & (flip8 >> 8);    flip1 |= mO & (flip1 >> 1);
+//    pre7 >>= 7;            pre9 >>= 9;            pre8 >>= 8;            pre1 = mO & (mO >> 1);
+//    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);    flip1 |= pre1 & (flip1 >> 2);
+//    flip7 |= pre7 & (flip7 >> 14);    flip9 |= pre9 & (flip9 >> 18);    flip8 |= pre8 & (flip8 >> 16);    flip1 |= pre1 & (flip1 >> 2);
+//    moves |= flip7 >> 7;        moves |= flip9 >> 9;        moves |= flip8 >> 8;        moves |= flip1 >> 1;
+//    
+//    return moves & ~(b.p | b.o);
+//}
+
+// code from http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
+//#if __has_builtin(__builtin_subcll)
+//inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
+//    uint64_t flipmask, cy;
+//    flipmask = __builtin_subcll(outflank, 1, 0, &cy);
+//    return __builtin_addcll(flipmask, 0, cy, &cy);
+//}
+//#elif (defined(_M_X64) && (_MSC_VER >= 1800)) || (defined(__x86_64__) && defined(__GNUC__) && (__GNUC__ > 7 || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)))
+//inline uint64_t OutflankToFlipmask(uint64_t outflank) noexcept {
+//    uint64_t flipmask;
+//    unsigned char cy = _subborrow_u64(0, outflank, 1, &flipmask);
+//    _addcarry_u64(cy, flipmask, 0, &flipmask);
+//    return flipmask;
+//}
+//#else
+//    #define OutflankToFlipmask(outflank)    ((outflank) - (unsigned int) ((outflank) != 0))
+//#endif
+//
+//inline uint64_t Flip(uint64_t put, const board &b) noexcept {
+//    uint64_t flipped, OM, outflank[4], mask[4];
+//    int pos = countl_zero(put);
+//    OM = b.o & 0x7e7e7e7e7e7e7e7eULL;
+//    
+//    mask[0] = 0x0080808080808080ULL >> (pos);
+//    mask[1] = 0x7f00000000000000ULL >> (pos);
+//    mask[2] = 0x0102040810204000ULL >> (pos);
+//    mask[3] = 0x0040201008040201ULL >> (pos);
+//    outflank[0] = (0x8000000000000000ULL >> countl_zero(~b.o & mask[0])) & b.p;
+//    outflank[1] = (0x8000000000000000ULL >> countl_zero(~OM & mask[1])) & b.p;
+//    outflank[2] = (0x8000000000000000ULL >> countl_zero(~OM & mask[2])) & b.p;
+//    outflank[3] = (0x8000000000000000ULL >> countl_zero(~OM & mask[3])) & b.p;
+//    flipped  = ((~outflank[0] + 1) << 1) & mask[0];
+//    flipped |= ((~outflank[1] + 1) << 1) & mask[1];
+//    flipped |= ((~outflank[2] + 1) << 1) & mask[2];
+//    flipped |= ((~outflank[3] + 1) << 1) & mask[3];
+//
+//    pos = 63 - pos;
+//    
+//    mask[0] = 0x0101010101010100ULL << pos;
+//    mask[1] = 0x00000000000000feULL << pos;
+//    mask[2] = 0x0002040810204080ULL << pos;
+//    mask[3] = 0x8040201008040200ULL << pos;
+//    outflank[0] = mask[0] & ((b.o | ~mask[0]) + 1) & b.p;
+//    outflank[1] = mask[1] & ((OM | ~mask[1]) + 1) & b.p;
+//    outflank[2] = mask[2] & ((OM | ~mask[2]) + 1) & b.p;
+//    outflank[3] = mask[3] & ((OM | ~mask[3]) + 1) & b.p;
+//    flipped |= OutflankToFlipmask(outflank[0]) & mask[0];
+//    flipped |= OutflankToFlipmask(outflank[1]) & mask[1];
+//    flipped |= OutflankToFlipmask(outflank[2]) & mask[2];
+//    flipped |= OutflankToFlipmask(outflank[3]) & mask[3];
+//
+//    return flipped;
+//}
 
 //code based on http://www.amy.hi-ho.ne.jp/okuhara/bitboard.htm
 uint64_t Flip(const uint64_t put, const board &b) noexcept {
@@ -118,7 +218,7 @@ uint64_t Flip(const uint64_t put, const board &b) noexcept {
     flip1 |= (flip1 << 2) & pre1; flip7 |= (flip7 << 14) & pre7; flip9 |= (flip9 << 18) & pre9; flip8 |= (flip8 << 16) & pre8;
     flip1 |= (flip1 << 2) & pre1; flip7 |= (flip7 << 14) & pre7; flip9 |= (flip9 << 18) & pre9; flip8 |= (flip8 << 16) & pre8;
     outflank1 = b.p & (flip1 << 1); outflank7 = b.p & (flip7 << 7); outflank9 = b.p & (flip9 << 9); outflank8 = b.p & (flip8 << 8);
-    flip1 &= - (int) (outflank1 != 0);  flip7 &= - (int) (outflank7 != 0);  flip9 &= - (int) (outflank9 != 0);  flip8 &= - (int) (outflank8 != 0);
+    flip1 &= - (int32_t) (outflank1 != 0);  flip7 &= - (int32_t) (outflank7 != 0);  flip9 &= - (int32_t) (outflank9 != 0);  flip8 &= - (int32_t) (outflank8 != 0);
     flipped = flip1 | flip7 | flip9 | flip8;
     flip1 = (put >> 1) & mO;        flip7 = (put >> 7) & mO;        flip9 = (put >> 9) & mO;        flip8 = (put >> 8) & b.o;
     flip1 |= (flip1 >> 1) & mO;   flip7 |= (flip7 >> 7) & mO;   flip9 |= (flip9 >> 9) & mO;   flip8 |= (flip8 >> 8) & b.o;
@@ -126,7 +226,7 @@ uint64_t Flip(const uint64_t put, const board &b) noexcept {
     flip1 |= (flip1 >> 2) & pre1; flip7 |= (flip7 >> 14) & pre7; flip9 |= (flip9 >> 18) & pre9; flip8 |= (flip8 >> 16) & pre8;
     flip1 |= (flip1 >> 2) & pre1; flip7 |= (flip7 >> 14) & pre7; flip9 |= (flip9 >> 18) & pre9; flip8 |= (flip8 >> 16) & pre8;
     outflank1 = b.p & (flip1 >> 1); outflank7 = b.p & (flip7 >> 7); outflank9 = b.p & (flip9 >> 9); outflank8 = b.p & (flip8 >> 8);
-    flip1 &= - (int) (outflank1 != 0);  flip7 &= - (int) (outflank7 != 0);  flip9 &= - (int) (outflank9 != 0);  flip8 &= - (int) (outflank8 != 0);
+    flip1 &= - (int32_t) (outflank1 != 0);  flip7 &= - (int32_t) (outflank7 != 0);  flip9 &= - (int32_t) (outflank9 != 0);  flip8 &= - (int32_t) (outflank8 != 0);
     flipped |= flip1 | flip7 | flip9 | flip8;
     return flipped;
 }
@@ -148,19 +248,19 @@ void swapboard() {
     //    cout << play_record << endl;
 }
 
-int ai_hint() {
+int32_t ai_hint() {
     cout << "[*]AIが考え中.." << endl;
     tmpbit = 0;
     think_percent = 0;
     memset(search_table, 0, sizeof(search_table));
     memset(former_search_table, 0, sizeof(former_search_table));
     legalboard = makelegalboard(b);
-    int putable_count = popcnt_u64(legalboard);
+    int32_t putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
         return 0;
     }
     visited_nodes = 0;
-    int score = 0;
+    int32_t score = 0;
     if (putable_count == 1) {
         tmpbit = legalboard;
     } else {
@@ -171,7 +271,7 @@ int ai_hint() {
         cout << "error" << endl;
         return 0;
     }
-    int count = clz_u64(tmpbit);
+    int32_t count = clz_u64(tmpbit);
     hint_y = count / 8;
     hint_x = count % 8;
     cout << "suggest : (" << hint_x << ", " << hint_y << ")" << endl;
@@ -180,7 +280,7 @@ int ai_hint() {
     return 1;
 }
 
-int search_nega_scout_mpc_cal_mid(board &b, int depth) {
+int32_t search_nega_scout_mpc_cal_mid(board &b, int32_t depth) {
 //    cout << "algorithm: NegaScout" << endl;
     use_mpc = false;
     memset(search_table, 0, sizeof(search_table));
@@ -189,7 +289,7 @@ int search_nega_scout_mpc_cal_mid(board &b, int depth) {
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
     vector<board_root> moveorder(popcnt_u64(legalboard));
-    int count = 0;
+    int32_t count = 0;
     while(legalboard) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
@@ -206,10 +306,10 @@ int search_nega_scout_mpc_cal_mid(board &b, int depth) {
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
-    int alpha = MIN_INF, beta = MAX_INF;
+    int32_t alpha = MIN_INF, beta = MAX_INF;
     think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-4)+1));
-    int wave = 0;
-    int end_depth;
+    int32_t wave = 0;
+    int32_t end_depth;
     end_depth = depth;
     for (search_depth = max(1, end_depth-4); search_depth <= end_depth; ++search_depth) {
         think_percent = wave*(100/(DEPTH-max(1, DEPTH-4)+1));
@@ -224,15 +324,15 @@ int search_nega_scout_mpc_cal_mid(board &b, int depth) {
         });
         alpha = MIN_INF;
         beta = MAX_INF;
-        future<int> futures[34];
-        int vars[34];
+        future<int32_t> futures[34];
+        int32_t vars[34];
         alpha = -nega_scout(search_depth-1, -beta, -alpha, moveorder[0]);
         vars[0] = alpha;
         if (search_depth == end_depth) {
             tmpbit = moveorder[0].put;
         }
         for (size_t i = 1; i < moveorder.size(); ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
                 return -nega_alpha_moveorder(search_depth-1, -alpha - 1, -alpha, moveorder[i]);
             });
         }
@@ -256,7 +356,7 @@ int search_nega_scout_mpc_cal_mid(board &b, int depth) {
     return alpha;
 }
 
-int search_finish_scout_mpc_cal_end(board b) {
+int32_t search_finish_scout_mpc_cal_end(board b) {
 //    cout << "algorithm: NegaScout" << endl;
     use_mpc = true;
     uint64_t legalboard = makelegalboard(b);
@@ -267,7 +367,7 @@ int search_finish_scout_mpc_cal_end(board b) {
     if (popcnt_u64(b.p | b.o) < 50) {
         uint64_t rev;
         vector<board_finish_root> moveorder(popcnt_u64(legalboard));
-        int count = 0;
+        int32_t count = 0;
         while(legalboard) {
             moveorder[count].put = blsi_u64(legalboard);
             legalboard = blsr_u64(legalboard);
@@ -284,8 +384,8 @@ int search_finish_scout_mpc_cal_end(board b) {
             moveorder[count].score = move_ordering_value(moveorder[count]);
             ++count;
         }
-        int alpha = MIN_INF, beta = MAX_INF;
-        int end_depth = min(16, 64-popcnt_u64(b.p | b.o));
+        int32_t alpha = MIN_INF, beta = MAX_INF;
+        int32_t end_depth = min(16, 64-popcnt_u64(b.p | b.o));
         end_search_stone_count = popcnt_u64(b.p | b.o)+end_depth;
         think_count = (100/(count+(end_depth-max(1, min(10, end_depth-6)))));
         for (search_depth = max(1, min(10, end_depth-6)); search_depth <= end_depth; ++search_depth) {
@@ -299,22 +399,22 @@ int search_finish_scout_mpc_cal_end(board b) {
             });
             alpha = MIN_INF;
             beta = MAX_INF;
-            future<int> futures[34];
-            int vars[34];
+            future<int32_t> futures[34];
+            int32_t vars[34];
             alpha = -nega_scout(search_depth-1, -beta, -alpha, moveorder[0]);
             vars[0] = alpha;
             if (search_depth == end_depth) {
                 tmpbit = moveorder[0].put;
             }
-            for (int i = 1; i < count; ++i) {
-                futures[i] = async(launch::async, [&, i]() -> int {
+            for (int32_t i = 1; i < count; ++i) {
+                futures[i] = async(launch::async, [&, i]() -> int32_t {
                     return -nega_alpha_moveorder(search_depth-1, -alpha - 1, -alpha, moveorder[i]);
                 });
             }
-            for (int i = 1; i < count; ++i) {
+            for (int32_t i = 1; i < count; ++i) {
                 vars[i] = futures[i].get();
             }
-            for (int i = 1; i < count; ++i) {
+            for (int32_t i = 1; i < count; ++i) {
                 if (vars[i] > alpha) {
                     vars[i] = -nega_scout(search_depth-1, -beta, -vars[i], moveorder[i]);
                 }
@@ -333,7 +433,7 @@ int search_finish_scout_mpc_cal_end(board b) {
     //    sync_model(afterIndex);
     legalboard = makelegalboard(b);
     vector<board_finish_root> moveorder(popcnt_u64(legalboard));
-    int count = 0;
+    int32_t count = 0;
     while(legalboard) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
@@ -354,22 +454,22 @@ int search_finish_scout_mpc_cal_end(board b) {
     sort(moveorder.begin(), moveorder.end(), [](const auto &a, const auto &b) {
         return a.score > b.score;
     });
-    int alpha = MIN_INF, beta = MAX_INF;
-    future<int> futures[34];
-    int vars[34];
-    int search_depth = 64 - popcnt_u64(b.p | b.o);
+    int32_t alpha = MIN_INF, beta = MAX_INF;
+    future<int32_t> futures[34];
+    int32_t vars[34];
+    int32_t search_depth = 64 - popcnt_u64(b.p | b.o);
     alpha = -nega_scout_finish(search_depth, -beta, -alpha, moveorder[0]);
     vars[0] = alpha;
     tmpbit = moveorder[0].put;
-    for (int i = 1; i <count; ++i) {
-        futures[i] = async(launch::async, [&, i]() -> int {
+    for (int32_t i = 1; i <count; ++i) {
+        futures[i] = async(launch::async, [&, i]() -> int32_t {
             return -nega_alpha_moveorder_finish(search_depth, -alpha - 1, -alpha, moveorder[i]);
         });
     }
-    for (int i = 1; i < count; ++i) {
+    for (int32_t i = 1; i < count; ++i) {
         vars[i] = futures[i].get();
     }
-    for (int i = 1; i < count; ++i) {
+    for (int32_t i = 1; i < count; ++i) {
         if (vars[i] > alpha) {
             vars[i] = -nega_scout_finish(search_depth, -beta, -vars[i], moveorder[i]);
         }
@@ -406,9 +506,9 @@ void cal_mpc() {
     board bb;
     use_mpc = false;
     play_record_to_coordinate_init();
-    vector<int> stones, deep, light;
-    vector<int> diffs;
-//    for (int i = 0; i < 16; ++i) {
+    vector<int32_t> stones, deep, light;
+    vector<int32_t> diffs;
+//    for (int32_t i = 0; i < 16; ++i) {
 //        for (auto &transcript : transcripts) {
 //            bb.p = 0x0000000810000000ULL;
 //            bb.o = 0x0000001008000000ULL;
@@ -418,8 +518,8 @@ void cal_mpc() {
 //                if (mpc_depth[i] <= 0) continue;
 //                if (makelegalboard(bb) == 0) continue;
 //                
-//                int b = search_nega_scout_mpc_cal_mid(bb, mpc_depth[i]);
-//                int a = search_nega_scout_mpc_cal_mid(bb, i);
+//                int32_t b = search_nega_scout_mpc_cal_mid(bb, mpc_depth[i]);
+//                int32_t a = search_nega_scout_mpc_cal_mid(bb, i);
 //
 //                stones.emplace_back(popcnt_u64(bb.p | bb.o));
 //                diffs.emplace_back(a - b);
@@ -429,7 +529,10 @@ void cal_mpc() {
 //        }
 //        cout << "pphase " << i << " done" << endl;
 //    }
-    int num = 0;
+//    for (size_t i = 0; i < stones.size(); ++ i) {
+//        cout << stones[i] << " " << light[i] << " " << deep[i] << " " << diffs[i] << endl;
+//    }
+    int32_t num = 0;
     for (auto &transcript : transcripts) {
         bb.p = 0x0000000810000000ULL;
         bb.o = 0x0000001008000000ULL;
@@ -439,8 +542,8 @@ void cal_mpc() {
             if (j <= 60) continue;
             if (makelegalboard(bb) == 0) continue;
             if (mpc_depth[(64 - popcnt_u64(bb.p | bb.o))] == 0) continue;
-            int b = search_nega_scout_mpc_cal_mid(bb, mpc_depth[(64 - popcnt_u64(bb.p | bb.o))]);
-            int a = search_finish_scout_mpc_cal_end(bb);
+            int32_t b = search_nega_scout_mpc_cal_mid(bb, mpc_depth[(64 - popcnt_u64(bb.p | bb.o))]);
+            int32_t a = search_finish_scout_mpc_cal_end(bb);
 
             stones.emplace_back(popcnt_u64(bb.p | bb.o));
             diffs.emplace_back(a - b);
@@ -450,15 +553,12 @@ void cal_mpc() {
             ++num;
         }
     }
-//    for (size_t i = 0; i < stones.size(); ++ i) {
-//        cout << stones[i] << " " << light[i] << " " << deep[i] << " " << diffs[i] << endl;
-//    }
     for (size_t i = 0; i < stones.size(); ++ i) {
         cout << stones[i] << " " << deep[i] << " " << diffs[i] << endl;
     }
 }
 
-int ai() {
+int32_t ai() {
     if (nowTurn == 1-AIplayer) {
         return 0;
     }
@@ -476,13 +576,13 @@ int ai() {
     memset(search_table, 0, sizeof(search_table));
     memset(former_search_table, 0, sizeof(former_search_table));
     legalboard = makelegalboard(b);
-    int putable_count = popcnt_u64(legalboard);
+    int32_t putable_count = popcnt_u64(legalboard);
     if (putable_count == 0) {
         swapboard();
         return 0;
     }
     visited_nodes = 0;
-    int score = 0;
+    int32_t score = 0;
     this_thread::sleep_for(chrono::milliseconds(20));
 #if use_book
     auto book_list = book.equal_range(make_pair(b.p, b.o));
@@ -501,19 +601,26 @@ int ai() {
 #endif
     auto start = chrono::high_resolution_clock::now();
     if (!tmpbit) {
-        if (nowIndex >= 41) {
-            score = search_finish_scout(b, false);
-        } else if (nowIndex >= 37)  {
-            mpc_p = 1.5;
-//            score = search_nega_scout(b, false, true);
-            score = search_finish_scout(b, true);
-        } else if (nowIndex >= 31)  {
-            mpc_p = 2.3;
-            score = search_nega_scout(b, false, true);
-//            score = search_finish_scout(b, true);
+        if (Level <= 12) {
+            if (nowIndex >= 41) {
+                score = search_finish_scout(b, false);
+            } else {
+                mpc_p = 2.0;
+                score = search_nega_scout(b, false, false);
+            }
         } else {
-            mpc_p = 2.0;
-            score = search_nega_scout(b, false, true);
+            if (nowIndex >= 41) {
+                score = search_finish_scout(b, false);
+            } else if (nowIndex >= 37)  {
+                mpc_p = 1.5;
+                score = search_finish_scout(b, true);
+            } else if (nowIndex >= 31)  {
+                mpc_p = 1.5;
+                score = search_nega_scout(b, false, true);
+            } else {
+                mpc_p = 1.5;
+                score = search_nega_scout(b, false, true);
+            }
         }
     }
     auto end = chrono::high_resolution_clock::now();
@@ -523,7 +630,7 @@ int ai() {
         cout << "error" << endl;
         return 0;
     }
-    int count = clz_u64(tmpbit);
+    int32_t count = clz_u64(tmpbit);
     tmpy = count / 8;
     tmpx = count % 8;
     putstone(tmpy, tmpx);
@@ -534,7 +641,7 @@ int ai() {
     return 1;
 }
 
-inline int move_ordering_value(const board &b) noexcept {
+inline int32_t move_ordering_value(const board &b) noexcept {
     const auto &entry = former_search_table[b.hash() & table_mask];
 
     if (entry.p == b.p && entry.o == b.o)
@@ -543,7 +650,7 @@ inline int move_ordering_value(const board &b) noexcept {
     return -evaluate_moveorder(b);
 }
 
-int search_nega_scout(board b, bool hint, bool mpc) {
+int32_t search_nega_scout(board b, bool hint32_t, bool mpc) {
     cout << "algorithm: NegaScout" << endl;
     use_mpc = mpc;
     memset(search_table, 0, sizeof(search_table));
@@ -552,7 +659,7 @@ int search_nega_scout(board b, bool hint, bool mpc) {
     uint64_t legalboard = makelegalboard(b);
     uint64_t rev;
     vector<board_root> moveorder(popcnt_u64(legalboard));
-    int count = 0;
+    int32_t count = 0;
     while(legalboard) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
@@ -569,11 +676,11 @@ int search_nega_scout(board b, bool hint, bool mpc) {
         moveorder[count].score = move_ordering_value(moveorder[count]);
         ++count;
     }
-    int alpha = MIN_INF, beta = MAX_INF;
+    int32_t alpha = MIN_INF, beta = MAX_INF;
     think_count = 100/(popcnt_u64(legalboard)*(DEPTH-max(1, DEPTH-8)+1));
-    int wave = 0;
-    int end_depth;
-    if (hint == true) {
+    int32_t wave = 0;
+    int32_t end_depth;
+    if (hint32_t == true) {
         end_depth = 8;
     } else {
         end_depth = DEPTH;
@@ -591,15 +698,15 @@ int search_nega_scout(board b, bool hint, bool mpc) {
         });
         alpha = MIN_INF;
         beta = MAX_INF;
-        future<int> futures[34];
-        int vars[34];
+        future<int32_t> futures[34];
+        int32_t vars[34];
         alpha = -nega_scout(search_depth-1, -beta, -alpha, moveorder[0]);
         vars[0] = alpha;
         if (search_depth == end_depth) {
             tmpbit = moveorder[0].put;
         }
         for (size_t i = 1; i < moveorder.size(); ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
                 return -nega_alpha_moveorder(search_depth-1, -alpha - 1, -alpha, moveorder[i]);
             });
         }
@@ -623,12 +730,12 @@ int search_nega_scout(board b, bool hint, bool mpc) {
     return alpha;
 }
 
-int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
+int32_t nega_scout(int32_t depth, int32_t alpha, int32_t beta, const board &b) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(b);
     }
-    int u = MAX_INF, l = MIN_INF;
+    int32_t u = MAX_INF, l = MIN_INF;
     uint32_t hash = b.hash();
     auto &entry = search_table[hash & table_mask];
     if (entry.p == b.p && entry.o == b.o && entry.depth == depth) {
@@ -650,7 +757,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
             return -nega_scout(depth, -beta, -alpha, b2);
         }
     }
-    int max_score = MIN_INF, count = 0;
+    int32_t max_score = MIN_INF, count = 0;
     uint64_t rev;
     board moveorder[34];
     uint64_t put;
@@ -673,9 +780,9 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
     
     if (mpc_depth[depth] > 0 && use_mpc) {
         double dev =  mpc_p * mpc_data_mid[popcnt_u64(b.p | b.o)][depth];
-        int dev_int = (dev > 0) ? ceil(dev) : floor(dev);
-        int bound_up = static_cast<int>(beta + dev_int);
-        int bound_low = static_cast<int>(alpha - dev_int);
+        int32_t dev_int32_t = (dev > 0) ? ceil(dev) : floor(dev);
+        int32_t bound_up = static_cast<int32_t>(beta + dev_int32_t);
+        int32_t bound_low = static_cast<int32_t>(alpha - dev_int32_t);
         if (alpha > MIN_INF && beta < MAX_INF) {
             if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
                 return alpha;
@@ -690,8 +797,8 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         return a.score > b.score;
     });
     
-    future<int> futures[34];
-    int vars[34];
+    future<int32_t> futures[34];
+    int32_t vars[34];
     if (depth > 3) {
         vars[0] = -nega_scout(depth-1, -beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
@@ -702,15 +809,15 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
         }
         alpha = max(alpha, vars[0]);
         max_score = max(max_score, vars[0]);
-        for (int i = 1; i < count; ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
+        for (int32_t i = 1; i < count; ++i) {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
                 return -nega_alpha_moveorder(depth - 1, -alpha - 1, -alpha, moveorder[i]);
             });
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             vars[i] = futures[i].get();
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
                     entry = {b.p, b.o, u, vars[i], depth};
@@ -730,7 +837,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 }
             }
         }
-        int max_var = *max_element(vars, vars+count);
+        int32_t max_var = *max_element(vars, vars+count);
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     } else {
@@ -742,15 +849,15 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
             }
             return vars[0];
         }
-        for (int i = 1; i < count; ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
+        for (int32_t i = 1; i < count; ++i) {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
                 return -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             });
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             vars[i] = futures[i].get();
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
                     entry = {b.p, b.o, u, vars[i], depth};
@@ -758,7 +865,7 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
                 return vars[i];
             }
         }
-        int max_var = *max_element(vars, vars+count);
+        int32_t max_var = *max_element(vars, vars+count);
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
@@ -766,12 +873,12 @@ int nega_scout(int depth, int alpha, int beta, const board &b) noexcept {
     return max_score;
 }
 
-int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcept {
+int32_t nega_alpha_moveorder(int32_t depth, int32_t alpha, int32_t beta, const board &b) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(b);
     }
-    int u = MAX_INF, l = MIN_INF;
+    int32_t u = MAX_INF, l = MIN_INF;
     table_data* entry = NULL;
     uint32_t hash = b.hash();
     {
@@ -795,7 +902,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
         if (!(makelegalboard(b2))) return evaluate(b);
         else return -nega_alpha_moveorder(depth, -beta, -alpha, b2);
     }
-    int var = 0, count = 0, max_score = MIN_INF;
+    int32_t var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
     board moveorder[34];
     uint64_t put;
@@ -818,9 +925,9 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     
     if (mpc_depth[depth] > 0 && use_mpc) {
         double dev =  mpc_p * mpc_data_mid[popcnt_u64(b.p | b.o)][depth];
-        int dev_int = (dev > 0) ? ceil(dev) : floor(dev);
-        int bound_up = static_cast<int>(beta + dev_int);
-        int bound_low = static_cast<int>(alpha - dev_int);
+        int32_t dev_int32_t = (dev > 0) ? ceil(dev) : floor(dev);
+        int32_t bound_up = static_cast<int32_t>(beta + dev_int32_t);
+        int32_t bound_low = static_cast<int32_t>(alpha - dev_int32_t);
         if (alpha > MIN_INF && beta < MAX_INF) {
             if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
                 return alpha;
@@ -836,7 +943,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     });
     
     if (depth <= 3) {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -849,7 +956,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
             max_score = max(max_score, var);
         }
     } else {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha_moveorder(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -867,7 +974,7 @@ int nega_alpha_moveorder(int depth, int alpha, int beta, const board &b) noexcep
     return max_score;
 }
 
-int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
+int32_t nega_alpha(int32_t depth, int32_t alpha, int32_t beta, const board &b) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(b);
@@ -880,7 +987,7 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
         else return -nega_alpha(depth, -beta, -alpha, b2);
     }
     uint64_t rev = 0;
-    int var, max_score = MIN_INF;
+    int32_t var, max_score = MIN_INF;
     board b1;
     for (const auto& i: moveorder_bit) {
         if (canput(i, legalboard)) {
@@ -905,12 +1012,12 @@ int nega_alpha(int depth, int alpha, int beta, const board &b) noexcept {
     return max_score;
 }
 
-int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noexcept {
+int32_t nega_alpha_moveorder_mpc(int32_t depth, int32_t alpha, int32_t beta, const board &b) noexcept {
     ++visited_nodes;
     if (depth <= 0) {
         return evaluate(b);
     }
-    int u = MAX_INF, l = MIN_INF;
+    int32_t u = MAX_INF, l = MIN_INF;
     table_data* entry = NULL;
     uint32_t hash = b.hash();
     {
@@ -933,7 +1040,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
         if (!(makelegalboard(b2))) return evaluate(b);
         else return -nega_alpha_moveorder_mpc(depth, -beta, -alpha, b2);
     }
-    int var = 0, count = 0, max_score = MIN_INF;
+    int32_t var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
     board moveorder[34];
     uint64_t put;
@@ -958,7 +1065,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
     });
     
     if (depth <= 3) {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -971,7 +1078,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
             max_score = max(max_score, var);
         }
     } else {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha_moveorder_mpc(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -989,7 +1096,7 @@ int nega_alpha_moveorder_mpc(int depth, int alpha, int beta, const board &b) noe
     return max_score;
 }
 
-int search_finish_scout(board b, bool mpc) {
+int32_t search_finish_scout(board b, bool mpc) {
     cout << "algorithm: NegaScout" << endl;
     use_mpc = true;
     uint64_t legalboard = makelegalboard(b);
@@ -1000,7 +1107,7 @@ int search_finish_scout(board b, bool mpc) {
     if (popcnt_u64(b.p | b.o) < 50) {
         uint64_t rev;
         vector<board_finish_root> moveorder(popcnt_u64(legalboard));
-        int count = 0;
+        int32_t count = 0;
         while(legalboard) {
             moveorder[count].put = blsi_u64(legalboard);
             legalboard = blsr_u64(legalboard);
@@ -1017,8 +1124,8 @@ int search_finish_scout(board b, bool mpc) {
             moveorder[count].score = move_ordering_value(moveorder[count]);
             ++count;
         }
-        int alpha = MIN_INF, beta = MAX_INF;
-        int end_depth = min(16, 64-popcnt_u64(b.p | b.o));
+        int32_t alpha = MIN_INF, beta = MAX_INF;
+        int32_t end_depth = min(16, 64-popcnt_u64(b.p | b.o));
         end_search_stone_count = popcnt_u64(b.p | b.o)+end_depth;
         think_count = (100/(count+(end_depth-max(1, min(10, end_depth-6)))));
         for (search_depth = max(1, min(10, end_depth-6)); search_depth <= end_depth; ++search_depth) {
@@ -1032,22 +1139,22 @@ int search_finish_scout(board b, bool mpc) {
             });
             alpha = MIN_INF;
             beta = MAX_INF;
-            future<int> futures[34];
-            int vars[34];
+            future<int32_t> futures[34];
+            int32_t vars[34];
             alpha = -nega_scout(search_depth-1, -beta, -alpha, moveorder[0]);
             vars[0] = alpha;
             if (search_depth == end_depth) {
                 tmpbit = moveorder[0].put;
             }
-            for (int i = 1; i < count; ++i) {
-                futures[i] = async(launch::async, [&, i]() -> int {
+            for (int32_t i = 1; i < count; ++i) {
+                futures[i] = async(launch::async, [&, i]() -> int32_t {
                     return -nega_alpha_moveorder(search_depth-1, -alpha - 1, -alpha, moveorder[i]);
                 });
             }
-            for (int i = 1; i < count; ++i) {
+            for (int32_t i = 1; i < count; ++i) {
                 vars[i] = futures[i].get();
             }
-            for (int i = 1; i < count; ++i) {
+            for (int32_t i = 1; i < count; ++i) {
                 if (vars[i] > alpha) {
                     vars[i] = -nega_scout(search_depth-1, -beta, -vars[i], moveorder[i]);
                 }
@@ -1067,7 +1174,7 @@ int search_finish_scout(board b, bool mpc) {
     //    sync_model(afterIndex);
     legalboard = makelegalboard(b);
     vector<board_finish_root> moveorder(popcnt_u64(legalboard));
-    int count = 0;
+    int32_t count = 0;
     while(legalboard) {
         moveorder[count].put = blsi_u64(legalboard);
         legalboard = blsr_u64(legalboard);
@@ -1088,22 +1195,22 @@ int search_finish_scout(board b, bool mpc) {
     sort(moveorder.begin(), moveorder.end(), [](const auto &a, const auto &b) {
         return a.score > b.score;
     });
-    int alpha = MIN_INF, beta = MAX_INF;
-    future<int> futures[34];
-    int vars[34];
-    int search_depth = 64 - popcnt_u64(b.p | b.o);
+    int32_t alpha = MIN_INF, beta = MAX_INF;
+    future<int32_t> futures[34];
+    int32_t vars[34];
+    int32_t search_depth = 64 - popcnt_u64(b.p | b.o);
     alpha = -nega_scout_finish(search_depth, -beta, -alpha, moveorder[0]);
     vars[0] = alpha;
     tmpbit = moveorder[0].put;
-    for (int i = 1; i <count; ++i) {
-        futures[i] = async(launch::async, [&, i]() -> int {
+    for (int32_t i = 1; i <count; ++i) {
+        futures[i] = async(launch::async, [&, i]() -> int32_t {
             return -nega_alpha_moveorder_finish(search_depth, -alpha - 1, -alpha, moveorder[i]);
         });
     }
-    for (int i = 1; i < count; ++i) {
+    for (int32_t i = 1; i < count; ++i) {
         vars[i] = futures[i].get();
     }
-    for (int i = 1; i < count; ++i) {
+    for (int32_t i = 1; i < count; ++i) {
         if (vars[i] > alpha) {
             vars[i] = -nega_scout_finish(search_depth, -beta, -vars[i], moveorder[i]);
         }
@@ -1118,13 +1225,13 @@ int search_finish_scout(board b, bool mpc) {
     return alpha;
 }
 
-int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noexcept{
+int32_t nega_scout_finish(int32_t depth, int32_t alpha, int32_t beta, const board_finish &b) noexcept{
     ++visited_nodes;
     if (depth <= 0) {
         return (popcnt_u64(b.p) - popcnt_u64(b.o)) * 256;
     }
-    int u = MAX_INF, l = MIN_INF;
-    int stones = popcnt_u64(b.p | b.o);
+    int32_t u = MAX_INF, l = MIN_INF;
+    int32_t stones = popcnt_u64(b.p | b.o);
     table_data* entry = NULL;
     uint32_t hash = b.hash();
     {
@@ -1146,7 +1253,7 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
         if (!b2.legalboard) return (popcnt_u64(b.p) - popcnt_u64(b.o)) * 256;
         else return -nega_scout_finish(depth, -beta, -alpha, b2);
     }
-    int max_score = MIN_INF, count = 0;
+    int32_t max_score = MIN_INF, count = 0;
     uint64_t rev;
     board_finish moveorder[34];
     if (stones < end_search_stone_count) {
@@ -1189,9 +1296,9 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
     
     if (mpc_depth[depth] > 0 && use_mpc) {
         double dev =  mpc_p * mpc_data_end[popcnt_u64(b.p | b.o)][mpc_depth[depth]];
-        int dev_int = (dev > 0) ? ceil(dev) : floor(dev);
-        int bound_up = static_cast<int>(beta + dev_int);
-        int bound_low = static_cast<int>(alpha - dev_int);
+        int32_t dev_int32_t = (dev > 0) ? ceil(dev) : floor(dev);
+        int32_t bound_up = static_cast<int32_t>(beta + dev_int32_t);
+        int32_t bound_low = static_cast<int32_t>(alpha - dev_int32_t);
         if (alpha > MIN_INF && beta < MAX_INF) {
             if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
                 return alpha;
@@ -1205,8 +1312,8 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
     sort(moveorder, moveorder+count, [](const auto &a, const auto &b) {
         return a.score < b.score;
     });
-    future<int> futures[34];
-    int vars[34];
+    future<int32_t> futures[34];
+    int32_t vars[34];
     if (stones < 57) {
         vars[0] = -nega_scout_finish(depth-1, -beta, -alpha, moveorder[0]);
         if (vars[0] >= beta) {
@@ -1217,15 +1324,15 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
         }
         alpha = max(alpha, vars[0]);
         max_score = max(max_score, vars[0]);
-        for (int i = 1; i < count; ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
+        for (int32_t i = 1; i < count; ++i) {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
                 return -nega_alpha_moveorder_finish(depth-1, -alpha - 1, -alpha, moveorder[i]);
             });
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             vars[i] = futures[i].get();
         }
-        for (int i = 1; i < count; ++i) {
+        for (int32_t i = 1; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
                     *entry = {b.p, b.o, u, vars[i], depth};
@@ -1243,20 +1350,20 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
                 }
             }
         }
-        int max_var = *max_element(vars, vars+count);
+        int32_t max_var = *max_element(vars, vars+count);
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     } else {
-        for (int i = 0; i < count; ++i) {
-            futures[i] = async(launch::async, [&, i]() -> int {
-                int var = -nega_alpha_finish(depth-1, -beta, -alpha, moveorder[i]);
+        for (int32_t i = 0; i < count; ++i) {
+            futures[i] = async(launch::async, [&, i]() -> int32_t {
+                int32_t var = -nega_alpha_finish(depth-1, -beta, -alpha, moveorder[i]);
                 return var;
             });
         }
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             vars[i] = futures[i].get();
         }
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             if (vars[i] >= beta) {
                 if (vars[i] > l) {
                     *entry = {b.p, b.o, u, vars[i], depth};
@@ -1264,7 +1371,7 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
                 return vars[i];
             }
         }
-        int max_var = *max_element(vars, vars+count);
+        int32_t max_var = *max_element(vars, vars+count);
         alpha = max(alpha, max_var);
         max_score = max(max_score, max_var);
     }
@@ -1272,12 +1379,12 @@ int nega_scout_finish(int depth, int alpha, int beta, const board_finish &b) noe
     return max_score;
 }
 
-int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_finish &b) noexcept{
+int32_t nega_alpha_moveorder_finish(int32_t depth, int32_t alpha, int32_t beta, const board_finish &b) noexcept{
     ++visited_nodes;
     if (depth <= 0) {
         return (popcnt_u64(b.p) - popcnt_u64(b.o)) * 256;
     }
-    int u = MAX_INF, l = MIN_INF;
+    int32_t u = MAX_INF, l = MIN_INF;
     table_data* entry = NULL;
     uint32_t hash = b.hash();
     {
@@ -1299,10 +1406,10 @@ int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_fini
         if (!b2.legalboard) return (popcnt_u64(b.p) - popcnt_u64(b.o)) * 256;
         else return -nega_alpha_moveorder_finish(depth, -beta, -alpha, b2);
     }
-    int var = 0, count = 0, max_score = MIN_INF;
+    int32_t var = 0, count = 0, max_score = MIN_INF;
     uint64_t rev;
     board_finish moveorder[34];
-    int stones = popcnt_u64(b.p | b.o);
+    int32_t stones = popcnt_u64(b.p | b.o);
     if (stones < end_search_stone_count) {
         for (uint64_t put = 0x8000000000000000; put > 0; put >>= 1) {
             if (b.legalboard & put) {
@@ -1343,9 +1450,9 @@ int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_fini
     
     if (mpc_depth[depth] > 0 && use_mpc) {
         double dev =  mpc_p * mpc_data_end[popcnt_u64(b.p | b.o)][mpc_depth[depth]];
-        int dev_int = (dev > 0) ? ceil(dev) : floor(dev);
-        int bound_up = static_cast<int>(beta + dev_int);
-        int bound_low = static_cast<int>(alpha - dev_int);
+        int32_t dev_int32_t = (dev > 0) ? ceil(dev) : floor(dev);
+        int32_t bound_up = static_cast<int32_t>(beta + dev_int32_t);
+        int32_t bound_low = static_cast<int32_t>(alpha - dev_int32_t);
         if (alpha > MIN_INF && beta < MAX_INF) {
             if (nega_alpha_moveorder_mpc(mpc_depth[depth], bound_low -1, bound_low, b) <= bound_low) {
                 return alpha;
@@ -1361,7 +1468,7 @@ int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_fini
     });
     
     if (stones < 57) {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha_moveorder_finish(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -1374,7 +1481,7 @@ int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_fini
             max_score = max(max_score, var);
         }
     } else {
-        for (int i = 0; i < count; ++i) {
+        for (int32_t i = 0; i < count; ++i) {
             var = -nega_alpha_finish(depth-1, -beta, -alpha, moveorder[i]);
             if (var >= beta) {
                 if (var > l) {
@@ -1392,7 +1499,7 @@ int nega_alpha_moveorder_finish(int depth, int alpha, int beta, const board_fini
     return max_score;
 }
 
-int nega_alpha_finish(int depth, int alpha, int beta, const board_finish &b) noexcept {
+int32_t nega_alpha_finish(int32_t depth, int32_t alpha, int32_t beta, const board_finish &b) noexcept {
     if (!b.legalboard) {
         board_finish b2 = b.flipped();
         b2.legalboard = makelegalboard(b2);
@@ -1402,7 +1509,7 @@ int nega_alpha_finish(int depth, int alpha, int beta, const board_finish &b) noe
         }
     }
     uint64_t rev = 0;
-    int var = 0, max_score = MIN_INF;
+    int32_t var = 0, max_score = MIN_INF;
     board_finish b1;
     b1.index = b.index;
     b1.player = b.player;
@@ -1430,7 +1537,7 @@ int nega_alpha_finish(int depth, int alpha, int beta, const board_finish &b) noe
     return max_score;
 }
 
-int winner() {
+int32_t winner() {
     if (nowTurn == BLACK_TURN) {
         blackc = popcnt_u64(b.p);
         whitec = popcnt_u64(b.o);

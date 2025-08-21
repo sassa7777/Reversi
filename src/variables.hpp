@@ -10,26 +10,26 @@
 
 #include "reversi.hpp"
 
-int end_search_stone_count;
+int32_t end_search_stone_count;
 bool first_reset;
-int DEPTH;
-int search_depth;
-int Level;
-int px, py;
-int whitec;
-int blackc;
-int tmpx, tmpy;
-int hint_x, hint_y;
+int32_t DEPTH;
+int32_t search_depth;
+int32_t Level;
+int32_t px, py;
+int32_t whitec;
+int32_t blackc;
+int32_t tmpx, tmpy;
+int32_t hint_x, hint_y;
 uint64_t tmpbit;
-int think_percent;
-int think_count;
-int AIplayer;
-int nowTurn;
-int nowIndex;
-int firstDEPTH;
-int afterIndex;
-int now_model_idx;
-int visited_nodes;
+int32_t think_percent;
+int32_t think_count;
+int32_t AIplayer;
+int32_t nowTurn;
+int32_t nowIndex;
+int32_t firstDEPTH;
+int32_t afterIndex;
+int32_t now_model_idx;
+int32_t visited_nodes;
 bool use_mpc;
 double mpc_p;
 uint64_t legalboard;
@@ -39,29 +39,36 @@ board b;
 board_back b_back;
 
 //multi prob cut based on egaroucid https://github.com/Nyanyan/Egaroucid
-constexpr double aa_mid = 3.6498594135461473;
-constexpr double bb_mid = 16.328790201074472;
-constexpr double cc_mid = -4.104748049569666;
-constexpr double dd_mid = -1.0933906581427852;
-constexpr double ee_mid = 53.35363110305511;
-constexpr double ff_mid = 170.13035450582603;
-constexpr double gg_mid = 172.49384089638207;
+//constexpr double aa_mid = 3.6498594135461473;
+//constexpr double bb_mid = 16.328790201074472;
+//constexpr double cc_mid = -4.104748049569666;
+//constexpr double dd_mid = -1.0933906581427852;
+//constexpr double ee_mid = 53.35363110305511;
+//constexpr double ff_mid = 170.13035450582603;
+//constexpr double gg_mid = 172.49384089638207;
+constexpr double aa_mid = 3.632094284296651;
+constexpr double bb_mid = 15.421963389690724;
+constexpr double cc_mid = -4.160710158354271;
+constexpr double dd_mid = -0.046413994268218794;
+constexpr double ee_mid = 53.1808701893721;
+constexpr double ff_mid = 171.13265034798772;
+constexpr double gg_mid = 182.5108096612884;
 
-constexpr double aa_end = 9.864501175177745;
-constexpr double bb_end = -24.22689316517559;
-constexpr double cc_end = 36.860730860309445;
-constexpr double dd_end = -338.68521250573633;
-constexpr double ee_end = 1136.182272092143;
-constexpr double ff_end = 9.803237207924484;
+constexpr double aa_end = 12.665170124150967;
+constexpr double bb_end = -45.12547136570383;
+constexpr double cc_end = 26.20811013746241;
+constexpr double dd_end = -308.728135588766;
+constexpr double ee_end = 1061.93484141299;
+constexpr double ff_end = 10.014821033002093;
 
-constexpr int mpc_depth[] {
+constexpr int32_t mpc_depth[] {
     0, 0, 0, 1, 2, 1, 2, 3, 4, 3, 4, 3, 4, 5, 6, 5, 6, 5, 6, 7, 8, 7, 8, 7, 8, 9, 10, 9, 10, 9, 10, 11
 };
 
 constexpr std::array<std::array<double, 21>, 65> init_mpc_mid_data() {
     std::array<std::array<double, 21>, 65> tmp;
-    for (int i = 0; i < 21; ++i) {
-        for (int j = 0; j < 65; ++j) {
+    for (int32_t i = 0; i < 21; ++i) {
+        for (int32_t j = 0; j < 65; ++j) {
             double A = aa_mid*(double)j/64.0 + bb_mid*(double)mpc_depth[i]/60.0 + (double)cc_mid*i/60.0;
             double dev = dd_mid*A*A*A + ee_mid*A*A + ff_mid*A + gg_mid;
             tmp[j][i] = dev;
@@ -72,8 +79,8 @@ constexpr std::array<std::array<double, 21>, 65> init_mpc_mid_data() {
 
 constexpr std::array<std::array<double, 31>, 65> init_mpc_end_data() {
     std::array<std::array<double, 31>, 65> tmp;
-    for (int i = 0; i < 31; ++i) {
-        for (int j = 0; j < 65; ++j) {
+    for (int32_t i = 0; i < 31; ++i) {
+        for (int32_t j = 0; j < 65; ++j) {
             double A = aa_end*(double)j/64.0 + (double)bb_end*i/60.0;
             double dev = cc_end*A*A*A + dd_end*A*A + ee_end*A + ff_end;
             tmp[j][i] = dev;
