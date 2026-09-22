@@ -8,7 +8,7 @@
 
 ・ビットボード
 
-・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、線形回帰を利用して最適化した評価関数
+・[Edax](https://github.com/abulmo/edax-reversi)、[Egaroucid](https://github.com/Nyanyan/Egaroucid)を参考にし、最急降下法を利用して最適化した評価関数
 
 ・残り20手で完全読み
 
